@@ -26,5 +26,4 @@
 ### Programmer/Design
  * Benjamin Leech, bdl249
 
-## Unity
-### Version Number: 2018.3.1f1
+### Unity Version Number: 2018.3.1f1
