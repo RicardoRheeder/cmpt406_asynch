@@ -1,30 +1,29 @@
 # cmpt406_asynch
 ### Group Name: <yet to be determined>
 
-## Members
-### Project Lead ###
+### Project Lead
  * Ricardo Rheeder
 
-### Tech Lead ###
+### Tech Lead
  * Brtyon Leason, bal983
 
-### Test Lead ###
+### Test Lead
  * Katlin Dickson, kad996
 
-### Design Lead ### 
+### Design Lead
  * Quitin Benham
 
-### Programmers ###
+### Programmers
  * Parker Reese
  * Gaurav Menon
  * Clayton Vanderstelt
  * Jaami Parvez
 
-### Artists ###
+### Artists
  * Davidson Ecklund
  * Theron Cory
 
-### Programmer/Design ###
+### Programmer/Design
  * Benjamin Leech, bdl249
 
 ## Unity
