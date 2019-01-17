@@ -24,16 +24,16 @@ func handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	decoder := json.NewDecoder(r.Body)
-	var ur request.CreateUserRequest
+	var ur request.CreateUser
 	err := decoder.Decode(&ur)
 	if err != nil {
-		http.Error(w, "Could not decode json body", http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = CreateUser(ctx, ur.Username, ur.Password)
 	if err != nil {
-		http.Error(w, "Creating User Failed", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -45,13 +45,13 @@ func handleGetUser(w http.ResponseWriter, r *http.Request) {
 
 	username, err := ValidateAuth(ctx, r)
 	if err != nil {
-		http.Error(w, "Not Authorized with Basic Auth", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	user, err := GetUser(ctx, username)
 	if err != nil {
-		http.Error(w, "Getting User Failed", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(user)
@@ -65,15 +65,23 @@ func handleRequestGame(w http.ResponseWriter, r *http.Request) {
 
 	username, err := ValidateAuth(ctx, r)
 	if err != nil {
-		http.Error(w, "Not Authorized with Basic Auth", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	user, err := GetUser(ctx, username)
+	decoder := json.NewDecoder(r.Body)
+	var gr request.GameRequest
+	err = decoder.Decode(&gr)
 	if err != nil {
-		http.Error(w, "Getting User Failed", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
-	json.NewEncoder(w).Encode(user)
+
+	err = RequestGame(ctx, username, gr.OpponentUsernames, gr.Board)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 	return

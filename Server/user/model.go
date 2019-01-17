@@ -7,4 +7,5 @@ type User struct {
 	ActiveGames     []string `json:"activeGames"`
 	SentInvites     []string `json:"sentInvites"`
 	RecievedInvites []string `json:"recievedInvites"`
+	CompletedGames  []string `json:"completedGames"`
 }

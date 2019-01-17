@@ -2,6 +2,8 @@ package common
 
 import (
 	"errors"
+
+	"github.com/google/uuid"
 )
 
 // StringNotEmpty validates that the string is not empty
@@ -12,10 +14,15 @@ func StringNotEmpty(input string) error {
 	return nil
 }
 
-// StringSliceNotEmpty validates that the slize is not empty
-func StringSliceNotEmpty(input []string) error {
-	if len(input) <= 0 {
-		return errors.New("Slice Empty")
+// StringSliceGreaterThanLength validates that the slice is greater than requested
+func StringSliceGreaterThanLength(input []string, size int) error {
+	if len(input) <= size {
+		return errors.New("Slice Too Small")
 	}
 	return nil
+}
+
+// GetRandomID will return a uuid as a string
+func GetRandomID() string {
+	return uuid.New().String()
 }

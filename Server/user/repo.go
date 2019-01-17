@@ -34,7 +34,7 @@ func CreateUser(ctx context.Context, username string, password string) error {
 }
 
 // UpdateUser will update a currently existing user
-func UpdateUser(ctx context.Context, username string, password string) error {
+func UpdateUser(ctx context.Context, username string, activeGames, sentInvites, recievedInvites, completedGames []string) error {
 
 	_, err := GetUser(ctx, username)
 	if err != nil {
@@ -43,8 +43,10 @@ func UpdateUser(ctx context.Context, username string, password string) error {
 	}
 
 	user := &User{
-		Username: username,
-		Password: password,
+		ActiveGames:     activeGames,
+		SentInvites:     sentInvites,
+		RecievedInvites: recievedInvites,
+		CompletedGames:  completedGames,
 	}
 
 	key := datastore.NewKey(ctx, "User", username, 0, nil)
