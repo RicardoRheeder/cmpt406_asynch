@@ -72,8 +72,8 @@ Get User:
  - Return: User Data
  - Example Return Data:
     {   
-        "username": "usernameTest2",
         "activeGames": ["GameID1", "GameID2"]
+        "sentInvites": ["GameId3"]
     }
 
 Request Game:

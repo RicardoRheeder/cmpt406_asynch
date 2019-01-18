@@ -133,7 +133,7 @@ func RequestGame(ctx context.Context, username string, OpponentUsernames []strin
 	/* Create shell gamestate */
 	allUsers := append(OpponentUsernames, username)
 	gameStateID := common.GetRandomID()
-	err = gamestate.CreateGameState(ctx, gameStateID, board, allUsers)
+	err = gamestate.CreateGameState(ctx, gameStateID, board, allUsers, []string{username})
 	if err != nil {
 		return err
 	}
@@ -162,6 +162,63 @@ func RequestGame(ctx context.Context, username string, OpponentUsernames []strin
 		if err != nil {
 			log.Criticalf(ctx, "We created a gamestate but failed to send Invites4")
 			return err
+		}
+	}
+
+	return nil
+}
+
+// AcceptGame will accept the game invite given by another user
+func AcceptGame(ctx context.Context, username string, gameStateID string) error {
+
+	/* Update GameState list of Accepted Users */
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Request Game failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameStateID)
+	if err != nil {
+		log.Errorf(ctx, "Request Game failed: gameStateID is required")
+		return errors.New("gameStateID is required")
+	}
+
+	gs, err := gamestate.GetGameState(ctx, gameStateID)
+	if err != nil {
+		return err
+	}
+	if !common.Contains(gs.Users, username) {
+		log.Errorf(ctx, "Attempted to accept game %s that user %s is not a part of", gameStateID, username)
+		return errors.New("User is not a part of that game")
+	}
+
+	gs.AcceptedUsers = append(gs.AcceptedUsers, username)
+	err = gamestate.UpdateGameState(ctx, gs.ID, "", gs.AcceptedUsers, nil, nil)
+	if err != nil {
+		return err
+	}
+
+	/* If all users have now accepted the game invite */
+	if len(gs.Users) == len(gs.AcceptedUsers) {
+		/* Update all users to have an Activate Game */
+		/* And remove their sent or requested Invite */
+		for i := 0; i < len(gs.Users); i++ {
+			u, err := user.GetUser(ctx, gs.Users[i])
+			if err != nil {
+				log.Criticalf(ctx, "We failed to get a user to assign it an active game")
+				return err
+			}
+			u.ActiveGames = append(u.ActiveGames, gs.ID)
+			if !common.Remove(u.RecievedInvites, gs.ID) {
+				if !common.Remove(u.SentInvites, gs.ID) {
+					log.Criticalf(ctx, "Somehow user %s successfully accepted a game request without the record on the User", u.Username)
+				}
+			}
+			err = user.UpdateUser(ctx, u.Username, u.ActiveGames, u.SentInvites, u.RecievedInvites, nil)
+			if err != nil {
+				log.Criticalf(ctx, "We failed to update a user to have an active game")
+				return err
+			}
 		}
 	}
 

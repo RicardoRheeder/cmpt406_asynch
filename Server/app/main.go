@@ -12,6 +12,7 @@ func main() {
 	http.HandleFunc("/CreateUser", handleCreateUser)
 	http.HandleFunc("/GetUser", handleGetUser)
 	http.HandleFunc("/RequestGame", handleRequestGame)
+	http.HandleFunc("/AcceptGame", handleAcceptGame)
 
 	appengine.Main()
 }
@@ -50,6 +51,10 @@ func handleGetUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	/* remove redundant data */
+	user.Username = ""
+	user.Password = ""
+
 	json.NewEncoder(w).Encode(user)
 
 	w.WriteHeader(http.StatusOK)
@@ -74,6 +79,33 @@ func handleRequestGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = RequestGame(ctx, username, gr.OpponentUsernames, gr.Board)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var ar request.AcceptRequest
+	err = decoder.Decode(&ar)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = AcceptGame(ctx, username, ar.GameID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
