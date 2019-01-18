@@ -36,17 +36,33 @@ func CreateUser(ctx context.Context, username string, password string) error {
 // UpdateUser will update a currently existing user
 func UpdateUser(ctx context.Context, username string, activeGames, sentInvites, recievedInvites, completedGames []string) error {
 
-	_, err := GetUser(ctx, username)
+	u, err := GetUser(ctx, username)
 	if err != nil {
 		log.Errorf(ctx, "Attempted to update user: %s, that doesn't exists", username)
 		return errors.New("User Doesn't Exists")
 	}
 
+	/* Pass nil values into the function if you want the value to remain the same */
+	if activeGames != nil {
+		u.ActiveGames = activeGames
+	}
+	if sentInvites != nil {
+		u.SentInvites = sentInvites
+	}
+	if recievedInvites != nil {
+		u.RecievedInvites = recievedInvites
+	}
+	if completedGames != nil {
+		u.CompletedGames = completedGames
+	}
+
 	user := &User{
-		ActiveGames:     activeGames,
-		SentInvites:     sentInvites,
-		RecievedInvites: recievedInvites,
-		CompletedGames:  completedGames,
+		Username:        u.Username,
+		Password:        u.Password,
+		ActiveGames:     u.ActiveGames,
+		SentInvites:     u.SentInvites,
+		RecievedInvites: u.RecievedInvites,
+		CompletedGames:  u.CompletedGames,
 	}
 
 	key := datastore.NewKey(ctx, "User", username, 0, nil)

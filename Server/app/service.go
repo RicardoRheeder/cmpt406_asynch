@@ -145,7 +145,7 @@ func RequestGame(ctx context.Context, username string, OpponentUsernames []strin
 		return err
 	}
 	u.SentInvites = append(u.SentInvites, gameStateID)
-	err = user.UpdateUser(ctx, u.Username, u.ActiveGames, u.SentInvites, u.RecievedInvites, u.CompletedGames)
+	err = user.UpdateUser(ctx, u.Username, nil, u.SentInvites, nil, nil)
 	if err != nil {
 		log.Criticalf(ctx, "We created a gamestate but failed to send Invites2")
 		return err
@@ -158,7 +158,7 @@ func RequestGame(ctx context.Context, username string, OpponentUsernames []strin
 			return err
 		}
 		u.RecievedInvites = append(u.RecievedInvites, gameStateID)
-		err = user.UpdateUser(ctx, u.Username, u.ActiveGames, u.SentInvites, u.RecievedInvites, u.CompletedGames)
+		err = user.UpdateUser(ctx, u.Username, nil, nil, u.RecievedInvites, nil)
 		if err != nil {
 			log.Criticalf(ctx, "We created a gamestate but failed to send Invites4")
 			return err
