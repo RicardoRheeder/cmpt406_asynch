@@ -79,6 +79,30 @@ Get User:
     }
 
 
+Add Friend:
+-----------------------
+ - Path: /AddFriend
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "username": "myNewFriend1"
+    }
+ - Return: Http Resonse Code
+
+
+Remove Friend:
+-----------------------
+ - Path: /RemoveFriend
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "username": "fuckThisFriendHeOut420"
+    }
+ - Return: Http Resonse Code
+
+
 Create Private Game:
 -----------------------
  - Path: /CreatePrivateGame
@@ -91,6 +115,7 @@ Create Private Game:
         "board": 6
     }
  - Return: Http Resonse Code
+
 
 Create Public Game:
 -----------------------
