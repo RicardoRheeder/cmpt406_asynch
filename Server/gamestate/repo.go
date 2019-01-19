@@ -9,7 +9,7 @@ import (
 )
 
 // CreateGameState will create a game state in DataStore
-func CreateGameState(ctx context.Context, ID string, board int, users, acceptedUsers []string) error {
+func CreateGameState(ctx context.Context, ID string, board int, users, acceptedUsers []string, maxUsers int, public bool) error {
 
 	_, err := GetGameState(ctx, ID)
 	if err == nil {
@@ -20,6 +20,8 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 	gameState := &GameState{
 		ID:            ID,
 		Board:         board,
+		Public:        public,
+		MaxUsers:      maxUsers,
 		Users:         users,
 		AcceptedUsers: acceptedUsers,
 		AliveUsers:    users,
@@ -37,7 +39,7 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 }
 
 // UpdateGameState will update the GameState with new values
-func UpdateGameState(ctx context.Context, ID, usersTurn string, acceptedUsers, readyUsers, aliveUsers []string) error {
+func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string) error {
 
 	gs, err := GetGameState(ctx, ID)
 	if err != nil {
@@ -46,6 +48,9 @@ func UpdateGameState(ctx context.Context, ID, usersTurn string, acceptedUsers, r
 	}
 
 	/* Input 0 values values to make the value not change */
+	if users != nil {
+		gs.Users = users
+	}
 	if acceptedUsers != nil {
 		gs.AcceptedUsers = acceptedUsers
 	}
@@ -62,10 +67,14 @@ func UpdateGameState(ctx context.Context, ID, usersTurn string, acceptedUsers, r
 	gameState := &GameState{
 		ID:            gs.ID,
 		Board:         gs.Board,
+		MaxUsers:      gs.MaxUsers,
+		Public:        gs.Public,
 		Users:         gs.Users,
 		AcceptedUsers: gs.AcceptedUsers,
 		ReadyUsers:    gs.ReadyUsers,
 		AliveUsers:    gs.AliveUsers,
+		UsersTurn:     gs.UsersTurn,
+		Units:         gs.Units,
 	}
 
 	key := datastore.NewKey(ctx, "GameState", gs.ID, 0, nil)
@@ -93,6 +102,26 @@ func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 	}
 
 	return &gameState, nil
+}
+
+// GetGameStateMulti will get a gamestate for each ID from DataStore
+// If any of the keys are invalid, the entire lookup could fail
+func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
+
+	keys := []*datastore.Key{}
+
+	for i := 0; i < len(IDs); i++ {
+		keys = append(keys, datastore.NewKey(ctx, "GameState", IDs[i], 0, nil))
+	}
+
+	gameStates := make([]GameState, len(IDs))
+	err := datastore.GetMulti(ctx, keys, gameStates)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get gameStates: %s", err.Error())
+		return nil, err
+	}
+
+	return gameStates, nil
 }
 
 /*

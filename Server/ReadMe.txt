@@ -50,6 +50,7 @@ API Interface
 
 Root url: https://async-406.appspot.com
 
+
 Create User:
 -----------------------
  - Path: /CreateUser
@@ -62,6 +63,7 @@ Create User:
         "password": "thisIsPassword"
     }
  - Return: Http Resonse Code
+
 
 Get User:
 -----------------------
@@ -76,9 +78,34 @@ Get User:
         "sentInvites": ["GameId3"]
     }
 
-Request Game:
+
+Add Friend:
 -----------------------
- - Path: /RequestGame
+ - Path: /AddFriend
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "username": "myNewFriend1"
+    }
+ - Return: Http Resonse Code
+
+
+Remove Friend:
+-----------------------
+ - Path: /RemoveFriend
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "username": "fuckThisFriendHeOut420"
+    }
+ - Return: Http Resonse Code
+
+
+Create Private Game:
+-----------------------
+ - Path: /CreatePrivateGame
  - POST
  - Auth: Basic Auth
  - Body: JSON
@@ -88,3 +115,76 @@ Request Game:
         "board": 6
     }
  - Return: Http Resonse Code
+
+
+Create Public Game:
+-----------------------
+ - Path: /CreatePublicGame
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "maxUsers": 3,
+        "board": 6
+    }
+ - Return: Http Resonse Code
+
+
+Accept Game: (used for both private and public)
+-----------------------
+ - Path: /AcceptGame
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "gameId": "123-456"
+    }
+ - Return: Http Resonse Code
+
+
+Get Game State:
+-----------------------
+ - Path: /GetGameState
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {
+        "gameId": "123-456"
+    }
+ - Return: GameState Data
+ - Example Return Data:
+    {   
+        "Board": 2,
+        "Users": ["user1", "user2", "user3"],
+        "AliveUsers": ["user1", "user2"]
+    }
+
+
+Get Game State Multi:
+-----------------------
+ - Path: /GetGameStateMulti
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {
+        "gameIds": ["123-456", "111-222"]
+    }
+ - Return: Array of GameState Data
+ - Example Return Data:
+    [
+        {   
+            "ID": "123-456",
+            "Board": 9,
+            "Users": ["user1", "user2", "user3"],
+            "AliveUsers": ["user1", "user2"]
+        },
+        {
+            "ID": "111-222",
+            "Board": 5,
+            "Users": ["user4", "user5"],
+            "AliveUsers": ["user4", "user5"]
+        }

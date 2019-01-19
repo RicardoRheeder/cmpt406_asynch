@@ -6,13 +6,34 @@ type CreateUser struct {
 	Password string `json:"password"`
 }
 
-// GameRequest is a struct to handle the request of inviting a user to a game
-type GameRequest struct {
+// Friend is a struct to handle the request of adding or removing a user to a users friendslist
+type Friend struct {
+	Username string `json:"username"`
+}
+
+// CreatePrivateGame is a struct to handle the request of inviting users to a private game
+type CreatePrivateGame struct {
 	OpponentUsernames []string `json:"opponentUsernames"`
 	Board             int      `json:"board"`
 }
 
-// AcceptRequest is a struct to handle the /AcceptRequest payload
-type AcceptRequest struct {
+// CreatePublicGame is a struct to handle the request of creating a public game
+type CreatePublicGame struct {
+	MaxUsers int `json:"maxUsers"`
+	Board    int `json:"board"`
+}
+
+// AcceptGame is a struct to handle the /AcceptGame payload
+type AcceptGame struct {
 	GameID string `json:"gameId"`
+}
+
+// GetGameState is a struct to handle the /GetGameState paylaod
+type GetGameState struct {
+	GameID string `json:"gameId"`
+}
+
+// GetGameStateMulti is a struct to handle the /GetGameStateMulti paylaod
+type GetGameStateMulti struct {
+	GameIDs []string `json:"gameIds"`
 }
