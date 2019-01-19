@@ -79,9 +79,9 @@ Get User:
     }
 
 
-Send Game Invite:
+Create Private Game:
 -----------------------
- - Path: /SendGameInvite
+ - Path: /CreatePrivateGame
  - POST
  - Auth: Basic Auth
  - Body: JSON
@@ -92,10 +92,23 @@ Send Game Invite:
     }
  - Return: Http Resonse Code
 
-
-Accept Game Invite:
+Create Public Game:
 -----------------------
- - Path: /AcceptGameInvite
+ - Path: /CreatePublicGame
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "maxUsers": 3,
+        "board": 6
+    }
+ - Return: Http Resonse Code
+
+
+Accept Game: (used for both private and public)
+-----------------------
+ - Path: /AcceptGame
  - POST
  - Auth: Basic Auth
  - Body: JSON
@@ -119,7 +132,8 @@ Get Game State:
  - Return: GameState Data
  - Example Return Data:
     {   
-        "Users": ["user1", "user2", "user3"]
+        "Board": 2,
+        "Users": ["user1", "user2", "user3"],
         "AliveUsers": ["user1", "user2"]
     }
 
@@ -138,12 +152,14 @@ Get Game State Multi:
  - Example Return Data:
     [
         {   
-            "ID": "123-456"
-            "Users": ["user1", "user2", "user3"]
+            "ID": "123-456",
+            "Board": 9,
+            "Users": ["user1", "user2", "user3"],
             "AliveUsers": ["user1", "user2"]
         },
         {
-            "ID": "111-222"
-            "Users": ["user4", "user5"]
+            "ID": "111-222",
+            "Board": 5,
+            "Users": ["user4", "user5"],
             "AliveUsers": ["user4", "user5"]
         }

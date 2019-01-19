@@ -6,14 +6,20 @@ type CreateUser struct {
 	Password string `json:"password"`
 }
 
-// SendInvite is a struct to handle the request of inviting a user to a game
-type SendInvite struct {
+// CreatePrivateGame is a struct to handle the request of inviting users to a private game
+type CreatePrivateGame struct {
 	OpponentUsernames []string `json:"opponentUsernames"`
 	Board             int      `json:"board"`
 }
 
-// AcceptInvite is a struct to handle the /AcceptRequest payload
-type AcceptInvite struct {
+// CreatePublicGame is a struct to handle the request of creating a public game
+type CreatePublicGame struct {
+	MaxUsers int `json:"maxUsers"`
+	Board    int `json:"board"`
+}
+
+// AcceptGame is a struct to handle the /AcceptGame payload
+type AcceptGame struct {
 	GameID string `json:"gameId"`
 }
 

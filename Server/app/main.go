@@ -11,8 +11,9 @@ import (
 func main() {
 	http.HandleFunc("/CreateUser", handleCreateUser)
 	http.HandleFunc("/GetUser", handleGetUser)
-	http.HandleFunc("/SendGameInvite", handleSendGameInvite)
-	http.HandleFunc("/AcceptGameInvite", handleAcceptGameInvite)
+	http.HandleFunc("/CreatePrivateGame", handleCreatePrivateGame)
+	http.HandleFunc("/CreatePublicGame", handleCreatePublicGame)
+	http.HandleFunc("/AcceptGame", handleAcceptGame)
 	http.HandleFunc("/GetGameState", handleGetGameState)
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
 
@@ -63,7 +64,7 @@ func handleGetUser(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func handleSendGameInvite(w http.ResponseWriter, r *http.Request) {
+func handleCreatePrivateGame(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	username, err := ValidateAuth(ctx, r)
@@ -73,14 +74,14 @@ func handleSendGameInvite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var gr request.SendInvite
-	err = decoder.Decode(&gr)
+	var pg request.CreatePrivateGame
+	err = decoder.Decode(&pg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = GameInvite(ctx, username, gr.OpponentUsernames, gr.Board)
+	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.Board)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -90,7 +91,7 @@ func handleSendGameInvite(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func handleAcceptGameInvite(w http.ResponseWriter, r *http.Request) {
+func handleCreatePublicGame(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	username, err := ValidateAuth(ctx, r)
@@ -100,14 +101,41 @@ func handleAcceptGameInvite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ar request.AcceptInvite
+	var pg request.CreatePublicGame
+	err = decoder.Decode(&pg)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = CreatePublicGame(ctx, username, pg.Board, pg.MaxUsers)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var ar request.AcceptGame
 	err = decoder.Decode(&ar)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = AcceptGameInvite(ctx, username, ar.GameID)
+	err = AcceptGame(ctx, username, ar.GameID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
