@@ -105,7 +105,7 @@ func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 		keys = append(keys, datastore.NewKey(ctx, "GameState", IDs[i], 0, nil))
 	}
 
-	gameStates := []GameState{}
+	gameStates := make([]GameState, len(IDs))
 	err := datastore.GetMulti(ctx, keys, gameStates)
 	if err != nil {
 		log.Errorf(ctx, "Failed to Get gameStates: %s", err.Error())

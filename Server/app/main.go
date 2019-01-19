@@ -14,7 +14,7 @@ func main() {
 	http.HandleFunc("/SendGameInvite", handleSendGameInvite)
 	http.HandleFunc("/AcceptGameInvite", handleAcceptGameInvite)
 	http.HandleFunc("/GetGameState", handleGetGameState)
-	http.HandleFunc("/GetGameStateMulti", handleGetGameState)
+	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
 
 	appengine.Main()
 }
