@@ -95,6 +95,26 @@ func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 	return &gameState, nil
 }
 
+// GetGameStateMulti will get a gamestate for each ID from DataStore
+// If any of the keys are invalid, the entire lookup could fail
+func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
+
+	keys := []*datastore.Key{}
+
+	for i := 0; i < len(IDs); i++ {
+		keys = append(keys, datastore.NewKey(ctx, "GameState", IDs[i], 0, nil))
+	}
+
+	gameStates := []GameState{}
+	err := datastore.GetMulti(ctx, keys, gameStates)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get gameStates: %s", err.Error())
+		return nil, err
+	}
+
+	return gameStates, nil
+}
+
 /*
 	TODO: it'll probably be easier for transactional updates to the GameState to
 	have repo commands like: AddToReadyUsers() and AddToAcceptedUseres()

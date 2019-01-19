@@ -11,8 +11,10 @@ import (
 func main() {
 	http.HandleFunc("/CreateUser", handleCreateUser)
 	http.HandleFunc("/GetUser", handleGetUser)
-	http.HandleFunc("/RequestGame", handleRequestGame)
-	http.HandleFunc("/AcceptGame", handleAcceptGame)
+	http.HandleFunc("/SendGameInvite", handleSendGameInvite)
+	http.HandleFunc("/AcceptGameInvite", handleAcceptGameInvite)
+	http.HandleFunc("/GetGameState", handleGetGameState)
+	http.HandleFunc("/GetGameStateMulti", handleGetGameState)
 
 	appengine.Main()
 }
@@ -61,7 +63,7 @@ func handleGetUser(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func handleRequestGame(w http.ResponseWriter, r *http.Request) {
+func handleSendGameInvite(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	username, err := ValidateAuth(ctx, r)
@@ -78,7 +80,7 @@ func handleRequestGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = RequestGame(ctx, username, gr.OpponentUsernames, gr.Board)
+	err = GameInvite(ctx, username, gr.OpponentUsernames, gr.Board)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -88,7 +90,7 @@ func handleRequestGame(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
+func handleAcceptGameInvite(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	username, err := ValidateAuth(ctx, r)
@@ -105,11 +107,69 @@ func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = AcceptGame(ctx, username, ar.GameID)
+	err = AcceptGameInvite(ctx, username, ar.GameID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleGetGameState(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var ggs request.GetGameState
+	err = decoder.Decode(&ggs)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	gameState, err := GetGameState(ctx, ggs.GameID, username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(gameState)
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleGetGameStateMulti(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var ggsm request.GetGameStateMulti
+	err = decoder.Decode(&ggsm)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	gameStates, err := GetGameStateMulti(ctx, ggsm.GameIDs, username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(gameStates)
 
 	w.WriteHeader(http.StatusOK)
 	return

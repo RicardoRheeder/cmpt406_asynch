@@ -103,21 +103,21 @@ func GetUser(ctx context.Context, username string) (*user.User, error) {
 /************************************/
 
 // RequestGame will update all users involved in the game request
-func RequestGame(ctx context.Context, username string, OpponentUsernames []string, board int) error {
+func GameInvite(ctx context.Context, username string, OpponentUsernames []string, board int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
 	if err != nil {
-		log.Errorf(ctx, "Request Game failed: username is required")
+		log.Errorf(ctx, "Game Invite failed: username is required")
 		return errors.New("username is required")
 	}
 	err = common.StringSliceGreaterThanLength(OpponentUsernames, 0)
 	if err != nil {
-		log.Errorf(ctx, "Request Game failed: more users are required")
+		log.Errorf(ctx, "Game Invite failed: more users are required")
 		return errors.New("more users required")
 	}
 	if board <= 0 {
-		log.Errorf(ctx, "Request Game failed: invalid board number")
+		log.Errorf(ctx, "Game Invite failed: invalid board number")
 		return errors.New("board number required")
 	}
 
@@ -125,7 +125,7 @@ func RequestGame(ctx context.Context, username string, OpponentUsernames []strin
 	for i := 0; i < len(OpponentUsernames); i++ {
 		_, err = user.GetUser(ctx, OpponentUsernames[i])
 		if err != nil {
-			log.Errorf(ctx, "Request Game for unknoewn user: %s", OpponentUsernames[i])
+			log.Errorf(ctx, "Game Invite for unknown user: %s", OpponentUsernames[i])
 			return err
 		}
 	}
@@ -168,27 +168,27 @@ func RequestGame(ctx context.Context, username string, OpponentUsernames []strin
 	return nil
 }
 
-// AcceptGame will accept the game invite given by another user
-func AcceptGame(ctx context.Context, username string, gameStateID string) error {
+// AcceptGameInvite will accept the game invite given by another user
+func AcceptGameInvite(ctx context.Context, username string, gameStateID string) error {
 
-	/* Update GameState list of Accepted Users */
 	err := common.StringNotEmpty(username)
 	if err != nil {
-		log.Errorf(ctx, "Request Game failed: username is required")
+		log.Errorf(ctx, "Accept Game Invite failed: username is required")
 		return errors.New("username is required")
 	}
 	err = common.StringNotEmpty(gameStateID)
 	if err != nil {
-		log.Errorf(ctx, "Request Game failed: gameStateID is required")
+		log.Errorf(ctx, "Accept Game Invite failed: gameStateID is required")
 		return errors.New("gameStateID is required")
 	}
 
+	/* Update GameState list of Accepted Users */
 	gs, err := gamestate.GetGameState(ctx, gameStateID)
 	if err != nil {
 		return err
 	}
 	if !common.Contains(gs.Users, username) {
-		log.Errorf(ctx, "Attempted to accept game %s that user %s is not a part of", gameStateID, username)
+		log.Errorf(ctx, "Attempted to accept game invite %s that user %s is not a part of", gameStateID, username)
 		return errors.New("User is not a part of that game")
 	}
 
@@ -223,4 +223,60 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 	}
 
 	return nil
+}
+
+// GetGameState will get the GameState for a particular gameID and user
+func GetGameState(ctx context.Context, gameStateID string, username string) (*gamestate.GameState, error) {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Get Game failed: username is required")
+		return nil, errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameStateID)
+	if err != nil {
+		log.Errorf(ctx, "Get Game failed: gameStateID is required")
+		return nil, errors.New("gameStateID is required")
+	}
+
+	gs, err := gamestate.GetGameState(ctx, gameStateID)
+	if err != nil {
+		return nil, err
+	}
+	if !common.Contains(gs.Users, username) {
+		log.Errorf(ctx, "Attempted to get game %s that user %s is not a part of", gameStateID, username)
+		return nil, errors.New("User is not a part of that game")
+	}
+
+	return gs, nil
+}
+
+// GetGameStateMulti will get all the GameStates for the gameIDs and user
+func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username string) ([]gamestate.GameState, error) {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Get Game failed: username is required")
+		return nil, errors.New("username is required")
+	}
+	err = common.StringSliceGreaterThanLength(gameStateIDs, 0)
+	if err != nil {
+		log.Errorf(ctx, "Get Game Multi failed: gameStateIDs is required")
+		return nil, errors.New("gameStateIDs is required")
+	}
+
+	gs, err := gamestate.GetGameStateMulti(ctx, gameStateIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	/* This kinda sucks but I'm not sure how to make it better. Could just not check this... */
+	for i := 0; i < len(gs); i++ {
+		if !common.Contains(gs[i].Users, username) {
+			log.Errorf(ctx, "Attempted to get game %s that user %s is not a part of", gs[i].ID, username)
+			return nil, errors.New("User is not a part of that game")
+		}
+	}
+
+	return gs, nil
 }
