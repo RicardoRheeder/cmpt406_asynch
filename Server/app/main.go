@@ -73,7 +73,7 @@ func handleSendGameInvite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var gr request.GameRequest
+	var gr request.SendInvite
 	err = decoder.Decode(&gr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -100,7 +100,7 @@ func handleAcceptGameInvite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ar request.AcceptRequest
+	var ar request.AcceptInvite
 	err = decoder.Decode(&ar)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
