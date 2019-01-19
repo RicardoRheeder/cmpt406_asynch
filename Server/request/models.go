@@ -6,6 +6,11 @@ type CreateUser struct {
 	Password string `json:"password"`
 }
 
+// Friend is a struct to handle the request of adding or removing a user to a users friendslist
+type Friend struct {
+	Username string `json:"username"`
+}
+
 // CreatePrivateGame is a struct to handle the request of inviting users to a private game
 type CreatePrivateGame struct {
 	OpponentUsernames []string `json:"opponentUsernames"`

@@ -99,6 +99,85 @@ func GetUser(ctx context.Context, username string) (*user.User, error) {
 	return user.GetUser(ctx, username)
 }
 
+// AddFriend adds a friend to their friends list
+func AddFriend(ctx context.Context, username string, friendName string) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Getting user failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(friendName)
+	if err != nil {
+		log.Errorf(ctx, "Getting user failed: friendName is required")
+		return errors.New("friendName is required")
+	}
+	if username == friendName {
+		return errors.New("You can't be your own friend")
+	}
+
+	/* Make sure that user actually exists */
+	_, err = user.GetUser(ctx, friendName)
+	if err != nil {
+		return err
+	}
+
+	u, err := user.GetUser(ctx, username)
+	if err != nil {
+		return err
+	}
+	if common.Contains(u.Friends, friendName) {
+		return errors.New("You already have that friend... dumb ass")
+	}
+
+	u.Friends = append(u.Friends, friendName)
+	err = user.UpdateUser(ctx, username, nil, nil, nil, nil, u.Friends)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// RemoveFriend removes a friend from their friends list
+func RemoveFriend(ctx context.Context, username string, friendName string) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Getting user failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(friendName)
+	if err != nil {
+		log.Errorf(ctx, "Getting user failed: friendName is required")
+		return errors.New("friendName is required")
+	}
+	if username == friendName {
+		return errors.New("Your own name is not a valid option here")
+	}
+
+	/* Make sure that user actually exists */
+	_, err = user.GetUser(ctx, friendName)
+	if err != nil {
+		return err
+	}
+
+	u, err := user.GetUser(ctx, username)
+	if err != nil {
+		return err
+	}
+	if !common.Remove(u.Friends, friendName) {
+		return errors.New("That name wasn't in your list")
+	}
+
+	err = user.UpdateUser(ctx, username, nil, nil, nil, nil, u.Friends)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 /* GameState / User Section */
 /************************************/
 
@@ -147,7 +226,7 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 		return err
 	}
 	u.PendingPrivateGames = append(u.PendingPrivateGames, gameStateID)
-	err = user.UpdateUser(ctx, u.Username, nil, u.PendingPrivateGames, nil, nil)
+	err = user.UpdateUser(ctx, u.Username, nil, u.PendingPrivateGames, nil, nil, nil)
 	if err != nil {
 		log.Criticalf(ctx, "We created a gamestate but failed to send private Invites2")
 		return err
@@ -155,7 +234,7 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 
 	for i := 0; i < len(opponentUsers); i++ {
 		opponentUsers[i].PendingPrivateGames = append(opponentUsers[i].PendingPrivateGames, gameStateID)
-		err = user.UpdateUser(ctx, opponentUsers[i].Username, nil, opponentUsers[i].PendingPrivateGames, nil, nil)
+		err = user.UpdateUser(ctx, opponentUsers[i].Username, nil, opponentUsers[i].PendingPrivateGames, nil, nil, nil)
 		if err != nil {
 			log.Criticalf(ctx, "We created a gamestate but failed to send private Invites4")
 			return err
@@ -198,7 +277,7 @@ func CreatePublicGame(ctx context.Context, username string, board int, maxUsers 
 		return err
 	}
 	u.PendingPublicGames = append(u.PendingPublicGames, gameStateID)
-	err = user.UpdateUser(ctx, u.Username, nil, nil, u.PendingPublicGames, nil)
+	err = user.UpdateUser(ctx, u.Username, nil, nil, u.PendingPublicGames, nil, nil)
 	if err != nil {
 		log.Criticalf(ctx, "We created a public gamestate %s but failed to update user who created it", gameStateID)
 		return err
@@ -262,7 +341,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 
 			u.ActiveGames = append(u.ActiveGames, gs.ID)
 			_ = common.Remove(u.PendingPublicGames, gs.ID)
-			err = user.UpdateUser(ctx, u.Username, u.ActiveGames, nil, u.PendingPublicGames, nil)
+			err = user.UpdateUser(ctx, u.Username, u.ActiveGames, nil, u.PendingPublicGames, nil, nil)
 			if err != nil {
 				log.Criticalf(ctx, "We failed to update a user %s to have an active game", u.Username)
 				return err
@@ -285,7 +364,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 				log.Criticalf(ctx, "Somehow user %s accepted private game %s without having it on their model", u.Username, gs.ID)
 			}
 			log.Infof(ctx, "New Values: %v", u)
-			err = user.UpdateUser(ctx, u.Username, u.ActiveGames, u.PendingPrivateGames, nil, nil)
+			err = user.UpdateUser(ctx, u.Username, u.ActiveGames, u.PendingPrivateGames, nil, nil, nil)
 			if err != nil {
 				log.Criticalf(ctx, "We failed to update a user %s to have an active game", u.Username)
 				return err
@@ -301,7 +380,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 		}
 		u.PendingPublicGames = append(u.PendingPublicGames, gs.ID)
 
-		err = user.UpdateUser(ctx, u.Username, nil, nil, u.PendingPublicGames, nil)
+		err = user.UpdateUser(ctx, u.Username, nil, nil, u.PendingPublicGames, nil, nil)
 		if err != nil {
 			log.Criticalf(ctx, "We failed to update a user %s to have an pending game", username)
 			return err
@@ -310,6 +389,9 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 
 	return nil
 }
+
+/* GameState Section */
+/************************************/
 
 // GetGameState will get the GameState for a particular gameID and user
 func GetGameState(ctx context.Context, gameStateID string, username string) (*gamestate.GameState, error) {

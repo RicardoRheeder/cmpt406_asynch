@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"errors"
 
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
@@ -14,7 +13,7 @@ func CreateUser(ctx context.Context, username string, password string) error {
 	_, err := GetUser(ctx, username)
 	if err == nil {
 		log.Errorf(ctx, "Attempted to create user: %s, that already exists", username)
-		return errors.New("User Already Exists")
+		return err
 	}
 
 	user := &User{
@@ -26,7 +25,7 @@ func CreateUser(ctx context.Context, username string, password string) error {
 
 	_, err = datastore.Put(ctx, key, user)
 	if err != nil {
-		log.Errorf(ctx, "Failed to Put (create) user: %s", username)
+		log.Errorf(ctx, "Failed to Put (create) user: %s, err: %s", username, err.Error())
 		return err
 	}
 
@@ -34,12 +33,12 @@ func CreateUser(ctx context.Context, username string, password string) error {
 }
 
 // UpdateUser will update a currently existing user
-func UpdateUser(ctx context.Context, username string, activeGames, pendingPrivateGames, pendingPublicGames, completedGames []string) error {
+func UpdateUser(ctx context.Context, username string, activeGames, pendingPrivateGames, pendingPublicGames, completedGames, friends []string) error {
 
 	u, err := GetUser(ctx, username)
 	if err != nil {
 		log.Errorf(ctx, "Attempted to update user: %s, that doesn't exists", username)
-		return errors.New("User Doesn't Exists")
+		return err
 	}
 
 	/* Pass nil values into the function if you want the value to remain the same */
@@ -55,10 +54,14 @@ func UpdateUser(ctx context.Context, username string, activeGames, pendingPrivat
 	if completedGames != nil {
 		u.CompletedGames = completedGames
 	}
+	if friends != nil {
+		u.Friends = friends
+	}
 
 	user := &User{
 		Username:            u.Username,
 		Password:            u.Password,
+		Friends:             u.Friends,
 		ActiveGames:         u.ActiveGames,
 		PendingPrivateGames: u.PendingPrivateGames,
 		PendingPublicGames:  u.PendingPublicGames,
@@ -69,7 +72,7 @@ func UpdateUser(ctx context.Context, username string, activeGames, pendingPrivat
 
 	_, err = datastore.Put(ctx, key, user)
 	if err != nil {
-		log.Errorf(ctx, "Failed to Put (update) user: %s", username)
+		log.Errorf(ctx, "Failed to Put (update) user: %s, err: %s", username, err.Error())
 		return err
 	}
 
@@ -85,7 +88,7 @@ func GetUser(ctx context.Context, username string) (*User, error) {
 
 	err := datastore.Get(ctx, key, &user)
 	if err != nil {
-		log.Errorf(ctx, "Failed to Get user: %s", username)
+		log.Errorf(ctx, "Failed to Get user: %s, err: %s", username, err.Error())
 		return nil, err
 	}
 

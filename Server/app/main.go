@@ -11,9 +11,14 @@ import (
 func main() {
 	http.HandleFunc("/CreateUser", handleCreateUser)
 	http.HandleFunc("/GetUser", handleGetUser)
+
+	http.HandleFunc("/AddFriend", handleAddFriend)
+	http.HandleFunc("/RemoveFriend", handleRemoveFriend)
+
 	http.HandleFunc("/CreatePrivateGame", handleCreatePrivateGame)
 	http.HandleFunc("/CreatePublicGame", handleCreatePublicGame)
 	http.HandleFunc("/AcceptGame", handleAcceptGame)
+
 	http.HandleFunc("/GetGameState", handleGetGameState)
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
 
@@ -59,6 +64,60 @@ func handleGetUser(w http.ResponseWriter, r *http.Request) {
 	user.Password = ""
 
 	json.NewEncoder(w).Encode(user)
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleAddFriend(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var f request.Friend
+	err = decoder.Decode(&f)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = AddFriend(ctx, username, f.Username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleRemoveFriend(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var f request.Friend
+	err = decoder.Decode(&f)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = RemoveFriend(ctx, username, f.Username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 	return

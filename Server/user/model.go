@@ -4,6 +4,7 @@ package user
 type User struct {
 	Username            string   `json:"username,omitempty" datastore:",omitempty"`
 	Password            string   `json:"password,omitempty" datastore:",omitempty"`
+	Friends             []string `json:"freinds,omitempty" datastore:",omitempty"`
 	ActiveGames         []string `json:"activeGames,omitempty" datastore:",omitempty"`
 	PendingPrivateGames []string `json:"pendingPrivateGames,omitempty" datastore:",omitempty"`
 	PendingPublicGames  []string `json:"pendingPublicGames,omitempty" datastore:",omitempty"`
