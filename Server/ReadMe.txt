@@ -188,3 +188,34 @@ Get Game State Multi:
             "Users": ["user4", "user5"],
             "AliveUsers": ["user4", "user5"]
         }
+    ]
+
+
+Get Public Games Summary:
+-----------------------
+- Path: /GetPublicGamesSummary
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {
+        "limit": 100
+    }
+ - Return: Array of Public GameState Data (with more limited fields)
+ - Example Return Data:
+    [
+        {   
+            "ID": "123-456",
+            "Board": 9,
+            "SpotsAvailable": 1,
+            "Public": true,
+            "Users": ["user1", "user2", "user3"]
+        },
+        {
+            "ID": "111-222",
+            "Board": 5,            
+            "SpotsAvailable": 3,
+            "Public": true,
+            "Users": ["user4", "user5"]
+        }
+    ]
