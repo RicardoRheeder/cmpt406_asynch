@@ -10,7 +10,7 @@ import (
 )
 
 // CreateGameState will create a game state in DataStore
-func CreateGameState(ctx context.Context, ID string, board int, users, acceptedUsers []string, maxUsers int, public bool) error {
+func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool) error {
 
 	_, err := GetGameState(ctx, ID)
 	if err == nil {
@@ -18,7 +18,7 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 		return errors.New("GameState Already Exists")
 	}
 	var spotsAvailable int
-	if public {
+	if isPublic {
 		spotsAvailable = maxUsers - len(acceptedUsers)
 	} else {
 		spotsAvailable = 0
@@ -26,8 +26,8 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 
 	gameState := &GameState{
 		ID:             ID,
-		Board:          board,
-		Public:         public,
+		BoardID:        boardID,
+		IsPublic:       isPublic,
 		MaxUsers:       maxUsers,
 		SpotsAvailable: spotsAvailable,
 		Users:          users,
@@ -47,12 +47,18 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 }
 
 // UpdateGameState will update the GameState with new values
-func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string, spotsAvailable int) error {
+func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string) error {
 
 	gs, err := GetGameState(ctx, ID)
 	if err != nil {
 		log.Errorf(ctx, "Attempted to update GameState: %s, that doesn't exists", ID)
 		return errors.New("GameState Doesn't Exists")
+	}
+	var spotsAvailable int
+	if gs.IsPublic {
+		spotsAvailable = gs.MaxUsers - len(acceptedUsers)
+	} else {
+		spotsAvailable = 0
 	}
 
 	/* Input 0 values to make the value not change */
@@ -74,16 +80,17 @@ func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedU
 
 	gameState := &GameState{
 		ID:             gs.ID,
-		Board:          gs.Board,
+		BoardID:        gs.BoardID,
 		MaxUsers:       gs.MaxUsers,
 		SpotsAvailable: spotsAvailable,
-		Public:         gs.Public,
+		IsPublic:       gs.IsPublic,
 		Users:          gs.Users,
 		AcceptedUsers:  gs.AcceptedUsers,
 		ReadyUsers:     gs.ReadyUsers,
 		AliveUsers:     gs.AliveUsers,
 		UsersTurn:      gs.UsersTurn,
 		Units:          gs.Units,
+		Cards:          gs.Cards,
 	}
 
 	key := datastore.NewKey(ctx, "GameState", gs.ID, 0, nil)

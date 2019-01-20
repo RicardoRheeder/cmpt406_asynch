@@ -14,13 +14,13 @@ type Friend struct {
 // CreatePrivateGame is a struct to handle the request of inviting users to a private game
 type CreatePrivateGame struct {
 	OpponentUsernames []string `json:"opponentUsernames"`
-	Board             int      `json:"board"`
+	BoardID           int      `json:"boardId"`
 }
 
 // CreatePublicGame is a struct to handle the request of creating a public game
 type CreatePublicGame struct {
 	MaxUsers int `json:"maxUsers"`
-	Board    int `json:"board"`
+	BoardID  int `json:"boardId"`
 }
 
 // AcceptGame is a struct to handle the /AcceptGame payload

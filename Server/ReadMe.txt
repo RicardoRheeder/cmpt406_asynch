@@ -112,7 +112,7 @@ Create Private Game:
  - Request Body Example:
     {   
         "opponentUsernames": ["username1", "username2"],
-        "board": 6
+        "boardId": 6
     }
  - Return: Http Resonse Code
 
@@ -126,7 +126,7 @@ Create Public Game:
  - Request Body Example:
     {   
         "maxUsers": 3,
-        "board": 6
+        "boardId": 6
     }
  - Return: Http Resonse Code
 
@@ -157,9 +157,9 @@ Get Game State:
  - Return: GameState Data
  - Example Return Data:
     {   
-        "Board": 2,
-        "Users": ["user1", "user2", "user3"],
-        "AliveUsers": ["user1", "user2"]
+        "boardId": 2,
+        "users": ["user1", "user2", "user3"],
+        "aliveUsers": ["user1", "user2"]
     }
 
 
@@ -177,16 +177,16 @@ Get Game State Multi:
  - Example Return Data:
     [
         {   
-            "ID": "123-456",
-            "Board": 9,
-            "Users": ["user1", "user2", "user3"],
-            "AliveUsers": ["user1", "user2"]
+            "Id": "123-456",
+            "boardId": 9,
+            "users": ["user1", "user2", "user3"],
+            "aliveUsers": ["user1", "user2"]
         },
         {
-            "ID": "111-222",
-            "Board": 5,
-            "Users": ["user4", "user5"],
-            "AliveUsers": ["user4", "user5"]
+            "Id": "111-222",
+            "boardId": 5,
+            "users": ["user4", "user5"],
+            "aliveUsers": ["user4", "user5"]
         }
     ]
 
@@ -205,17 +205,17 @@ Get Public Games Summary:
  - Example Return Data:
     [
         {   
-            "ID": "123-456",
-            "Board": 9,
-            "SpotsAvailable": 1,
-            "Public": true,
-            "Users": ["user1", "user2", "user3"]
+            "Id": "123-456",
+            "boardId": 9,
+            "spotsAvailable": 1,
+            "isPublic": true,
+            "users": ["user1", "user2", "user3"]
         },
         {
-            "ID": "111-222",
-            "Board": 5,            
-            "SpotsAvailable": 3,
-            "Public": true,
-            "Users": ["user4", "user5"]
+            "Id": "111-222",
+            "boardId": 5,            
+            "spotsAvailable": 3,
+            "isPublic": true,
+            "users": ["user4", "user5"]
         }
     ]
