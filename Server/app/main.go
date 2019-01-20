@@ -21,6 +21,7 @@ func main() {
 
 	http.HandleFunc("/GetGameState", handleGetGameState)
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
+	http.HandleFunc("/GetPublicGamesSummary", handleGetPublicGamesSummary)
 
 	appengine.Main()
 }
@@ -257,6 +258,35 @@ func handleGetGameStateMulti(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(gameStates)
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleGetPublicGamesSummary(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var pgs request.GetPublicGamesSummary
+	err = decoder.Decode(&pgs)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	publicGameStates, err := GetPublicGamesSummary(ctx, username, pgs.Limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(publicGameStates)
 
 	w.WriteHeader(http.StatusOK)
 	return

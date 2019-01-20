@@ -1,6 +1,7 @@
 package gamestate
 
 import (
+	"Projects/cmpt406_asynch/Server/common"
 	"context"
 	"errors"
 
@@ -18,13 +19,14 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 	}
 
 	gameState := &GameState{
-		ID:            ID,
-		Board:         board,
-		Public:        public,
-		MaxUsers:      maxUsers,
-		Users:         users,
-		AcceptedUsers: acceptedUsers,
-		AliveUsers:    users,
+		ID:             ID,
+		Board:          board,
+		Public:         public,
+		MaxUsers:       maxUsers,
+		SpotsAvailable: maxUsers - len(acceptedUsers),
+		Users:          users,
+		AcceptedUsers:  acceptedUsers,
+		AliveUsers:     users,
 	}
 
 	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
@@ -39,7 +41,7 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 }
 
 // UpdateGameState will update the GameState with new values
-func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string) error {
+func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string, spotsAvailable int) error {
 
 	gs, err := GetGameState(ctx, ID)
 	if err != nil {
@@ -65,16 +67,17 @@ func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedU
 	}
 
 	gameState := &GameState{
-		ID:            gs.ID,
-		Board:         gs.Board,
-		MaxUsers:      gs.MaxUsers,
-		Public:        gs.Public,
-		Users:         gs.Users,
-		AcceptedUsers: gs.AcceptedUsers,
-		ReadyUsers:    gs.ReadyUsers,
-		AliveUsers:    gs.AliveUsers,
-		UsersTurn:     gs.UsersTurn,
-		Units:         gs.Units,
+		ID:             gs.ID,
+		Board:          gs.Board,
+		MaxUsers:       gs.MaxUsers,
+		SpotsAvailable: spotsAvailable,
+		Public:         gs.Public,
+		Users:          gs.Users,
+		AcceptedUsers:  gs.AcceptedUsers,
+		ReadyUsers:     gs.ReadyUsers,
+		AliveUsers:     gs.AliveUsers,
+		UsersTurn:      gs.UsersTurn,
+		Units:          gs.Units,
 	}
 
 	key := datastore.NewKey(ctx, "GameState", gs.ID, 0, nil)
@@ -122,6 +125,32 @@ func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 	}
 
 	return gameStates, nil
+}
+
+// GetPublicGamesSummary queries for public available games
+func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]Summary, error) {
+
+	var summaries = []Summary{}
+
+	q := datastore.NewQuery("GameState").Filter("Public =", true).Filter("SpotsAvailable >", 0).Limit(limit)
+	t := q.Run(ctx)
+	for {
+		var s Summary
+		_, err := t.Next(&s)
+		if err == datastore.Done {
+			break // No further entities match the query.
+		}
+		if err != nil {
+			log.Errorf(ctx, "fetching next Summary: %v", err)
+			break
+		}
+		/* No point including games they're already a part of */
+		if !common.Contains(s.AcceptedUsers, username) {
+			summaries = append(summaries, s)
+		}
+	}
+
+	return summaries, nil
 }
 
 /*

@@ -33,7 +33,12 @@ type GetGameState struct {
 	GameID string `json:"gameId"`
 }
 
-// GetGameStateMulti is a struct to handle the /GetGameStateMulti paylaod
+// GetGameStateMulti is a struct to handle the /GetGameStateMulti payload
 type GetGameStateMulti struct {
 	GameIDs []string `json:"gameIds"`
+}
+
+// GetPublicGamesSummary is a struct to handle the /GetPublicGamesSummary payload
+type GetPublicGamesSummary struct {
+	Limit int `json:"limit"`
 }

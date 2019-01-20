@@ -325,7 +325,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 	}
 
 	gs.AcceptedUsers = append(gs.AcceptedUsers, username)
-	err = gamestate.UpdateGameState(ctx, gs.ID, "", gs.Users, gs.AcceptedUsers, nil, nil)
+	err = gamestate.UpdateGameState(ctx, gs.ID, "", gs.Users, gs.AcceptedUsers, nil, nil, gs.SpotsAvailable-1)
 	if err != nil {
 		return err
 	}
@@ -447,4 +447,21 @@ func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username stri
 	}
 
 	return gs, nil
+}
+
+// GetPublicGamesSummary will query and return all available public games for the user to join
+func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]gamestate.Summary, error) {
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Get Public Games failed: username is required")
+		return nil, errors.New("username is required")
+	}
+	if limit < 0 {
+		log.Errorf(ctx, "Get Game Multi failed: limit invalid")
+		return nil, errors.New("Invalid limit given")
+	} else if limit == 0 {
+		limit = 100
+	}
+
+	return gamestate.GetPublicGamesSummary(ctx, username, limit)
 }
