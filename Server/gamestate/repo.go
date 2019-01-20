@@ -17,13 +17,19 @@ func CreateGameState(ctx context.Context, ID string, board int, users, acceptedU
 		log.Errorf(ctx, "Attempted to create GameState: %s, that already exists", ID)
 		return errors.New("GameState Already Exists")
 	}
+	var spotsAvailable int
+	if public {
+		spotsAvailable = maxUsers - len(acceptedUsers)
+	} else {
+		spotsAvailable = 0
+	}
 
 	gameState := &GameState{
 		ID:             ID,
 		Board:          board,
 		Public:         public,
 		MaxUsers:       maxUsers,
-		SpotsAvailable: maxUsers - len(acceptedUsers),
+		SpotsAvailable: spotsAvailable,
 		Users:          users,
 		AcceptedUsers:  acceptedUsers,
 		AliveUsers:     users,
@@ -49,7 +55,7 @@ func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedU
 		return errors.New("GameState Doesn't Exists")
 	}
 
-	/* Input 0 values values to make the value not change */
+	/* Input 0 values to make the value not change */
 	if users != nil {
 		gs.Users = users
 	}
