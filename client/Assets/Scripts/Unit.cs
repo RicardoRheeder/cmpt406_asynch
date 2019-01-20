@@ -13,13 +13,9 @@ public class Unit {
     [DataMember]
     private Vector2Int geoPoint;
 
-    [DataMember]
-    private string owner;
-
-    public Unit(int unitType, int health, Vector2Int geoPoint, string owner) {
+    public Unit(int unitType, int health, Vector2Int geoPoint) {
         this.unitType = (UnitType)unitType;
         this.health = health;
         this.geoPoint = geoPoint;
-        this.owner = owner;
     }
 }
