@@ -219,3 +219,37 @@ Get Public Games Summary:
             "users": ["user4", "user5"]
         }
     ]
+
+Update Game State:
+-----------------------
+ - Path: /UpdateGameState
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "gameId": "123-456"
+        "readyUsers": ["User1", "User2", "User3"]
+        "units": {
+            "User3": [
+                {
+                    "unitType": 5,
+                    "health": 10,
+                    "coord": {1, 2}
+                },
+                {
+                    "unitType": 2,
+                    "health": 5,
+                    "coord": {2, 2} 
+                }
+            ]
+        },
+        "cards": {
+            "User3": {
+                "hand": ["cardId1", "cardId2", "cardId1"],
+                "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                "discard": []
+            }
+        }
+    }
+ - Return: Http Resonse Code
