@@ -27,6 +27,11 @@ public class LevelEditor : EditorWindow {
             currentAction = (currentAction == LevelEditorAction.Place) ? LevelEditorAction.None : LevelEditorAction.Place;
             Debug.Log("Create button clicked. CurrentAction:" + currentAction.ToString());
         }
+        DrawUILine(Color.gray);
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Grid");
+        grid = EditorGUILayout.ObjectField(grid, typeof(Grid),true) as Grid;
+        EditorGUILayout.EndHorizontal();
     }
 
     void OnFocus() {
@@ -52,10 +57,15 @@ public class LevelEditor : EditorWindow {
     }
 
     void CreateTile() {
+        if(grid == null) {
+            return;
+        }
+
         GameObject tile = PrefabUtility.InstantiatePrefab(Resources.LoadAll("")[0]) as GameObject;
         Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
         Vector3 mousePosition = mouseRay.GetPoint(0f);
-        tile.transform.position = mousePosition;
+        tile.transform.parent = grid.transform;
+        tile.transform.position = grid.CellToWorld(grid.WorldToCell(mousePosition));
     }
 
     static void DrawUILine(Color color, int thickness = 2, int padding = 10) {
