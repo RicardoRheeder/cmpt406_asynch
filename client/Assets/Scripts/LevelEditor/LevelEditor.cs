@@ -53,10 +53,8 @@ public class LevelEditor : EditorWindow {
 
     void CreateTile() {
         GameObject tile = PrefabUtility.InstantiatePrefab(Resources.LoadAll("")[0]) as GameObject;
-        Vector3 mousePosition = Event.current.mousePosition;
-        mousePosition.y = SceneView.currentDrawingSceneView.camera.pixelHeight - mousePosition.y;
-        mousePosition = SceneView.currentDrawingSceneView.camera.ScreenToWorldPoint(mousePosition);
-        mousePosition.y = -mousePosition.y;
+        Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+        Vector3 mousePosition = mouseRay.GetPoint(0f);
         tile.transform.position = mousePosition;
     }
 
