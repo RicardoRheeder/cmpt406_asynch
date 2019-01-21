@@ -1,5 +1,7 @@
 package request
 
+import "Projects/cmpt406_asynch/Server/gamestate"
+
 // CreateUser is a struct to handle the request of creating a user
 type CreateUser struct {
 	Username string `json:"username"`
@@ -41,4 +43,13 @@ type GetGameStateMulti struct {
 // GetPublicGamesSummary is a struct to handle the /GetPublicGamesSummary payload
 type GetPublicGamesSummary struct {
 	Limit int `json:"limit"`
+}
+
+// UpdateGameState holds all the information that can be updated in the GameState
+type UpdateGameState struct {
+	GameID     string                      `json:"gameId"`
+	ReadyUsers []string                    `json:"readyUsers"`
+	AliveUsers []string                    `json:"aliveUsers"`
+	Units      map[string][]gamestate.Unit `json:"units"`
+	Cards      map[string]gamestate.Cards  `json:"cards"`
 }

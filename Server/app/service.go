@@ -325,7 +325,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 	}
 
 	gs.AcceptedUsers = append(gs.AcceptedUsers, username)
-	err = gamestate.UpdateGameState(ctx, gs.ID, "", gs.Users, gs.AcceptedUsers, nil, nil)
+	err = gamestate.UpdateGameState(ctx, gs.ID, "", gs.Users, gs.AcceptedUsers, nil, nil, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -464,4 +464,105 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]g
 	}
 
 	return gamestate.GetPublicGamesSummary(ctx, username, limit)
+}
+
+// UpdateGameState is used to update the game state because a user acted upon the game
+func UpdateGameState(ctx context.Context, username, gameID string, readyUsers, aliveUsers []string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Update GameState failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Update GameState failed: gameID is required")
+		return errors.New("gameID is required")
+	}
+
+	gs, err := gamestate.GetGameState(ctx, gameID)
+	if err != nil {
+		return err
+	}
+
+	var usersTurn string
+	if gs.UsersTurn == "" {
+		/* The game hasn't started yet, people are just readying in their units */
+		if gs.MaxUsers == len(readyUsers) {
+			/* This is the last person readying up right now. Choose a person for their turn */
+			usersTurn = gs.AliveUsers[0]
+		}
+		if len(gs.ReadyUsers) <= len(readyUsers) {
+			/* readyUsers should have been increased from before...*/
+			log.Errorf(ctx, "Update GameState failed: readied users should have been increased")
+			return errors.New("Readied Users should have been increased")
+		}
+		if units == nil {
+			log.Errorf(ctx, "Update GameState failed: user %s readied up but didn't get passed in units", username)
+			return errors.New("New readied user should be assigned units")
+		}
+		if cards == nil {
+			log.Errorf(ctx, "Update GameState failed: user %s readied up but didn't get passed in cards", username)
+			return errors.New("New readied user should be assigned cards")
+		}
+		/* Update the game state, adding in units and cards to current gamestate */
+		/* Union Units */
+		for k, v := range units {
+			gs.Units[k] = v
+		}
+		/* Union Cards */
+		for k, v := range cards {
+			gs.Cards[k] = v
+		}
+
+		return gamestate.UpdateGameState(ctx, gameID, usersTurn, nil, nil, readyUsers, nil, gs.Units, gs.Cards)
+	}
+
+	/* This is a person who is making their turn */
+	if gs.UsersTurn != username {
+		/* Player is trying to cheat? */
+		log.Errorf(ctx, "Update GameState failed: username %s does not match players turn %s", username, gs.UsersTurn)
+		return errors.New("gameID is required")
+	}
+	/* If there is only one person left alive then the game is over we need to update all users */
+	if aliveUsers != nil {
+		if len(aliveUsers) == 1 {
+			// TODO: update users to have a `Completed Game`. Still need to update the game state tho so users can see that last move?
+		}
+		gs.AliveUsers = aliveUsers
+	}
+
+	/* Choose the next user that should go */
+	var found = false
+	for i, v := range gs.AliveUsers {
+		if v == gs.UsersTurn {
+			if i+1 >= len(gs.AliveUsers) {
+				usersTurn = gs.AliveUsers[0]
+			} else {
+				usersTurn = gs.AliveUsers[i+1]
+			}
+			found = true
+			break
+		}
+	}
+	/* Will happen if the current user died in his turn */
+	if !found {
+		/* TODO: I'm not sure if this is possible so I'll fix it later if it is */
+		log.Criticalf(ctx, "The user %s died in his turn and now no next user has been selected", username)
+	}
+
+	if units != nil {
+		/* Overwrite unit keys with new values */
+		for k, v := range units {
+			gs.Units[k] = v
+		}
+	}
+	if cards != nil {
+		/* Overwrite card keys with new values */
+		for k, v := range cards {
+			gs.Cards[k] = v
+		}
+	}
+
+	return gamestate.UpdateGameState(ctx, gameID, usersTurn, nil, nil, nil, gs.AliveUsers, gs.Units, gs.Cards)
 }

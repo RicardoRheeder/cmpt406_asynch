@@ -177,13 +177,13 @@ Get Game State Multi:
  - Example Return Data:
     [
         {   
-            "Id": "123-456",
+            "id": "123-456",
             "boardId": 9,
             "users": ["user1", "user2", "user3"],
             "aliveUsers": ["user1", "user2"]
         },
         {
-            "Id": "111-222",
+            "id": "111-222",
             "boardId": 5,
             "users": ["user4", "user5"],
             "aliveUsers": ["user4", "user5"]
@@ -205,14 +205,14 @@ Get Public Games Summary:
  - Example Return Data:
     [
         {   
-            "Id": "123-456",
+            "id": "123-456",
             "boardId": 9,
             "spotsAvailable": 1,
             "isPublic": true,
             "users": ["user1", "user2", "user3"]
         },
         {
-            "Id": "111-222",
+            "id": "111-222",
             "boardId": 5,            
             "spotsAvailable": 3,
             "isPublic": true,

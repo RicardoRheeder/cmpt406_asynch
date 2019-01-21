@@ -47,7 +47,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 }
 
 // UpdateGameState will update the GameState with new values
-func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string) error {
+func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string, units map[string][]Unit, cards map[string]Cards) error {
 
 	gs, err := GetGameState(ctx, ID)
 	if err != nil {
@@ -76,6 +76,12 @@ func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedU
 	}
 	if usersTurn != "" {
 		gs.UsersTurn = usersTurn
+	}
+	if units != nil {
+		gs.Units = units
+	}
+	if cards != nil {
+		gs.Cards = cards
 	}
 
 	gameState := &GameState{

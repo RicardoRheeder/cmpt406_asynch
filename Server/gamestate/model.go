@@ -45,6 +45,7 @@ type Unit struct {
 
 // Cards contains all the card information on a per user bases
 type Cards struct {
-	Hand []string `json:"hand,omitempty" datastore:",omitempty"`
-	Deck []string `json:"deck,omitempty" datastore:",omitempty"`
+	Hand    []string `json:"hand,omitempty" datastore:",omitempty"`
+	Deck    []string `json:"deck,omitempty" datastore:",omitempty"`
+	Discard []string `json:"discard,omitempty" datastore:",omitempty"`
 }
