@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElevationTile {
+public class HexTile: MonoBehaviour {
     Elevation elevation;
     TileAttribute attribute;
     Vector3Int localPosition;
