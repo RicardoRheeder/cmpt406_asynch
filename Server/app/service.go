@@ -182,7 +182,7 @@ func RemoveFriend(ctx context.Context, username string, friendName string) error
 /************************************/
 
 // CreatePrivateGame will create a private game with the requested users
-func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames []string, board int) error {
+func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames []string, boardID int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -195,9 +195,9 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 		log.Errorf(ctx, "Create Private Game failed: more users are required")
 		return errors.New("more users required")
 	}
-	if board < 0 {
-		log.Errorf(ctx, "Create Private Game failed: invalid board number")
-		return errors.New("board number required")
+	if boardID < 0 {
+		log.Errorf(ctx, "Create Private Game failed: invalid boardID number")
+		return errors.New("boardID number required")
 	}
 
 	/* Ensure the requested opponents actually exist */
@@ -214,7 +214,7 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 	/* Create shell private gamestate */
 	allUsers := append(OpponentUsernames, username)
 	gameStateID := common.GetRandomID()
-	err = gamestate.CreateGameState(ctx, gameStateID, board, allUsers, []string{username}, len(allUsers), false)
+	err = gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false)
 	if err != nil {
 		return err
 	}
@@ -245,7 +245,7 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 }
 
 // CreatePublicGame will create a public game open to all users
-func CreatePublicGame(ctx context.Context, username string, board int, maxUsers int) error {
+func CreatePublicGame(ctx context.Context, username string, boardID int, maxUsers int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -253,9 +253,9 @@ func CreatePublicGame(ctx context.Context, username string, board int, maxUsers 
 		log.Errorf(ctx, "Create Public Game failed: username is required")
 		return errors.New("username is required")
 	}
-	if board < 0 {
-		log.Errorf(ctx, "Create Public Game failed: invalid board number")
-		return errors.New("board number required")
+	if boardID < 0 {
+		log.Errorf(ctx, "Create Public Game failed: invalid boardID number")
+		return errors.New("boardID number required")
 	}
 	if maxUsers <= 1 {
 		log.Errorf(ctx, "Create Public Game failed: invalid max users")
@@ -265,7 +265,7 @@ func CreatePublicGame(ctx context.Context, username string, board int, maxUsers 
 	/* Create shell public gamestate */
 	gameStateID := common.GetRandomID()
 	usersSoFar := []string{username}
-	err = gamestate.CreateGameState(ctx, gameStateID, board, usersSoFar, usersSoFar, maxUsers, true)
+	err = gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true)
 	if err != nil {
 		return err
 	}
@@ -311,7 +311,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 		return errors.New("Can't accept game twice")
 	}
 
-	if gs.Public {
+	if gs.IsPublic {
 		if len(gs.AcceptedUsers) == gs.MaxUsers {
 			log.Errorf(ctx, "User %s attempted to accept game %s that is full", username, gameStateID)
 			return errors.New("Game is full")
@@ -325,12 +325,12 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 	}
 
 	gs.AcceptedUsers = append(gs.AcceptedUsers, username)
-	err = gamestate.UpdateGameState(ctx, gs.ID, "", gs.Users, gs.AcceptedUsers, nil, nil)
+	err = gamestate.UpdateGameState(ctx, gs.ID, "", gs.Users, gs.AcceptedUsers, nil, nil, nil, nil)
 	if err != nil {
 		return err
 	}
 
-	if gs.Public && len(gs.AcceptedUsers) == gs.MaxUsers {
+	if gs.IsPublic && len(gs.AcceptedUsers) == gs.MaxUsers {
 		/* If the game is public and it's now been filled */
 		for i := 0; i < len(gs.AcceptedUsers); i++ {
 			u, err := user.GetUser(ctx, gs.Users[i])
@@ -348,7 +348,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 			}
 		}
 
-	} else if !gs.Public && len(gs.Users) == len(gs.AcceptedUsers) {
+	} else if !gs.IsPublic && len(gs.Users) == len(gs.AcceptedUsers) {
 		log.Infof(ctx, "All Accepted Users: %v, length %d", gs.Users, len(gs.Users))
 		/* If the game is private and has been accepted by all people invited */
 		for i := 0; i < len(gs.Users); i++ {
@@ -370,7 +370,7 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 				return err
 			}
 		}
-	} else if gs.Public {
+	} else if gs.IsPublic {
 		/* Accepting of public games need to update user if the game isn't full yet */
 
 		u, err := user.GetUser(ctx, username)
@@ -411,7 +411,7 @@ func GetGameState(ctx context.Context, gameStateID string, username string) (*ga
 	if err != nil {
 		return nil, err
 	}
-	if !gs.Public && !common.Contains(gs.Users, username) {
+	if !gs.IsPublic && !common.Contains(gs.Users, username) {
 		log.Errorf(ctx, "Attempted to get game %s that user %s is not a part of", gameStateID, username)
 		return nil, errors.New("User is not a part of that game")
 	}
@@ -440,11 +440,129 @@ func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username stri
 
 	/* This kinda sucks but I'm not sure how to make it better. Could just not check this... */
 	for i := 0; i < len(gs); i++ {
-		if !gs[i].Public && !common.Contains(gs[i].Users, username) {
+		if !gs[i].IsPublic && !common.Contains(gs[i].Users, username) {
 			log.Errorf(ctx, "Attempted to get game %s that user %s is not a part of", gs[i].ID, username)
 			return nil, errors.New("User is not a part of that game")
 		}
 	}
 
 	return gs, nil
+}
+
+// GetPublicGamesSummary will query and return all available public games for the user to join
+func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]gamestate.Summary, error) {
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Get Public Games failed: username is required")
+		return nil, errors.New("username is required")
+	}
+	if limit < 0 {
+		log.Errorf(ctx, "Get Game Multi failed: limit invalid")
+		return nil, errors.New("Invalid limit given")
+	} else if limit == 0 {
+		limit = 100
+	}
+
+	return gamestate.GetPublicGamesSummary(ctx, username, limit)
+}
+
+// UpdateGameState is used to update the game state because a user acted upon the game
+func UpdateGameState(ctx context.Context, username, gameID string, readyUsers, aliveUsers []string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Update GameState failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Update GameState failed: gameID is required")
+		return errors.New("gameID is required")
+	}
+
+	gs, err := gamestate.GetGameState(ctx, gameID)
+	if err != nil {
+		return err
+	}
+
+	var usersTurn string
+	if gs.UsersTurn == "" {
+		/* The game hasn't started yet, people are just readying in their units */
+		if gs.MaxUsers == len(readyUsers) {
+			/* This is the last person readying up right now. Choose a person for their turn */
+			usersTurn = gs.AliveUsers[0]
+		}
+		if len(gs.ReadyUsers) <= len(readyUsers) {
+			/* readyUsers should have been increased from before...*/
+			log.Errorf(ctx, "Update GameState failed: readied users should have been increased")
+			return errors.New("Readied Users should have been increased")
+		}
+		if units == nil {
+			log.Errorf(ctx, "Update GameState failed: user %s readied up but didn't get passed in units", username)
+			return errors.New("New readied user should be assigned units")
+		}
+		if cards == nil {
+			log.Errorf(ctx, "Update GameState failed: user %s readied up but didn't get passed in cards", username)
+			return errors.New("New readied user should be assigned cards")
+		}
+		/* Update the game state, adding in units and cards to current gamestate */
+		/* Union Units */
+		for k, v := range units {
+			gs.Units[k] = v
+		}
+		/* Union Cards */
+		for k, v := range cards {
+			gs.Cards[k] = v
+		}
+
+		return gamestate.UpdateGameState(ctx, gameID, usersTurn, nil, nil, readyUsers, nil, gs.Units, gs.Cards)
+	}
+
+	/* This is a person who is making their turn */
+	if gs.UsersTurn != username {
+		/* Player is trying to cheat? */
+		log.Errorf(ctx, "Update GameState failed: username %s does not match players turn %s", username, gs.UsersTurn)
+		return errors.New("gameID is required")
+	}
+	/* If there is only one person left alive then the game is over we need to update all users */
+	if aliveUsers != nil {
+		if len(aliveUsers) == 1 {
+			// TODO: update users to have a `Completed Game`. Still need to update the game state tho so users can see that last move?
+		}
+		gs.AliveUsers = aliveUsers
+	}
+
+	/* Choose the next user that should go */
+	var found = false
+	for i, v := range gs.AliveUsers {
+		if v == gs.UsersTurn {
+			if i+1 >= len(gs.AliveUsers) {
+				usersTurn = gs.AliveUsers[0]
+			} else {
+				usersTurn = gs.AliveUsers[i+1]
+			}
+			found = true
+			break
+		}
+	}
+	/* Will happen if the current user died in his turn */
+	if !found {
+		/* TODO: I'm not sure if this is possible so I'll fix it later if it is */
+		log.Criticalf(ctx, "The user %s died in his turn and now no next user has been selected", username)
+	}
+
+	if units != nil {
+		/* Overwrite unit keys with new values */
+		for k, v := range units {
+			gs.Units[k] = v
+		}
+	}
+	if cards != nil {
+		/* Overwrite card keys with new values */
+		for k, v := range cards {
+			gs.Cards[k] = v
+		}
+	}
+
+	return gamestate.UpdateGameState(ctx, gameID, usersTurn, nil, nil, nil, gs.AliveUsers, gs.Units, gs.Cards)
 }
