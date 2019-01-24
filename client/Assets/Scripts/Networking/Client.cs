@@ -20,9 +20,8 @@ public class Client : MonoBehaviour {
 
     //Server information
     private const string URL = "https://async-406.appspot.com";
-    private const string CREATE_USER = "/CreateUser";
-    private const string REQUEST_GAME = "/RequestGame";
-    private const string GET_USER_INFO = "/GetUser";
+    private const string CREATE_USER = "/CreateUser"; //Used for creating a new user
+    private const string GET_USER_INFO = "/GetUser"; //Used for logging in
 
     //Networking constants
     private const string JSON_TYPE = "application/json";
@@ -81,7 +80,6 @@ public class Client : MonoBehaviour {
         else {
             string json = JsonConversion.ConvertObjectToJson(typeof(Credentials), (System.Object) user);
             byte[] bytes = Encoding.ASCII.GetBytes(json);
-            Debug.Log(json);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + CREATE_USER);
             request.ContentType = JSON_TYPE;
             request.ContentLength = bytes.Length;
@@ -103,11 +101,20 @@ public class Client : MonoBehaviour {
     //Request Body: JSON of username and password
     //Return: true if the user exists, false otherwise
     public bool LoginUser(string username, string password) {
-        user = new Credentials(username, password);
         if (debugMode) {
         }
         else {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + GET_USER_INFO);
+            request.Method = "GET";
+            request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(username + ":" + password));
 
+            //We might want to do more logic here depending on what the various status codes we have mean
+            //This will come in place later once more functionality is in place
+            //We also might need to cache the response in order to populate the next page
+            if( ((HttpWebResponse)request.GetResponse()).StatusCode == HttpStatusCode.OK) {
+                user = new Credentials(username, password);
+                return true;
+            }
         }
         return false;
     }
