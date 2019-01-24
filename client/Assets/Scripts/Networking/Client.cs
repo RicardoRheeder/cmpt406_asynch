@@ -3,12 +3,13 @@
 //This class will have to ahndle the logic of the following:
 //  providing an API that other places within the game can send/receive messages from the server
 //  be able to handle server disconnects/reconnects
-//  Allow to connect to the "mock" of the 
+//  Allow to connect to the "mock" of the server
 using System.IO;
 using System.Net;
 using System.Text;
 using UnityEngine;
 
+//This class has a monobehaviour attached so that the "DebugMode" can be easily toggled on and off without going into the code
 public class Client : MonoBehaviour {
 
     [SerializeField]
@@ -25,8 +26,10 @@ public class Client : MonoBehaviour {
 
     //Networking constants
     private const string JSON_TYPE = "application/json";
-
+    
+    //Make sure this object is not destroyed on scene transitions
     public void Start() {
+        DontDestroyOnLoad(this.gameObject);
     }
 
     //Sends a message to the server to get the requested game state
@@ -85,7 +88,10 @@ public class Client : MonoBehaviour {
             request.Method = "POST";
             Stream requestData = request.GetRequestStream();
             requestData.Write(bytes, 0, bytes.Length);
-            Debug.Log(request.GetResponse());
+
+            //We might want to do more logic here depending on what the various status codes we have mean
+            //This will come in place later once more functionality is in place
+            return ((HttpWebResponse)request.GetResponse()).StatusCode ==  HttpStatusCode.OK;
         }
         return false;
     }

@@ -238,6 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23f0e224bf088884f9d85f40f748b644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkApi: {fileID: 0}
 --- !u!1001 &124448277
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2311,12 +2312,16 @@ PrefabInstance:
     - target: {fileID: 7903379653510517517, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+<<<<<<< HEAD
       value: -0.00000806909
       objectReference: {fileID: 0}
     - target: {fileID: 7903379653510517517, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.00008018081
+=======
+      value: -0.000029563904
+>>>>>>> cbc7b0fb7e502b08926a4ca64cd4c83433110ff2
       objectReference: {fileID: 0}
     - target: {fileID: 6691123218622088880, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
@@ -2552,12 +2557,16 @@ PrefabInstance:
     - target: {fileID: 7903379653510517517, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+<<<<<<< HEAD
       value: 94.96998
       objectReference: {fileID: 0}
     - target: {fileID: 7903379653510517517, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.000088932444
+=======
+      value: -0.000029563904
+>>>>>>> cbc7b0fb7e502b08926a4ca64cd4c83433110ff2
       objectReference: {fileID: 0}
     - target: {fileID: 6691123218622088880, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
@@ -2828,7 +2837,7 @@ PrefabInstance:
       objectReference: {fileID: 30583493}
     - target: {fileID: 1412710375, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: MainMenuQuitButton
+      value: MainMenuLogoutButton
       objectReference: {fileID: 0}
     - target: {fileID: 1412710375, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -2836,7 +2845,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1412050297, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_text
+<<<<<<< HEAD
       value: Log Out
+=======
+      value: 'Logout
+
+'
+>>>>>>> cbc7b0fb7e502b08926a4ca64cd4c83433110ff2
       objectReference: {fileID: 0}
     - target: {fileID: 1412050297, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_havePropertiesChanged
@@ -2852,11 +2867,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1412050297, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_fontSize
+<<<<<<< HEAD
       value: 18
+=======
+      value: 18.9
+>>>>>>> cbc7b0fb7e502b08926a4ca64cd4c83433110ff2
       objectReference: {fileID: 0}
     - target: {fileID: 1412050297, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_textInfo.spaceCount
       value: 1
+<<<<<<< HEAD
       objectReference: {fileID: 0}
     - target: {fileID: 1412050297, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_textInfo.wordCount
@@ -2869,6 +2889,8 @@ PrefabInstance:
     - target: {fileID: 1412050297, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
       propertyPath: m_textInfo.lineCount
       value: 2
+=======
+>>>>>>> cbc7b0fb7e502b08926a4ca64cd4c83433110ff2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1227b33ccf97a74b9fed1b3c8926a0a, type: 3}
