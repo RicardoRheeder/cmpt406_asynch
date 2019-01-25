@@ -42,7 +42,7 @@ public class HexTilemap : MonoBehaviour {
         worldTiles.Clear();
         HexTile[] tiles = GetComponentsInChildren<HexTile>();
         for(int i=0; i < tiles.Length; i++) {
-            worldTiles.Add(grid.WorldToCell(tiles[i].transform.position),tiles[i]);
+            // worldTiles.Add(grid.WorldToCell(tiles[i].position),tiles[i]);
         }
     }
     

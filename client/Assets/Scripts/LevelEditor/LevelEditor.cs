@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Tilemaps;
 
 enum LevelEditorAction {
     None,
@@ -12,7 +13,8 @@ enum LevelEditorAction {
 public class LevelEditor : EditorWindow {
 
     LevelEditorAction currentAction = LevelEditorAction.None;
-    Grid grid;
+    Tilemap tilemap;
+    TileBase customTile;
     List<GameObject> tileObjects = new List<GameObject>();
 
     [MenuItem("Window/Level Editor")]
@@ -40,7 +42,12 @@ public class LevelEditor : EditorWindow {
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Grid");
-        grid = EditorGUILayout.ObjectField(grid, typeof(Grid),true) as Grid;
+        tilemap = EditorGUILayout.ObjectField(tilemap, typeof(Tilemap),true) as Tilemap;
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Tile");
+        customTile = EditorGUILayout.ObjectField(customTile, typeof(TileBase),true) as TileBase;
         EditorGUILayout.EndHorizontal();
     }
 
@@ -51,6 +58,9 @@ public class LevelEditor : EditorWindow {
         // TODO: might be better to replace this with physics overlap if colliders are added to tiles
         if(tileObjects.Count == 0) {
             tileObjects.AddRange(FindObjectsOfType(typeof(GameObject)) as GameObject[]);
+        }
+        if(tilemap != null) {
+            Selection.activeObject = tilemap;
         }
     }
 
@@ -80,21 +90,23 @@ public class LevelEditor : EditorWindow {
     }
 
     void CreateTile() {
-        if(grid == null) {
+        if(tilemap == null) {
             return;
         }
 
-        GameObject tile = PrefabUtility.InstantiatePrefab(Resources.LoadAll("")[0]) as GameObject;
+        //GameObject tile = PrefabUtility.InstantiatePrefab(Resources.LoadAll("")[0]) as GameObject;
         Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
         Vector3 mousePosition = mouseRay.GetPoint(0f);
-        tile.transform.parent = grid.transform;
-        tile.transform.position = grid.CellToWorld(grid.WorldToCell(mousePosition));
+        //tile.transform.parent = tilemap.transform;
+        //Vector3 newPosition = tilemap.CellToWorld(tilemap.WorldToCell(mousePosition));
+        Vector3Int newPosition = tilemap.WorldToCell(mousePosition);
+        tilemap.SetTile(newPosition,customTile);
+        //tile.transform.position = new Vector3(newPosition.x,newPosition.y,0);
     }
 
     void EraseTile() {
         Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
         Vector3 mousePosition = mouseRay.GetPoint(0f);
-        
     }
 
     static void DrawUILine(Color color, int thickness = 2, int padding = 10) {
