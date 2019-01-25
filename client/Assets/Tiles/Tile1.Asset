@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileModel: {fileID: 2711570883986180150, guid: 2ae4c28b26a124291801a22233fbd88d,
     type: 3}
+  spritePreview: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  elevation: 0
+  attribute: 0

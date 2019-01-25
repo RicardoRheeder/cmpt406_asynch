@@ -9,31 +9,29 @@ using UnityEditor;
 public class HexTile: TileBase {
 
     public GameObject tileModel;
+    public Sprite spritePreview;
 
+    [SerializeField]
     Elevation elevation;
+    [SerializeField]
     TileAttribute attribute;
-    Vector3Int localPosition;
-    Vector3Int worldPosition;
 
     public Elevation Elevation { get; set; }
 
     public TileAttribute Attribute { get; set; }
 
-    // public Vector3Int LocalPosition { get; set; }
-
-    // public Vector3Int WorldPosition { get; set; }
-
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
-        go.transform.rotation = Quaternion.Euler(90,0,0);
+        if(go) {
+           go.transform.rotation = Quaternion.Euler(90,0,0); 
+        }
         return true;
     }
 
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData) {
-        tileData.sprite = null; // Do I need a sprite for it to be detected?
+        tileData.sprite = spritePreview; // Do I need a sprite for it to be detected?
         tileData.colliderType = Tile.ColliderType.Grid;
         tileData.flags = TileFlags.None;
-        GameObject tile = Resources.LoadAll("")[0] as GameObject;
-        tileData.gameObject = tile;
+        tileData.gameObject = tileModel;
     }
 
     #if UNITY_EDITOR

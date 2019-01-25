@@ -40,6 +40,14 @@ public class LevelEditor : EditorWindow {
 
         DrawUILine(Color.gray);
 
+        if(GUILayout.Button("Clear All")) {
+            if(tilemap != null) {
+                tilemap.ClearAllTiles();
+            }
+        }
+
+        DrawUILine(Color.gray);
+
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Grid");
         tilemap = EditorGUILayout.ObjectField(tilemap, typeof(Tilemap),true) as Tilemap;
@@ -94,14 +102,10 @@ public class LevelEditor : EditorWindow {
             return;
         }
 
-        //GameObject tile = PrefabUtility.InstantiatePrefab(Resources.LoadAll("")[0]) as GameObject;
         Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
         Vector3 mousePosition = mouseRay.GetPoint(0f);
-        //tile.transform.parent = tilemap.transform;
-        //Vector3 newPosition = tilemap.CellToWorld(tilemap.WorldToCell(mousePosition));
         Vector3Int newPosition = tilemap.WorldToCell(mousePosition);
         tilemap.SetTile(newPosition,customTile);
-        //tile.transform.position = new Vector3(newPosition.x,newPosition.y,0);
     }
 
     void EraseTile() {
