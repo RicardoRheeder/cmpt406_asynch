@@ -1,49 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
+/*
+ API class for easy access of common grid data, 
+ and custom data such as elevation and attributes
+ */
 public class HexTilemap : MonoBehaviour {
 
-    Grid grid;
+    Tilemap tilemap;
     Dictionary<Vector3Int,HexTile> worldTiles = new Dictionary<Vector3Int, HexTile>();
 
     void Awake() {
-        grid = GetComponent<Grid>();
-        FindWorldTiles();
+        tilemap = GetComponent<Tilemap>();
     }
 
-    public Grid Grid { get; }
+    public Tilemap Tilemap { get; }
 
     public bool HasTile(Vector3Int pos) {
-        return worldTiles.ContainsKey(pos);
+        return tilemap.HasTile(pos);
+    }
+
+    public HexTile GetHexTile(Vector3Int pos) {
+        return tilemap.GetTile(pos) as HexTile;
     }
 
     public bool HasTileAtElevation(Vector3Int pos, Elevation el) {
-        HexTile tile = null;
-        worldTiles.TryGetValue(pos, out tile);
-        return tile != null && tile.Elevation == el;
-    }
-
-    public HexTile GetTile(Vector3Int pos) {
-        HexTile tile = null;
-        worldTiles.TryGetValue(pos, out tile);
-        return tile;
+        return GetTileAtElevation(pos,el) != null;
     }
 
     public HexTile GetTileAtElevation(Vector3Int pos, Elevation el) {
-        HexTile tile = null;
-        worldTiles.TryGetValue(pos, out tile);
+        HexTile tile = GetHexTile(pos);
         return (tile != null && tile.Elevation == el) ? tile : null;
-    }
-
-    public Dictionary<Vector3Int,HexTile> Tiles { get; }
-
-    private void FindWorldTiles() {
-        worldTiles.Clear();
-        HexTile[] tiles = GetComponentsInChildren<HexTile>();
-        for(int i=0; i < tiles.Length; i++) {
-            // worldTiles.Add(grid.WorldToCell(tiles[i].position),tiles[i]);
-        }
     }
     
 }

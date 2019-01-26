@@ -24,7 +24,11 @@ public class HexTile: TileBase {
         if(go) {
            go.transform.rotation = Quaternion.Euler(90,0,0); 
         }
-        return true;
+        return base.StartUp(position,tilemap,go);
+    }
+
+    public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
+        base.RefreshTile(location,tilemap);
     }
 
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData) {
