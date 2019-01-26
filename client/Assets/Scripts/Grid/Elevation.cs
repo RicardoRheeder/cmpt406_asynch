@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Elevation {
-    High,
+    Low,
     Mid,
-    Low
+    High
 }

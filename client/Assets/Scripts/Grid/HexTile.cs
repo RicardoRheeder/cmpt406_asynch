@@ -14,7 +14,7 @@ public class HexTile: TileBase {
     [SerializeField]
     Elevation elevation;
     [SerializeField]
-    TileAttribute attribute;
+    List<TileAttribute> attribute = new List<TileAttribute>();
 
     public Elevation Elevation { get; set; }
 
