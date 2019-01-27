@@ -7,10 +7,10 @@
 public class Credentials {
 
     [DataMember]
-    private string username;
+    public string username;
 
     [DataMember]
-    private string password;
+    public string password;
 
     public Credentials(string username, string password) {
         this.username = username;
