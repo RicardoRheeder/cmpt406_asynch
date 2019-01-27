@@ -3,10 +3,10 @@ using System.Runtime.Serialization;
 using UnityEngine;
 
 [DataContract]
-public class Commander {
+public class General {
 
     [DataMember]
-    private CommanderType commanderType;
+    private GeneralType generalType;
 
     [DataMember]
     private int health;
@@ -17,8 +17,8 @@ public class Commander {
     [DataMember]
     private Dictionary<string, int> coolDowns;
 
-    public Commander(int commanderType, int health, Vector2Int geoPoint, Dictionary<string, int> coolDowns) {
-        this.commanderType = (CommanderType)commanderType;
+    public General(int generalType, int health, Vector2Int geoPoint, Dictionary<string, int> coolDowns) {
+        this.generalType = (GeneralType)generalType;
         this.health = health;
         this.geoPoint = geoPoint;
         this.coolDowns = coolDowns;

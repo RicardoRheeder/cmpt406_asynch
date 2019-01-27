@@ -38,9 +38,9 @@ public class GameState {
     private Dictionary<string, Cards> cards;
 
     [DataMember]
-    private Dictionary<string, Commander> commanders;
+    private Dictionary<string, General> generals;
 
-    public GameState (string id, int type, int maxUsers, bool isPublic, string[] users, string[] acceptedUsers, string[] readyUsers, string[] aliveUsers, string usersTurn, Dictionary<string, Unit[]> units, Dictionary<string, Cards> cards, Dictionary<string, Commander> commanders) {
+    public GameState (string id, int type, int maxUsers, bool isPublic, string[] users, string[] acceptedUsers, string[] readyUsers, string[] aliveUsers, string usersTurn, Dictionary<string, Unit[]> units, Dictionary<string, Cards> cards, Dictionary<string, General> generals) {
         this.id = id;
         this.boardId = (BoardType)type;
         this.maxUsers = maxUsers;
@@ -52,6 +52,14 @@ public class GameState {
         this.usersTurn = usersTurn;
         this.units = units;
         this.cards = cards;
-        this.commanders = commanders;
+        this.generals = generals;
     }
+}
+
+//Used to create a collection of gamestates from a server response
+[DataContract]
+public class GameStateCollection {
+
+    [DataMember]
+    public List<GameState> states;
 }
