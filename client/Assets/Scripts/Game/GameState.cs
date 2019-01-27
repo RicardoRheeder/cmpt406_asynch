@@ -4,43 +4,46 @@ using System.Runtime.Serialization;
 [DataContract]
 public class GameState {
 
-    [DataMember]
+    [DataMember(IsRequired=true)]
     private string id;
 
-    [DataMember]
+    [DataMember(IsRequired=true)]
     private BoardType boardId;
 
-    [DataMember]
+    [DataMember(IsRequired=true)]
     private int maxUsers;
 
-    [DataMember]
+    [DataMember(IsRequired=true)]
+    private int spotsAvailable;
+
+    [DataMember(IsRequired=true)]
     private bool isPublic;
 
-    [DataMember]
-    private string[] users;
+    [DataMember(IsRequired=true)]
+    private List<string> users;
 
-    [DataMember]
-    private string[] acceptedUsers;
+    [DataMember(IsRequired=true)]
+    private List<string> acceptedUsers;
 
-    [DataMember]
-    private string[] readyUsers;
+    [DataMember(IsRequired=true)]
+    private List<string> readyUsers;
 
-    [DataMember]
-    private string[] aliveUsers;
+    [DataMember(IsRequired=true)]
+    private List<string> aliveUsers;
 
-    [DataMember]
+    [DataMember(IsRequired=true)]
     private string usersTurn;
 
-    [DataMember]
-    private Dictionary<string, Unit[]> units;
+    [DataMember] //These should be required in the future
+    private Dictionary<string, List<Unit>> units;
 
-    [DataMember]
+    [DataMember] //These should be required in the future
     private Dictionary<string, Cards> cards;
 
-    [DataMember]
+    [DataMember] //These should be required in the future
     private Dictionary<string, General> generals;
 
-    public GameState (string id, int type, int maxUsers, bool isPublic, string[] users, string[] acceptedUsers, string[] readyUsers, string[] aliveUsers, string usersTurn, Dictionary<string, Unit[]> units, Dictionary<string, Cards> cards, Dictionary<string, General> generals) {
+    public GameState (string id, int type, int maxUsers, bool isPublic, List<string> users, List<string> acceptedUsers, List<string> readyUsers, List<string> aliveUsers, string usersTurn, Dictionary<string, List<Unit>> units, Dictionary<string, Cards> cards, Dictionary<string, General> generals) {
         this.id = id;
         this.boardId = (BoardType)type;
         this.maxUsers = maxUsers;

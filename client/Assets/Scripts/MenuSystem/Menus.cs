@@ -107,6 +107,14 @@ public class Menus : MonoBehaviour {
             CacheMenuItems();
         }
         SetMenuState(false, false, false, true);
+        Tuple<bool, GameState> response = networkApi.GetGamestate("3ed32d75-8d7c-45cc-bd2f-c79f98634172"); //Hardcoded for testing purposes
+        if (response.First) {
+            Debug.Log(JsonConversion.ConvertObjectToJson(typeof(GameState), response.Second));
+        }
+        else {
+            Debug.Log("getting the gamestate failed");
+            //the request failed, inform the user
+        }
     }
 
     public void MainMenuCreateGameButton() {
@@ -121,7 +129,7 @@ public class Menus : MonoBehaviour {
             CacheMenuItems();
         }
         SetMenuState(false, true, false, false);
-        Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
+        Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
             //we can deal with displaying the game states
         }
