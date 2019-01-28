@@ -1,7 +1,6 @@
 package gamestate
 
 import (
-	"Projects/cmpt406_asynch/Server/common"
 	"context"
 	"errors"
 
@@ -130,29 +129,17 @@ func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 // If any of the keys are invalid, the entire lookup could fail
 func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 
-	q := datastore.NewQuery("GameState")
+	keys := []*datastore.Key{}
 
 	for i := 0; i < len(IDs); i++ {
-		key := datastore.NewKey(ctx, "GameState", IDs[i], 0, nil)
-		q = q.Filter("__key__ =", key)
+		keys = append(keys, datastore.NewKey(ctx, "GameState", IDs[i], 0, nil))
 	}
 
-	q = q.
-		Project("ID", "BoardID", "MaxUsers", "SpotsAvailable", "IsPublic", "Users", "AcceptedUsers", "ReadyUsers", "AliveUsers", "UsersTurn")
-
-	var gameStates = []GameState{}
-
-	t := q.Run(ctx)
-	for {
-		var s GameState
-		_, err := t.Next(&s)
-		if err == datastore.Done {
-			break // No further entities match the query.
-		}
-		if err != nil {
-			log.Errorf(ctx, "fetching next multi GameState: %v", err)
-			break
-		}
+	gameStates := make([]GameState, len(IDs))
+	err := datastore.GetMulti(ctx, keys, gameStates)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get gameStates: %s", err.Error())
+		return nil, err
 	}
 
 	return gameStates, nil
@@ -176,12 +163,8 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]G
 			break // No further entities match the query.
 		}
 		if err != nil {
-			log.Errorf(ctx, "fetching next GameState: %v", err)
+			log.Errorf(ctx, "fetching next Summary: %v", err)
 			break
-		}
-		/* No point including games they're already a part of */
-		if !common.Contains(s.AcceptedUsers, username) {
-			gameStates = append(gameStates, s)
 		}
 	}
 

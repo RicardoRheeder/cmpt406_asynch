@@ -81,7 +81,8 @@ Get User:
  - Example Return Data:
     {   
         "activeGames": ["GameID1", "GameID2"]
-        "sentInvites": ["GameId3"]
+        "PendingPrivateGames": ["GameId3"]
+        "PendingPublicGames": ["GameId6"]
     }
 
 
@@ -214,17 +215,16 @@ Get Public Games Summary:
             "id": "123-456",
             "boardId": 9,
             "spotsAvailable": 1,
-            "isPublic": true,
-            "users": ["user1", "user2", "user3"]
+            "maxUsers": 6,
         },
         {
             "id": "111-222",
             "boardId": 5,            
             "spotsAvailable": 3,
-            "isPublic": true,
-            "users": ["user4", "user5"]
+            "maxUsers": 4,
         }
     ]
+    
 
 Update Game State:
 -----------------------

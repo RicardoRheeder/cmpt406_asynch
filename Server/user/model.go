@@ -1,5 +1,7 @@
 package user
 
+import "context"
+
 // User is a human player of the game
 type User struct {
 	Username            string   `json:"username,omitempty" datastore:",omitempty"`
@@ -10,3 +12,6 @@ type User struct {
 	PendingPublicGames  []string `json:"pendingPublicGames,omitempty" datastore:",omitempty,noindex"`
 	CompletedGames      []string `json:"completedGames,omitempty" datastore:",omitempty,noindex"`
 }
+
+// UpdateUserFunc is a mutator function that edits the user in the desired way
+type UpdateUserFunc func(context.Context, *User) error

@@ -116,27 +116,32 @@ func AddFriend(ctx context.Context, username string, friendName string) error {
 		return errors.New("You can't be your own friend")
 	}
 
-	/* Make sure that user actually exists */
+	/* Make sure that the friend actually exists */
 	_, err = user.GetUser(ctx, friendName)
 	if err != nil {
 		return err
 	}
 
-	u, err := user.GetUser(ctx, username)
-	if err != nil {
-		return err
-	}
-	if common.Contains(u.Friends, friendName) {
-		return errors.New("You already have that friend... dumb ass")
-	}
-
-	u.Friends = append(u.Friends, friendName)
-	err = user.UpdateUser(ctx, username, nil, nil, nil, nil, u.Friends)
+	err = user.UpdateUser(ctx, username, addFriend(ctx, friendName))
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// Helper function to editing the User model
+func addFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
+
+	return func(ctx context.Context, u *user.User) error {
+		if common.Contains(u.Friends, friendName) {
+			return errors.New("You already have that friend... dumb ass")
+		}
+
+		u.Friends = append(u.Friends, friendName)
+
+		return nil
+	}
 }
 
 // RemoveFriend removes a friend from their friends list
@@ -162,20 +167,25 @@ func RemoveFriend(ctx context.Context, username string, friendName string) error
 		return err
 	}
 
-	u, err := user.GetUser(ctx, username)
-	if err != nil {
-		return err
-	}
-	if !common.Remove(u.Friends, friendName) {
-		return errors.New("That name wasn't in your list")
-	}
-
-	err = user.UpdateUser(ctx, username, nil, nil, nil, nil, u.Friends)
+	err = user.UpdateUser(ctx, username, removeFriend(ctx, friendName))
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// Helper function to editing the User model
+func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
+
+	return func(ctx context.Context, u *user.User) error {
+
+		if !common.Remove(u.Friends, friendName) {
+			return errors.New("That name wasn't in your list")
+		}
+
+		return nil
+	}
 }
 
 /* GameState / User Section */
@@ -201,14 +211,13 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 	}
 
 	/* Ensure the requested opponents actually exist */
-	var opponentUsers = make([]*user.User, len(OpponentUsernames))
+	/* TODO: not a fan of all this extra datastore lookups... */
 	for i := 0; i < len(OpponentUsernames); i++ {
-		u, err := user.GetUser(ctx, OpponentUsernames[i])
+		_, err := user.GetUser(ctx, OpponentUsernames[i])
 		if err != nil {
 			log.Errorf(ctx, "Game Invite for unknown user: %s", OpponentUsernames[i])
 			return err
 		}
-		opponentUsers[i] = u
 	}
 
 	/* Create shell private gamestate */
@@ -220,21 +229,14 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 	}
 
 	/* stick gamestate id onto users models */
-	u, err := user.GetUser(ctx, username)
-	if err != nil {
-		log.Criticalf(ctx, "We created a gamestate but failed to send private Invites1")
-		return err
-	}
-	u.PendingPrivateGames = append(u.PendingPrivateGames, gameStateID)
-	err = user.UpdateUser(ctx, u.Username, nil, u.PendingPrivateGames, nil, nil, nil)
+	err = user.UpdateUser(ctx, username, appendToPrivateGames(ctx, gameStateID))
 	if err != nil {
 		log.Criticalf(ctx, "We created a gamestate but failed to send private Invites2")
 		return err
 	}
 
-	for i := 0; i < len(opponentUsers); i++ {
-		opponentUsers[i].PendingPrivateGames = append(opponentUsers[i].PendingPrivateGames, gameStateID)
-		err = user.UpdateUser(ctx, opponentUsers[i].Username, nil, opponentUsers[i].PendingPrivateGames, nil, nil, nil)
+	for i := 0; i < len(OpponentUsernames); i++ {
+		err = user.UpdateUser(ctx, OpponentUsernames[i], appendToPrivateGames(ctx, gameStateID))
 		if err != nil {
 			log.Criticalf(ctx, "We created a gamestate but failed to send private Invites4")
 			return err
@@ -270,14 +272,8 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 		return err
 	}
 
-	/* Update the user that created the public game to have a PendingPublicGame*/
-	u, err := user.GetUser(ctx, username)
-	if err != nil {
-		log.Criticalf(ctx, "We created a public gamestate %s but failed to update user who created it", gameStateID)
-		return err
-	}
-	u.PendingPublicGames = append(u.PendingPublicGames, gameStateID)
-	err = user.UpdateUser(ctx, u.Username, nil, nil, u.PendingPublicGames, nil, nil)
+	/* Update the user that created the public game to have a PendingPublicGame */
+	err = user.UpdateUser(ctx, username, appendToPublicGames(ctx, gameStateID))
 	if err != nil {
 		log.Criticalf(ctx, "We created a public gamestate %s but failed to update user who created it", gameStateID)
 		return err
@@ -333,54 +329,28 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 	if gs.IsPublic && len(gs.AcceptedUsers) == gs.MaxUsers {
 		/* If the game is public and it's now been filled */
 		for i := 0; i < len(gs.AcceptedUsers); i++ {
-			u, err := user.GetUser(ctx, gs.Users[i])
-			if err != nil {
-				log.Criticalf(ctx, "We failed to get a user %s to assign it an active game", u.Username)
-				return err
-			}
 
-			u.ActiveGames = append(u.ActiveGames, gs.ID)
-			_ = common.Remove(u.PendingPublicGames, gs.ID)
-			err = user.UpdateUser(ctx, u.Username, u.ActiveGames, nil, u.PendingPublicGames, nil, nil)
+			err = user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gameStateID))
 			if err != nil {
-				log.Criticalf(ctx, "We failed to update a user %s to have an active game", u.Username)
+				log.Criticalf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
 				return err
 			}
 		}
 
 	} else if !gs.IsPublic && len(gs.Users) == len(gs.AcceptedUsers) {
-		log.Infof(ctx, "All Accepted Users: %v, length %d", gs.Users, len(gs.Users))
 		/* If the game is private and has been accepted by all people invited */
 		for i := 0; i < len(gs.Users); i++ {
-			u, err := user.GetUser(ctx, gs.Users[i])
-			if err != nil {
-				log.Criticalf(ctx, "We failed to get a user %s to assign it an active game", u.Username)
-				return err
-			}
-			log.Infof(ctx, "Operating on user: %v", u)
 
-			u.ActiveGames = append(u.ActiveGames, gs.ID)
-			if !common.Remove(u.PendingPrivateGames, gs.ID) {
-				log.Criticalf(ctx, "Somehow user %s accepted private game %s without having it on their model", u.Username, gs.ID)
-			}
-			log.Infof(ctx, "New Values: %v", u)
-			err = user.UpdateUser(ctx, u.Username, u.ActiveGames, u.PendingPrivateGames, nil, nil, nil)
+			err = user.UpdateUser(ctx, gs.Users[i], updatePrivateGameToActive(ctx, gameStateID))
 			if err != nil {
-				log.Criticalf(ctx, "We failed to update a user %s to have an active game", u.Username)
+				log.Criticalf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
 				return err
 			}
 		}
 	} else if gs.IsPublic {
 		/* Accepting of public games need to update user if the game isn't full yet */
 
-		u, err := user.GetUser(ctx, username)
-		if err != nil {
-			log.Criticalf(ctx, "We failed to get a user %s to assign it an active game", username)
-			return err
-		}
-		u.PendingPublicGames = append(u.PendingPublicGames, gs.ID)
-
-		err = user.UpdateUser(ctx, u.Username, nil, nil, u.PendingPublicGames, nil, nil)
+		err = user.UpdateUser(ctx, username, appendToPublicGames(ctx, gameStateID))
 		if err != nil {
 			log.Criticalf(ctx, "We failed to update a user %s to have an pending game", username)
 			return err
@@ -388,6 +358,42 @@ func AcceptGame(ctx context.Context, username string, gameStateID string) error 
 	}
 
 	return nil
+}
+
+// Helper function to editing the User model
+func updatePublicGameToActive(ctx context.Context, gameID string) user.UpdateUserFunc {
+	return func(ctx context.Context, u *user.User) error {
+		_ = common.Remove(u.PendingPublicGames, gameID)
+		u.ActiveGames = append(u.ActiveGames, gameID)
+		return nil
+	}
+}
+
+// Helper function to editing the User model
+func updatePrivateGameToActive(ctx context.Context, gameID string) user.UpdateUserFunc {
+	return func(ctx context.Context, u *user.User) error {
+		if !common.Remove(u.PendingPrivateGames, gameID) {
+			log.Criticalf(ctx, "Somehow user %s accepted private game %s without having it on their model", u.Username, gameID)
+		}
+		u.ActiveGames = append(u.ActiveGames, gameID)
+		return nil
+	}
+}
+
+// Helper function to editing the User model
+func appendToPrivateGames(ctx context.Context, gameID string) user.UpdateUserFunc {
+	return func(ctx context.Context, u *user.User) error {
+		u.PendingPrivateGames = append(u.PendingPrivateGames, gameID)
+		return nil
+	}
+}
+
+// Helper function to editing the User model
+func appendToPublicGames(ctx context.Context, gameID string) user.UpdateUserFunc {
+	return func(ctx context.Context, u *user.User) error {
+		u.PendingPublicGames = append(u.PendingPublicGames, gameID)
+		return nil
+	}
 }
 
 /* GameState Section */
