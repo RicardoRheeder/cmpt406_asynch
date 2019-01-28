@@ -30,4 +30,9 @@ public static class JsonConversion {
             throw new InvalidDataException("Cannot convert a null object to JSON");
         }
     }
+
+    //Used when we need to send a single field to the server, easier than creating data contracts for each field
+    public static string GetJsonForSingleField(string key, string value) {
+        return "{\"" + key + "\":\"" + value + "\"}";
+    }
 }
