@@ -11,50 +11,41 @@ import (
 // CreateGameState will create a game state in DataStore
 func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool) error {
 
-	// Transaction to ensure race conditions wont break things
-	err := datastore.RunInTransaction(ctx, func(ctx context.Context) error {
+	_, err := GetGameState(ctx, ID)
+	if err == nil {
+		log.Errorf(ctx, "Attempted to create GameState: %s, that already exists", ID)
+		return errors.New("GameState Already Exists")
+	}
 
-		_, err := GetGameState(ctx, ID)
-		if err == nil {
-			log.Errorf(ctx, "Attempted to create GameState: %s, that already exists", ID)
-			return errors.New("GameState Already Exists")
-		}
+	var spotsAvailable int
+	if isPublic {
+		spotsAvailable = maxUsers - len(acceptedUsers)
+	} else {
+		spotsAvailable = 0
+	}
 
-		var spotsAvailable int
-		if isPublic {
-			spotsAvailable = maxUsers - len(acceptedUsers)
-		} else {
-			spotsAvailable = 0
-		}
+	gameState := &GameState{
+		ID:             ID,
+		BoardID:        boardID,
+		IsPublic:       isPublic,
+		MaxUsers:       maxUsers,
+		SpotsAvailable: spotsAvailable,
+		UsersTurn:      "",
+		Users:          users,
+		AcceptedUsers:  acceptedUsers,
+		ReadyUsers:     []string{},
+		AliveUsers:     users,
+	}
 
-		gameState := &GameState{
-			ID:             ID,
-			BoardID:        boardID,
-			IsPublic:       isPublic,
-			MaxUsers:       maxUsers,
-			SpotsAvailable: spotsAvailable,
-			UsersTurn:      "",
-			Users:          users,
-			AcceptedUsers:  acceptedUsers,
-			ReadyUsers:     []string{},
-			AliveUsers:     users,
-		}
-
-		key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
-		_, err = datastore.Put(ctx, key, gameState)
-		if err != nil {
-			log.Errorf(ctx, "Failed to Put (create) gameState: %s", ID)
-			return err
-		}
-
-		return nil
-	}, &datastore.TransactionOptions{XG: true})
+	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
+	_, err = datastore.Put(ctx, key, gameState)
 	if err != nil {
-		log.Errorf(ctx, "Create GameState Transaction failed: %v", err)
+		log.Errorf(ctx, "Failed to Put (create) gameState: %s", ID)
 		return err
 	}
 
 	return nil
+
 }
 
 // UpdateGameState will update the GameState with new values

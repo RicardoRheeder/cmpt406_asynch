@@ -183,7 +183,6 @@ func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
 		if !common.Remove(u.Friends, friendName) {
 			return errors.New("That name wasn't in your list")
 		}
-
 		return nil
 	}
 }
@@ -192,7 +191,7 @@ func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
 /************************************/
 
 // CreatePrivateGame will create a private game with the requested users
-func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames []string, boardID int) error {
+func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -200,7 +199,7 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 		log.Errorf(ctx, "Create Private Game failed: username is required")
 		return errors.New("username is required")
 	}
-	err = common.StringSliceGreaterThanLength(OpponentUsernames, 0)
+	err = common.StringSliceGreaterThanLength(opponentUsernames, 0)
 	if err != nil {
 		log.Errorf(ctx, "Create Private Game failed: more users are required")
 		return errors.New("more users required")
@@ -212,38 +211,44 @@ func CreatePrivateGame(ctx context.Context, username string, OpponentUsernames [
 
 	/* Ensure the requested opponents actually exist */
 	/* TODO: not a fan of all this extra datastore lookups, But also not sure how to avoid it */
-	for i := 0; i < len(OpponentUsernames); i++ {
-		_, err := user.GetUser(ctx, OpponentUsernames[i])
+	for i := 0; i < len(opponentUsernames); i++ {
+		_, err := user.GetUser(ctx, opponentUsernames[i])
 		if err != nil {
-			log.Errorf(ctx, "Game Invite for unknown user: %s", OpponentUsernames[i])
+			log.Errorf(ctx, "Game Invite for unknown user: %s", opponentUsernames[i])
 			return err
 		}
 	}
 
-	/* Create shell private gamestate */
-	allUsers := append(OpponentUsernames, username)
-	gameStateID := common.GetRandomID()
-	err = gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false)
+	/* Update the user, all other invite and create a shell game state*/
+	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID))
 	if err != nil {
 		return err
 	}
-
-	/* stick gamestate id onto users models */
-	err = user.UpdateUser(ctx, username, appendToPrivateGames(ctx, gameStateID))
-	if err != nil {
-		log.Criticalf(ctx, "We created a gamestate but failed to send private Invites2")
-		return err
-	}
-
-	for i := 0; i < len(OpponentUsernames); i++ {
-		err = user.UpdateUser(ctx, OpponentUsernames[i], appendToPrivateGames(ctx, gameStateID))
-		if err != nil {
-			log.Criticalf(ctx, "We created a gamestate but failed to send private Invites4")
-			return err
-		}
-	}
-
 	return nil
+}
+
+func createPrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int) user.UpdateUserFunc {
+
+	return func(ctx context.Context, u *user.User) error {
+		/* Create shell private gamestate */
+		allUsers := append(opponentUsernames, username)
+		gameStateID := common.GetRandomID()
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false)
+		if err != nil {
+			return err
+		}
+
+		/* Update user creating the private game and all invitees */
+		u.PendingPrivateGames = append(u.PendingPrivateGames, gameStateID)
+		for i := 0; i < len(opponentUsernames); i++ {
+			err = user.UpdateUser(ctx, opponentUsernames[i], appendToPrivateGames(ctx, gameStateID))
+			if err != nil {
+				log.Criticalf(ctx, "We created a gamestate but failed to send private Invites4")
+				return err
+			}
+		}
+		return nil
+	}
 }
 
 // CreatePublicGame will create a public game open to all users
@@ -264,22 +269,30 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 		return errors.New("Must have more than 1 maxUsers")
 	}
 
-	/* Create shell public gamestate */
-	gameStateID := common.GetRandomID()
-	usersSoFar := []string{username}
-	err = gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true)
-	if err != nil {
-		return err
-	}
-
 	/* Update the user that created the public game to have a PendingPublicGame */
-	err = user.UpdateUser(ctx, username, appendToPublicGames(ctx, gameStateID))
+	err = user.UpdateUserWithT(ctx, username, createPublicGame(ctx, username, boardID, maxUsers))
 	if err != nil {
-		log.Criticalf(ctx, "We created a public gamestate %s but failed to update user who created it", gameStateID)
 		return err
 	}
 
 	return nil
+}
+
+func createPublicGame(ctx context.Context, username string, boardID int, maxUsers int) user.UpdateUserFunc {
+
+	return func(ctx context.Context, u *user.User) error {
+		/* Create shell public gamestate */
+		gameStateID := common.GetRandomID()
+		usersSoFar := []string{username}
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true)
+		if err != nil {
+			return err
+		}
+		/* Update the user who created the public game */
+		u.PendingPublicGames = append(u.PendingPublicGames, gameStateID)
+
+		return nil
+	}
 }
 
 // AcceptGame will either add user to a public game, or accept a private game invite
