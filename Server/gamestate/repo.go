@@ -11,34 +11,46 @@ import (
 // CreateGameState will create a game state in DataStore
 func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool) error {
 
-	_, err := GetGameState(ctx, ID)
-	if err == nil {
-		log.Errorf(ctx, "Attempted to create GameState: %s, that already exists", ID)
-		return errors.New("GameState Already Exists")
-	}
-	var spotsAvailable int
-	if isPublic {
-		spotsAvailable = maxUsers - len(acceptedUsers)
-	} else {
-		spotsAvailable = 0
-	}
+	// Transaction to ensure race conditions wont break things
+	err := datastore.RunInTransaction(ctx, func(ctx context.Context) error {
 
-	gameState := &GameState{
-		ID:             ID,
-		BoardID:        boardID,
-		IsPublic:       isPublic,
-		MaxUsers:       maxUsers,
-		SpotsAvailable: spotsAvailable,
-		Users:          users,
-		AcceptedUsers:  acceptedUsers,
-		AliveUsers:     users,
-	}
+		_, err := GetGameState(ctx, ID)
+		if err == nil {
+			log.Errorf(ctx, "Attempted to create GameState: %s, that already exists", ID)
+			return errors.New("GameState Already Exists")
+		}
 
-	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
+		var spotsAvailable int
+		if isPublic {
+			spotsAvailable = maxUsers - len(acceptedUsers)
+		} else {
+			spotsAvailable = 0
+		}
 
-	_, err = datastore.Put(ctx, key, gameState)
+		gameState := &GameState{
+			ID:             ID,
+			BoardID:        boardID,
+			IsPublic:       isPublic,
+			MaxUsers:       maxUsers,
+			SpotsAvailable: spotsAvailable,
+			UsersTurn:      "",
+			Users:          users,
+			AcceptedUsers:  acceptedUsers,
+			ReadyUsers:     []string{},
+			AliveUsers:     users,
+		}
+
+		key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
+		_, err = datastore.Put(ctx, key, gameState)
+		if err != nil {
+			log.Errorf(ctx, "Failed to Put (create) gameState: %s", ID)
+			return err
+		}
+
+		return nil
+	}, &datastore.TransactionOptions{XG: true})
 	if err != nil {
-		log.Errorf(ctx, "Failed to Put (create) gameState: %s", ID)
+		log.Errorf(ctx, "Create GameState Transaction failed: %v", err)
 		return err
 	}
 
@@ -46,63 +58,35 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 }
 
 // UpdateGameState will update the GameState with new values
-func UpdateGameState(ctx context.Context, ID, usersTurn string, users, acceptedUsers, readyUsers, aliveUsers []string, units map[string][]Unit, cards map[string]Cards) error {
+func UpdateGameState(ctx context.Context, ID string, updateGameStateFunc UpdateGameStateFunc) error {
 
-	gs, err := GetGameState(ctx, ID)
+	// Transaction to ensure race conditions wont break things
+	err := datastore.RunInTransaction(ctx, func(ctx context.Context) error {
+
+		var gameState GameState
+
+		key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
+		err := datastore.Get(ctx, key, &gameState)
+		if err != nil {
+			log.Errorf(ctx, "Failed to Get gameState: %s", ID)
+			return err
+		}
+
+		err = updateGameStateFunc(ctx, &gameState)
+		if err != nil {
+			return err
+		}
+
+		_, err = datastore.Put(ctx, key, &gameState)
+		if err != nil {
+			log.Errorf(ctx, "Failed to Put (update) gameState: %s", ID)
+			return err
+		}
+
+		return nil
+	}, &datastore.TransactionOptions{XG: true})
 	if err != nil {
-		log.Errorf(ctx, "Attempted to update GameState: %s, that doesn't exists", ID)
-		return errors.New("GameState Doesn't Exists")
-	}
-	var spotsAvailable int
-	if gs.IsPublic {
-		spotsAvailable = gs.MaxUsers - len(acceptedUsers)
-	} else {
-		spotsAvailable = 0
-	}
-
-	/* Input 0 values to make the value not change */
-	if users != nil {
-		gs.Users = users
-	}
-	if acceptedUsers != nil {
-		gs.AcceptedUsers = acceptedUsers
-	}
-	if readyUsers != nil {
-		gs.ReadyUsers = readyUsers
-	}
-	if aliveUsers != nil {
-		gs.AliveUsers = aliveUsers
-	}
-	if usersTurn != "" {
-		gs.UsersTurn = usersTurn
-	}
-	if units != nil {
-		gs.Units = units
-	}
-	if cards != nil {
-		gs.Cards = cards
-	}
-
-	gameState := &GameState{
-		ID:             gs.ID,
-		BoardID:        gs.BoardID,
-		MaxUsers:       gs.MaxUsers,
-		SpotsAvailable: spotsAvailable,
-		IsPublic:       gs.IsPublic,
-		Users:          gs.Users,
-		AcceptedUsers:  gs.AcceptedUsers,
-		ReadyUsers:     gs.ReadyUsers,
-		AliveUsers:     gs.AliveUsers,
-		UsersTurn:      gs.UsersTurn,
-		Units:          gs.Units,
-		Cards:          gs.Cards,
-	}
-
-	key := datastore.NewKey(ctx, "GameState", gs.ID, 0, nil)
-
-	_, err = datastore.Put(ctx, key, gameState)
-	if err != nil {
-		log.Errorf(ctx, "Failed to Put (update) GameState: %s", gs.ID)
+		log.Errorf(ctx, "Update GameState Transaction failed: %v", err)
 		return err
 	}
 

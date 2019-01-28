@@ -1,6 +1,8 @@
 package gamestate
 
 import (
+	"context"
+
 	"google.golang.org/appengine"
 )
 
@@ -33,3 +35,6 @@ type Cards struct {
 	Deck    []string `json:"deck,omitempty" datastore:",omitempty"`
 	Discard []string `json:"discard,omitempty" datastore:",omitempty"`
 }
+
+// UpdateGameStateFunc is a mutator function that edits the game state in the desired way
+type UpdateGameStateFunc func(context.Context, *GameState) error
