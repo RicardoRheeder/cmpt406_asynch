@@ -130,51 +130,60 @@ func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 // If any of the keys are invalid, the entire lookup could fail
 func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 
-	keys := []*datastore.Key{}
+	q := datastore.NewQuery("GameState")
 
 	for i := 0; i < len(IDs); i++ {
-		keys = append(keys, datastore.NewKey(ctx, "GameState", IDs[i], 0, nil))
+		key := datastore.NewKey(ctx, "GameState", IDs[i], 0, nil)
+		q = q.Filter("__key__ =", key)
 	}
 
-	gameStates := make([]GameState, len(IDs))
-	err := datastore.GetMulti(ctx, keys, gameStates)
-	if err != nil {
-		log.Errorf(ctx, "Failed to Get gameStates: %s", err.Error())
-		return nil, err
+	q = q.
+		Project("ID", "BoardID", "MaxUsers", "SpotsAvailable", "IsPublic", "Users", "AcceptedUsers", "ReadyUsers", "AliveUsers", "UsersTurn")
+
+	var gameStates = []GameState{}
+
+	t := q.Run(ctx)
+	for {
+		var s GameState
+		_, err := t.Next(&s)
+		if err == datastore.Done {
+			break // No further entities match the query.
+		}
+		if err != nil {
+			log.Errorf(ctx, "fetching next multi GameState: %v", err)
+			break
+		}
 	}
 
 	return gameStates, nil
 }
 
 // GetPublicGamesSummary queries for public available games
-func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]Summary, error) {
+func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]GameState, error) {
 
-	var summaries = []Summary{}
+	var gameStates = []GameState{}
 
-	q := datastore.NewQuery("GameState").Filter("Public =", true).Filter("SpotsAvailable >", 0).Limit(limit)
+	q := datastore.NewQuery("GameState").
+		Filter("IsPublic =", true).
+		Filter("SpotsAvailable >", 0).
+		Project("ID", "BoardID", "MaxUsers", "SpotsAvailable").
+		Limit(limit)
 	t := q.Run(ctx)
 	for {
-		var s Summary
+		var s GameState
 		_, err := t.Next(&s)
 		if err == datastore.Done {
 			break // No further entities match the query.
 		}
 		if err != nil {
-			log.Errorf(ctx, "fetching next Summary: %v", err)
+			log.Errorf(ctx, "fetching next GameState: %v", err)
 			break
 		}
 		/* No point including games they're already a part of */
 		if !common.Contains(s.AcceptedUsers, username) {
-			summaries = append(summaries, s)
+			gameStates = append(gameStates, s)
 		}
 	}
 
-	return summaries, nil
+	return gameStates, nil
 }
-
-/*
-	TODO: it'll probably be easier for transactional updates to the GameState to
-	have repo commands like: AddToReadyUsers() and AddToAcceptedUseres()
-	or, AddToArrays(readyUser, acceptedUser) (checks for empty strings)
-	But not important for 1v1 games, just for 3+ free for alls
-*/

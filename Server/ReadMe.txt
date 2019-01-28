@@ -40,9 +40,15 @@ Testing:
 
 Deploy Project:
 -----------------------
-    - gcloud app deployed ./app/app.yaml
+    - gcloud app deploy ./app/app.yaml
     - Should only be done on the clean MASTER BRANCH
 
+Indexes:
+-----------------------
+- To remove indexes no longer in the index.yaml file:
+    gcloud datastore indexes cleanup index.yaml
+- To update new indexes:
+    gcloud datastore indexes create index.yaml
 
 ---------------------------------------------------------------------
 API Interface

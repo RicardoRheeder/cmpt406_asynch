@@ -450,7 +450,7 @@ func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username stri
 }
 
 // GetPublicGamesSummary will query and return all available public games for the user to join
-func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]gamestate.Summary, error) {
+func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]gamestate.GameState, error) {
 	err := common.StringNotEmpty(username)
 	if err != nil {
 		log.Errorf(ctx, "Get Public Games failed: username is required")
