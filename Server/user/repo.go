@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
@@ -10,67 +11,77 @@ import (
 // CreateUser will create a user in DataStore
 func CreateUser(ctx context.Context, username string, password string) error {
 
-	_, err := GetUser(ctx, username)
-	if err == nil {
-		log.Errorf(ctx, "Attempted to create user: %s, that already exists", username)
-		return err
-	}
+	// Transaction to ensure race conditions wont break things
+	err := datastore.RunInTransaction(ctx, func(ctx context.Context) error {
 
-	user := &User{
-		Username: username,
-		Password: password,
-	}
+		_, err := GetUser(ctx, username)
+		if err == nil {
+			log.Errorf(ctx, "Attempted to create user: %s, that already exists", username)
+			return errors.New("User Already Exists")
+		}
 
-	key := datastore.NewKey(ctx, "User", username, 0, nil)
+		user := &User{
+			Username: username,
+			Password: password,
+		}
 
-	_, err = datastore.Put(ctx, key, user)
+		key := datastore.NewKey(ctx, "User", username, 0, nil)
+
+		_, err = datastore.Put(ctx, key, user)
+		if err != nil {
+			log.Errorf(ctx, "Failed to Put (create) user: %s, err: %s", username, err.Error())
+			return err
+		}
+		return nil
+	}, &datastore.TransactionOptions{XG: true})
 	if err != nil {
-		log.Errorf(ctx, "Failed to Put (create) user: %s, err: %s", username, err.Error())
+		log.Errorf(ctx, "Create User Transaction failed: %v", err)
 		return err
 	}
 
 	return nil
 }
 
-// UpdateUser will update a currently existing user
-func UpdateUser(ctx context.Context, username string, activeGames, pendingPrivateGames, pendingPublicGames, completedGames, friends []string) error {
+// UpdateUserWithT will update a currently existing user inside a transaction
+func UpdateUserWithT(ctx context.Context, username string, updateFunc UpdateUserFunc) error {
 
-	u, err := GetUser(ctx, username)
+	// Transaction to ensure race conditions wont break things
+	err := datastore.RunInTransaction(ctx, func(ctx context.Context) error {
+
+		return updateUserHelper(ctx, username, updateFunc)
+
+	}, &datastore.TransactionOptions{XG: true})
 	if err != nil {
-		log.Errorf(ctx, "Attempted to update user: %s, that doesn't exists", username)
+		log.Errorf(ctx, "Update User Transaction failed: %v", err)
 		return err
 	}
 
-	/* Pass nil values into the function if you want the value to remain the same */
-	if activeGames != nil {
-		u.ActiveGames = activeGames
-	}
-	if pendingPrivateGames != nil {
-		u.PendingPrivateGames = pendingPrivateGames
-	}
-	if pendingPublicGames != nil {
-		u.PendingPublicGames = pendingPublicGames
-	}
-	if completedGames != nil {
-		u.CompletedGames = completedGames
-	}
-	if friends != nil {
-		u.Friends = friends
-	}
+	return nil
+}
 
-	user := &User{
-		Username:            u.Username,
-		Password:            u.Password,
-		Friends:             u.Friends,
-		ActiveGames:         u.ActiveGames,
-		PendingPrivateGames: u.PendingPrivateGames,
-		PendingPublicGames:  u.PendingPublicGames,
-		CompletedGames:      u.CompletedGames,
-	}
+// UpdateUser will update a currently existing user without a transaction
+func UpdateUser(ctx context.Context, username string, updateFunc UpdateUserFunc) error {
+	return updateUserHelper(ctx, username, updateFunc)
+}
 
+func updateUserHelper(ctx context.Context, username string, updateFunc UpdateUserFunc) error {
 	key := datastore.NewKey(ctx, "User", username, 0, nil)
 
-	_, err = datastore.Put(ctx, key, user)
+	var u User
+
+	err := datastore.Get(ctx, key, &u)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get user: %s, err: %s", username, err.Error())
+		return err
+	}
+
+	err = updateFunc(ctx, &u)
+	if err != nil {
+		log.Errorf(ctx, "Update Func Failed: %v", err)
+		return err
+	}
+
+	_, err = datastore.Put(ctx, key, &u)
 	if err != nil {
 		log.Errorf(ctx, "Failed to Put (update) user: %s, err: %s", username, err.Error())
 		return err

@@ -1,39 +1,25 @@
 package gamestate
 
 import (
+	"context"
+
 	"google.golang.org/appengine"
 )
 
 // GameState is everything the client needs to know to construct the state of the game
 type GameState struct {
-	ID             string            `json:"id,omitempty" datastore:",omitempty"`
-	BoardID        int               `json:"boardId,omitempty" datastore:",omitempty"`
-	MaxUsers       int               `json:"maxUsers,omitempty" datastore:",omitempty"`
-	SpotsAvailable int               `json:"spotsAvailable,omitempty" datastore:",omitempty"`
+	ID             string            `json:"id,omitempty"`
+	BoardID        int               `json:"boardId,omitempty"`
+	MaxUsers       int               `json:"maxUsers,omitempty"`
+	SpotsAvailable int               `json:"spotsAvailable,omitempty"`
 	IsPublic       bool              `json:"isPublic"`
-	Users          []string          `json:"users,omitempty" datastore:",omitempty,noindex"`
-	AcceptedUsers  []string          `json:"acceptedUsers,omitempty" datastore:",omitempty,noindex"`
-	ReadyUsers     []string          `json:"readyUsers,omitempty" datastore:",omitempty,noindex"`
-	AliveUsers     []string          `json:"aliveUsers,omitempty" datastore:",omitempty,noindex"`
-	UsersTurn      string            `json:"usersTurn,omitempty" datastore:",omitempty,noindex"`
+	Users          []string          `json:"users,omitempty"`
+	AcceptedUsers  []string          `json:"acceptedUsers,omitempty"`
+	ReadyUsers     []string          `json:"readyUsers,omitempty"`
+	AliveUsers     []string          `json:"aliveUsers,omitempty"`
+	UsersTurn      string            `json:"usersTurn,omitempty"`
 	Units          map[string][]Unit `json:"units,omitempty" datastore:",omitempty,noindex,flatten"`
 	Cards          map[string]Cards  `json:"cards,omitempty" datastore:",omitempty,noindex,flatten"`
-}
-
-// Summary is the same as GameState but wont json marshal as much on the return
-type Summary struct {
-	ID             string            `json:"id,omitempty" datastore:",omitempty"`
-	BoardID        int               `json:"boardId,omitempty" datastore:",omitempty"`
-	MaxUsers       int               `json:"maxUsers,omitempty" datastore:",omitempty"`
-	SpotsAvailable int               `json:"spotsAvailable,omitempty" datastore:",omitempty"`
-	IsPublic       bool              `json:"isPublic"`
-	Users          []string          `json:"users,omitempty" datastore:",omitempty,noindex"`
-	AcceptedUsers  []string          `json:"acceptedUsers,omitempty" datastore:",omitempty,noindex"`
-	ReadyUsers     []string          `json:"readyUsers,omitempty" datastore:",omitempty,noindex"`
-	AliveUsers     []string          `json:"-" datastore:",omitempty,noindex"`
-	UsersTurn      string            `json:"usersTurn,omitempty" datastore:",omitempty,noindex"`
-	Units          map[string][]Unit `json:"-" datastore:",omitempty,noindex,flatten"`
-	Cards          map[string]Cards  `json:"-" datastore:",omitempty,noindex,flatten"`
 }
 
 // Unit is a game piece on the board
@@ -49,3 +35,6 @@ type Cards struct {
 	Deck    []string `json:"deck,omitempty" datastore:",omitempty"`
 	Discard []string `json:"discard,omitempty" datastore:",omitempty"`
 }
+
+// UpdateGameStateFunc is a mutator function that edits the game state in the desired way
+type UpdateGameStateFunc func(context.Context, *GameState) error

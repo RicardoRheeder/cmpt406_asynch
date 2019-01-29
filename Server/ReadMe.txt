@@ -40,9 +40,15 @@ Testing:
 
 Deploy Project:
 -----------------------
-    - gcloud app deployed ./app/app.yaml
+    - gcloud app deploy ./app/app.yaml
     - Should only be done on the clean MASTER BRANCH
 
+Indexes:
+-----------------------
+- To remove indexes no longer in the index.yaml file:
+    gcloud datastore indexes cleanup index.yaml
+- To update new indexes:
+    gcloud datastore indexes create index.yaml
 
 ---------------------------------------------------------------------
 API Interface
@@ -75,7 +81,8 @@ Get User:
  - Example Return Data:
     {   
         "activeGames": ["GameID1", "GameID2"]
-        "sentInvites": ["GameId3"]
+        "PendingPrivateGames": ["GameId3"]
+        "PendingPublicGames": ["GameId6"]
     }
 
 
@@ -208,17 +215,16 @@ Get Public Games Summary:
             "id": "123-456",
             "boardId": 9,
             "spotsAvailable": 1,
-            "isPublic": true,
-            "users": ["user1", "user2", "user3"]
+            "maxUsers": 6,
         },
         {
             "id": "111-222",
             "boardId": 5,            
             "spotsAvailable": 3,
-            "isPublic": true,
-            "users": ["user4", "user5"]
+            "maxUsers": 4,
         }
     ]
+    
 
 Update Game State:
 -----------------------
