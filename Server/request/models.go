@@ -31,13 +31,8 @@ type CreatePublicGame struct {
 	BoardID         int    `json:"boardId"`
 }
 
-// AcceptGame is a struct to handle the /AcceptGame payload
-type AcceptGame struct {
-	GameID string `json:"gameId"`
-}
-
-// GetGameState is a struct to handle the /GetGameState paylaod
-type GetGameState struct {
+// OnlyGameID is a struct to handle payloads that consist of only the GameID
+type OnlyGameID struct {
 	GameID string `json:"gameId"`
 }
 

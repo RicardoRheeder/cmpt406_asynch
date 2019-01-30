@@ -378,7 +378,7 @@ func acceptGame(ctx context.Context, username, gameStateID string) gamestate.Upd
 
 				err = user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gameStateID))
 				if err != nil {
-					log.Criticalf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
+					log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
 					return err
 				}
 			}
@@ -389,7 +389,7 @@ func acceptGame(ctx context.Context, username, gameStateID string) gamestate.Upd
 
 				err = user.UpdateUser(ctx, gs.Users[i], updatePrivateGameToActive(ctx, gameStateID))
 				if err != nil {
-					log.Criticalf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
+					log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
 					return err
 				}
 			}
@@ -398,11 +398,135 @@ func acceptGame(ctx context.Context, username, gameStateID string) gamestate.Upd
 
 			err = user.UpdateUser(ctx, username, appendToPublicGames(ctx, gameStateID))
 			if err != nil {
-				log.Criticalf(ctx, "We failed to update a user %s to have an pending game", username)
+				log.Errorf(ctx, "We failed to update a user %s to have an pending game", username)
 				return err
 			}
 		}
 
+		return nil
+	}
+}
+
+// BackOutGame will back a user out of a game that they accepted but not readied to
+func BackOutGame(ctx context.Context, username string, gameStateID string) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Backout Game failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameStateID)
+	if err != nil {
+		log.Errorf(ctx, "Backout Game failed: gameStateID is required")
+		return errors.New("gameStateID is required")
+	}
+
+	err = gamestate.UpdateGameState(ctx, gameStateID, backOutGame(ctx, username, gameStateID))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func backOutGame(ctx context.Context, username, gameStateID string) gamestate.UpdateGameStateFunc {
+
+	return func(ctx context.Context, gs *gamestate.GameState) error {
+		if !gs.IsPublic {
+			log.Errorf(ctx, "user: %s, tried to BackOut of a private game", username)
+			return errors.New("Cannot BackOut of private game once 'Accepted'")
+		}
+		if common.Contains(gs.ReadyUsers, username) {
+			log.Errorf(ctx, "user: %s, tried to BackOut of game they are readied in", username)
+			return errors.New("Cannot BackOut of game you are 'Ready' in")
+		}
+
+		if !common.Remove(gs.AcceptedUsers, username) {
+			log.Errorf(ctx, "user: %s, tried to BackOut of game they not 'Accepted' in", username)
+			return errors.New("Cannot BackOut of game you are not 'Accepted' in")
+		}
+		common.Remove(gs.AliveUsers, username)
+		gs.SpotsAvailable = gs.MaxUsers - len(gs.AcceptedUsers)
+
+		err := user.UpdateUser(ctx, username, removePendingGame(ctx, gameStateID))
+		if err != nil {
+			log.Errorf(ctx, "We failed to update a user %s to remove accepted game", username)
+			return err
+		}
+
+		return nil
+	}
+}
+
+// ForfeitGame will remove the user from the game counting as a loss
+func ForfeitGame(ctx context.Context, username string, gameStateID string) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Forfeit failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameStateID)
+	if err != nil {
+		log.Errorf(ctx, "Forfeit failed: gameStateID is required")
+		return errors.New("gameStateID is required")
+	}
+
+	err = gamestate.UpdateGameState(ctx, gameStateID, forfeitGame(ctx, username, gameStateID))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.UpdateGameStateFunc {
+
+	return func(ctx context.Context, gs *gamestate.GameState) error {
+		if !common.Contains(gs.ReadyUsers, username) {
+			log.Errorf(ctx, "user: %s, tried to Forfeit a game they arent readied in", username)
+			return errors.New("Cannot Forfeit a game you are not 'Ready' in")
+		}
+
+		if !common.Remove(gs.AliveUsers, username) {
+			log.Errorf(ctx, "user: %s, tried to Forfeit a game they are not alive in", username)
+			return errors.New("Cannot Forfeit a game you are not alive in")
+		}
+
+		/* remove all cards and units that belonged to that user */
+		delete(gs.Cards, username)
+		delete(gs.Units, username)
+
+		/* Add the action that says they forfeited */
+		gs.Actions = append(gs.Actions, []gamestate.Action{gamestate.Action{Username: username, ActionType: gamestate.Forfeit}})
+
+		err := user.UpdateUser(ctx, username, updateActiveGameToComplete(ctx, gameStateID))
+		if err != nil {
+			log.Errorf(ctx, "We failed to update a user %s to remove accepted game", username)
+			return err
+		}
+
+		return nil
+	}
+}
+
+// Helper function to editing the User model
+func removePendingGame(ctx context.Context, gameID string) user.UpdateUserFunc {
+	return func(ctx context.Context, u *user.User) error {
+		if !common.Remove(u.PendingPublicGames, gameID) {
+			if !common.Remove(u.PendingPrivateGames, gameID) {
+				log.Criticalf(ctx, "user: %s, managed to remove themselves as accepted from a gameState without that id on their model", u.Username)
+			}
+		}
+		return nil
+	}
+}
+
+// Helper function to editing the User model
+func updateActiveGameToComplete(ctx context.Context, gameID string) user.UpdateUserFunc {
+	return func(ctx context.Context, u *user.User) error {
+		common.Remove(u.ActiveGames, gameID)
+		u.CompletedGames = append(u.CompletedGames, gameID)
 		return nil
 	}
 }
@@ -542,6 +666,10 @@ func updateGameState(username string, readyUsers, aliveUsers []string, units map
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 
 		if gs.UsersTurn == "" {
+			if !common.Contains(gs.AcceptedUsers, username) {
+				log.Errorf(ctx, "User tried to ReadyUp when not accepted %s, %s", username, gs.ID)
+				return errors.New("User is not accepted into this game")
+			}
 			/* The game hasn't started yet, people are just readying in their units */
 			if gs.MaxUsers == len(readyUsers) {
 				/* This is the last person readying up right now. Choose a person for their turn */

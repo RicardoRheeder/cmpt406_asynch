@@ -18,6 +18,8 @@ func main() {
 	http.HandleFunc("/CreatePrivateGame", handleCreatePrivateGame)
 	http.HandleFunc("/CreatePublicGame", handleCreatePublicGame)
 	http.HandleFunc("/AcceptGame", handleAcceptGame)
+	http.HandleFunc("/BackOutGame", handleBackOutGame)
+	http.HandleFunc("/ForfeitGame", handleForfeitGame)
 
 	http.HandleFunc("/GetGameState", handleGetGameState)
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
@@ -190,7 +192,7 @@ func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ar request.AcceptGame
+	var ar request.OnlyGameID
 	err = decoder.Decode(&ar)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -198,6 +200,60 @@ func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = AcceptGame(ctx, username, ar.GameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleBackOutGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req request.OnlyGameID
+	err = decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = BackOutGame(ctx, username, req.GameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleForfeitGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	_, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req request.OnlyGameID
+	err = decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = ForfeitGame(ctx, username, req.GameID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -217,7 +273,7 @@ func handleGetGameState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ggs request.GetGameState
+	var ggs request.OnlyGameID
 	err = decoder.Decode(&ggs)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

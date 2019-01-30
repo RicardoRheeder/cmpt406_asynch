@@ -23,6 +23,7 @@ type GameState struct {
 	UsersTurn       string            `json:"usersTurn,omitempty"`
 	Units           map[string][]Unit `json:"units,omitempty" datastore:",omitempty,noindex,flatten"`
 	Cards           map[string]Cards  `json:"cards,omitempty" datastore:",omitempty,noindex,flatten"`
+	Actions         [][]Action        `json:"actions,omitempty" datastore:",omitempty,noindex,flatten"`
 	TurnTime        int               `json:"turnTime,omitempty"`
 	TimeToStateTurn int               `json:"timeToStartTurn,omitempty"`
 	Created         time.Time         `json:"created,omitempty"`
@@ -44,8 +45,26 @@ type Cards struct {
 
 // Action contains the info for a single action in the game
 type Action struct {
-	UnitID string `json:"unitId,omitempt" datastore:",omitempty"`
-} /* TODO: fill this struct out more */
+	Username   string             `json:"username,omitempty" datastore:",omitempty"`
+	ActionType ActionType         `json:"actionType,omitempty" datastore:",omitempty"`
+	Origin     appengine.GeoPoint `json:"origin,omitempty" datastore:",omitempty"`
+	Target     appengine.GeoPoint `json:"target,omitempty" datastore:",omitempty"`
+	CardID     int                `json:"cardId,omitempty" datastore:",omitempty"`
+}
+
+// ActionType Enum for use in the Action struct
+type ActionType int
+
+const (
+	// Move : unit moved from one spot to another
+	Move ActionType = iota
+	// Attack : unit attacked a position
+	Attack
+	// Card : user used a card
+	Card
+	// Forfeit : user has quit the game, counting as a loss
+	Forfeit
+)
 
 // UpdateGameStateFunc is a mutator function that edits the game state in the desired way
 type UpdateGameStateFunc func(context.Context, *GameState) error
