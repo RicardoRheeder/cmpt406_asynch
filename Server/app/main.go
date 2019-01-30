@@ -239,7 +239,7 @@ func handleBackOutGame(w http.ResponseWriter, r *http.Request) {
 func handleForfeitGame(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	_, err := ValidateAuth(ctx, r)
+	username, err := ValidateAuth(ctx, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
