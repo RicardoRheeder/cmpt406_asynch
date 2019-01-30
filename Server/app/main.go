@@ -143,7 +143,7 @@ func handleCreatePrivateGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID)
+	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID, pg.GameName, pg.TurnTime, pg.TimeToStartTurn)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -170,7 +170,7 @@ func handleCreatePublicGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers)
+	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers, pg.GameName, pg.TurnTime, pg.TimeToStartTurn)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

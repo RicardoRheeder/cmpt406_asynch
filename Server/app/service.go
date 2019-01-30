@@ -191,13 +191,18 @@ func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
 /************************************/
 
 // CreatePrivateGame will create a private game with the requested users
-func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int) error {
+func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, timeToStartTurn int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
 	if err != nil {
 		log.Errorf(ctx, "Create Private Game failed: username is required")
 		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameName)
+	if err != nil {
+		log.Errorf(ctx, "Create Private Game failed: gameName is required")
+		return errors.New("gameName is required")
 	}
 	err = common.StringSliceGreaterThanLength(opponentUsernames, 0)
 	if err != nil {
@@ -207,6 +212,14 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 	if boardID <= 0 {
 		log.Errorf(ctx, "Create Private Game failed: invalid boardID number")
 		return errors.New("boardId number required")
+	}
+	if turnTime == 0 || turnTime < -1 {
+		log.Errorf(ctx, "Create Private Game failed: invalid turnTime number")
+		return errors.New("turnTime number invalid")
+	}
+	if timeToStartTurn == 0 || timeToStartTurn < -1 {
+		log.Errorf(ctx, "Create Private Game failed: timeToStartTurn turnTime number")
+		return errors.New("timeToStartTurn number invalid")
 	}
 
 	/* Ensure the requested opponents actually exist */
@@ -220,20 +233,20 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 	}
 
 	/* Update the user, all other invite and create a shell game state*/
-	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID))
+	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID, gameName, turnTime, timeToStartTurn))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func createPrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int) user.UpdateUserFunc {
+func createPrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, timeToStartTurn int) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 		/* Create shell private gamestate */
 		allUsers := append(opponentUsernames, username)
 		gameStateID := common.GetRandomID()
-		err := gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false)
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false, gameName, turnTime, timeToStartTurn)
 		if err != nil {
 			return err
 		}
@@ -252,13 +265,18 @@ func createPrivateGame(ctx context.Context, username string, opponentUsernames [
 }
 
 // CreatePublicGame will create a public game open to all users
-func CreatePublicGame(ctx context.Context, username string, boardID int, maxUsers int) error {
+func CreatePublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, turnTime, timeToStartTurn int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
 	if err != nil {
 		log.Errorf(ctx, "Create Public Game failed: username is required")
 		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameName)
+	if err != nil {
+		log.Errorf(ctx, "Create Private Game failed: gameName is required")
+		return errors.New("gameName is required")
 	}
 	if boardID <= 0 {
 		log.Errorf(ctx, "Create Public Game failed: invalid boardID number")
@@ -268,9 +286,17 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 		log.Errorf(ctx, "Create Public Game failed: invalid max users")
 		return errors.New("Must have more than 1 maxUsers")
 	}
+	if turnTime == 0 || turnTime < -1 {
+		log.Errorf(ctx, "Create Private Game failed: invalid turnTime number")
+		return errors.New("turnTime number invalid")
+	}
+	if timeToStartTurn == 0 || timeToStartTurn < -1 {
+		log.Errorf(ctx, "Create Private Game failed: timeToStartTurn turnTime number")
+		return errors.New("timeToStartTurn number invalid")
+	}
 
 	/* Update the user that created the public game to have a PendingPublicGame */
-	err = user.UpdateUserWithT(ctx, username, createPublicGame(ctx, username, boardID, maxUsers))
+	err = user.UpdateUserWithT(ctx, username, createPublicGame(ctx, username, boardID, maxUsers, gameName, turnTime, timeToStartTurn))
 	if err != nil {
 		return err
 	}
@@ -278,13 +304,13 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 	return nil
 }
 
-func createPublicGame(ctx context.Context, username string, boardID int, maxUsers int) user.UpdateUserFunc {
+func createPublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, turnTime, timeToStartTurn int) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 		/* Create shell public gamestate */
 		gameStateID := common.GetRandomID()
 		usersSoFar := []string{username}
-		err := gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true)
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true, gameName, turnTime, timeToStartTurn)
 		if err != nil {
 			return err
 		}

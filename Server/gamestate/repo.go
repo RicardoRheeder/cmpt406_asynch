@@ -3,13 +3,14 @@ package gamestate
 import (
 	"context"
 	"errors"
+	"time"
 
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 )
 
 // CreateGameState will create a game state in DataStore
-func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool) error {
+func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, turnTime, timeToStartTurn int) error {
 
 	_, err := GetGameState(ctx, ID)
 	if err == nil {
@@ -25,16 +26,21 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 	}
 
 	gameState := &GameState{
-		ID:             ID,
-		BoardID:        boardID,
-		IsPublic:       isPublic,
-		MaxUsers:       maxUsers,
-		SpotsAvailable: spotsAvailable,
-		UsersTurn:      "",
-		Users:          users,
-		AcceptedUsers:  acceptedUsers,
-		ReadyUsers:     []string{},
-		AliveUsers:     users,
+		ID:              ID,
+		GameName:        gameName,
+		CreatedBy:       acceptedUsers[0],
+		BoardID:         boardID,
+		IsPublic:        isPublic,
+		MaxUsers:        maxUsers,
+		SpotsAvailable:  spotsAvailable,
+		UsersTurn:       "",
+		Users:           users,
+		AcceptedUsers:   acceptedUsers,
+		ReadyUsers:      []string{},
+		AliveUsers:      users,
+		TurnTime:        turnTime,
+		TimeToStateTurn: timeToStartTurn,
+		Created:         time.Now().UTC(),
 	}
 
 	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
