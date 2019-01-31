@@ -18,6 +18,7 @@ func main() {
 	http.HandleFunc("/CreatePrivateGame", handleCreatePrivateGame)
 	http.HandleFunc("/CreatePublicGame", handleCreatePublicGame)
 	http.HandleFunc("/AcceptGame", handleAcceptGame)
+	http.HandleFunc("/DeclineGame", handleDeclineGame)
 	http.HandleFunc("/BackOutGame", handleBackOutGame)
 	http.HandleFunc("/ForfeitGame", handleForfeitGame)
 
@@ -200,6 +201,33 @@ func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = AcceptGame(ctx, username, ar.GameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleDeclineGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req request.OnlyGameID
+	err = decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = DeclineGame(ctx, username, req.GameID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -407,6 +407,74 @@ func acceptGame(ctx context.Context, username, gameStateID string) gamestate.Upd
 	}
 }
 
+// DeclineGame will reject a private game invite
+func DeclineGame(ctx context.Context, username string, gameStateID string) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Decline Game failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameStateID)
+	if err != nil {
+		log.Errorf(ctx, "Decline Game failed: gameStateID is required")
+		return errors.New("gameStateID is required")
+	}
+
+	err = gamestate.UpdateGameState(ctx, gameStateID, declineGame(ctx, username, gameStateID))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func declineGame(ctx context.Context, username, gameStateID string) gamestate.UpdateGameStateFunc {
+
+	return func(ctx context.Context, gs *gamestate.GameState) error {
+		if gs.CreatedBy == username {
+			log.Errorf(ctx, "user: %s, tried to Decline a game they created", username)
+			return errors.New("Cannot Decline a game you created")
+		}
+		if gs.IsPublic {
+			log.Errorf(ctx, "user: %s, tried to Decline a public game", username)
+			return errors.New("Cannot BackOut of private game once 'Accepted'")
+		}
+		if !common.Contains(gs.Users, username) {
+			log.Errorf(ctx, "user: %s, tried to Decline a game they weren't invited to", username)
+			return errors.New("Cannot Decline game you were'nt invite to")
+		}
+		if common.Contains(gs.AcceptedUsers, username) {
+			log.Errorf(ctx, "user: %s, tried to Decline a game they already accepted", username)
+			return errors.New("Cannot Decline a game you already accepted. Try BackOut endpoint")
+		}
+		common.Remove(gs.Users, username)
+		common.Remove(gs.AliveUsers, username)
+		gs.MaxUsers = len(gs.Users)
+
+		err := user.UpdateUser(ctx, username, removePendingGame(ctx, gameStateID))
+		if err != nil {
+			log.Errorf(ctx, "We failed to update a user %s to remove pending game", username)
+			return err
+		}
+
+		/* If the game now only has 1 user, remove the game from that last user */
+		if gs.MaxUsers == 1 {
+			err := user.UpdateUser(ctx, gs.Users[0], removePendingGame(ctx, gameStateID))
+			if err != nil {
+				log.Errorf(ctx, "We failed to update a user %s to remove pending game", gs.Users[0])
+				return err
+			}
+			/*
+				TODO: Not sure if we also want to delete the GameState entity
+				Could be used for looking back at a history of sent invites :shrug:
+			*/
+		}
+
+		return nil
+	}
+}
+
 // BackOutGame will back a user out of a game that they accepted but not readied to
 func BackOutGame(ctx context.Context, username string, gameStateID string) error {
 
@@ -450,7 +518,7 @@ func backOutGame(ctx context.Context, username, gameStateID string) gamestate.Up
 
 		err := user.UpdateUser(ctx, username, removePendingGame(ctx, gameStateID))
 		if err != nil {
-			log.Errorf(ctx, "We failed to update a user %s to remove accepted game", username)
+			log.Errorf(ctx, "We failed to update a user %s to remove pending game", username)
 			return err
 		}
 
@@ -502,7 +570,7 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 
 		err := user.UpdateUser(ctx, username, updateActiveGameToComplete(ctx, gameStateID))
 		if err != nil {
-			log.Errorf(ctx, "We failed to update a user %s to remove accepted game", username)
+			log.Errorf(ctx, "We failed to update a user %s to remove active game", username)
 			return err
 		}
 

@@ -59,6 +59,9 @@ Root url: https://async-406.appspot.com
 
 Create User:
 -----------------------
+This endpoint will create a user. A created user is needed to be authed
+for all other endpoints.
+
  - Path: /CreateUser
  - POST
  - Auth: None
@@ -73,6 +76,9 @@ Create User:
 
 Get User:
 -----------------------
+Given a username this endpoint will return all the data for a user. Can 
+also be used to validate an inputed username and password is correct
+
  - Path: /GetUser
  - GET
  - Auth: Basic Auth
@@ -88,6 +94,9 @@ Get User:
 
 Add Friend:
 -----------------------
+This endpoint will add a friend to the friends list of the user. Provided
+freinds name must be an existing user.
+
  - Path: /AddFriend
  - POST
  - Auth: Basic Auth
@@ -100,6 +109,9 @@ Add Friend:
 
 Remove Friend:
 -----------------------
+This endpoint will remove a friend to the friends list of the user. Provided
+freinds must actually be on their freinds list.
+
  - Path: /RemoveFriend
  - POST
  - Auth: Basic Auth
@@ -112,6 +124,9 @@ Remove Friend:
 
 Create Private Game:
 -----------------------
+By creating a Private Game you are inviting x number of users to play against you. 
+Only the provided usernames will be able to join the game 
+
  - Path: /CreatePrivateGame
  - POST
  - Auth: Basic Auth
@@ -126,6 +141,9 @@ Create Private Game:
 
 Create Public Game:
 -----------------------
+By creating a Public Game you are openly inviting any user to play against you.
+Once the total spots fill up and are "Ready", the game begins.
+
  - Path: /CreatePublicGame
  - POST
  - Auth: Basic Auth
@@ -138,9 +156,59 @@ Create Public Game:
  - Return: Http Resonse Code
 
 
-Accept Game: (used for both private and public)
+Accept Game: 
 -----------------------
+This will accept both a Private Game you've been invited to or a Public Game.
+
  - Path: /AcceptGame
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "gameId": "123-456"
+    }
+ - Return: Http Resonse Code
+
+
+Decline Game:
+-----------------------
+Used to decline the invite to a Private Game. If you were not the only person
+invited to this game, the game can continued to be played without you 
+
+ - Path: /DeclineGame
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "gameId": "123-456"
+    }
+ - Return: Http Resonse Code
+
+
+BackOut Game: 
+-----------------------
+For when you've accepted a public game and then changed your mind. Can only be
+done BEFORE you've placed your army.
+
+ - Path: /BackOutGame
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "gameId": "123-456"
+    }
+ - Return: Http Resonse Code
+
+
+Forfeit Game: 
+-----------------------
+For any time after you've placed your army. This will remove you from the game
+as if you've been killed.
+
+ - Path: /ForfeitGame
  - POST
  - Auth: Basic Auth
  - Body: JSON
@@ -153,6 +221,8 @@ Accept Game: (used for both private and public)
 
 Get Game State:
 -----------------------
+Gets all of the data for a provided GameStateID
+
  - Path: /GetGameState
  - POST
  - Auth: Basic Auth
@@ -172,6 +242,8 @@ Get Game State:
 
 Get Game State Multi:
 -----------------------
+Gets all of the data for multiple provided GameStateIDs
+
  - Path: /GetGameStateMulti
  - POST
  - Auth: Basic Auth
@@ -200,6 +272,8 @@ Get Game State Multi:
 
 Get Public Games Summary:
 -----------------------
+Gets a subset of the fields for all Public GameStates that have open spots
+
 - Path: /GetPublicGamesSummary
  - POST
  - Auth: Basic Auth
@@ -228,6 +302,8 @@ Get Public Games Summary:
 
 Update Game State:
 -----------------------
+For when you are placing your army or making a turn in a game.
+
  - Path: /UpdateGameState
  - POST
  - Auth: Basic Auth
