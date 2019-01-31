@@ -133,6 +133,9 @@ Only the provided usernames will be able to join the game
  - Body: JSON
  - Request Body Example:
     {   
+        "gameName": "FightMeYouLilBitch",
+        "turnTime": 3600,
+        "timeToStartTurn": 172800,
         "opponentUsernames": ["username1", "username2"],
         "boardId": 6
     }
@@ -150,6 +153,9 @@ Once the total spots fill up and are "Ready", the game begins.
  - Body: JSON
  - Request Body Example:
     {   
+        "gameName": "WhoWantsToPlay",
+        "turnTime": 3600,
+        "timeToStartTurn": 172800,
         "maxUsers": 3,
         "boardId": 6
     }
