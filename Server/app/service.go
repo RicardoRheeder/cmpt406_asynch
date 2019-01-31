@@ -504,11 +504,14 @@ func backOutGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			log.Errorf(ctx, "user: %s, tried to BackOut of a private game", username)
 			return errors.New("Cannot BackOut of private game once 'Accepted'")
 		}
+		if gs.CreatedBy == username {
+			log.Errorf(ctx, "user: %s, tried to BackOut of game they created", username)
+			return errors.New("Cannot BackOut of game you created")
+		}
 		if common.Contains(gs.ReadyUsers, username) {
 			log.Errorf(ctx, "user: %s, tried to BackOut of game they are readied in", username)
 			return errors.New("Cannot BackOut of game you are 'Ready' in")
 		}
-
 		if !common.Remove(gs.AcceptedUsers, username) {
 			log.Errorf(ctx, "user: %s, tried to BackOut of game they not 'Accepted' in", username)
 			return errors.New("Cannot BackOut of game you are not 'Accepted' in")
