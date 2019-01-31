@@ -517,6 +517,7 @@ func backOutGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			return errors.New("Cannot BackOut of game you are not 'Accepted' in")
 		}
 		common.Remove(gs.AliveUsers, username)
+		common.Remove(gs.Users, username)
 		gs.SpotsAvailable = gs.MaxUsers - len(gs.AcceptedUsers)
 
 		err := user.UpdateUser(ctx, username, removePendingGame(ctx, gameStateID))
