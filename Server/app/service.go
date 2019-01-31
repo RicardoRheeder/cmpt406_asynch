@@ -180,7 +180,7 @@ func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 
-		if !common.Remove(u.Friends, friendName) {
+		if !common.Remove(&u.Friends, friendName) {
 			return errors.New("That name wasn't in your list")
 		}
 		return nil
@@ -448,8 +448,8 @@ func declineGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			log.Errorf(ctx, "user: %s, tried to Decline a game they already accepted", username)
 			return errors.New("Cannot Decline a game you already accepted. Try BackOut endpoint")
 		}
-		common.Remove(gs.Users, username)
-		common.Remove(gs.AliveUsers, username)
+		common.Remove(&gs.Users, username)
+		common.Remove(&gs.AliveUsers, username)
 		gs.MaxUsers = len(gs.Users)
 
 		err := user.UpdateUser(ctx, username, removePendingGame(ctx, gameStateID))
@@ -512,12 +512,12 @@ func backOutGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			log.Errorf(ctx, "user: %s, tried to BackOut of game they are readied in", username)
 			return errors.New("Cannot BackOut of game you are 'Ready' in")
 		}
-		if !common.Remove(gs.AcceptedUsers, username) {
+		if !common.Remove(&gs.AcceptedUsers, username) {
 			log.Errorf(ctx, "user: %s, tried to BackOut of game they not 'Accepted' in", username)
 			return errors.New("Cannot BackOut of game you are not 'Accepted' in")
 		}
-		common.Remove(gs.AliveUsers, username)
-		common.Remove(gs.Users, username)
+		common.Remove(&gs.AliveUsers, username)
+		common.Remove(&gs.Users, username)
 		gs.SpotsAvailable = gs.MaxUsers - len(gs.AcceptedUsers)
 
 		err := user.UpdateUser(ctx, username, removePendingGame(ctx, gameStateID))
@@ -560,7 +560,7 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			return errors.New("Cannot Forfeit a game you are not 'Ready' in")
 		}
 
-		if !common.Remove(gs.AliveUsers, username) {
+		if !common.Remove(&gs.AliveUsers, username) {
 			log.Errorf(ctx, "user: %s, tried to Forfeit a game they are not alive in", username)
 			return errors.New("Cannot Forfeit a game you are not alive in")
 		}
@@ -585,8 +585,8 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 // Helper function to editing the User model
 func removePendingGame(ctx context.Context, gameID string) user.UpdateUserFunc {
 	return func(ctx context.Context, u *user.User) error {
-		if !common.Remove(u.PendingPublicGames, gameID) {
-			if !common.Remove(u.PendingPrivateGames, gameID) {
+		if !common.Remove(&u.PendingPublicGames, gameID) {
+			if !common.Remove(&u.PendingPrivateGames, gameID) {
 				log.Criticalf(ctx, "user: %s, managed to remove themselves as accepted from a gameState without that id on their model", u.Username)
 			}
 		}
@@ -597,7 +597,7 @@ func removePendingGame(ctx context.Context, gameID string) user.UpdateUserFunc {
 // Helper function to editing the User model
 func updateActiveGameToComplete(ctx context.Context, gameID string) user.UpdateUserFunc {
 	return func(ctx context.Context, u *user.User) error {
-		common.Remove(u.ActiveGames, gameID)
+		common.Remove(&u.ActiveGames, gameID)
 		u.CompletedGames = append(u.CompletedGames, gameID)
 		return nil
 	}
@@ -606,7 +606,7 @@ func updateActiveGameToComplete(ctx context.Context, gameID string) user.UpdateU
 // Helper function to editing the User model
 func updatePublicGameToActive(ctx context.Context, gameID string) user.UpdateUserFunc {
 	return func(ctx context.Context, u *user.User) error {
-		_ = common.Remove(u.PendingPublicGames, gameID)
+		_ = common.Remove(&u.PendingPublicGames, gameID)
 		u.ActiveGames = append(u.ActiveGames, gameID)
 		return nil
 	}
@@ -615,7 +615,7 @@ func updatePublicGameToActive(ctx context.Context, gameID string) user.UpdateUse
 // Helper function to editing the User model
 func updatePrivateGameToActive(ctx context.Context, gameID string) user.UpdateUserFunc {
 	return func(ctx context.Context, u *user.User) error {
-		if !common.Remove(u.PendingPrivateGames, gameID) {
+		if !common.Remove(&u.PendingPrivateGames, gameID) {
 			log.Criticalf(ctx, "Somehow user %s accepted private game %s without having it on their model", u.Username, gameID)
 		}
 		u.ActiveGames = append(u.ActiveGames, gameID)

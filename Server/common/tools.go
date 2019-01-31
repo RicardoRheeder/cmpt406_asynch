@@ -39,12 +39,11 @@ func Contains(sa []string, s string) bool {
 
 // Remove will delete the given string from the array
 // returns true if it found it, false otherwise
-func Remove(s []string, r string) bool {
-	for i, v := range s {
+func Remove(s *[]string, r string) bool {
+	slice := *s
+	for i, v := range slice {
 		if v == r {
-			copy(s[i:], s[i+1:]) // Shift a[i+1:] left one index.
-			s[len(s)-1] = ""     // Erase last element (write zero value).
-			s = s[:len(s)-1]     // Truncate slice.
+			*s = append(slice[:i], slice[i+1:]...)
 			return true
 		}
 	}
