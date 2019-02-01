@@ -316,23 +316,23 @@ For when you are placing your army in a public or private game.
  - Body: JSON
  - Request Body Example:
     {   
-        "gameId": "123-456"
+        "gameId": "55410202-af58-470f-a690-d01b41458655",
         "units": {
-            "User3": [
+            "ParkerReese1": [
                 {
                     "unitType": 5,
                     "health": 10,
-                    "coord": {1, 2}
+                    "coord": {"Lat": 1, "Lng": 2}
                 },
                 {
                     "unitType": 2,
                     "health": 5,
-                    "coord": {2, 2} 
+                    "coord": {"Lat": 1, "Lng": 2}
                 }
             ]
         },
         "cards": {
-            "User3": {
+            "ParkerReese1": {
                 "hand": ["cardId1", "cardId2", "cardId1"],
                 "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
                 "discard": []
@@ -353,42 +353,42 @@ server know what you did.
  - Body: JSON
  - Request Body Example:
     {   
-        "gameId": "123-456"
+        "gameId": "55410202-af58-470f-a690-d01b41458655",
         "units": {
-            "User2": [
+            "ParkerReese1": [
                 {
                     "unitType": 5,
                     "health": 10,
-                    "coord": {1, 2}
+                    "coord": {"Lat": 1, "Lng": 2}
                 },
                 {
                     "unitType": 2,
                     "health": 5,
-                    "coord": {2, 2} 
+                    "coord": {"Lat": 1, "Lng": 4}
                 }
             ]
         },
         "cards": {
-            "User2": {
+            "ParkerReese1": {
                 "hand": ["cardId1", "cardId2", "cardId1"],
                 "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
                 "discard": []
             }
         },
-        "killedUsers": ["User3"],
         "actions": [
             {
-                "username":   "User2",            
-	            "actionType": 1,         
-	            "origin":     {1,1},
-	            "target":     {2,2},
+                "username":   "ParkerReese1",            
+                "actionType": 1,         
+                "origin":     {"Lat": 1, "Lng": 2},
+                "target":     {"Lat": 2, "Lng": 2}
             },
             {
-                "username":   "User2",            
-	            "actionType": 2,       
-	            "target":     {1,1},
-                "cardId":     497,
-            },
-        ]
+                "username":   "ParkerReese1",            
+                "actionType": 1,       
+                "origin":     {"Lat": 1, "Lng": 4},
+                "target":     {"Lat": 2, "Lng": 2}
+            }
+        ],
+        "killedUsers": ["ParkerReese3"]
     }
  - Return: Http Resonse Code

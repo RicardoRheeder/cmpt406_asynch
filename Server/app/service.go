@@ -497,7 +497,7 @@ func backOutGame(ctx context.Context, username, gameStateID string) gamestate.Up
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 		if !gs.IsPublic {
 			log.Errorf(ctx, "user: %s, tried to BackOut of a private game", username)
-			return errors.New("Cannot BackOut of private game once 'Accepted'")
+			return errors.New("Cannot BackOut of private game. (did you mean Decline?)")
 		}
 		if gs.CreatedBy == username {
 			log.Errorf(ctx, "user: %s, tried to BackOut of game they created", username)
@@ -664,7 +664,7 @@ func GetGameState(ctx context.Context, gameStateID string, username string) (*ga
 }
 
 // GetGameStateMulti will get all the GameStates for the gameIDs and user
-func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username string) ([]gamestate.GameState, error) {
+func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username string) ([]*gamestate.GameState, error) {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
@@ -682,19 +682,20 @@ func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username stri
 		return nil, err
 	}
 
-	/* This kinda sucks but I'm not sure how to make it better. Could just not check this... */
+	/* This kinda sucks but I'm not sure how to make it better. Could just not check this...
 	for i := 0; i < len(gs); i++ {
 		if !gs[i].IsPublic && !common.Contains(gs[i].Users, username) {
 			log.Errorf(ctx, "Attempted to get game %s that user %s is not a part of", gs[i].ID, username)
 			return nil, errors.New("User is not a part of that game")
 		}
 	}
+	*/
 
 	return gs, nil
 }
 
 // GetPublicGamesSummary will query and return all available public games for the user to join
-func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]gamestate.GameState, error) {
+func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]*gamestate.GameState, error) {
 	err := common.StringNotEmpty(username)
 	if err != nil {
 		log.Errorf(ctx, "Get Public Games failed: username is required")
@@ -757,14 +758,20 @@ func readyUnits(username string, units map[string][]gamestate.Unit, cards map[st
 		}
 		/* make user considered "Ready"*/
 		gs.ReadyUsers = append(gs.ReadyUsers, username)
-
+		/* nil checks */
+		if gs.Units == nil {
+			gs.Units = map[string][]gamestate.Unit{}
+		}
+		if gs.Cards == nil {
+			gs.Cards = map[string]gamestate.Cards{}
+		}
 		/* Add Provided Units */
 		for k, v := range units {
-			gs.Units.(map[string][]gamestate.Unit)[k] = v
+			gs.Units[k] = v
 		}
 		/* Add Provided Cards */
 		for k, v := range cards {
-			gs.Units.(map[string]gamestate.Cards)[k] = v
+			gs.Cards[k] = v
 		}
 
 		/* If it's the last person that needed to ready up */
@@ -833,13 +840,13 @@ func makeMove(username string, units map[string][]gamestate.Unit, cards map[stri
 		if units != nil {
 			/* Overwrite unit keys with new values */
 			for k, v := range units {
-				gs.Units.(map[string][]gamestate.Unit)[k] = v
+				gs.Units[k] = v
 			}
 		}
 		if cards != nil {
 			/* Overwrite card keys with new values */
 			for k, v := range cards {
-				gs.Cards.(map[string]gamestate.Cards)[k] = v
+				gs.Cards[k] = v
 			}
 		}
 

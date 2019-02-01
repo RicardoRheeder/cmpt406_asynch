@@ -9,28 +9,47 @@ import (
 
 // GameState is everything the client needs to know to construct the state of the game
 type GameState struct {
-	ID              string      `json:"id,omitempty"`
-	GameName        string      `json:"gameName,omitempty"`
-	CreatedBy       string      `json:"createdBy,omitempty"`
-	BoardID         int         `json:"boardId,omitempty"`
-	MaxUsers        int         `json:"maxUsers,omitempty"`
-	SpotsAvailable  int         `json:"spotsAvailable,omitempty"`
-	IsPublic        bool        `json:"isPublic"`
-	Users           []string    `json:"users,omitempty"`
-	AcceptedUsers   []string    `json:"acceptedUsers,omitempty"`
-	ReadyUsers      []string    `json:"readyUsers,omitempty"`
-	AliveUsers      []string    `json:"aliveUsers,omitempty"`
-	UsersTurn       string      `json:"usersTurn,omitempty"`
-	Units           interface{} `json:"units,omitempty" datastore:",noindex,flatten"`
-	Cards           interface{} `json:"cards,omitempty" datastore:",noindex,flatten"`
-	Actions         [][]Action  `json:"actions,omitempty" datastore:",noindex,flatten"`
-	TurnTime        int         `json:"turnTime,omitempty"`
-	TimeToStateTurn int         `json:"timeToStartTurn,omitempty"`
-	Created         time.Time   `json:"created,omitempty"`
+	ID              string            `json:"id,omitempty"`
+	GameName        string            `json:"gameName,omitempty"`
+	CreatedBy       string            `json:"createdBy,omitempty"`
+	BoardID         int               `json:"boardId,omitempty"`
+	MaxUsers        int               `json:"maxUsers,omitempty"`
+	SpotsAvailable  int               `json:"spotsAvailable,omitempty"`
+	IsPublic        bool              `json:"isPublic"`
+	Users           []string          `json:"users,omitempty"`
+	AcceptedUsers   []string          `json:"acceptedUsers,omitempty"`
+	ReadyUsers      []string          `json:"readyUsers,omitempty"`
+	AliveUsers      []string          `json:"aliveUsers,omitempty"`
+	UsersTurn       string            `json:"usersTurn,omitempty"`
+	Units           map[string][]Unit `json:"units,omitempty"`
+	Cards           map[string]Cards  `json:"cards,omitempty"`
+	Actions         [][]Action        `json:"actions,omitempty"`
+	TurnTime        int               `json:"turnTime,omitempty"`
+	TimeToStateTurn int               `json:"timeToStartTurn,omitempty"`
+	Created         time.Time         `json:"created,omitempty"`
 }
 
-type units map[string][]Unit
-type cards map[string]Cards
+// trueGameState is whats actually saved in datastore
+type trueGameState struct {
+	ID              string    `json:"id,omitempty"`
+	GameName        string    `json:"gameName,omitempty"`
+	CreatedBy       string    `json:"createdBy,omitempty"`
+	BoardID         int       `json:"boardId,omitempty"`
+	MaxUsers        int       `json:"maxUsers,omitempty"`
+	SpotsAvailable  int       `json:"spotsAvailable,omitempty"`
+	IsPublic        bool      `json:"isPublic"`
+	Users           []string  `json:"users,omitempty"`
+	AcceptedUsers   []string  `json:"acceptedUsers,omitempty"`
+	ReadyUsers      []string  `json:"readyUsers,omitempty"`
+	AliveUsers      []string  `json:"aliveUsers,omitempty"`
+	UsersTurn       string    `json:"usersTurn,omitempty"`
+	Units           []byte    `json:"units,omitempty" datastore:",noindex,flatten"`
+	Cards           []byte    `json:"cards,omitempty" datastore:",noindex,flatten"`
+	Actions         []byte    `json:"actions,omitempty" datastore:",noindex,flatten"`
+	TurnTime        int       `json:"turnTime,omitempty"`
+	TimeToStateTurn int       `json:"timeToStartTurn,omitempty"`
+	Created         time.Time `json:"created,omitempty"`
+}
 
 // Unit is a game piece on the board
 type Unit struct {
