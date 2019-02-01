@@ -2,6 +2,7 @@ package gamestate
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -38,6 +39,9 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		AcceptedUsers:   acceptedUsers,
 		ReadyUsers:      []string{},
 		AliveUsers:      users,
+		Units:           []byte{},
+		Cards:           []byte{},
+		Actions:         [][]Action{},
 		TurnTime:        turnTime,
 		TimeToStateTurn: timeToStartTurn,
 		Created:         time.Now().UTC(),
@@ -69,7 +73,17 @@ func UpdateGameState(ctx context.Context, ID string, updateGameStateFunc UpdateG
 			return err
 		}
 
+		err = convertCardsAndUnitsToMaps(ctx, &gameState)
+		if err != nil {
+			return err
+		}
+
 		err = updateGameStateFunc(ctx, &gameState)
+		if err != nil {
+			return err
+		}
+
+		err = convertCardsAndUnitsToBytes(ctx, &gameState)
 		if err != nil {
 			return err
 		}
@@ -103,6 +117,11 @@ func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 		return nil, err
 	}
 
+	err = convertCardsAndUnitsToMaps(ctx, &gameState)
+	if err != nil {
+		return nil, err
+	}
+
 	return &gameState, nil
 }
 
@@ -123,6 +142,14 @@ func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 		return nil, err
 	}
 
+	/* convert each []btyte to their map version */
+	for _, v := range gameStates {
+		err = convertCardsAndUnitsToMaps(ctx, &v)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return gameStates, nil
 }
 
@@ -134,7 +161,7 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]G
 	q := datastore.NewQuery("GameState").
 		Filter("IsPublic =", true).
 		Filter("SpotsAvailable >", 0).
-		Project("ID", "BoardID", "MaxUsers", "SpotsAvailable").
+		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable").
 		Limit(limit)
 	t := q.Run(ctx)
 	for {
@@ -147,7 +174,44 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]G
 			log.Errorf(ctx, "fetching next Summary: %v", err)
 			break
 		}
+		err = convertCardsAndUnitsToMaps(ctx, &s)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return gameStates, nil
+}
+
+/* helper function to deal with []bytes */
+func convertCardsAndUnitsToMaps(ctx context.Context, gs *GameState) error {
+	var gsUnits = units{}
+	var gsCards = cards{}
+
+	err := json.Unmarshal(gs.Units.([]byte), gsUnits)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(gs.Cards.([]byte), gsCards)
+	if err != nil {
+		return err
+	}
+	gs.Units = gsUnits
+	gs.Cards = gsCards
+
+	return nil
+}
+
+func convertCardsAndUnitsToBytes(ctx context.Context, gs *GameState) error {
+	var err error
+	gs.Units, err = json.Marshal(gs.Units)
+	if err != nil {
+		return err
+	}
+	gs.Cards, err = json.Marshal(gs.Cards)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

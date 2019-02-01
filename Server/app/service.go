@@ -561,8 +561,8 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 		}
 
 		/* remove all cards and units that belonged to that user */
-		delete(gs.Cards, username)
-		delete(gs.Units, username)
+		//delete(gs.Cards, username)
+		//delete(gs.Units, username)
 
 		/* Add the action that says they forfeited */
 		gs.Actions = append(gs.Actions, []gamestate.Action{gamestate.Action{Username: username, ActionType: gamestate.Forfeit}})
@@ -757,13 +757,14 @@ func readyUnits(username string, units map[string][]gamestate.Unit, cards map[st
 		}
 		/* make user considered "Ready"*/
 		gs.ReadyUsers = append(gs.ReadyUsers, username)
+
 		/* Add Provided Units */
 		for k, v := range units {
-			gs.Units[k] = v
+			gs.Units.(map[string][]gamestate.Unit)[k] = v
 		}
 		/* Add Provided Cards */
 		for k, v := range cards {
-			gs.Cards[k] = v
+			gs.Units.(map[string]gamestate.Cards)[k] = v
 		}
 
 		/* If it's the last person that needed to ready up */
@@ -832,15 +833,16 @@ func makeMove(username string, units map[string][]gamestate.Unit, cards map[stri
 		if units != nil {
 			/* Overwrite unit keys with new values */
 			for k, v := range units {
-				gs.Units[k] = v
+				gs.Units.(map[string][]gamestate.Unit)[k] = v
 			}
 		}
 		if cards != nil {
 			/* Overwrite card keys with new values */
 			for k, v := range cards {
-				gs.Cards[k] = v
+				gs.Cards.(map[string]gamestate.Cards)[k] = v
 			}
 		}
+
 		/* add to the thing of actions */
 		if actions != nil {
 			gs.Actions = append(gs.Actions, actions)

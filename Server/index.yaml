@@ -5,6 +5,7 @@ indexes:
   - name: "IsPublic"
   - name: "SpotsAvailable"
   - name: "BoardID"
+  - name: "GameName"
   - name: "ID"
   - name: "MaxUsers"
 
