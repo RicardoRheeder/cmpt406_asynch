@@ -561,8 +561,8 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 		}
 
 		/* remove all cards and units that belonged to that user */
-		//delete(gs.Cards, username)
-		//delete(gs.Units, username)
+		delete(gs.Cards, username)
+		delete(gs.Units, username)
 
 		/* Add the action that says they forfeited */
 		gs.Actions = append(gs.Actions, []gamestate.Action{gamestate.Action{Username: username, ActionType: gamestate.Forfeit}})
@@ -571,6 +571,15 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 		if err != nil {
 			log.Errorf(ctx, "We failed to update a user %s to remove active game", username)
 			return err
+		}
+		/* If there is now only one other person left */
+		if len(gs.AliveUsers) == 1 {
+			/* Update that user to have the game as a completed game */
+			err := user.UpdateUser(ctx, gs.AcceptedUsers[0], updateActiveGameToComplete(ctx, gameStateID))
+			if err != nil {
+				log.Errorf(ctx, "We failed to update a user %s to remove active game", username)
+				return err
+			}
 		}
 
 		return nil
