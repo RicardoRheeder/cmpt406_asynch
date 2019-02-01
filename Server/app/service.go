@@ -580,6 +580,7 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 				log.Errorf(ctx, "We failed to update a user %s to remove active game", username)
 				return err
 			}
+			gs.UsersTurn = ""
 		}
 
 		return nil
