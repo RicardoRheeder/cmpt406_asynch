@@ -83,7 +83,7 @@ public class LevelEditor : EditorWindow {
         int controlId = GUIUtility.GetControlID(FocusType.Passive);
         switch(e.GetTypeForControl(controlId)) {
             case EventType.MouseDown:
-                Debug.Log("mouseclick on scene");
+                // Debug.Log("mouseclick on scene");
                 if(currentAction == LevelEditorAction.Place) {
                     CreateTile();
                 } else if (currentAction == LevelEditorAction.Erase) {
@@ -105,7 +105,9 @@ public class LevelEditor : EditorWindow {
         Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
         Vector3 mousePosition = mouseRay.GetPoint(0f);
         Vector3Int newPosition = tilemap.WorldToCell(mousePosition);
-        tilemap.SetTile(newPosition,customTile);
+        HexTile randTile = customTile as HexTile;
+        randTile.Elevation = Elevation.Low;
+        tilemap.SetTile(newPosition,randTile);
     }
 
     void EraseTile() {

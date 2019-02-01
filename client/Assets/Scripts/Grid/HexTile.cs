@@ -22,7 +22,8 @@ public class HexTile: TileBase {
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
-           go.transform.rotation = Quaternion.Euler(90,0,0); 
+           go.transform.rotation = Quaternion.Euler(90,0,0);
+           go.transform.position = new Vector3(go.transform.position.x,(go.transform.position.y + (10) * (int)elevation),go.transform.position.z);
         }
         return base.StartUp(position,tilemap,go);
     }
