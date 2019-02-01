@@ -306,18 +306,17 @@ Gets a subset of the fields for all Public GameStates that have open spots
     ]
     
 
-Update Game State:
+Ready Units:
 -----------------------
-For when you are placing your army or making a turn in a game.
+For when you are placing your army in a public or private game.
 
- - Path: /UpdateGameState
+ - Path: /ReadyUnits
  - POST
  - Auth: Basic Auth
  - Body: JSON
  - Request Body Example:
     {   
         "gameId": "123-456"
-        "readyUsers": ["User1", "User2", "User3"]
         "units": {
             "User3": [
                 {
@@ -339,5 +338,57 @@ For when you are placing your army or making a turn in a game.
                 "discard": []
             }
         }
+    }
+ - Return: Http Resonse Code
+
+
+Make Move:
+-----------------------
+For when it is your turn in a game and you want to let the
+server know what you did.
+
+ - Path: /MakeMove
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {   
+        "gameId": "123-456"
+        "units": {
+            "User2": [
+                {
+                    "unitType": 5,
+                    "health": 10,
+                    "coord": {1, 2}
+                },
+                {
+                    "unitType": 2,
+                    "health": 5,
+                    "coord": {2, 2} 
+                }
+            ]
+        },
+        "cards": {
+            "User2": {
+                "hand": ["cardId1", "cardId2", "cardId1"],
+                "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                "discard": []
+            }
+        },
+        "killedUsers": ["User3"],
+        "actions": [
+            {
+                "username":   "User2",            
+	            "actionType": 1,         
+	            "origin":     {1,1},
+	            "target":     {2,2},
+            },
+            {
+                "username":   "User2",            
+	            "actionType": 2,       
+	            "target":     {1,1},
+                "cardId":     497,
+            },
+        ]
     }
  - Return: Http Resonse Code

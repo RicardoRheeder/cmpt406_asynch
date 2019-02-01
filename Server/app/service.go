@@ -362,46 +362,19 @@ func acceptGame(ctx context.Context, username, gameStateID string) gamestate.Upd
 			gs.AliveUsers = append(gs.AliveUsers, username)
 			gs.SpotsAvailable = gs.MaxUsers - len(gs.Users)
 
+			/* Accepting of public games need to update user */
+			err := user.UpdateUser(ctx, username, appendToPublicGames(ctx, gameStateID))
+			if err != nil {
+				log.Errorf(ctx, "We failed to update a user %s to have an pending game", username)
+				return err
+			}
+
 		} else if !common.Contains(gs.Users, username) {
 			log.Errorf(ctx, "Attempted to accept private game %s that user %s is not a part of", gameStateID, username)
 			return errors.New("User was not invited to that game")
 		}
 		/* add user to list of accepted users */
 		gs.AcceptedUsers = append(gs.AcceptedUsers, username)
-
-		var err error
-
-		/* Cross group transaction portion where we also need to update all of the usres... */
-		if gs.IsPublic && len(gs.AcceptedUsers) == gs.MaxUsers {
-			/* If the game is public and it's now been filled */
-			for i := 0; i < len(gs.AcceptedUsers); i++ {
-
-				err = user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gameStateID))
-				if err != nil {
-					log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
-					return err
-				}
-			}
-
-		} else if !gs.IsPublic && len(gs.Users) == len(gs.AcceptedUsers) {
-			/* If the game is private and has been accepted by all people invited */
-			for i := 0; i < len(gs.Users); i++ {
-
-				err = user.UpdateUser(ctx, gs.Users[i], updatePrivateGameToActive(ctx, gameStateID))
-				if err != nil {
-					log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
-					return err
-				}
-			}
-		} else if gs.IsPublic {
-			/* Accepting of public games need to update user if the game isn't full yet */
-
-			err = user.UpdateUser(ctx, username, appendToPublicGames(ctx, gameStateID))
-			if err != nil {
-				log.Errorf(ctx, "We failed to update a user %s to have an pending game", username)
-				return err
-			}
-		}
 
 		return nil
 	}
@@ -469,6 +442,28 @@ func declineGame(ctx context.Context, username, gameStateID string) gamestate.Up
 				TODO: Not sure if we also want to delete the GameState entity
 				Could be used for looking back at a history of sent invites :shrug:
 			*/
+		} else if gs.MaxUsers == len(gs.ReadyUsers) {
+			/* oppositely, the user declining could kickoff the game */
+			/* If all the users are now considered ready */
+			gs.UsersTurn = gs.AliveUsers[0]
+
+			if gs.IsPublic {
+				for i := 0; i < len(gs.ReadyUsers); i++ {
+					err := user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gs.ID))
+					if err != nil {
+						log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
+						return err
+					}
+				}
+			} else {
+				for i := 0; i < len(gs.ReadyUsers); i++ {
+					err := user.UpdateUser(ctx, gs.Users[i], updatePrivateGameToActive(ctx, gs.ID))
+					if err != nil {
+						log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
+						return err
+					}
+				}
+			}
 		}
 
 		return nil
@@ -606,7 +601,7 @@ func updateActiveGameToComplete(ctx context.Context, gameID string) user.UpdateU
 // Helper function to editing the User model
 func updatePublicGameToActive(ctx context.Context, gameID string) user.UpdateUserFunc {
 	return func(ctx context.Context, u *user.User) error {
-		_ = common.Remove(&u.PendingPublicGames, gameID)
+		common.Remove(&u.PendingPublicGames, gameID)
 		u.ActiveGames = append(u.ActiveGames, gameID)
 		return nil
 	}
@@ -715,77 +710,149 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]g
 	return gamestate.GetPublicGamesSummary(ctx, username, limit)
 }
 
-// UpdateGameState is used to update the game state because a user acted upon the game
-func UpdateGameState(ctx context.Context, username, gameID string, readyUsers, aliveUsers []string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards) error {
+// ReadyUnits is used to place your units on the field and be provided cards
+func ReadyUnits(ctx context.Context, username, gameID string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards) error {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
-		log.Errorf(ctx, "Update GameState failed: username is required")
+		log.Errorf(ctx, "Ready Units failed: username is required")
 		return errors.New("username is required")
 	}
-	err = common.StringNotEmpty(username)
+	err = common.StringNotEmpty(gameID)
 	if err != nil {
-		log.Errorf(ctx, "Update GameState failed: gameID is required")
+		log.Errorf(ctx, "Ready Units failed: gameID is required")
 		return errors.New("gameID is required")
 	}
+	if len(units) <= 0 {
+		log.Errorf(ctx, "Ready Units failed: units are required")
+		return errors.New("units are required")
+	}
+	if len(cards) <= 0 {
+		log.Errorf(ctx, "Ready Units failed: cards are required")
+		return errors.New("cards are required")
+	}
+	if len(units) > 1 {
+		log.Errorf(ctx, "Ready Units failed: units being placed for more than one user")
+		return errors.New("units should only be for one user")
+	}
+	if len(cards) > 1 {
+		log.Errorf(ctx, "Ready Units failed: cards being given to more than one user")
+		return errors.New("cards should only be for one user")
+	}
 
-	return gamestate.UpdateGameState(ctx, gameID, updateGameState(username, readyUsers, aliveUsers, units, cards))
+	return gamestate.UpdateGameState(ctx, gameID, readyUnits(username, units, cards))
 }
 
-// updateGameState is a helper function to update the GameState
-func updateGameState(username string, readyUsers, aliveUsers []string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards) gamestate.UpdateGameStateFunc {
+// readyUnits is a helper function to assigning a player units and making them considered "Ready"
+func readyUnits(username string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards) gamestate.UpdateGameStateFunc {
+
+	return func(ctx context.Context, gs *gamestate.GameState) error {
+		if !common.Contains(gs.AcceptedUsers, username) {
+			log.Errorf(ctx, "User %s tried to ready up in game %s that they arn't accepted in", username, gs.ID)
+			return errors.New("Cannot ReadyUnits in a game you haven't accepted")
+		}
+		if common.Contains(gs.ReadyUsers, username) {
+			log.Errorf(ctx, "User %s tried to ready up in game %s that they've already readied up in", username, gs.ID)
+			return errors.New("Cannot ReadyUnits more than once")
+		}
+		/* make user considered "Ready"*/
+		gs.ReadyUsers = append(gs.ReadyUsers, username)
+		/* Add Provided Units */
+		for k, v := range units {
+			gs.Units[k] = v
+		}
+		/* Add Provided Cards */
+		for k, v := range cards {
+			gs.Cards[k] = v
+		}
+
+		/* If it's the last person that needed to ready up */
+		if gs.MaxUsers == len(gs.ReadyUsers) {
+			gs.UsersTurn = gs.AliveUsers[0]
+
+			if gs.IsPublic {
+				for i := 0; i < len(gs.ReadyUsers); i++ {
+					err := user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gs.ID))
+					if err != nil {
+						log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
+						return err
+					}
+				}
+			} else {
+				for i := 0; i < len(gs.ReadyUsers); i++ {
+					err := user.UpdateUser(ctx, gs.Users[i], updatePrivateGameToActive(ctx, gs.ID))
+					if err != nil {
+						log.Errorf(ctx, "We failed to update a user %s to have an active game", gs.Users[i])
+						return err
+					}
+				}
+			}
+		}
+
+		return nil
+	}
+}
+
+// MakeMove is used to initiate a turn in the game
+func MakeMove(ctx context.Context, username, gameID string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards, actions []gamestate.Action, killedUsers []string) error {
+
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Make Move failed: username is required")
+		return errors.New("username is required")
+	}
+	err = common.StringNotEmpty(gameID)
+	if err != nil {
+		log.Errorf(ctx, "Make Move failed: gameID is required")
+		return errors.New("gameID is required")
+	}
+	if len(units) > 1 {
+		log.Errorf(ctx, "Make Move failed: units being placed for more than one user")
+		return errors.New("units should only be for one user")
+	}
+	if len(cards) > 1 {
+		log.Errorf(ctx, "Make Move failed: cards being given to more than one user")
+		return errors.New("cards should only be for one user")
+	}
+
+	return gamestate.UpdateGameState(ctx, gameID, makeMove(username, units, cards, actions, killedUsers))
+}
+
+// makeMove is a helper function to update the GameState for doing a turn
+func makeMove(username string, units map[string][]gamestate.Unit, cards map[string]gamestate.Cards, actions []gamestate.Action, killedUsers []string) gamestate.UpdateGameStateFunc {
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 
-		if gs.UsersTurn == "" {
-			if !common.Contains(gs.AcceptedUsers, username) {
-				log.Errorf(ctx, "User tried to ReadyUp when not accepted %s, %s", username, gs.ID)
-				return errors.New("User is not accepted into this game")
-			}
-			/* The game hasn't started yet, people are just readying in their units */
-			if gs.MaxUsers == len(readyUsers) {
-				/* This is the last person readying up right now. Choose a person for their turn */
-				gs.UsersTurn = gs.AliveUsers[0]
-			}
-			if len(gs.ReadyUsers) <= len(readyUsers) {
-				/* readyUsers should have been increased from before...*/
-				log.Errorf(ctx, "Update GameState failed: readied users should have been increased")
-				return errors.New("Readied Users should have been increased")
-			}
-			gs.ReadyUsers = readyUsers
-			if units == nil {
-				log.Errorf(ctx, "Update GameState failed: user %s readied up but didn't pass in units", username)
-				return errors.New("New readied user should be assigned units")
-			}
-			if cards == nil {
-				log.Errorf(ctx, "Update GameState failed: user %s readied up but didn't pass in cards", username)
-				return errors.New("New readied user should be assigned cards")
-			}
-			/* Update the game state, adding in units and cards to current gamestate */
-			/* Union Units */
+		/* This is a person who is making their turn */
+		if gs.UsersTurn != username {
+			log.Errorf(ctx, "Make Move failed: username %s does not match players turn %s", username, gs.UsersTurn)
+			return errors.New("It's not your turn")
+		}
+
+		if units != nil {
+			/* Overwrite unit keys with new values */
 			for k, v := range units {
 				gs.Units[k] = v
 			}
-			/* Union Cards */
+		}
+		if cards != nil {
+			/* Overwrite card keys with new values */
 			for k, v := range cards {
 				gs.Cards[k] = v
 			}
-
-			return nil
 		}
-
-		/* This is a person who is making their turn */
-		if gs.UsersTurn != username {
-			/* Player is trying to cheat? */
-			log.Errorf(ctx, "Update GameState failed: username %s does not match players turn %s", username, gs.UsersTurn)
-			return errors.New("gameID is required")
+		/* add to the thing of actions */
+		if actions != nil {
+			gs.Actions = append(gs.Actions, actions)
 		}
-		/* If there is only one person left alive then the game is over we need to update all users */
-		if aliveUsers != nil {
-			if len(aliveUsers) == 1 {
-				// TODO: update users to have a `Completed Game`. Still need to update the game state tho so users can see that last move?
+		/* remove killed users from list of alive users */
+		if killedUsers != nil {
+			for _, v := range killedUsers {
+				common.Remove(&gs.AliveUsers, v)
 			}
-			gs.AliveUsers = aliveUsers
+		}
+		if len(gs.AliveUsers) == 1 {
+			// TODO: a user has won!
 		}
 
 		/* Choose the next user that should go */
@@ -805,19 +872,6 @@ func updateGameState(username string, readyUsers, aliveUsers []string, units map
 		if !found {
 			/* TODO: I'm not sure if this is possible so I'll fix it later if it is */
 			log.Criticalf(ctx, "The user %s died in his turn and now no next user has been selected", username)
-		}
-
-		if units != nil {
-			/* Overwrite unit keys with new values */
-			for k, v := range units {
-				gs.Units[k] = v
-			}
-		}
-		if cards != nil {
-			/* Overwrite card keys with new values */
-			for k, v := range cards {
-				gs.Cards[k] = v
-			}
 		}
 
 		return nil

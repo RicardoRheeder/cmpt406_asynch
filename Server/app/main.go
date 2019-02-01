@@ -26,7 +26,8 @@ func main() {
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
 	http.HandleFunc("/GetPublicGamesSummary", handleGetPublicGamesSummary)
 
-	http.HandleFunc("/UpdateGameState", handleUpdateGameState)
+	http.HandleFunc("/ReadyUnits", handleReadyUnits)
+	http.HandleFunc("/MakeMove", handleMakeMove)
 
 	appengine.Main()
 }
@@ -378,7 +379,7 @@ func handleGetPublicGamesSummary(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func handleUpdateGameState(w http.ResponseWriter, r *http.Request) {
+func handleReadyUnits(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	username, err := ValidateAuth(ctx, r)
@@ -388,14 +389,41 @@ func handleUpdateGameState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ugs request.UpdateGameState
-	err = decoder.Decode(&ugs)
+	var ru request.ReadyUnits
+	err = decoder.Decode(&ru)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = UpdateGameState(ctx, username, ugs.GameID, ugs.ReadyUsers, ugs.AliveUsers, ugs.Units, ugs.Cards)
+	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.Cards)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleMakeMove(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var mm request.MakeMove
+	err = decoder.Decode(&mm)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Cards, mm.Actions, mm.KilledUsers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

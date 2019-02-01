@@ -46,11 +46,18 @@ type GetPublicGamesSummary struct {
 	Limit int `json:"limit"`
 }
 
-// UpdateGameState holds all the information that can be updated in the GameState
-type UpdateGameState struct {
-	GameID     string                      `json:"gameId"`
-	ReadyUsers []string                    `json:"readyUsers"`
-	AliveUsers []string                    `json:"aliveUsers"`
-	Units      map[string][]gamestate.Unit `json:"units"`
-	Cards      map[string]gamestate.Cards  `json:"cards"`
+// ReadyUnits holds all the information to ready up in a game
+type ReadyUnits struct {
+	GameID string                      `json:"gameId"`
+	Units  map[string][]gamestate.Unit `json:"units"`
+	Cards  map[string]gamestate.Cards  `json:"cards"`
+}
+
+// MakeMove holds all the information for doing a turn
+type MakeMove struct {
+	GameID      string                      `json:"gameId"`
+	KilledUsers []string                    `json:"killedUsers"`
+	Units       map[string][]gamestate.Unit `json:"units"`
+	Cards       map[string]gamestate.Cards  `json:"cards"`
+	Actions     []gamestate.Action          `json:"actions"`
 }
