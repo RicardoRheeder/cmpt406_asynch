@@ -5,12 +5,14 @@ using UnityEngine.Tilemaps;
 using UnityEditor;
 
 // [CustomEditor(typeof(HexBrush))]
-public class HexBrushEditor : GridBrushEditor {
+// public class HexBrushEditor : GridBrushEditor {
+//     private HexBrush hexBrush { get { return target as HexBrush; } }
 
-    private HexBrush lineBrush { get { return target as HexBrush; } }
-        public override void OnPaintSceneGUI(GridLayout grid, GameObject brushTarget, BoundsInt position, GridBrushBase.Tool tool, bool executing){
-            base.OnPaintSceneGUI(grid, brushTarget, position, tool, executing);
-            PaintPreview(grid, brushTarget, position.min);
-        }
+//     protected override void OnEnable() {
+//         base.OnEnable();
+//     }
 
-}
+//     public override void OnPaintInspectorGUI() {
+//         base.OnPaintInspectorGUI();
+//     }
+// }
