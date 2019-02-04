@@ -47,14 +47,9 @@ public class Client : MonoBehaviour {
             //Interface with the mock server instead, should be used for testing only
         }
         else {
-            string json = JsonConversion.ConvertObjectToJson<Credentials>(typeof(Credentials), user);
-            byte[] bytes = Encoding.ASCII.GetBytes(json);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + CREATE_USER);
-            request.ContentType = JSON_TYPE;
-            request.ContentLength = bytes.Length;
-            request.Method = "POST";
-            Stream requestData = request.GetRequestStream();
-            requestData.Write(bytes, 0, bytes.Length);
+            HttpWebRequest request = CreatePostRequest(GET_GAME_STATE_MULTI);
+            string requestJson = JsonConversion.ConvertObjectToJson<Credentials>(typeof(Credentials), user);
+            AddJsonToRequest(requestJson, ref request);
 
             //We might want to do more logic here depending on what the various status codes we have mean
             //This will come in place later once more functionality is in place
@@ -134,17 +129,9 @@ public class Client : MonoBehaviour {
     }
 
     private Tuple<bool, GameStateCollection> GetGameStateCollectionHelper(GameIds ids) {
-        //Setting up the request object
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + GET_GAME_STATE_MULTI);
-        request.Method = "POST";
-        request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(user.username + ":" + user.password));
-        request.ContentType = JSON_TYPE;
-
-        //Setting up the request json into the request object
+        HttpWebRequest request = CreatePostRequest(GET_GAME_STATE_MULTI);
         string requestJson = JsonConversion.ConvertObjectToJson<GameIds>(typeof(GameIds), ids);
-        byte[] bytes = Encoding.ASCII.GetBytes(requestJson);
-        Stream requestData = request.GetRequestStream();
-        requestData.Write(bytes, 0, bytes.Length);
+        AddJsonToRequest(requestJson, ref request);
 
         var response = (HttpWebResponse)request.GetResponse();
         if (response.StatusCode == HttpStatusCode.OK) {
@@ -179,17 +166,9 @@ public class Client : MonoBehaviour {
     }
 
     private bool FriendHelper(string targetUser, string endpoint) {
-        //Setting up the request object
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + endpoint);
-        request.Method = "POST";
-        request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(user.username + ":" + user.password));
-        request.ContentType = JSON_TYPE;
-
-        //Setting up the request json into the request object
+        HttpWebRequest request = CreatePostRequest(endpoint);
         string requestJson = JsonConversion.GetJsonForSingleField("username", targetUser);
-        byte[] bytes = Encoding.ASCII.GetBytes(requestJson);
-        Stream requestData = request.GetRequestStream();
-        requestData.Write(bytes, 0, bytes.Length);
+        AddJsonToRequest(requestJson, ref request);
 
         var response = (HttpWebResponse)request.GetResponse();
         if (response.StatusCode == HttpStatusCode.OK) {
@@ -204,17 +183,9 @@ public class Client : MonoBehaviour {
             //Interface with the mock server instead, should be used only for testing purposes
         }
         else {
-            //Setting up the request object
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + GET_GAME_STATE);
-            request.Method = "POST";
-            request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(user.username + ":" + user.password));
-            request.ContentType = JSON_TYPE;
-
-            //Setting up the request json into the request object
+            HttpWebRequest request = CreatePostRequest(GET_GAME_STATE);
             string requestJson = JsonConversion.GetJsonForSingleField("gameId", id);
-            byte[] bytes = Encoding.ASCII.GetBytes(requestJson);
-            Stream requestData = request.GetRequestStream();
-            requestData.Write(bytes, 0, bytes.Length);
+            AddJsonToRequest(requestJson, ref request);
 
             var response = (HttpWebResponse)request.GetResponse();
             if (response.StatusCode == HttpStatusCode.OK) {
@@ -242,5 +213,19 @@ public class Client : MonoBehaviour {
             request.ContentType = JSON_TYPE;
         }
         return false;
+    }
+
+    private HttpWebRequest CreatePostRequest(string endpoint) {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + endpoint);
+        request.Method = "POST";
+        request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(user.username + ":" + user.password));
+        request.ContentType = JSON_TYPE;
+        return request;
+    }
+
+    private void AddJsonToRequest(string json, ref HttpWebRequest request) {
+        byte[] bytes = Encoding.ASCII.GetBytes(json);
+        Stream requestData = request.GetRequestStream();
+        requestData.Write(bytes, 0, bytes.Length);
     }
 }
