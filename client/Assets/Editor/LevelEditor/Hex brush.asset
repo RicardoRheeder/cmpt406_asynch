@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d31d90b7335f473fafd6595ab17c6c6, type: 3}
   m_Name: Hex brush
   m_EditorClassIdentifier: 
-  currentElevation: 2
+  currentElevation: 0
   model: {fileID: 2711570883986180150, guid: 2ae4c28b26a124291801a22233fbd88d, type: 3}

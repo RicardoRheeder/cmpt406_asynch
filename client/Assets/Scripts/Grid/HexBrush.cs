@@ -2,52 +2,63 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
 
-[CreateAssetMenu(fileName = "Hex brush", menuName = "Brushes/Hex brush")]
-[CustomGridBrush(false, true, false, "Hex Brush")]
-public class HexBrush : GridBrushBase {
+namespace UnityEditor {
+    [CreateAssetMenu(fileName = "Hex brush", menuName = "Brushes/Hex brush")]
+    [CustomGridBrush(false, true, false, "Hex Brush")]
+    public class HexBrush : GridBrush {
 
-    public Elevation currentElevation;
-    public GameObject model;
-    
-    public override void Paint(GridLayout grid, GameObject brushTarget, Vector3Int position) {
-        // Do not allow editing palettes
-        if (brushTarget.layer == 31)
-            return;
+        public Elevation currentElevation;
+        public GameObject model;
+        private GameObject prev_brushTarget;
         
-        Tilemap tilemap = brushTarget.GetComponent<Tilemap>();
-        if(tilemap == null) {
-            return;
-        }
-        
-        Debug.Log("hex paint");
-        HexTile tile = ScriptableObject.CreateInstance<HexTile>();
-        SerializedObject serialTile = new SerializedObject(tile);
-        serialTile.FindProperty("elevation").intValue = (int)Elevation.High;
-        serialTile.FindProperty("tileModel").objectReferenceValue = model;
-        serialTile.ApplyModifiedProperties();
-        tile.Elevation = Elevation.High;
-        tile.tileModel = model;
-        Debug.Log("is tile gameObject null? " + tile.Elevation.ToString());
-        Vector3Int newPos = new Vector3Int(position.x,position.y, (int)tile.Elevation);
-        tilemap.SetTile(newPos,serialTile.targetObject as HexTile);
-
-        if(tile.tileObject != null) {
-            // tile.tileObject.transform.position = new Vector3(tile.tileObject.transform.position.x,tile.tileObject.transform.position.y, (tile.tileObject.transform.position.z - (2.5f) * (int)tile.Elevation));
+        public override void Paint(GridLayout grid, GameObject brushTarget, Vector3Int position) {
+            // Do not allow editing palettes
+            if (brushTarget != null && brushTarget.layer == 31) {
+                return;
+            }
+            
+            Tilemap tilemap = brushTarget.GetComponent<Tilemap>();
+            if(tilemap == null) {
+                return;
+            }
+            
+            HexTile tile = ScriptableObject.CreateInstance<HexTile>();
+            SerializedObject serialTile = new SerializedObject(tile);
+            serialTile.FindProperty("elevation").intValue = (int)currentElevation;
+            serialTile.FindProperty("tileModel").objectReferenceValue = model;
+            serialTile.ApplyModifiedProperties();
+            Vector3Int newPos = new Vector3Int(position.x,position.y, (int)tile.Elevation);
+            tilemap.SetTile(newPos,serialTile.targetObject as HexTile);
         }
 
-        TileBase theTile = tilemap.GetTile(position);
-        Debug.Log("actual tile elevation: " + (theTile != null ? (theTile as HexTile).Elevation.ToString() : null));
+        public override void Erase(GridLayout gridLayout, GameObject brushTarget, Vector3Int position) {
+            base.Erase(gridLayout,brushTarget,position);
+        }
+
+        public override void Rotate(GridBrushBase.RotationDirection direction, GridLayout.CellLayout layout) {
+
+        }
     }
 
-    public override void Erase(GridLayout gridLayout, GameObject brushTarget, Vector3Int position) {
-        base.Erase(gridLayout,brushTarget,position);
-    }
+    [CustomEditor(typeof(HexBrush))]
+    public class HexBrushEditor : GridBrushEditor
+    {
+        private HexBrush hexBrush { get { return target as HexBrush; } }
 
-    public override void Rotate(GridBrushBase.RotationDirection direction, GridLayout.CellLayout layout) {
+        private SerializedObject m_SerializedObject;
 
+        protected override void OnEnable() {
+            base.OnEnable();
+            m_SerializedObject = new SerializedObject(target);
+        }
+
+        public override void OnPaintInspectorGUI() {
+            m_SerializedObject.UpdateIfRequiredOrScript();
+            hexBrush.model = EditorGUILayout.ObjectField(hexBrush.model, typeof(GameObject), true) as GameObject;
+            hexBrush.currentElevation = (Elevation)EditorGUILayout.EnumPopup("Elevation: ", hexBrush.currentElevation);
+            m_SerializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
     }
 }

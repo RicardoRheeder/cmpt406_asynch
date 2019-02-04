@@ -18,10 +18,9 @@ namespace UnityEditor
 
         public override void Paint(GridLayout grid, GameObject brushTarget, Vector3Int position)
         {
-            if (position == prev_position)
-                    {
+            if (position == prev_position){
                         return;
-                    }
+            }
                     prev_position = position;
             if (brushTarget) {
                 prev_brushTarget = brushTarget;
