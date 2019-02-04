@@ -1,27 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[DataContract]
-public class General {
-
-    [DataMember]
-    private GeneralType generalType;
-
-    [DataMember]
-    private int health;
-
-    [DataMember]
-    private Vector2Int geoPoint;
-
-    [DataMember]
-    private Dictionary<string, int> coolDowns;
-
-    public General(int generalType, int health, Vector2Int geoPoint, Dictionary<string, int> coolDowns) {
-        this.generalType = (GeneralType)generalType;
-        this.health = health;
-        this.geoPoint = geoPoint;
-        this.coolDowns = coolDowns;
-    }
+//A general is a special unit with extra abilities
+//I'm not sure how this works with the data contract and data members as of yet
+public class General : Unit {
 
 }

@@ -38,12 +38,18 @@ public class GameState {
     private Dictionary<string, List<Unit>> units;
 
     [DataMember] //These should be required in the future
-    private Dictionary<string, Cards> cards;
+    public Dictionary<string, Card[]> hand;
+
+    [DataMember] //These should be required in the future
+    public Dictionary<string, Card[]> drawPile;
+
+    [DataMember] //These should be required in the future
+    public Dictionary<string, Card[]> discardPile;
 
     [DataMember] //These should be required in the future
     private Dictionary<string, General> generals;
 
-    public GameState (string id, int type, int maxUsers, bool isPublic, List<string> users, List<string> acceptedUsers, List<string> readyUsers, List<string> aliveUsers, string usersTurn, Dictionary<string, List<Unit>> units, Dictionary<string, Cards> cards, Dictionary<string, General> generals) {
+    public GameState (string id, int type, int maxUsers, bool isPublic, List<string> users, List<string> acceptedUsers, List<string> readyUsers, List<string> aliveUsers, string usersTurn, Dictionary<string, List<Unit>> units, Dictionary<string, Card[]> hand, Dictionary<string, Card[]> drawPile, Dictionary<string, Card[]> discardPile, Dictionary<string, General> generals) {
         this.id = id;
         this.boardId = (BoardType)type;
         this.maxUsers = maxUsers;
@@ -54,7 +60,9 @@ public class GameState {
         this.aliveUsers = aliveUsers;
         this.usersTurn = usersTurn;
         this.units = units;
-        this.cards = cards;
+        this.hand = hand;
+        this.drawPile = drawPile;
+        this.discardPile = discardPile;
         this.generals = generals;
     }
 }

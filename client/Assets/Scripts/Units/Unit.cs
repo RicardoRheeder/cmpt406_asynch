@@ -1,21 +1,52 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 [DataContract]
-public class Unit {
+public abstract class Unit {
+
+    int maxHealth;
 
     [DataMember]
-    private UnitType unitType;
+    int currentHealth;
+
+    int armourValue;
+    int armourPenetration;
+    int damageValue;
+    int attackRange;
+    int attackAoe;
+    int movementSpeed;
 
     [DataMember]
-    private int health;
+    int xPos;
 
     [DataMember]
-    private Vector2Int geoPoint;
+    int yPos;
 
-    public Unit(int unitType, int health, Vector2Int geoPoint) {
-        this.unitType = (UnitType)unitType;
-        this.health = health;
-        this.geoPoint = geoPoint;
+    Vector2Int position;
+
+    [OnDeserializing()]
+    internal void OnDeserializingMethod(StreamingContext context) {
+        xPos = position.x;
+        yPos = position.y;
     }
+
+    [OnSerializing()]
+    internal void OnSerializingMethod(StreamingContext context) {
+        position = new Vector2Int(xPos, yPos);
+    }
+
+    public bool TakeDamage(int damage) {
+        return false;
+    }
+
+    public void Attack(Vector2Int target) {
+
+    }
+
+    public void Move(Vector2Int target) {
+
+    }
+
 }

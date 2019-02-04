@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameBuilder : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+public class GameBuilder {
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public GameBuilder() {}
+
+
+    //Method that takes in a game state, loads the appropriate scene and instantiates all of the objects
+    public void Build(GameState state) {
+
     }
 }
