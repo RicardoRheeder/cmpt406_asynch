@@ -13,7 +13,7 @@ public class HexTile: TileBase {
     public Sprite spritePreview;
 
     [SerializeField]
-    Elevation elevation;
+    public Elevation elevation;
     [SerializeField]
     List<TileAttribute> attribute = new List<TileAttribute>();
 
@@ -28,9 +28,19 @@ public class HexTile: TileBase {
             Debug.Log("StartUp elevation:" + elevation);
             go.transform.rotation = Quaternion.Euler(90,0,0);
             go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y, (go.transform.position.z - (2.5f) * (int)elevation));
+            // go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, position.z * -2);
             tileObject = go;
         }
-        return base.StartUp(position,tilemap,go);
+
+        #if UNITY_EDITOR
+        if (go != null){
+            if (go.scene.name == null){
+                DestroyImmediate(go);
+            }
+        }
+        #endif
+        return true;
+        // return base.StartUp(position,tilemap,go);
     }
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
