@@ -34,19 +34,19 @@ public class GameState {
     [DataMember(IsRequired=true)]
     private string usersTurn;
 
-    [DataMember] //These should be required in the future
+    [DataMember]
     private Dictionary<string, List<Unit>> units;
 
-    [DataMember] //These should be required in the future
+    [DataMember]
     public Dictionary<string, Card[]> hand;
 
-    [DataMember] //These should be required in the future
+    [DataMember]
     public Dictionary<string, Card[]> drawPile;
 
-    [DataMember] //These should be required in the future
+    [DataMember]
     public Dictionary<string, Card[]> discardPile;
 
-    [DataMember] //These should be required in the future
+    [DataMember]
     private Dictionary<string, General> generals;
 
     public GameState (string id, int type, int maxUsers, bool isPublic, List<string> users, List<string> acceptedUsers, List<string> readyUsers, List<string> aliveUsers, string usersTurn, Dictionary<string, List<Unit>> units, Dictionary<string, Card[]> hand, Dictionary<string, Card[]> drawPile, Dictionary<string, Card[]> discardPile, Dictionary<string, General> generals) {
@@ -73,4 +73,32 @@ public class GameStateCollection {
 
     [DataMember]
     public List<GameState> states;
+}
+
+//Special object used to create a game
+[DataContract]
+public class CreatePrivateGameState {
+
+    [DataMember]
+    private string gameName;
+
+    [DataMember]
+    private int turnTime;
+
+    [DataMember( Name = "timeToStartTurn")]
+    private int forfeitTime;
+
+    [DataMember]
+    private List<string> opponentUsernames;
+
+    [DataMember]
+    private int boardId;
+
+    public CreatePrivateGameState(string name, int turnTime, int forfeitTime, List<string> opponents, int boardId) {
+        this.gameName = name;
+        this.turnTime = turnTime;
+        this.forfeitTime = forfeitTime;
+        this.opponentUsernames = opponents;
+        this.boardId = boardId;
+    }
 }

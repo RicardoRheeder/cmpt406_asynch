@@ -4,6 +4,7 @@
 //  providing an API that other places within the game can send/receive messages from the server
 //  be able to handle server disconnects/reconnects
 //  Allow to connect to the "mock" of the server
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -228,7 +229,18 @@ public class Client : MonoBehaviour {
         return new Tuple<bool, GameState>(false, null);
     }
 
-    public bool CreateGame(GameState state) {
+    public bool CreatePrivateGame(string name, int turnTime, int forfeitTime, List<string> opponents, int boardId) {
+        CreatePrivateGameState state = new CreatePrivateGameState(name, turnTime, forfeitTime, opponents, boardId);
+        if(debugMode) {
+
+        }
+        else {
+            //Setting up the request object
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + CREATE_PRIVATE_GAME);
+            request.Method = "POST";
+            request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(user.username + ":" + user.password));
+            request.ContentType = JSON_TYPE;
+        }
         return false;
     }
 }
