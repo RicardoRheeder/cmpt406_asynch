@@ -47,13 +47,20 @@ public class Client : MonoBehaviour {
             //Interface with the mock server instead, should be used for testing only
         }
         else {
-            HttpWebRequest request = CreatePostRequest(GET_GAME_STATE_MULTI);
+            HttpWebRequest request = CreatePostRequestWithoutAuth(CREATE_USER);
             string requestJson = JsonConversion.ConvertObjectToJson<Credentials>(typeof(Credentials), user);
             AddJsonToRequest(requestJson, ref request);
 
             //We might want to do more logic here depending on what the various status codes we have mean
             //This will come in place later once more functionality is in place
-            return ((HttpWebResponse)request.GetResponse()).StatusCode == HttpStatusCode.OK;
+            try {
+                request.GetResponse();
+            }
+            catch (WebException e) {
+                Debug.Log("Create user failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+                return false;
+            }
+            return true;
         }
         return false;
     }
@@ -71,8 +78,8 @@ public class Client : MonoBehaviour {
 
             //We might want to do more logic here depending on what the various status codes we have mean
             //This will come in place later once more functionality is in place
-            var response = (HttpWebResponse)request.GetResponse();
-            if (response.StatusCode == HttpStatusCode.OK) {
+            try {
+                var response = (HttpWebResponse)request.GetResponse();
                 string responseJson;
                 using (var reader = new StreamReader(response.GetResponseStream())) {
                     responseJson = reader.ReadToEnd();
@@ -80,6 +87,10 @@ public class Client : MonoBehaviour {
                 userInformation = JsonConversion.CreateFromJson<PlayerMetadata>(responseJson, typeof(PlayerMetadata));
                 user = new Credentials(username, password);
                 return true;
+            }
+            catch (WebException e) {
+                Debug.Log("Login user failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+                return false;
             }
         }
         return false;
@@ -133,8 +144,8 @@ public class Client : MonoBehaviour {
         string requestJson = JsonConversion.ConvertObjectToJson<GameIds>(typeof(GameIds), ids);
         AddJsonToRequest(requestJson, ref request);
 
-        var response = (HttpWebResponse)request.GetResponse();
-        if (response.StatusCode == HttpStatusCode.OK) {
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
             string responseJson;
             using (var reader = new StreamReader(response.GetResponseStream())) {
                 responseJson = reader.ReadToEnd();
@@ -142,7 +153,10 @@ public class Client : MonoBehaviour {
             GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
             return new Tuple<bool, GameStateCollection>(true, states);
         }
-        return new Tuple<bool, GameStateCollection>(false, null);
+        catch (WebException e) {
+            Debug.Log("Get Game State failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+            return new Tuple<bool, GameStateCollection>(false, null);
+        }
     }
 
     public bool AddFriend(string userToAdd) {
@@ -170,12 +184,15 @@ public class Client : MonoBehaviour {
         string requestJson = JsonConversion.GetJsonForSingleField("username", targetUser);
         AddJsonToRequest(requestJson, ref request);
 
-        var response = (HttpWebResponse)request.GetResponse();
-        if (response.StatusCode == HttpStatusCode.OK) {
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
             Debug.Log("friend request sent!");
             return true;
         }
-        return false;
+        catch (WebException e) {
+            Debug.Log("Friend request failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+            return false;
+        }
     }
 
     public Tuple<bool, GameState> GetGamestate(string id) {
@@ -187,14 +204,18 @@ public class Client : MonoBehaviour {
             string requestJson = JsonConversion.GetJsonForSingleField("gameId", id);
             AddJsonToRequest(requestJson, ref request);
 
-            var response = (HttpWebResponse)request.GetResponse();
-            if (response.StatusCode == HttpStatusCode.OK) {
+            try {
+                var response = (HttpWebResponse)request.GetResponse();
                 string responseJson;
                 using (var reader = new StreamReader(response.GetResponseStream())) {
                     responseJson = reader.ReadToEnd();
                 }
                 GameState state = JsonConversion.CreateFromJson<GameState>(responseJson, typeof(GameState));
                 return new Tuple<bool, GameState>(true, state);
+            }
+            catch (WebException e) {
+                Debug.Log("Get Game State failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+                return new Tuple<bool, GameState>(false, null);
             }
         }
         return new Tuple<bool, GameState>(false, null);
@@ -207,10 +228,18 @@ public class Client : MonoBehaviour {
         }
         else {
             //Setting up the request object
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + CREATE_PRIVATE_GAME);
-            request.Method = "POST";
-            request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(user.username + ":" + user.password));
-            request.ContentType = JSON_TYPE;
+            HttpWebRequest request = CreatePostRequest(CREATE_PRIVATE_GAME);
+            string requestJson = JsonConversion.ConvertObjectToJson<CreatePrivateGameState>(typeof(CreatePrivateGameState), state);
+            AddJsonToRequest(requestJson, ref request);
+
+            try {
+                var response = (HttpWebResponse)request.GetResponse();
+                return true;
+            }
+            catch (WebException e) {
+                Debug.Log("Create Private game failed with response code: " + ((HttpWebResponse)e.Response).StatusCode);
+                return false;
+            }
         }
         return false;
     }
@@ -219,6 +248,13 @@ public class Client : MonoBehaviour {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + endpoint);
         request.Method = "POST";
         request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes(user.username + ":" + user.password));
+        request.ContentType = JSON_TYPE;
+        return request;
+    }
+
+    private HttpWebRequest CreatePostRequestWithoutAuth(string endpoint) {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + endpoint);
+        request.Method = "POST";
         request.ContentType = JSON_TYPE;
         return request;
     }

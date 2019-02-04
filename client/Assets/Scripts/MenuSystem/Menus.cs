@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,11 +7,6 @@ public class Menus : MonoBehaviour {
 
     //Storage of the network api persistant object
     private Client networkApi;
-
-    //Variables used 
-    private readonly string validationPattern = "^[a-zA-Z0-9_-]*$";
-    private readonly int validationLowerLimit = 4;
-    private readonly int validationUpperLimit = 20;
 
     public void Start() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
@@ -27,7 +21,7 @@ public class Menus : MonoBehaviour {
         string password = GameObject.Find("PasswordField").GetComponent<TMP_InputField>().text;
 
         //The user entered a username or password that is invalid
-        if (!ValidateUsernamePassword(username, password)) {
+        if (!StringValidation.ValidateUsernamePassword(username, password)) {
             //prompt this on the ui, and do nothing
             Debug.Log("username or password is invalid");
             return;
@@ -46,7 +40,7 @@ public class Menus : MonoBehaviour {
         string password = GameObject.Find("PasswordField").GetComponent<TMP_InputField>().text;
         
         //The user entered a username or password that is invalid
-        if(!ValidateUsernamePassword(username, password)) {
+        if(!StringValidation.ValidateUsernamePassword(username, password)) {
             //prompt this on the ui, and do nothing
             Debug.Log("username or password is invalid");
             return;
@@ -59,18 +53,6 @@ public class Menus : MonoBehaviour {
             return;
         }
         SceneManager.LoadScene("MainMenu");
-    }
-
-    //Make sure the username/password are only strings we consider valid
-    private bool ValidateUsernamePassword(string username, string password) {
-        return ValidateString(username) && ValidateString(password);
-    }
-
-    private bool ValidateString(string s) {
-        if( s.Length > validationLowerLimit && s.Length <= validationUpperLimit) {
-            return Regex.Match(s, validationPattern).Success;
-        }
-        return false;
     }
 
     public void LoginScreenQuitButton() {
@@ -88,10 +70,10 @@ public class Menus : MonoBehaviour {
     //should only be called the first time a main menu button is pressed
     private void CacheMenuItems() {
         menuItemsCached = true;
-        pendingGamesPanel = GameObject.Find("pendingGamesPanel");
-        activeGamesPanel = GameObject.Find("activeGamesPanel");
-        createGamePanel = GameObject.Find("createGamePanel");
-        joinGamePanel = GameObject.Find("joinGamePanel");
+        pendingGamesPanel = GameObject.Find("PendingGamesPanel");
+        activeGamesPanel = GameObject.Find("ActiveGamesPanel");
+        createGamePanel = GameObject.Find("CreateGamePanel");
+        joinGamePanel = GameObject.Find("JoinGamePanel");
     }
 
     //Helper function to enable/disable menus with boolean flags
