@@ -9,6 +9,7 @@ using UnityEditor;
 [System.Serializable]
 public class HexTile: TileBase {
 
+    [HideInInspector]
     public GameObject tileModel;
     public Sprite spritePreview;
 
@@ -23,14 +24,10 @@ public class HexTile: TileBase {
 
     public TileAttribute Attribute { get; set; }
 
-    public GameObject tileObject;
-
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
             go.transform.rotation = Quaternion.Euler(90,0,0);
             go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y, (go.transform.position.z - (2.5f) * (int)elevation));
-            // go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, position.z * -2);
-            tileObject = go;
         }
 
         #if UNITY_EDITOR
@@ -43,7 +40,6 @@ public class HexTile: TileBase {
         #endif
 
         return true;
-        // return base.StartUp(position,tilemap,go);
     }
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {

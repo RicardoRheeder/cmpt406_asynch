@@ -5,40 +5,39 @@ using UnityEngine.Tilemaps;
 using UnityEditor;
 
 namespace UnityEditor {
-    [CreateAssetMenu(fileName = "Hex brush", menuName = "Brushes/Hex brush")]
-    [CustomGridBrush(false, true, false, "Hex Brush")]
+    [CustomGridBrush(false, false, false, "Hex Brush")]
     public class HexBrush : GridBrush {
 
-        public Elevation currentElevation;
-        public GameObject model;
-        private GameObject prev_brushTarget;
+        public Elevation currentElevation; // the elevation to place a tile at
+        public GameObject model; // the tile prefab to place
         
         public override void Paint(GridLayout grid, GameObject brushTarget, Vector3Int position) {
-            // Do not allow editing palettes
-            if (brushTarget != null && brushTarget.layer == 31) {
-                return;
-            }
-            
             Tilemap tilemap = brushTarget.GetComponent<Tilemap>();
-            if(tilemap == null) {
+            // Do not allow editing palettes, or if no tilemap exists
+            if(tilemap == null || brushTarget.layer == 31) {
                 return;
             }
             
+            //create a new instance of a HexTile
             HexTile tile = ScriptableObject.CreateInstance<HexTile>();
+            //create a new serialized object from new tile instance
             SerializedObject serialTile = new SerializedObject(tile);
+            //set values for the serialized object
             serialTile.FindProperty("elevation").intValue = (int)currentElevation;
             serialTile.FindProperty("tileModel").objectReferenceValue = model;
+            //apply the modified properties so that unity saves the instance
             serialTile.ApplyModifiedProperties();
-            Vector3Int newPos = new Vector3Int(position.x,position.y, (int)tile.Elevation);
-            tilemap.SetTile(newPos,serialTile.targetObject as HexTile);
+            //add the tile at current paint position
+            tilemap.SetTile(position,serialTile.targetObject as HexTile);
         }
 
         public override void Erase(GridLayout gridLayout, GameObject brushTarget, Vector3Int position) {
+            // TODO erase stacked tiles
             base.Erase(gridLayout,brushTarget,position);
         }
 
         public override void Rotate(GridBrushBase.RotationDirection direction, GridLayout.CellLayout layout) {
-
+            // TODO allow rotation
         }
     }
 
@@ -47,18 +46,20 @@ namespace UnityEditor {
     {
         private HexBrush hexBrush { get { return target as HexBrush; } }
 
-        private SerializedObject m_SerializedObject;
+        private SerializedObject serializedBrush;
 
         protected override void OnEnable() {
             base.OnEnable();
-            m_SerializedObject = new SerializedObject(target);
+            serializedBrush = new SerializedObject(target);
         }
 
         public override void OnPaintInspectorGUI() {
-            m_SerializedObject.UpdateIfRequiredOrScript();
+            // get the latest representation of the brush
+            serializedBrush.UpdateIfRequiredOrScript();
             hexBrush.model = EditorGUILayout.ObjectField(hexBrush.model, typeof(GameObject), true) as GameObject;
             hexBrush.currentElevation = (Elevation)EditorGUILayout.EnumPopup("Elevation: ", hexBrush.currentElevation);
-            m_SerializedObject.ApplyModifiedPropertiesWithoutUndo();
+            //save any changes to the brush
+            serializedBrush.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }
