@@ -18,16 +18,14 @@ public class HexTile: TileBase {
     public Elevation elevation;
     [SerializeField]
     [HideInInspector]
-    List<TileAttribute> attribute = new List<TileAttribute>();
+    public List<TileAttribute> attributes = new List<TileAttribute>();
 
-    public Elevation Elevation { get; set; }
-
-    public TileAttribute Attribute { get; set; }
+    const float ELEVATION_MULTIPLIER = 2.5f;
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
             go.transform.rotation = Quaternion.Euler(90,0,0);
-            go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y, (go.transform.position.z - (2.5f) * (int)elevation));
+            go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y, (go.transform.position.z - (ELEVATION_MULTIPLIER) * (int)elevation));
         }
 
         #if UNITY_EDITOR

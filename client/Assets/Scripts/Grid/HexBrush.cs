@@ -10,6 +10,7 @@ namespace UnityEditor {
 
         public Elevation currentElevation; // the elevation to place a tile at
         public GameObject model; // the tile prefab to place
+        public List<TileAttribute> attributes = new List<TileAttribute>();
         
         public override void Paint(GridLayout grid, GameObject brushTarget, Vector3Int position) {
             Tilemap tilemap = brushTarget.GetComponent<Tilemap>();
@@ -21,14 +22,27 @@ namespace UnityEditor {
             //create a new instance of a HexTile
             HexTile tile = ScriptableObject.CreateInstance<HexTile>();
             //create a new serialized object from new tile instance
-            SerializedObject serialTile = new SerializedObject(tile);
+            SerializedObject serializedTile = new SerializedObject(tile);
             //set values for the serialized object
-            serialTile.FindProperty("elevation").intValue = (int)currentElevation;
-            serialTile.FindProperty("tileModel").objectReferenceValue = model;
+            serializedTile.FindProperty("elevation").intValue = (int)currentElevation;
+            serializedTile.FindProperty("tileModel").objectReferenceValue = model;
+            SerializeAttributes(serializedTile.FindProperty("attributes"));
             //apply the modified properties so that unity saves the instance
-            serialTile.ApplyModifiedProperties();
+            serializedTile.ApplyModifiedProperties();
             //add the tile at current paint position
-            tilemap.SetTile(position,serialTile.targetObject as HexTile);
+            tilemap.SetTile(position,serializedTile.targetObject as HexTile);
+        }
+
+        private void SerializeAttributes(SerializedProperty arr) {
+            if(arr == null || !arr.isArray) {
+                return;
+            }
+
+            arr.ClearArray();
+            for(int i = 0; i < attributes.Count; i++) {
+                arr.InsertArrayElementAtIndex(i);
+                arr.GetArrayElementAtIndex(i).intValue = (int)attributes[i];
+            }
         }
 
         public override void Erase(GridLayout gridLayout, GameObject brushTarget, Vector3Int position) {
@@ -47,6 +61,7 @@ namespace UnityEditor {
         private HexBrush hexBrush { get { return target as HexBrush; } }
 
         private SerializedObject serializedBrush;
+        private SerializedObject serializedAttributeList;
 
         protected override void OnEnable() {
             base.OnEnable();
@@ -58,6 +73,18 @@ namespace UnityEditor {
             serializedBrush.UpdateIfRequiredOrScript();
             hexBrush.model = EditorGUILayout.ObjectField(hexBrush.model, typeof(GameObject), true) as GameObject;
             hexBrush.currentElevation = (Elevation)EditorGUILayout.EnumPopup("Elevation: ", hexBrush.currentElevation);
+            for(int i = 0; i < hexBrush.attributes.Count; i++) {
+                hexBrush.attributes[i] = (TileAttribute)EditorGUILayout.EnumPopup("Attribute " + i + ": ", hexBrush.attributes[i]);
+            }
+            GUILayout.BeginHorizontal();
+            if(GUILayout.Button("+ attribute")) {
+                hexBrush.attributes.Add(TileAttribute.Normal);
+            }
+            if(GUILayout.Button("- attribute") && hexBrush.attributes.Count > 0) {
+                hexBrush.attributes.RemoveAt(hexBrush.attributes.Count - 1);
+            }
+            GUILayout.EndHorizontal();
+            
             //save any changes to the brush
             serializedBrush.ApplyModifiedPropertiesWithoutUndo();
         }

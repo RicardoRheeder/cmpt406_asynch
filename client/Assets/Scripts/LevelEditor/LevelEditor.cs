@@ -106,7 +106,7 @@ public class LevelEditor : EditorWindow {
         Vector3 mousePosition = mouseRay.GetPoint(0f);
         Vector3Int newPosition = tilemap.WorldToCell(mousePosition);
         HexTile randTile = ScriptableObject.CreateInstance<HexTile>();
-        randTile.Elevation = Elevation.High;
+        randTile.elevation = Elevation.High;
         tilemap.SetTile(newPosition,randTile);
     }
 
