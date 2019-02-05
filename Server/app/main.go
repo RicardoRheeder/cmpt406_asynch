@@ -18,12 +18,16 @@ func main() {
 	http.HandleFunc("/CreatePrivateGame", handleCreatePrivateGame)
 	http.HandleFunc("/CreatePublicGame", handleCreatePublicGame)
 	http.HandleFunc("/AcceptGame", handleAcceptGame)
+	http.HandleFunc("/DeclineGame", handleDeclineGame)
+	http.HandleFunc("/BackOutGame", handleBackOutGame)
+	http.HandleFunc("/ForfeitGame", handleForfeitGame)
 
 	http.HandleFunc("/GetGameState", handleGetGameState)
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
 	http.HandleFunc("/GetPublicGamesSummary", handleGetPublicGamesSummary)
 
-	http.HandleFunc("/UpdateGameState", handleUpdateGameState)
+	http.HandleFunc("/ReadyUnits", handleReadyUnits)
+	http.HandleFunc("/MakeMove", handleMakeMove)
 
 	appengine.Main()
 }
@@ -143,7 +147,7 @@ func handleCreatePrivateGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID)
+	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID, pg.GameName, pg.TurnTime, pg.TimeToStartTurn)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -170,7 +174,7 @@ func handleCreatePublicGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers)
+	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers, pg.GameName, pg.TurnTime, pg.TimeToStartTurn)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -190,7 +194,7 @@ func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ar request.AcceptGame
+	var ar request.OnlyGameID
 	err = decoder.Decode(&ar)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -198,6 +202,87 @@ func handleAcceptGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = AcceptGame(ctx, username, ar.GameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleDeclineGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req request.OnlyGameID
+	err = decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = DeclineGame(ctx, username, req.GameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleBackOutGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req request.OnlyGameID
+	err = decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = BackOutGame(ctx, username, req.GameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleForfeitGame(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req request.OnlyGameID
+	err = decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = ForfeitGame(ctx, username, req.GameID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -217,7 +302,7 @@ func handleGetGameState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ggs request.GetGameState
+	var ggs request.OnlyGameID
 	err = decoder.Decode(&ggs)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -294,7 +379,7 @@ func handleGetPublicGamesSummary(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func handleUpdateGameState(w http.ResponseWriter, r *http.Request) {
+func handleReadyUnits(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	username, err := ValidateAuth(ctx, r)
@@ -304,14 +389,41 @@ func handleUpdateGameState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var ugs request.UpdateGameState
-	err = decoder.Decode(&ugs)
+	var ru request.ReadyUnits
+	err = decoder.Decode(&ru)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = UpdateGameState(ctx, username, ugs.GameID, ugs.ReadyUsers, ugs.AliveUsers, ugs.Units, ugs.Cards)
+	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.Cards)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleMakeMove(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var mm request.MakeMove
+	err = decoder.Decode(&mm)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Cards, mm.Actions, mm.KilledUsers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
