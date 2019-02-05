@@ -20,10 +20,9 @@ public class CreateGame : MonoBehaviour {
     TMP_InputField invitePlayer;
     TMP_Dropdown mapSelection;
 
-    // Start is called before the first frame update
-    void Start() {
+    //We need to find these on awake, since the "Menus.cs" file disables components on start
+    public void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
-        opponents = new List<string>();
 
         turnDuration = GameObject.Find("DurationTimeDisplay").GetComponent<TMP_Text>();
         turnSlider = GameObject.Find("DurationSlider").GetComponent<Slider>();
@@ -31,6 +30,10 @@ public class CreateGame : MonoBehaviour {
         forfeitSlider = GameObject.Find("ForfeitTimeSlider").GetComponent<Slider>();
         invitePlayer = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
         mapSelection = GameObject.Find("MapDropdown").GetComponent<TMP_Dropdown>();
+    }
+
+    void Start() {
+        opponents = new List<string>();
     }
 
     //TODO: input validation both client and backend side
