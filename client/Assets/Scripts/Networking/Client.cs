@@ -57,7 +57,7 @@ public class Client : MonoBehaviour {
                 request.GetResponse();
             }
             catch (WebException e) {
-                Debug.Log("Create user failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+                PrettyPrint(CREATE_USER, (HttpWebResponse)e.Response);
                 return false;
             }
             return true;
@@ -89,7 +89,7 @@ public class Client : MonoBehaviour {
                 return true;
             }
             catch (WebException e) {
-                Debug.Log("Login user failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+                PrettyPrint(GET_USER_INFO, (HttpWebResponse)e.Response);
                 return false;
             }
         }
@@ -154,7 +154,7 @@ public class Client : MonoBehaviour {
             return new Tuple<bool, GameStateCollection>(true, states);
         }
         catch (WebException e) {
-            Debug.Log("Get Game State failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+            PrettyPrint(GET_GAME_STATE_MULTI, (HttpWebResponse)e.Response);
             return new Tuple<bool, GameStateCollection>(false, null);
         }
     }
@@ -190,7 +190,7 @@ public class Client : MonoBehaviour {
             return true;
         }
         catch (WebException e) {
-            Debug.Log("Friend request failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+            PrettyPrint(endpoint, (HttpWebResponse)e.Response);
             return false;
         }
     }
@@ -214,7 +214,7 @@ public class Client : MonoBehaviour {
                 return new Tuple<bool, GameState>(true, state);
             }
             catch (WebException e) {
-                Debug.Log("Get Game State failed with exception: " + ((HttpWebResponse)e.Response).StatusCode);
+                PrettyPrint(GET_GAME_STATE, (HttpWebResponse)e.Response);
                 return new Tuple<bool, GameState>(false, null);
             }
         }
@@ -237,13 +237,14 @@ public class Client : MonoBehaviour {
                 return true;
             }
             catch (WebException e) {
-                Debug.Log("Create Private game failed with response code: " + ((HttpWebResponse)e.Response).StatusCode);
+                PrettyPrint(CREATE_PRIVATE_GAME, (HttpWebResponse)e.Response);
                 return false;
             }
         }
         return false;
     }
 
+    //Helper methods for the API
     private HttpWebRequest CreatePostRequest(string endpoint) {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + endpoint);
         request.Method = "POST";
@@ -263,5 +264,18 @@ public class Client : MonoBehaviour {
         byte[] bytes = Encoding.ASCII.GetBytes(json);
         Stream requestData = request.GetRequestStream();
         requestData.Write(bytes, 0, bytes.Length);
+    }
+
+    private void PrettyPrint(string endpoint, HttpWebResponse response) {
+        string responseJson;
+        using (var reader = new StreamReader(response.GetResponseStream())) {
+            responseJson = reader.ReadToEnd();
+        }
+        Debug.Log(string.Format("Call to endpoint {0} failed: {1} {2}; {3}",
+            endpoint,
+            (int)response.StatusCode,
+            response.StatusCode,
+            responseJson
+        ));
     }
 }
