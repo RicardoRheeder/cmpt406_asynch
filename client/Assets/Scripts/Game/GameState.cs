@@ -35,7 +35,7 @@ public class GameState {
     private string usersTurn;
 
     [DataMember]
-    private Dictionary<string, List<Unit>> units;
+    private Dictionary<string, List<UnitStats>> units;
 
     [DataMember]
     public Dictionary<string, Card[]> hand;
@@ -49,7 +49,7 @@ public class GameState {
     [DataMember]
     private Dictionary<string, General> generals;
 
-    public GameState (string id, int type, int maxUsers, bool isPublic, List<string> users, List<string> acceptedUsers, List<string> readyUsers, List<string> aliveUsers, string usersTurn, Dictionary<string, List<Unit>> units, Dictionary<string, Card[]> hand, Dictionary<string, Card[]> drawPile, Dictionary<string, Card[]> discardPile, Dictionary<string, General> generals) {
+    public GameState (string id, int type, int maxUsers, bool isPublic, List<string> users, List<string> acceptedUsers, List<string> readyUsers, List<string> aliveUsers, string usersTurn, Dictionary<string, List<UnitStats>> units, Dictionary<string, Card[]> hand, Dictionary<string, Card[]> drawPile, Dictionary<string, Card[]> discardPile, Dictionary<string, General> generals) {
         this.id = id;
         this.boardId = (BoardType)type;
         this.maxUsers = maxUsers;
