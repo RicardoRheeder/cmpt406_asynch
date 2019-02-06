@@ -4,7 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
  
  // Code created by Unity Answer's user Bunny83
- // Using this during development to find and delete any hidden objects
+ // Source answer: https://answers.unity.com/questions/1291622/object-in-scene-not-in-hierarchy.html
+ // Source code: https://www.dropbox.com/s/b8s70bf5ighi8p3/HiddenObjectExplorer.cs?dl=0
+ // Using this temporarily during development to find and delete any hidden objects
 public class HiddenObjectExplorer : EditorWindow
 {
     [MenuItem("Tools/HiddenObjectExplorer")]
