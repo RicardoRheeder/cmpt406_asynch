@@ -89,7 +89,7 @@ func UpdateGameState(ctx context.Context, ID string, updateGameStateFunc UpdateG
 		}
 
 		/* Put the changes to gamestate */
-		_, err = datastore.Put(ctx, key, gameState)
+		_, err = datastore.Put(ctx, key, &gameState)
 		if err != nil {
 			log.Errorf(ctx, "Failed to Put (update) gameState: %s", ID)
 			return err
