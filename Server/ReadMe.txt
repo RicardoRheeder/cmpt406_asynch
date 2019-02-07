@@ -404,3 +404,67 @@ server know what you did.
         "killedUsers": ["ParkerReese3"]
     }
  - Return: Http Resonse Code
+
+
+---------------------------------------------------------------------
+Structures
+---------------------------------------------------------------------
+
+// GameState is everything the client needs to know to construct the state of the game
+type GameState struct {
+	ID              string
+	GameName        string
+	CreatedBy       string
+	BoardID         int
+	MaxUsers        int
+	SpotsAvailable  int     
+	IsPublic        bool
+	Users           []string
+	AcceptedUsers   []string
+	ReadyUsers      []string
+	AliveUsers      []string
+	UsersTurn       string
+	Units           []Unit
+	Cards           []Cards
+	Actions         []Action
+	TurnTime        int
+	TimeToStateTurn int
+	Created         time.Time
+}
+
+// Unit is a game piece on the board
+type Unit struct {
+	Owner    string
+	UnitType int
+	Health   float32
+	Coord    appengine.GeoPoint
+}
+
+// Cards contains all the card information on a per user bases
+type Cards struct {
+	ID      string
+	Owner   string
+	Hand    []string
+	Deck    []string
+	Discard []string
+}
+
+// Action contains the info for a single action in the game
+type Action struct {
+	Username   string
+	ActionType ActionType
+	Origin     appengine.GeoPoint
+	Target     appengine.GeoPoint
+	CardID     int
+}
+
+// User is a human player of the game
+type User struct {
+	Username            string
+	Password            string
+	Friends             []string
+	ActiveGames         []string
+	PendingPrivateGames []string
+	PendingPublicGames  []string
+	CompletedGames      []string
+}
