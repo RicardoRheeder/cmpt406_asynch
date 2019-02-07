@@ -22,7 +22,8 @@ type GameState struct {
 	AliveUsers      []string  `json:"aliveUsers,omitempty"`
 	UsersTurn       string    `json:"usersTurn,omitempty"`
 	Units           []Unit    `json:"units,omitempty"`
-	Cards           []Cards   `json:"cards,omitempty"`
+	Cards           []Cards   `json:"cards,omitempty" datastore:"-"`
+	CardIDs         []string  `json:"-"`
 	Actions         []Action  `json:"actions,omitempty"`
 	TurnTime        int       `json:"turnTime,omitempty"`
 	TimeToStateTurn int       `json:"timeToStartTurn,omitempty"`
@@ -39,6 +40,7 @@ type Unit struct {
 
 // Cards contains all the card information on a per user bases
 type Cards struct {
+	ID      string   `json:"id,omitempty" datastore:",omitempty"`
 	Owner   string   `json:"owner,omitempty" datastore:",omitempty"`
 	Hand    []string `json:"hand,omitempty" datastore:",omitempty"`
 	Deck    []string `json:"deck,omitempty" datastore:",omitempty"`

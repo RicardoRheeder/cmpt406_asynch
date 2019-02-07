@@ -753,6 +753,10 @@ func readyUnits(username string, units []gamestate.Unit, cards gamestate.Cards) 
 		gs.ReadyUsers = append(gs.ReadyUsers, username)
 		/* Add Provided Units */
 		gs.Units = append(gs.Units, units...)
+
+		/* Assign the Cards an ID */
+		cards.ID = common.GetRandomID()
+		gs.CardIDs = append(gs.CardIDs, cards.ID)
 		/* Add Provided Cards */
 		gs.Cards = append(gs.Cards, cards)
 

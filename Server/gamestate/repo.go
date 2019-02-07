@@ -39,7 +39,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		ReadyUsers:      []string{},
 		AliveUsers:      users,
 		Units:           []Unit{},
-		Cards:           []Cards{},
+		CardIDs:         []string{},
 		Actions:         []Action{},
 		TurnTime:        turnTime,
 		TimeToStateTurn: timeToStartTurn,
@@ -77,6 +77,18 @@ func UpdateGameState(ctx context.Context, ID string, updateGameStateFunc UpdateG
 			return err
 		}
 
+		/* Put the changes to cards */
+		cardKeys := []*datastore.Key{}
+		for i := 0; i < len(gameState.Cards); i++ {
+			cardKeys = append(cardKeys, datastore.NewKey(ctx, "Cards", gameState.Cards[i].ID, 0, nil))
+		}
+		_, err = datastore.PutMulti(ctx, cardKeys, gameState.Cards)
+		if err != nil {
+			log.Errorf(ctx, "Failed to Put (update) the Cards: %s", ID)
+			return err
+		}
+
+		/* Put the changes to gamestate */
 		_, err = datastore.Put(ctx, key, gameState)
 		if err != nil {
 			log.Errorf(ctx, "Failed to Put (update) gameState: %s", ID)
@@ -105,6 +117,21 @@ func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 		log.Errorf(ctx, "Failed to Get gameState: %s", ID)
 		return nil, err
 	}
+
+	/* Now get the cards for the GameState */
+	cardKeys := []*datastore.Key{}
+
+	for i := 0; i < len(gameState.CardIDs); i++ {
+		cardKeys = append(cardKeys, datastore.NewKey(ctx, "Cards", gameState.CardIDs[i], 0, nil))
+	}
+
+	cards := make([]Cards, len(gameState.CardIDs))
+	err = datastore.GetMulti(ctx, cardKeys, cards)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get GameState Cards: %s", err.Error())
+		return nil, err
+	}
+	gameState.Cards = cards
 
 	return &gameState, nil
 }
