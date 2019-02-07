@@ -48,16 +48,16 @@ type GetPublicGamesSummary struct {
 
 // ReadyUnits holds all the information to ready up in a game
 type ReadyUnits struct {
-	GameID string                      `json:"gameId"`
-	Units  map[string][]gamestate.Unit `json:"units"`
-	Cards  map[string]gamestate.Cards  `json:"cards"`
+	GameID string           `json:"gameId"`
+	Units  []gamestate.Unit `json:"units"`
+	Cards  gamestate.Cards  `json:"cards"`
 }
 
 // MakeMove holds all the information for doing a turn
 type MakeMove struct {
-	GameID      string                      `json:"gameId"`
-	KilledUsers []string                    `json:"killedUsers"`
-	Units       map[string][]gamestate.Unit `json:"units"`
-	Cards       map[string]gamestate.Cards  `json:"cards"`
-	Actions     []gamestate.Action          `json:"actions"`
+	GameID      string             `json:"gameId"`
+	KilledUsers []string           `json:"killedUsers"`
+	Units       []gamestate.Unit   `json:"units"`
+	Cards       []gamestate.Cards  `json:"cards"`
+	Actions     []gamestate.Action `json:"actions"`
 }

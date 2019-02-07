@@ -1,6 +1,7 @@
 package common
 
 import (
+	"Projects/cmpt406_asynch/Server/gamestate"
 	"errors"
 
 	"github.com/google/uuid"
@@ -48,4 +49,48 @@ func Remove(s *[]string, r string) bool {
 		}
 	}
 	return false
+}
+
+// RemoveCards will remove the cards of provided owner
+func RemoveCards(s *[]gamestate.Cards, o string) bool {
+	slice := *s
+	for i, v := range slice {
+		if v.Owner == o {
+			*s = append(slice[:i], slice[i+1:]...)
+			return true
+		}
+	}
+	return false
+}
+
+// RemoveAll will delete all instances of string from the array
+func RemoveAll(s *[]string, r string) {
+	slice := *s
+
+	length := len(slice)
+	for i := 0; i < length; i++ {
+		v := slice[i]
+		if v == r {
+			slice = append(slice[:i], slice[i+1:]...)
+			length = len(slice)
+			i--
+		}
+	}
+	*s = slice
+}
+
+// RemoveAllUnits will delete all units of a given owner
+func RemoveAllUnits(s *[]gamestate.Unit, o string) {
+	slice := *s
+
+	length := len(slice)
+	for i := 0; i < length; i++ {
+		v := slice[i]
+		if v.Owner == o {
+			slice = append(slice[:i], slice[i+1:]...)
+			length = len(slice)
+			i--
+		}
+	}
+	*s = slice
 }

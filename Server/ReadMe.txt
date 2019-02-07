@@ -317,27 +317,28 @@ For when you are placing your army in a public or private game.
  - Request Body Example:
     {   
         "gameId": "55410202-af58-470f-a690-d01b41458655",
-        "units": {
-            "ParkerReese1": [
+        "units":        // Note: Should just be the units that the user has placed. (No one elses).  
+            [
                 {
+                    "owner": "ParkerReese1",
                     "unitType": 5,
                     "health": 10,
                     "coord": {"Lat": 1, "Lng": 2}
                 },
                 {
+                    "owner": "ParkerReese1",
                     "unitType": 2,
                     "health": 5,
                     "coord": {"Lat": 1, "Lng": 2}
                 }
-            ]
-        },
-        "cards": {
-            "ParkerReese1": {
+            ],
+        "cards":        // Note: Should just be the cards that the user now has. (No one elses).  
+            {
+                "owner": "ParkerReese1",
                 "hand": ["cardId1", "cardId2", "cardId1"],
                 "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
                 "discard": []
             }
-        }
     }
  - Return: Http Resonse Code
 
@@ -354,41 +355,52 @@ server know what you did.
  - Request Body Example:
     {   
         "gameId": "55410202-af58-470f-a690-d01b41458655",
-        "units": {
-            "ParkerReese1": [
+        "units":        // Note: Should be ALL of the units on the board, for all users.
+            [
                 {
+                    "owner": "ParkerReese1",
                     "unitType": 5,
                     "health": 10,
                     "coord": {"Lat": 1, "Lng": 2}
                 },
                 {
+                    "owner": "ParkerReese2",
                     "unitType": 2,
                     "health": 5,
                     "coord": {"Lat": 1, "Lng": 4}
                 }
             ]
         },
-        "cards": {
-            "ParkerReese1": {
-                "hand": ["cardId1", "cardId2", "cardId1"],
-                "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
-                "discard": []
-            }
-        },
-        "actions": [
-            {
-                "username":   "ParkerReese1",            
-                "actionType": 1,         
-                "origin":     {"Lat": 1, "Lng": 2},
-                "target":     {"Lat": 2, "Lng": 2}
-            },
-            {
-                "username":   "ParkerReese1",            
-                "actionType": 1,       
-                "origin":     {"Lat": 1, "Lng": 4},
-                "target":     {"Lat": 2, "Lng": 2}
-            }
-        ],
+        "cards":        // Note: Should be ALL of the cards for all users.
+            [
+                {
+                    "owner": "ParkerReese1",
+                    "hand": ["cardId1", "cardId2", "cardId1"],
+                    "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                    "discard": []
+                },
+                {
+                    "owner": "ParkerReese2",
+                    "hand": ["cardId1", "cardId2", "cardId1"],
+                    "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                    "discard": []
+                },
+            ],
+        "actions":      // Note: Should be only the new actions for this users turn. (No one elses).
+            [
+                {
+                    "username":   "ParkerReese1",            
+                    "actionType": 1,         
+                    "origin":     {"Lat": 1, "Lng": 2},
+                    "target":     {"Lat": 2, "Lng": 2}
+                },
+                {
+                    "username":   "ParkerReese1",            
+                    "actionType": 1,       
+                    "origin":     {"Lat": 1, "Lng": 4},
+                    "target":     {"Lat": 2, "Lng": 2}
+                }
+            ],
         "killedUsers": ["ParkerReese3"]
     }
  - Return: Http Resonse Code
