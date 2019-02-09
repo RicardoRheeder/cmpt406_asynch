@@ -6,14 +6,26 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
     private GameBuilder builder;
-    private PlayerController player;
+
+    [SerializeField]
+    private GameObject playerControllerPrefab;
+
+   private PlayerController player;
+    private GameObject playerControllerObject;
+    private PlayerController playerController;
 
     private List<Action> turnActions;
+
+    //Dictionary<Vector2Int, UnitStats> units;
 
     // Start is called before the first frame update
     void Start() {
         DontDestroyOnLoad(this.gameObject);
         builder = new GameBuilder();
+
+        playerControllerObject = GameObject.Find("PlayerController");
+        playerController = playerControllerObject.GetComponent<PlayerController>();
+        playerController.Initialize(this, null); //Somewhere deck will be created, now you can just pass in null
     }
 
     void LoadGame(GameState state, string username) {
@@ -21,7 +33,7 @@ public class GameManager : MonoBehaviour {
             new List<Card>(state.hand[username]),
             new List<Card>(state.drawPile[username]),
             new List<Card>(state.discardPile[username]));
-        player = new PlayerController(this, deck);
+        player = new PlayerController(this, deck); 
 
         builder.Build(state);
 
@@ -36,4 +48,13 @@ public class GameManager : MonoBehaviour {
     public void EndTurn() {
 
     }
+
+    public void GetUnitOnTile(Vector3Int tile)
+    {
+
+        print("this unit");
+        // return false;  //update this for later
+    }
+
+    
 }
