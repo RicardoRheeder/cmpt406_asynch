@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
 
     //The method called when the load game button is pressed
     //Since we are loading the correct scene, we have to setup the onsceneloaded function
-    void LoadGame(GameState state, string username) {
+    public void LoadGame(GameState state, string username) {
         this.state = state;
         this.username = username;
 
@@ -51,12 +51,7 @@ public class GameManager : MonoBehaviour {
     }
 
     //This method has to be called immediately after we've loaded a scene
-    void OnGameLoaded(Scene scene, LoadSceneMode mode) {
-        CardController deck = new CardController(
-            new List<Card>(state.hand[username]),
-            new List<Card>(state.drawPile[username]),
-            new List<Card>(state.discardPile[username])
-        );
+    private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(state);
@@ -65,14 +60,14 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, deck);
+        playerController.Initialize(this, state.userCardsMap[username]);
 
         //Since the only scene we can load from this point is the main menu, we can prep 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
 
-    void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
+    private void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
         state = null; //Verify that the state is destroyed;
         //Anything else that the game manager has to reset needs to be done here
     }

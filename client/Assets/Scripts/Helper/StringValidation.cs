@@ -22,7 +22,7 @@ public static class StringValidation {
     }
 
     private static bool ValidateString(string s, int lowerLimit, int upperLimit, string validationPattern) {
-        if (s.Length > lowerLimit && s.Length <= upperLimit) {
+        if (s.Length >= lowerLimit && s.Length <= upperLimit) {
             return Regex.Match(s, validationPattern).Success;
         }
         return false;

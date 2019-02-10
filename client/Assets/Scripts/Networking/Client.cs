@@ -24,7 +24,6 @@ public class Client : MonoBehaviour {
     private const string URL = "https://async-406.appspot.com";
     private const string CREATE_USER = "/CreateUser"; //Used for creating a new user
     private const string GET_USER_INFO = "/GetUser"; //Used for logging in
-    private const string GET_GAME_STATE_SUMMARY_MULTI = "/GetGameStateSummaryMulti"; //Used to get the pending gamestate summaries
     private const string GET_GAME_STATE_MULTI = "/GetGameStateMulti"; //Used to get the pending gamestates
     private const string ADD_FRIEND = "/AddFriend"; //Used to add a friend
     private const string REMOVE_FRIEND = "/RemoveFriend"; //Used to remove a friend
@@ -108,7 +107,8 @@ public class Client : MonoBehaviour {
             //Interface with the mock server instead, should be used only for testing purposes
         }
         else {
-            if (userInformation.pendingPrivateGames.Count > 0 || userInformation.pendingPublicGames.Count > 0) {
+            if ((userInformation.pendingPrivateGames != null && userInformation.pendingPrivateGames.Count > 0) ||
+                (userInformation.pendingPublicGames != null && userInformation.pendingPublicGames.Count > 0)) {
                 return GetGameStateCollectionHelper(new GameIds(userInformation.pendingPublicGames, userInformation.pendingPrivateGames));
             }
         }
@@ -261,6 +261,7 @@ public class Client : MonoBehaviour {
     }
 
     private void AddJsonToRequest(string json, ref HttpWebRequest request) {
+        Debug.Log("Adding Json to request: " + json);
         byte[] bytes = Encoding.ASCII.GetBytes(json);
         Stream requestData = request.GetRequestStream();
         requestData.Write(bytes, 0, bytes.Length);

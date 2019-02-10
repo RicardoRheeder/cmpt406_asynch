@@ -20,6 +20,8 @@ public class CreateGame : MonoBehaviour {
     TMP_InputField invitePlayer;
     TMP_Dropdown mapSelection;
 
+    GameManager manager;
+
     //We need to find these on awake, since the "Menus.cs" file disables components on start
     public void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
@@ -30,6 +32,9 @@ public class CreateGame : MonoBehaviour {
         forfeitSlider = GameObject.Find("ForfeitTimeSlider").GetComponent<Slider>();
         invitePlayer = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
         mapSelection = GameObject.Find("MapDropdown").GetComponent<TMP_Dropdown>();
+        manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        //populate the map selection with proper values
     }
 
     void Start() {
@@ -38,6 +43,7 @@ public class CreateGame : MonoBehaviour {
 
     //TODO: input validation both client and backend side
     public void ConfirmCreate() {
+        //Check if we are creating a public or a private game
         string gameName = GameObject.Find("GameNameInputField").GetComponent<TMP_InputField>().text;
         if (!StringValidation.ValidateGameName(gameName)) {
             Debug.Log("invalid game name");
@@ -49,8 +55,14 @@ public class CreateGame : MonoBehaviour {
 
         int boardId = 1; //Hardcoded, properly parse this in the future
 
-        networkApi.CreatePrivateGame(gameName, turnTime, forfeitTime, opponents, boardId); //Hardcoded to create a private game now
-        opponents.Clear();
+        if (networkApi.CreatePrivateGame(gameName, turnTime, forfeitTime, opponents, boardId)) {
+            opponents.Clear();
+            GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
+            //Maybe pop up a game created message that fades out?
+        }
+        else {
+            //Inform the user that it failed for some reason
+        }
     }
 
     public void InvitePlayer() {

@@ -6,9 +6,11 @@ public class UnitStats {
 
     //General Unit information
     [DataMember]
-    int serverUnitType;
+    int serverUnitType = -1;
     UnitType unitType;
     int cost;
+    [DataMember]
+    string owner;
 
     //defense stats
     [DataMember]
@@ -34,6 +36,7 @@ public class UnitStats {
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
     public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost) {
         this.unitType = type;
+        this.serverUnitType = (int)type;
         this.currentHP = maxHP;
         this.maxHP = maxHP;
         this.armour = armour;

@@ -5,65 +5,60 @@ using System.Runtime.Serialization;
 public class GameState {
 
     [DataMember(IsRequired=true)]
-    private string id;
+    public string id;
 
-    [DataMember(IsRequired=true)]
+    [DataMember(IsRequired = true)]
+    private string gameName;
+
+    [DataMember(IsRequired = true)]
+    private string createdBy;
+
+    [DataMember(IsRequired = true)]
     public BoardType boardId;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private int maxUsers;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private int spotsAvailable;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private bool isPublic;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private List<string> users;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private List<string> acceptedUsers;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private List<string> readyUsers;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private List<string> aliveUsers;
 
-    [DataMember(IsRequired=true)]
+    [DataMember]
     private string usersTurn;
 
     [DataMember]
-    private Dictionary<string, List<UnitStats>> units;
+    private List<UnitStats> units;
+    public Dictionary<string, List<UnitStats>> userUnitsMap;
 
     [DataMember]
-    public Dictionary<string, Card[]> hand;
+    private List<CardController> cards;
+    public Dictionary<string, CardController> userCardsMap;
 
     [DataMember]
-    public Dictionary<string, Card[]> drawPile;
+    public List<Action> actions;
 
     [DataMember]
-    public Dictionary<string, Card[]> discardPile;
+    private int turnTime;
 
-    [DataMember]
-    private Dictionary<string, General> generals;
+    [DataMember(Name="timeToStartTurn")]
+    private int forfeitTime;
 
-    public GameState (string id, int type, int maxUsers, bool isPublic, List<string> users, List<string> acceptedUsers, List<string> readyUsers, List<string> aliveUsers, string usersTurn, Dictionary<string, List<UnitStats>> units, Dictionary<string, Card[]> hand, Dictionary<string, Card[]> drawPile, Dictionary<string, Card[]> discardPile, Dictionary<string, General> generals) {
-        this.id = id;
-        this.boardId = (BoardType)type;
-        this.maxUsers = maxUsers;
-        this.isPublic = isPublic;
-        this.users = users;
-        this.acceptedUsers = acceptedUsers;
-        this.readyUsers = readyUsers;
-        this.aliveUsers = aliveUsers;
-        this.usersTurn = usersTurn;
-        this.units = units;
-        this.hand = hand;
-        this.drawPile = drawPile;
-        this.discardPile = discardPile;
-        this.generals = generals;
+    public override string ToString() {
+        return JsonConversion.ConvertObjectToJson(typeof(GameState), this);
     }
 }
 
@@ -73,6 +68,20 @@ public class GameStateCollection {
 
     [DataMember]
     public List<GameState> states;
+    public Dictionary<string, GameState> idToStateMap;
+
+    //This function will be run after the class is serialized from the JSON string
+    //you can use this to set default values, or ensure values are within some valid context
+    [OnDeserialized]
+    public void OnDeserialized(StreamingContext c) {
+        foreach(var state in states) {
+            idToStateMap.Add(state.id, state);
+        }
+    }
+
+    public override string ToString() {
+        return JsonConversion.ConvertObjectToJson(typeof(GameStateCollection), this);
+    }
 }
 
 //Special object used to create a game

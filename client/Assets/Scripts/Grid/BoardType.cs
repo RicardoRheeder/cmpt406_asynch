@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Note: due to a server constraint, all board IDs have to be > 0
 public enum BoardType {
-    first = 0,
+    first = 1,
 }

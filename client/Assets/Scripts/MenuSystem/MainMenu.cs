@@ -24,7 +24,7 @@ public class MainMenu : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        SetMenuState(false, false, false, false);
+        SetInitialMenuState();
     }
 
     //Helper function to enable/disable menus with boolean flags
@@ -33,6 +33,11 @@ public class MainMenu : MonoBehaviour {
         activeGamesPanel.SetActive(activeState);
         createGamePanel.SetActive(createState);
         joinGamePanel.SetActive(joinState);
+    }
+
+    //Helper function so that other buttons can easily return to this state when they are done in their sub menu
+    public void SetInitialMenuState() {
+        SetMenuState(false, false, false, false);
     }
 
     public void MainMenuJoinGameButton() {
@@ -66,6 +71,9 @@ public class MainMenu : MonoBehaviour {
         SetMenuState(true, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         if (response.First) {
+            foreach(var state in response.Second.states) {
+                Debug.Log(state);
+            }
             //we can deal with displaying the game states
         }
         else {
