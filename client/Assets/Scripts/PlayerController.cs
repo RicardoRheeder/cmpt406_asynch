@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
 
     private CardController deck;
 
-    //public Tilemap tilemap;
+    public Tilemap tilemap;
 
     private GameManager manager;
 
@@ -49,16 +49,18 @@ public class PlayerController : MonoBehaviour
     private void InputController()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //Vector3Int tilePos = tilemap.WorldToCell(mousePos);
-
+        Vector3Int tilePos = tilemap.WorldToCell(mousePos);
+        
         //test
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)) //on mouse left click
         {
-            //manager.GetUnitOnTile(tilepos);
-            UnitStats unit = manager.GetUnitOnTile(mousePos);
-            UpdateUnitDisplay(unit);
+            print(tilePos);
+           
+            UnitStats unit = manager.GetUnitOnTile(tilePos);
             
-            // print(tilePos);
+            UpdateUnitDisplay(unit);
+          
+          
           
         }
 
