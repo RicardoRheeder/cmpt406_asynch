@@ -4,8 +4,11 @@ using UnityEngine;
 [DataContract]
 public class UnitStats {
 
-    //an enum that represents the unit type
+    //General Unit information
+    [DataMember]
+    int serverUnitType;
     UnitType unitType;
+    int cost;
 
     //defense stats
     [DataMember]
@@ -28,11 +31,10 @@ public class UnitStats {
     [DataMember]
     int yPos;
 
-
-    //Constructor
-    public UnitStats(int currentHP, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed)
-    {
-        this.currentHP = currentHP;
+    //This constructor should mainly be used for testing purposes, so currentHp = maxHp
+    public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost) {
+        this.unitType = type;
+        this.currentHP = maxHP;
         this.maxHP = maxHP;
         this.armour = armour;
         this.range = range;
@@ -40,9 +42,8 @@ public class UnitStats {
         this.pierce = pierce;
         this.aoe = aoe;
         this.movementSpeed = movementSpeed;
+        this.cost = cost;
     }
-    //others
-    //a list of the card affects on the unit?
 
     //TODO: see if HexDistance() works for range finding
     //checks to make sure the target is in range
@@ -53,61 +54,43 @@ public class UnitStats {
             return true;
     }
 
-    //sends a damage value, and this units type to the target of the attack
-    public void Attack(UnitStats target) {
-        if(InRange(target.position))
-            target.TakeDamage(damage,this.pierce, this.unitType);
+    //Returns a value based on the target
+    public int Attack(UnitStats target) {
+        return System.Convert.ToInt32(this.damage * UnitMetadata.GetMultiplier(this.unitType, target.unitType));
     }
 
-    //TODO: apply type advantage
-    //receives a damage value, and a unit type and calcualtes the damage taken
-    public void TakeDamage(int damage, int pierce, UnitType type) {
-        //the final damage taken
-        int finalDamage = damage;
-        int effectiveArmour = this.armour;
-        
-        //if this unit is weak to the attaking unit, increase damage
-        if (IsWeak(type))
-            //apply type advantage;
-
-        //calculate armour
-        effectiveArmour -= pierce;
-        if (effectiveArmour < 0)
-            effectiveArmour = 0;
-
-        //apply armour to damage
-        finalDamage -= effectiveArmour;
-
-        //take the damage
-        currentHP -= finalDamage;
-    }
-
-    public bool IsWeak(UnitType type) {
-        //if this is a light, and attacker is heavy, return true
-        if (this.unitType == UnitType.light && type == UnitType.heavy )
-            return true;
-        //if this is a heavy, and attacker is pierce, return true
-        else if (this.unitType == UnitType.heavy && type == UnitType.pierce)
-            return true;
-        //if this is a pierce, and attacker is light, return true
-        else if (this.unitType == UnitType.pierce && type == UnitType.light)
-            return true;
-        //else, return false
-        else
-            return false;
+    //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
+    public bool TakeDamage(int damage) {
+        damage -= armour;
+        damage = damage <= 0 ? 1 : damage;
+        currentHP -= damage;
+        return currentHP >= 0;
     }
 
     //TODO
+    //Note: the game manager will actually move the unit if valid. This method will basically be to handle animations and thats it.
     public void Move() {
 
     }
 
     //We need to convert the xPos and yPos variables to be Position
+    //We also need to get a base unit and copy over the stats that weren't stored on the server.
     [OnDeserialized()]
     internal void OnDeserializedMethod(StreamingContext context) {
         position = new Vector2Int(xPos, yPos);
+        unitType = (UnitType)serverUnitType;
+        UnitStats baseUnit = UnitFactory.GetBaseUnit(unitType);
+        this.cost = baseUnit.cost;
+        this.maxHP = baseUnit.maxHP;
+        this.armour = baseUnit.armour;
+        this.damage = baseUnit.damage;
+        this.pierce = baseUnit.pierce;
+        this.range = baseUnit.range;
+        this.aoe = baseUnit.aoe;
+        this.movementSpeed = baseUnit.movementSpeed;
     }
 
+    //Note: the unit type will never change so we don't have to update the int value
     [OnSerializing()]
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = position.x;
