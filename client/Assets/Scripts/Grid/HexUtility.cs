@@ -176,11 +176,13 @@ public static class HexUtility {
         return false;
     }
 
-    public static List<Vector3Int> GetNeighbors(Vector3Int hex, Tilemap tilemap){
+    public static List<Vector3Int> GetNeighbors(Vector3Int hex, Tilemap tilemap, bool ignoreElevation) {
         List<Vector3Int> neighbors = new List<Vector3Int>();
+        HexTile currTile = tilemap.GetTile(hex) as HexTile;
         for(int i = 0; i<=5; i++){
             Vector3Int neighbor = NeighborTile(hex, i);
-            if(tilemap.HasTile(neighbor)){
+            HexTile neighborTile = tilemap.GetTile(neighbor) as HexTile;
+            if((neighborTile != null && (!ignoreElevation && Math.Abs(neighborTile.elevation - currTile.elevation) < 2))) {
                 neighbors.Add(neighbor);
             }
             
@@ -372,7 +374,7 @@ public static class HexUtility {
             if (current == end){
                 break;
             }
-            List<Vector3Int> neighbors = GetNeighbors(current, tilemap);
+            List<Vector3Int> neighbors = GetNeighbors(current, tilemap, false);
             foreach(Vector3Int next in neighbors){
                 int newCost = costSoFar[current] + 1;
                 if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next]){
