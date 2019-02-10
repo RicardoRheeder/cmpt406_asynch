@@ -317,27 +317,28 @@ For when you are placing your army in a public or private game.
  - Request Body Example:
     {   
         "gameId": "55410202-af58-470f-a690-d01b41458655",
-        "units": {
-            "ParkerReese1": [
+        "units":        // Note: Should just be the units that the user has placed. (No one elses).  
+            [
                 {
+                    "owner": "ParkerReese1",
                     "unitType": 5,
                     "health": 10,
                     "coord": {"Lat": 1, "Lng": 2}
                 },
                 {
+                    "owner": "ParkerReese1",
                     "unitType": 2,
                     "health": 5,
                     "coord": {"Lat": 1, "Lng": 2}
                 }
-            ]
-        },
-        "cards": {
-            "ParkerReese1": {
+            ],
+        "cards":        // Note: Should just be the cards that the user now has. (No one elses).  
+            {
+                "owner": "ParkerReese1",
                 "hand": ["cardId1", "cardId2", "cardId1"],
                 "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
                 "discard": []
             }
-        }
     }
  - Return: Http Resonse Code
 
@@ -354,41 +355,116 @@ server know what you did.
  - Request Body Example:
     {   
         "gameId": "55410202-af58-470f-a690-d01b41458655",
-        "units": {
-            "ParkerReese1": [
+        "units":        // Note: Should be ALL of the units on the board, for all users.
+            [
                 {
+                    "owner": "ParkerReese1",
                     "unitType": 5,
                     "health": 10,
                     "coord": {"Lat": 1, "Lng": 2}
                 },
                 {
+                    "owner": "ParkerReese2",
                     "unitType": 2,
                     "health": 5,
                     "coord": {"Lat": 1, "Lng": 4}
                 }
             ]
         },
-        "cards": {
-            "ParkerReese1": {
-                "hand": ["cardId1", "cardId2", "cardId1"],
-                "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
-                "discard": []
-            }
-        },
-        "actions": [
-            {
-                "username":   "ParkerReese1",            
-                "actionType": 1,         
-                "origin":     {"Lat": 1, "Lng": 2},
-                "target":     {"Lat": 2, "Lng": 2}
-            },
-            {
-                "username":   "ParkerReese1",            
-                "actionType": 1,       
-                "origin":     {"Lat": 1, "Lng": 4},
-                "target":     {"Lat": 2, "Lng": 2}
-            }
-        ],
+        "cards":        // Note: Should be ALL of the cards for all users.
+            [
+                {
+                    "owner": "ParkerReese1",
+                    "hand": ["cardId1", "cardId2", "cardId1"],
+                    "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                    "discard": []
+                },
+                {
+                    "owner": "ParkerReese2",
+                    "hand": ["cardId1", "cardId2", "cardId1"],
+                    "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                    "discard": []
+                },
+            ],
+        "actions":      // Note: Should be only the new actions for this users turn. (No one elses).
+            [
+                {
+                    "username":   "ParkerReese1",            
+                    "actionType": 1,         
+                    "origin":     {"Lat": 1, "Lng": 2},
+                    "target":     {"Lat": 2, "Lng": 2}
+                },
+                {
+                    "username":   "ParkerReese1",            
+                    "actionType": 1,       
+                    "origin":     {"Lat": 1, "Lng": 4},
+                    "target":     {"Lat": 2, "Lng": 2}
+                }
+            ],
         "killedUsers": ["ParkerReese3"]
     }
  - Return: Http Resonse Code
+
+
+---------------------------------------------------------------------
+Structures
+---------------------------------------------------------------------
+
+// GameState is everything the client needs to know to construct the state of the game
+type GameState struct {
+	ID              string
+	GameName        string
+	CreatedBy       string
+	BoardID         int
+	MaxUsers        int
+	SpotsAvailable  int     
+	IsPublic        bool
+	Users           []string
+	AcceptedUsers   []string
+	ReadyUsers      []string
+	AliveUsers      []string
+	UsersTurn       string
+	Units           []Unit
+	Cards           []Cards
+	Actions         []Action
+	TurnTime        int
+	TimeToStateTurn int
+	Created         time.Time
+}
+
+// Unit is a game piece on the board
+type Unit struct {
+	Owner    string
+	UnitType int
+	Health   float32
+	Coord    appengine.GeoPoint
+}
+
+// Cards contains all the card information on a per user bases
+type Cards struct {
+	ID      string
+	Owner   string
+	Hand    []string
+	Deck    []string
+	Discard []string
+}
+
+// Action contains the info for a single action in the game
+type Action struct {
+	Username   string
+	ActionType ActionType
+	Origin     appengine.GeoPoint
+	Target     appengine.GeoPoint
+	CardID     int
+}
+
+// User is a human player of the game
+type User struct {
+	Username            string
+	Password            string
+	Friends             []string
+	ActiveGames         []string
+	PendingPrivateGames []string
+	PendingPublicGames  []string
+	CompletedGames      []string
+}

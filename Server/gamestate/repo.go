@@ -2,7 +2,6 @@ package gamestate
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"time"
 
@@ -26,7 +25,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		spotsAvailable = 0
 	}
 
-	gameState := &trueGameState{
+	gameState := &GameState{
 		ID:              ID,
 		GameName:        gameName,
 		CreatedBy:       acceptedUsers[0],
@@ -39,9 +38,9 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		AcceptedUsers:   acceptedUsers,
 		ReadyUsers:      []string{},
 		AliveUsers:      users,
-		Units:           []byte{},
-		Cards:           []byte{},
-		Actions:         []byte{},
+		Units:           []Unit{},
+		CardIDs:         []string{},
+		Actions:         []Action{},
 		TurnTime:        turnTime,
 		TimeToStateTurn: timeToStartTurn,
 		Created:         time.Now().UTC(),
@@ -64,31 +63,33 @@ func UpdateGameState(ctx context.Context, ID string, updateGameStateFunc UpdateG
 	// Transaction to ensure race conditions wont break things
 	err := datastore.RunInTransaction(ctx, func(ctx context.Context) error {
 
-		var trueGS trueGameState
+		var gameState GameState
 
 		key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
-		err := datastore.Get(ctx, key, &trueGS)
+		err := datastore.Get(ctx, key, &gameState)
 		if err != nil {
 			log.Errorf(ctx, "Failed to Get gameState: %s", ID)
 			return err
 		}
 
-		gameState, err := convertTrueGameStateToGameState(ctx, &trueGS)
+		err = updateGameStateFunc(ctx, &gameState)
 		if err != nil {
 			return err
 		}
 
-		err = updateGameStateFunc(ctx, gameState)
+		/* Put the changes to cards */
+		cardKeys := []*datastore.Key{}
+		for i := 0; i < len(gameState.Cards); i++ {
+			cardKeys = append(cardKeys, datastore.NewKey(ctx, "Cards", gameState.Cards[i].ID, 0, nil))
+		}
+		_, err = datastore.PutMulti(ctx, cardKeys, gameState.Cards)
 		if err != nil {
+			log.Errorf(ctx, "Failed to Put (update) the Cards: %s", ID)
 			return err
 		}
 
-		returnTrueGS, err := convertGameStateToTrueGameState(ctx, gameState)
-		if err != nil {
-			return err
-		}
-
-		_, err = datastore.Put(ctx, key, returnTrueGS)
+		/* Put the changes to gamestate */
+		_, err = datastore.Put(ctx, key, &gameState)
 		if err != nil {
 			log.Errorf(ctx, "Failed to Put (update) gameState: %s", ID)
 			return err
@@ -107,22 +108,37 @@ func UpdateGameState(ctx context.Context, ID string, updateGameStateFunc UpdateG
 // GetGameState will get a gamestate via its key ID from DataStore
 func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 
-	var trueGS trueGameState
+	var gameState GameState
 
 	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
 
-	err := datastore.Get(ctx, key, &trueGS)
+	err := datastore.Get(ctx, key, &gameState)
 	if err != nil {
 		log.Errorf(ctx, "Failed to Get gameState: %s", ID)
 		return nil, err
 	}
 
-	return convertTrueGameStateToGameState(ctx, &trueGS)
+	/* Now get the cards for the GameState */
+	cardKeys := []*datastore.Key{}
+
+	for i := 0; i < len(gameState.CardIDs); i++ {
+		cardKeys = append(cardKeys, datastore.NewKey(ctx, "Cards", gameState.CardIDs[i], 0, nil))
+	}
+
+	cards := make([]Cards, len(gameState.CardIDs))
+	err = datastore.GetMulti(ctx, cardKeys, cards)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get GameState Cards: %s", err.Error())
+		return nil, err
+	}
+	gameState.Cards = cards
+
+	return &gameState, nil
 }
 
 // GetGameStateMulti will get a gamestate for each ID from DataStore
 // If any of the keys are invalid, the entire lookup could fail
-func GetGameStateMulti(ctx context.Context, IDs []string) ([]*GameState, error) {
+func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 
 	keys := []*datastore.Key{}
 
@@ -130,30 +146,20 @@ func GetGameStateMulti(ctx context.Context, IDs []string) ([]*GameState, error) 
 		keys = append(keys, datastore.NewKey(ctx, "GameState", IDs[i], 0, nil))
 	}
 
-	trueGSs := make([]trueGameState, len(IDs))
-	err := datastore.GetMulti(ctx, keys, trueGSs)
+	gameStates := make([]GameState, len(IDs))
+	err := datastore.GetMulti(ctx, keys, gameStates)
 	if err != nil {
 		log.Errorf(ctx, "Failed to Get gameStates: %s", err.Error())
 		return nil, err
-	}
-
-	gameStates := make([]*GameState, len(IDs))
-	/* convert each []btyte to their map version */
-	for _, v := range trueGSs {
-		gs, err := convertTrueGameStateToGameState(ctx, &v)
-		if err != nil {
-			return nil, err
-		}
-		gameStates = append(gameStates, gs)
 	}
 
 	return gameStates, nil
 }
 
 // GetPublicGamesSummary queries for public available games
-func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]*GameState, error) {
+func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]GameState, error) {
 
-	var gameStates = []*GameState{}
+	var gameStates = []GameState{}
 
 	q := datastore.NewQuery("GameState").
 		Filter("IsPublic =", true).
@@ -162,8 +168,8 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]*
 		Limit(limit)
 	t := q.Run(ctx)
 	for {
-		var tgs trueGameState
-		_, err := t.Next(&tgs)
+		var gs GameState
+		_, err := t.Next(&gs)
 		if err == datastore.Done {
 			break // No further entities match the query.
 		}
@@ -171,96 +177,8 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]*
 			log.Errorf(ctx, "fetching next Summary: %v", err)
 			break
 		}
-		gs, err := convertTrueGameStateToGameState(ctx, &tgs)
-		if err != nil {
-			return nil, err
-		}
 		gameStates = append(gameStates, gs)
 	}
 
 	return gameStates, nil
-}
-
-/* helper function to deal with []bytes */
-func convertTrueGameStateToGameState(ctx context.Context, gs *trueGameState) (*GameState, error) {
-	returnGS := &GameState{
-		ID:              gs.ID,
-		GameName:        gs.GameName,
-		CreatedBy:       gs.CreatedBy,
-		BoardID:         gs.BoardID,
-		MaxUsers:        gs.MaxUsers,
-		SpotsAvailable:  gs.SpotsAvailable,
-		IsPublic:        gs.IsPublic,
-		Users:           gs.Users,
-		AcceptedUsers:   gs.AcceptedUsers,
-		ReadyUsers:      gs.ReadyUsers,
-		AliveUsers:      gs.AliveUsers,
-		UsersTurn:       gs.UsersTurn,
-		TurnTime:        gs.TurnTime,
-		TimeToStateTurn: gs.TimeToStateTurn,
-		Created:         gs.Created,
-	}
-
-	if len(gs.Units) > 0 {
-		err := json.Unmarshal(gs.Units, &returnGS.Units)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if len(gs.Cards) > 0 {
-		err := json.Unmarshal(gs.Cards, &returnGS.Cards)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if len(gs.Actions) > 0 {
-		err := json.Unmarshal(gs.Actions, &returnGS.Actions)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return returnGS, nil
-}
-
-func convertGameStateToTrueGameState(ctx context.Context, gs *GameState) (*trueGameState, error) {
-	returnGS := &trueGameState{
-		ID:              gs.ID,
-		GameName:        gs.GameName,
-		CreatedBy:       gs.CreatedBy,
-		BoardID:         gs.BoardID,
-		MaxUsers:        gs.MaxUsers,
-		SpotsAvailable:  gs.SpotsAvailable,
-		IsPublic:        gs.IsPublic,
-		Users:           gs.Users,
-		AcceptedUsers:   gs.AcceptedUsers,
-		ReadyUsers:      gs.ReadyUsers,
-		AliveUsers:      gs.AliveUsers,
-		UsersTurn:       gs.UsersTurn,
-		TurnTime:        gs.TurnTime,
-		TimeToStateTurn: gs.TimeToStateTurn,
-		Created:         gs.Created,
-	}
-
-	var err error
-	if len(gs.Units) > 0 {
-		returnGS.Units, err = json.Marshal(gs.Units)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if len(gs.Cards) > 0 {
-		returnGS.Cards, err = json.Marshal(gs.Cards)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if len(gs.Cards) > 0 {
-		returnGS.Actions, err = json.Marshal(gs.Actions)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return returnGS, nil
 }
