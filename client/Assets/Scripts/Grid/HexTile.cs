@@ -6,25 +6,38 @@ using UnityEngine.Tilemaps;
 using UnityEditor;
 #endif
 
+[System.Serializable]
 public class HexTile: TileBase {
 
+    [HideInInspector]
     public GameObject tileModel;
     public Sprite spritePreview;
 
     [SerializeField]
-    Elevation elevation;
+    [HideInInspector]
+    public Elevation elevation;
     [SerializeField]
-    List<TileAttribute> attribute = new List<TileAttribute>();
+    [HideInInspector]
+    public List<TileAttribute> attributes = new List<TileAttribute>();
 
-    public Elevation Elevation { get; set; }
-
-    public TileAttribute Attribute { get; set; }
+    const float ELEVATION_MULTIPLIER = 2.5f;
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
-           go.transform.rotation = Quaternion.Euler(90,0,0); 
+            go.transform.rotation = Quaternion.Euler(90,0,0);
+            go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y, (go.transform.position.z - (ELEVATION_MULTIPLIER) * (int)elevation));
         }
-        return base.StartUp(position,tilemap,go);
+
+        #if UNITY_EDITOR
+        if (go != null){
+            if (go.scene.name == null) {
+                Debug.Log("DestroyImmediate");
+                DestroyImmediate(go);
+            }
+        }
+        #endif
+
+        return true;
     }
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {

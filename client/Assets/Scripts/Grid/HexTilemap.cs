@@ -32,7 +32,7 @@ public class HexTilemap : MonoBehaviour {
 
     public HexTile GetTileAtElevation(Vector3Int pos, Elevation el) {
         HexTile tile = GetHexTile(pos);
-        return (tile != null && tile.Elevation == el) ? tile : null;
+        return (tile != null && tile.elevation == el) ? tile : null;
     }
     
 }
