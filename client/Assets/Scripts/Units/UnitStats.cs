@@ -9,18 +9,18 @@ public class UnitStats {
 
     //defense stats
     [DataMember]
-    int currentHP;
-    int maxHP;
-    int armour;
+    public int currentHP;
+    public int maxHP;
+    public int armour;
 
     //offense stats
-    int damage;
-    int pierce;
-    int range;
-    int aoe;
+    public int damage;
+    public int pierce;
+    public int range;
+    public int aoe;
 
     //mobility
-    int movementSpeed;
+    public int movementSpeed;
     private Vector2Int position;
     //xPos and yPos are the variables sent by the server, so we have to convert them to position
     [DataMember]
@@ -28,6 +28,19 @@ public class UnitStats {
     [DataMember]
     int yPos;
 
+
+    //Constructor
+    public UnitStats(int currentHP, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed)
+    {
+        this.currentHP = currentHP;
+        this.maxHP = maxHP;
+        this.armour = armour;
+        this.range = range;
+        this.damage = damage;
+        this.pierce = pierce;
+        this.aoe = aoe;
+        this.movementSpeed = movementSpeed;
+    }
     //others
     //a list of the card affects on the unit?
 

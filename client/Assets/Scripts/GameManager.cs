@@ -49,11 +49,11 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void GetUnitOnTile(Vector3Int tile)
+    public UnitStats GetUnitOnTile(Vector3 tile)
     {
 
         print("this unit");
-        // return false;  //update this for later
+        return new UnitStats(50, 100, 10, 2, 5, 3, 4, 5); //update this for later
     }
 
     
