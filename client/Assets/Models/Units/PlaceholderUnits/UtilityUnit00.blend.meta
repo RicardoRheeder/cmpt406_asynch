@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f58d45e45f43c944ebb911eebae60e79
+guid: c9b95d3bbb5de4d879e8ad5b5536a333
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -11,7 +11,6 @@ ModelImporter:
     4300000: mesh01
     7400000: Default Take
     9500000: //RootNode
-    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1
