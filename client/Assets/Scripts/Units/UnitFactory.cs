@@ -4,39 +4,39 @@ using System.Collections.Generic;
 
 public static class UnitFactory {
 
-    public static UnitStats CreateTrooper() {
+    private static UnitStats CreateTrooper() {
         return new UnitStats(UnitType.trooper, 20, 0, 2, 3, 0, 1, 2, 1);
     }
 
-    public static UnitStats CreateReacon() {
+    private static UnitStats CreateReacon() {
         return new UnitStats(UnitType.reacon, 20, 0, 3, 2, 0, 1, 5, 1);
     }
 
-    public static UnitStats CreateSteamer() {
+    private static UnitStats CreateSteamer() {
         return new UnitStats(UnitType.steamer, 25, 4, 1, 3, 0, 1, 3, 1);
     }
 
-    public static UnitStats CreatePewPew() {
+    private static UnitStats CreatePewPew() {
         return new UnitStats(UnitType.pewpew, 35, 2, 3, 2, 0, 1, 2, 1);
     }
 
-    public static UnitStats CreateCompensator() {
+    private static UnitStats CreateCompensator() {
         return new UnitStats(UnitType.compensator, 15, 0, 3, 4, 3, 1, 3, 1);
     }
 
-    public static UnitStats CreateFoundation() {
+    private static UnitStats CreateFoundation() {
         return new UnitStats(UnitType.foundation, 20, 0, 2, 3, 3, 1, 2, 1);
     }
 
-    public static UnitStats CreatePowerSurge() {
+    private static UnitStats CreatePowerSurge() {
         return new UnitStats(UnitType.powerSurge, 15, 0, 2, 2, 0, 1, 3, 1);
     }
 
-    public static UnitStats CreateMidas() {
+    private static UnitStats CreateMidas() {
         return new UnitStats(UnitType.midas, 15, 0, 3, -3, 0, 1, 3, 1);
     }
 
-    public static UnitStats CreateClaymore() {
+    private static UnitStats CreateClaymore() {
         return new UnitStats(UnitType.claymore, 10, 0, 1, 4, 0, 1, 5, 1);
     }
 

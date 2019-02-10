@@ -1,18 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
 
-public class PlayerController : MonoBehaviour
-{
+public class PlayerController : MonoBehaviour {
 
     private CardController deck;
-
-    public Tilemap tilemap;
-
     private GameManager manager;
+    public Tilemap tilemap;
 
     public TMP_Text unitDisplayHealth;
     public TMP_Text unitDisplayArmour;
@@ -22,32 +16,24 @@ public class PlayerController : MonoBehaviour
     public TMP_Text unitDisplayPierce;
     public TMP_Text unitDisplayMovementSpeed;
 
-
-    void Awake()
-    {
-
-    }
-
-    public PlayerController(GameManager manager, CardController deck) {
+    public void Initialize(GameManager manager, CardController deck) {
         this.deck = deck;
         this.manager = manager;
+        unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
+        unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
+        unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
+        unitDisplayAOE = GameObject.Find("unitDisplayAOE").GetComponent<TMP_Text>();
+        unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
+        unitDisplayMovementSpeed = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
+        unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
     }
 
-    public void Initialize(GameManager manager, CardController deck)
-    {
-        this.deck = deck;
-        this.manager = manager;
-    }
 
-
-    void Update()
-    {
-      
+    void Update() {
         InputController();
     }
 
-    private void InputController()
-    {
+    private void InputController() {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int tilePos = tilemap.WorldToCell(mousePos);
         
@@ -57,17 +43,13 @@ public class PlayerController : MonoBehaviour
             print(tilePos);
            
             UnitStats unit = manager.GetUnitOnTile(tilePos);
-            
-            UpdateUnitDisplay(unit);
-          
-          
-          
+            if(unit != null)
+                UpdateUnitDisplay(unit);
         }
 
     }
 
-    private void UpdateUnitDisplay(UnitStats unit)
-    {
+    private void UpdateUnitDisplay(UnitStats unit) {
         //Strings to display the information
         string hp = "Health: " + unit.currentHP + " / " + unit.maxHP;
         string armour = "Armour: " + unit.armour;
@@ -78,25 +60,12 @@ public class PlayerController : MonoBehaviour
         string movementSpeed = "Movement Speed: " + unit.movementSpeed;
 
         //Finders to find which text to change for what attribute
-        unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
         unitDisplayHealth.text = hp;
-
-        unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
         unitDisplayArmour.text = armour;
-
-        unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
         unitDisplayRange.text = range;
-
-        unitDisplayAOE = GameObject.Find("unitDisplayAOE").GetComponent<TMP_Text>();
         unitDisplayAOE.text = aoe;
-
-        unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
         unitDisplayDamage.text = damage;
-
-        unitDisplayMovementSpeed = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
         unitDisplayMovementSpeed.text = movementSpeed;
-
-        unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
         unitDisplayPierce.text = pierce;
     }
 

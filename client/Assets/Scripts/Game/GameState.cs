@@ -8,7 +8,7 @@ public class GameState {
     private string id;
 
     [DataMember(IsRequired=true)]
-    private BoardType boardId;
+    public BoardType boardId;
 
     [DataMember(IsRequired=true)]
     private int maxUsers;
