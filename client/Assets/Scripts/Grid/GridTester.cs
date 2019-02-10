@@ -62,7 +62,7 @@ public class GridTester : MonoBehaviour {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int endPosition = tilemap.WorldToCell(mousePosition);
 
-        List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,tilemap);
+        List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,tilemap,false);
         StartCoroutine(PathMovement(path, 5f));
     }
 

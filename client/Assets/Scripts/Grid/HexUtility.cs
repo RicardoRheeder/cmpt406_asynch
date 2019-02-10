@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public static class HexUtility {
+
+    // Converts a vector3Int position from oddr (coordinate system used for tilemap in the game)
+    // to a cube coordinate. This is done to make algorithms easier and more efficient
     public static Vector3Int OddrToCube(Vector3Int hex) {
 		int x = hex.x - (hex.y - (hex.y&1)) / 2;
 		int z = hex.y;
@@ -12,12 +15,15 @@ public static class HexUtility {
 		return new Vector3Int(x, y, z);
 	}
 
+    // Converts a Vector3Int position from the cube coordinate system to the oddr coordinate system
+    // this method should be used before the return statement of hex algorithms
     public static Vector3Int CubeToOddr(Vector3Int hex) {
         int x = hex.x + (hex.z - (hex.z&1))/2;
         int y = hex.z;
         return new Vector3Int(x, y, 0);
 	}
 
+    // returns the distance (number of tiles) between two hex positions
     public static float HexDistance(Vector3Int a, Vector3Int b) {
 		Vector3Int dA = OddrToCube( a);
 		Vector3Int dB = OddrToCube( b);
@@ -25,7 +31,6 @@ public static class HexUtility {
           + Math.Abs(dA.x + dA.y - dB.x - dB.y)
           + Math.Abs(dA.y - dB.y)) / 2;
 	}
-
 
     public static List<Vector3Int> FindLine(Vector3Int starting, Vector3Int ending) {
         List<Vector3Int > tileCache;
@@ -86,18 +91,18 @@ public static class HexUtility {
         return result;
     }
 
-    //Linear extrapolation
+    // Linear extrapolation
     public static float Lerp(float a, float b, float t) {
         return a+(b-a)*t;
     }
 
-    //Linear extrapolates a value for each cubic direction, and places them in a Vector3.
+    // Linear extrapolates a value for each cubic direction, and places them in a Vector3.
     public static Vector3 CubeLerp(Vector3 a, Vector3 b, float t) {
         return new Vector3( Lerp( a.x, b.x, t), Lerp( a.y, b.y, t), Lerp( a.z, b.z, t));
     }
 
-    //Round a Vector3 with floating values in order to find corresponding Vector3Int.
-    //This is usually used to find which Hex a Vector3 value can be found in.
+    // Round a Vector3 with floating values in order to find corresponding Vector3Int.
+    // This is usually used to find which Hex a Vector3 value can be found in.
     public static Vector3Int CubeRound(Vector3 a) {
         int rx = Convert.ToInt32(a.x);
         int ry = Convert.ToInt32(a.y);
@@ -119,35 +124,6 @@ public static class HexUtility {
 
         return new Vector3Int(rx, ry, rz);
     }
-
-
-    //Helper class to say that direction(0) = curPoos + cubeDirections[0]
-    //DO NOT CHANGE THE ORDER OF THE LIST
-    private static readonly List<Vector3Int> oddYOffsetDirections = new List<Vector3Int> {
-        new Vector3Int(1, 0, 0),
-        new Vector3Int(1, 1, 0),
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(-1, 0, 0),
-        new Vector3Int(0, -1, 0),
-        new Vector3Int(1, -1, 0),
-    };
-    private static readonly List<Vector3Int> evenYOffsetDirections = new List<Vector3Int> {
-        new Vector3Int(1, 0, 0),
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(-1, 1, 0),
-        new Vector3Int(-1, 0, 0),
-        new Vector3Int(-1, -1, 0),
-        new Vector3Int(0, -1, 0),
-    };
-
-    private static List<Vector3Int> cubeDirections = new List<Vector3Int> {
-        new Vector3Int(1, -1, 0),
-        new Vector3Int(0, -1, 1),
-        new Vector3Int(-1, 0, 1),
-        new Vector3Int(-1, 1, 0),
-        new Vector3Int(0, 1, -1),
-        new Vector3Int(1, 0, -1),
-    };
 
     //Given a tile and a direction integer, return the tile found in that direction.
     public static Vector3Int NeighborTile(Vector3Int starting, int direction ) {
@@ -189,6 +165,176 @@ public static class HexUtility {
         }
         return neighbors;
     }
+
+    //This function will will remove any tiles from the list of tiles that the board does not actually contain
+    public static List<Vector3Int> GetTilePositionsInRange( Tilemap tilemap, Vector3Int startingPos, int range ) {
+        List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
+        List<Vector3Int> paddedList = new List<Vector3Int>();
+        foreach (Vector3Int tile in tileList) {
+            if (!tilemap.HasTile( tile )) {
+                paddedList.Add( tile );
+            }
+        }
+        foreach (Vector3Int tile in paddedList) {
+            tileList.Remove( tile );
+        }
+        return new List<Vector3Int>( tileList );
+    }
+
+    public static List<Vector3Int> TestGetTilePositionsInRange(Tilemap tilemap, Vector3Int startingPos, int range){
+        Tuple<Vector3Int,int> posAndRange = new Tuple<Vector3Int,int>(startingPos, range);
+        if(!testRangeCalculationCache.ContainsKey(posAndRange)){
+            List<Vector3Int> results = new List<Vector3Int>();
+            for (int x = -range; x<=range; x++){
+                for( int y = Math.Max(-range, -x-range); y <= Math.Min(+range, -x+range); y++){
+                    int z = -x-y;
+                    Vector3Int startingPosCube = OddrToCube(startingPos);
+                    Vector3Int tileInRange = startingPosCube + new Vector3Int(x,y,z);
+                    tileInRange = CubeToOddr(tileInRange);
+                    if(tilemap.HasTile(tileInRange)){
+                        results.Add(tileInRange);
+                    }   
+                }   
+            }
+            testRangeCalculationCache.Add(posAndRange, results);
+            return results;
+            }
+        else {
+            return testRangeCalculationCache[posAndRange];
+        }          
+    }
+
+    //This function will will remove any tiles from the list of tiles that the board does not actually contain
+    public static List<Vector3Int> GetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector3Int startingPos, int range ) {
+        List<Vector3Int> tileList = GetTilePositionsInRange(tilemap, startingPos, range);
+        tileList.Remove( startingPos );
+        return new List<Vector3Int>( tileList );
+    }
+
+    public static List<Vector3Int> TestGetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector3Int startingPos, int range ) {
+        List<Vector3Int> tileList = TestGetTilePositionsInRange(tilemap, startingPos, range);
+        tileList.Remove( startingPos );
+        return new List<Vector3Int>( tileList );
+    }
+
+    //This function will return all positions in the range of the target and leave in the starting tile and the padded tiles.
+    public static List<Vector3Int> GetTilePositionsInRangeWithStartingWithPaddingTiles( Vector3Int startingPos, int range ) {
+        List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
+        return new List<Vector3Int>( tileList );
+    }
+
+    //This function will return all positions in the range of the target and leave in the padded tiles, removing the starting tile
+    public static List<Vector3Int> GetTilePositionsInRangeWithoutStartingWithPaddingTiles( Vector3Int startingPos, int range ) {
+        List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
+        tileList.Remove( startingPos );
+        return new List<Vector3Int>( tileList );
+    }
+
+    // This function returns a list of hexes that can be reached, given a a certain movement range.
+    // Obstacles and the edge of the map are taken into account, and will prevent certain hexes from being reached.
+    // if ignoreElevation is false, it won't include tiles with an elevation difference >= 2
+    public static HashSet<Vector3Int> HexReachable(Vector3Int starting, int movementRange, Tilemap tilemap){
+        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+        visited.Add(starting);
+        List<List<Vector3Int>> fringes = new List<List<Vector3Int>>();
+        List<Vector3Int> startList = new List<Vector3Int>();
+        startList.Add(starting);
+        fringes.Add(startList);
+        for(int movement = 1; movement <= movementRange; movement++){
+            fringes.Add(new List<Vector3Int>());
+            foreach(Vector3Int hex in fringes[movement-1]){
+                for(int dir = 0; dir < 6; dir++){
+                    Vector3Int neighbor = NeighborTile(hex, dir);
+                    if(!visited.Contains(neighbor) && tilemap.HasTile(neighbor)){
+                        visited.Add(neighbor);
+                        fringes[movement].Add(neighbor);
+                    }
+                }
+            }
+        }
+        return visited;
+    }
+	
+	//Takes in a list of tiles, returns the list of tiles with all tiles outside of the tilemap removed
+	public static List<Vector3Int> RemoveInvalidTiles(Tilemap tilemap, List<Vector3Int> tileList ){
+		List<Vector3Int> targetListToRemove = new List<Vector3Int>();
+		
+		foreach(Vector3Int tileTarget in tileList){
+			if (!tilemap.GetTile(tileTarget)){
+				targetListToRemove.Add(tileTarget);
+			}
+		}
+		foreach(Vector3Int tileTarget in targetListToRemove){
+			tileList.Remove(tileTarget);
+		}
+		return tileList;
+	}
+
+    // Finds a path between starting and ending position
+    // only paths to non-null tiles on the argument tilemap
+    // if ignoreElevation is false, it won't path to an elevation difference >= 2
+    public static List<Vector3Int> Pathfinding(Vector3Int start, Vector3Int end, Tilemap tilemap, bool ignoreElevation){
+        PriorityQueue<PriorityTuple> frontier = new PriorityQueue<PriorityTuple>();
+        frontier.Enqueue(new PriorityTuple(0,start));
+        Dictionary<Vector3Int,Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
+        Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
+        
+        cameFrom.Add(start, start);
+        costSoFar.Add(start, 0);
+        while(frontier.Count()>0){
+            Vector3Int current = frontier.Dequeue().GetHex();
+            if (current == end){
+                break;
+            }
+            List<Vector3Int> neighbors = GetNeighbors(current, tilemap, ignoreElevation);
+            foreach(Vector3Int next in neighbors){
+                int newCost = costSoFar[current] + 1;
+                if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next]){
+                    costSoFar[next] = newCost;
+                    int heuristicFunction = (int)HexDistance(next, end);
+                    int evalFunction = newCost + heuristicFunction;
+                    frontier.Enqueue(new PriorityTuple(evalFunction, next));
+                    cameFrom[next] = current;
+                }
+            }
+        }
+        List<Vector3Int> path = new List<Vector3Int> ();
+        Vector3Int stepBack = end;
+        while(cameFrom[stepBack] != stepBack){
+            path.Insert(0, stepBack);
+            stepBack = cameFrom[stepBack];
+        }
+
+        return path;
+    }
+
+    //Helper class to say that direction(0) = curPos + cubeDirections[0]
+    //DO NOT CHANGE THE ORDER OF THE LIST
+    private static readonly List<Vector3Int> oddYOffsetDirections = new List<Vector3Int> {
+        new Vector3Int(1, 0, 0),
+        new Vector3Int(1, 1, 0),
+        new Vector3Int(0, 1, 0),
+        new Vector3Int(-1, 0, 0),
+        new Vector3Int(0, -1, 0),
+        new Vector3Int(1, -1, 0),
+    };
+    private static readonly List<Vector3Int> evenYOffsetDirections = new List<Vector3Int> {
+        new Vector3Int(1, 0, 0),
+        new Vector3Int(0, 1, 0),
+        new Vector3Int(-1, 1, 0),
+        new Vector3Int(-1, 0, 0),
+        new Vector3Int(-1, -1, 0),
+        new Vector3Int(0, -1, 0),
+    };
+
+    private static List<Vector3Int> cubeDirections = new List<Vector3Int> {
+        new Vector3Int(1, -1, 0),
+        new Vector3Int(0, -1, 1),
+        new Vector3Int(-1, 0, 1),
+        new Vector3Int(-1, 1, 0),
+        new Vector3Int(0, 1, -1),
+        new Vector3Int(1, 0, -1),
+    };
 
     // This dictionary is in the format of tile coordinates to a list of lists of tile coordinates
     // the list will be of size n, where n is the highest range we calculated
@@ -253,146 +399,4 @@ public static class HexUtility {
         return returnList;
     }
 
-    //This function will will remove any tiles from the list of tiles that the board does not actually contain
-    public static List<Vector3Int> GetTilePositionsInRange( Tilemap tilemap, Vector3Int startingPos, int range ) {
-        List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
-        List<Vector3Int> paddedList = new List<Vector3Int>();
-        foreach (Vector3Int tile in tileList) {
-            if (!tilemap.HasTile( tile )) {
-                paddedList.Add( tile );
-            }
-        }
-        foreach (Vector3Int tile in paddedList) {
-            tileList.Remove( tile );
-        }
-        return new List<Vector3Int>( tileList );
-    }
-
-    public static List<Vector3Int> TestGetTilePositionsInRange(Tilemap tilemap, Vector3Int startingPos, int range){
-        Tuple<Vector3Int,int> posAndRange = new Tuple<Vector3Int,int>(startingPos, range);
-        if(!testRangeCalculationCache.ContainsKey(posAndRange)){
-            List<Vector3Int> results = new List<Vector3Int>();
-            for (int x = -range; x<=range; x++){
-                for( int y = Math.Max(-range, -x-range); y <= Math.Min(+range, -x+range); y++){
-                    int z = -x-y;
-                    Vector3Int startingPosCube = OddrToCube(startingPos);
-                    Vector3Int tileInRange = startingPosCube + new Vector3Int(x,y,z);
-                    tileInRange = CubeToOddr(tileInRange);
-                    if(tilemap.HasTile(tileInRange)){
-                        results.Add(tileInRange);
-                    }
-                    
-                }
-                
-            }
-            testRangeCalculationCache.Add(posAndRange, results);
-            return results;
-            }
-        else{
-            return testRangeCalculationCache[posAndRange];
-        }
-        
-            
-
-    }
-
-    //This function will will remove any tiles from the list of tiles that the board does not actually contain
-    public static List<Vector3Int> GetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector3Int startingPos, int range ) {
-        List<Vector3Int> tileList = GetTilePositionsInRange(tilemap, startingPos, range);
-        tileList.Remove( startingPos );
-        return new List<Vector3Int>( tileList );
-    }
-
-    public static List<Vector3Int> TestGetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector3Int startingPos, int range ) {
-        List<Vector3Int> tileList = TestGetTilePositionsInRange(tilemap, startingPos, range);
-        tileList.Remove( startingPos );
-        return new List<Vector3Int>( tileList );
-    }
-
-    //This function will return all positions in the range of the target and leave in the starting tile and the padded tiles.
-    public static List<Vector3Int> GetTilePositionsInRangeWithStartingWithPaddingTiles( Vector3Int startingPos, int range ) {
-        List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
-        return new List<Vector3Int>( tileList );
-    }
-
-    //This function will return all positions in the range of the target and leave in the padded tiles, removing the starting tile
-    public static List<Vector3Int> GetTilePositionsInRangeWithoutStartingWithPaddingTiles( Vector3Int startingPos, int range ) {
-        List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
-        tileList.Remove( startingPos );
-        return new List<Vector3Int>( tileList );
-    }
-
-    //This function returns a list of hexes that can be reached, given a a certain movement range.
-    //Obstacles and the edge of the map are taken into account, and will prevent certain hexes from being reached.
-    public static HashSet<Vector3Int> HexReachable(Vector3Int starting, int movementRange, Tilemap tilemap){
-        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
-        visited.Add(starting);
-        List<List<Vector3Int>> fringes = new List<List<Vector3Int>>();
-        List<Vector3Int> startList = new List<Vector3Int>();
-        startList.Add(starting);
-        fringes.Add(startList);
-        for(int movement = 1; movement <= movementRange; movement++){
-            fringes.Add(new List<Vector3Int>());
-            foreach(Vector3Int hex in fringes[movement-1]){
-                for(int dir = 0; dir < 6; dir++){
-                    Vector3Int neighbor = NeighborTile(hex, dir);
-                    if(!visited.Contains(neighbor) && tilemap.HasTile(neighbor)){
-                        visited.Add(neighbor);
-                        fringes[movement].Add(neighbor);
-                    }
-                }
-            }
-        }
-        return visited;
-    }
-	
-	//Takes in a list of tiles, returns the list of tiles with all tiles outside of the tilemap removed
-	public static List<Vector3Int> RemoveInvalidTiles(Tilemap tilemap, List<Vector3Int> tileList ){
-		List<Vector3Int> targetListToRemove = new List<Vector3Int>();
-		
-		foreach(Vector3Int tileTarget in tileList){
-			if (!tilemap.GetTile(tileTarget)){
-				targetListToRemove.Add(tileTarget);
-			}
-		}
-		foreach(Vector3Int tileTarget in targetListToRemove){
-			tileList.Remove(tileTarget);
-		}
-		return tileList;
-	}
-
-    public static List<Vector3Int> Pathfinding(Vector3Int start, Vector3Int end, Tilemap tilemap){
-        PriorityQueue<PriorityTuple> frontier = new PriorityQueue<PriorityTuple>();
-        frontier.Enqueue(new PriorityTuple(0,start));
-        Dictionary<Vector3Int,Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
-        Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
-        
-        cameFrom.Add(start, start);
-        costSoFar.Add(start, 0);
-        while(frontier.Count()>0){
-            Vector3Int current = frontier.Dequeue().GetHex();
-            if (current == end){
-                break;
-            }
-            List<Vector3Int> neighbors = GetNeighbors(current, tilemap, false);
-            foreach(Vector3Int next in neighbors){
-                int newCost = costSoFar[current] + 1;
-                if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next]){
-                    costSoFar[next] = newCost;
-                    int heuristicFunction = (int)HexDistance(next, end);
-                    int evalFunction = newCost + heuristicFunction;
-                    frontier.Enqueue(new PriorityTuple(evalFunction, next));
-                    cameFrom[next] = current;
-                }
-            }
-        }
-        List<Vector3Int> path = new List<Vector3Int> ();
-        Vector3Int stepBack = end;
-        while(cameFrom[stepBack] != stepBack){
-            path.Insert(0, stepBack);
-            stepBack = cameFrom[stepBack];
-        }
-
-        return path;
-    }
 }
