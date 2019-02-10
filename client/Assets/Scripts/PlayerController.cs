@@ -28,7 +28,6 @@ public class PlayerController : MonoBehaviour {
         unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
     }
 
-
     void Update() {
         InputController();
     }
@@ -38,15 +37,13 @@ public class PlayerController : MonoBehaviour {
         Vector3Int tilePos = tilemap.WorldToCell(mousePos);
         
         //test
-        if (Input.GetMouseButtonDown(0)) //on mouse left click
-        {
+        if (Input.GetMouseButtonDown(0)) { //on mouse left click
             print(tilePos);
            
             UnitStats unit = manager.GetUnitOnTile(tilePos);
             if(unit != null)
                 UpdateUnitDisplay(unit);
         }
-
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {
@@ -68,6 +65,4 @@ public class PlayerController : MonoBehaviour {
         unitDisplayMovementSpeed.text = movementSpeed;
         unitDisplayPierce.text = pierce;
     }
-
-
 }
