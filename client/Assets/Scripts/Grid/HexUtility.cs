@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 
 public static class HexUtility {
 
+    public const int ELEVATION_REACHABLE_DISTANCE = 2;
+
     // Converts a vector3Int position from oddr (coordinate system used for tilemap in the game)
     // to a cube coordinate. This is done to make algorithms easier and more efficient
     public static Vector3Int OddrToCube(Vector3Int hex) {
@@ -150,14 +152,11 @@ public static class HexUtility {
     // Returns a list containing the positions of all immediate neighbours to a tile
     public static List<Vector3Int> GetNeighbors(Vector3Int hex, Tilemap tilemap, bool ignoreElevation) {
         List<Vector3Int> neighbors = new List<Vector3Int>();
-        HexTile currTile = tilemap.GetTile(hex) as HexTile;
         for(int i = 0; i<=5; i++){
             Vector3Int neighbor = NeighborTile(hex, i);
-            HexTile neighborTile = tilemap.GetTile(neighbor) as HexTile;
-            if((neighborTile != null && (ignoreElevation || (!ignoreElevation && Math.Abs(neighborTile.elevation - currTile.elevation) < 2)))) {
+            if((tilemap.HasTile(neighbor) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap)))) {
                 neighbors.Add(neighbor);
             }
-            
         }
         return neighbors;
     }
@@ -210,11 +209,9 @@ public static class HexUtility {
         for(int movement = 1; movement <= movementRange; movement++){
             fringes.Add(new List<Vector3Int>());
             foreach(Vector3Int hex in fringes[movement-1]) {
-                HexTile fringeTile = tilemap.GetTile(hex) as HexTile;
                 for(int dir = 0; dir < 6; dir++){
                     Vector3Int neighbor = NeighborTile(hex, dir);
-                    HexTile neighborTile = tilemap.GetTile(neighbor) as HexTile;
-                    if(!visited.Contains(neighbor) && tilemap.HasTile(neighbor) && (ignoreElevation || (!ignoreElevation && Math.Abs(neighborTile.elevation - fringeTile.elevation) < 2))) {
+                    if(!visited.Contains(neighbor) && tilemap.HasTile(neighbor) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap))) {
                         visited.Add(neighbor);
                         fringes[movement].Add(neighbor);
                     }
@@ -276,6 +273,22 @@ public static class HexUtility {
         }
 
         return path;
+    }
+
+    // Returns true if elevated movement between two tiles is possible, false otherwise
+    public static bool IsElevationReachable(Vector3Int startPos, Vector3Int endPos, Tilemap tilemap) {
+        if(tilemap == null) {
+            return false;
+        }
+
+        HexTile startTile = tilemap.GetTile(startPos) as HexTile;
+        HexTile endTile = tilemap.GetTile(endPos) as HexTile;
+
+        if(startTile == null || endTile == null) {
+            return false;
+        }
+
+        return Math.Abs(endTile.elevation - startTile.elevation) < ELEVATION_REACHABLE_DISTANCE;
     }
 
     //Helper class to say that direction(0) = curPos + cubeDirections[0]
