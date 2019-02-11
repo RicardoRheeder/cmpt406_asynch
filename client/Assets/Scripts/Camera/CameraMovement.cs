@@ -55,85 +55,44 @@ public class CameraMovement : MonoBehaviour
 
     // public float mouseRotationSpeed = 100f;
 
-    private void Awake()
-    {
+    private void Awake() {
         zoom = Camera.main.orthographicSize;
     }
 
-
     // Use this for initialization
-    private void Start()
-    {
-        
-
+    private void Start() {
         desiredPosition = transform.position;
     }
 
     // LateUpdate is called every frame, if the Behaviour is enabled
-    void LateUpdate()
-    {
+    void LateUpdate() {
+        if(Input.GetMouseButton(1)) {
+            HandleRotation();
+        } else {
+            HandlePan();
+            HandleZoom();
+        }
+    }
 
-        //***DO Not Know how to rotate with the orthgraphic camera*****
-        //This is for roation with prespective camera
-        //When right mouse button is pressed, Rotate camera left/right if mouse is moved left/right
-        /*   if (Input.GetKey(KeyCode.Mouse1)) {
-               transform.Rotate(Vector3.up, Input.GetAxis("Mouse X") * Time.deltaTime * mouseRotationSpeed, Space.World); // -Input.GetAxis("Mouse X"): remove minus to invert rotation
-           }
-
-           else
-
-
-           //**********************
-           */
-
-
-        if (useCursor)
-        {
+    void HandlePan() {
+        if (useCursor) {
             currentPosition = Vector3.zero;
 
-            if (Input.mousePosition.x < scrollZone)
-            {
+            if (Input.mousePosition.x < scrollZone) {
                 currentPosition.x -= sensitivity * Time.deltaTime;
-            }
-            else if (Input.mousePosition.x > Screen.width - scrollZone)
-            {
+            } else if (Input.mousePosition.x > Screen.width - scrollZone) {
                 currentPosition.x = sensitivity * Time.deltaTime;
             }
 
-            if (Input.mousePosition.y < scrollZone)
-            {
+            if (Input.mousePosition.y < scrollZone) {
                 currentPosition.y -= sensitivity * Time.deltaTime;
-            }
-            else if (Input.mousePosition.y > Screen.height - scrollZone)
-            {
+            } else if (Input.mousePosition.y > Screen.height - scrollZone) {
                 currentPosition.y = sensitivity * Time.deltaTime;
             }
-        }
-        else
-        {
+        } else {
             currentPosition.x = Input.GetAxis("Horizontal") * sensitivity * Time.deltaTime;
             currentPosition.y = Input.GetAxis("Vertical") * sensitivity * Time.deltaTime;
         }
-        //-Input.GetAxis("Mouse ScrollWheel")
-        //Zoom In/Out based on mouse wheel scroll by changing camera's Y position
-        if (Input.mouseScrollDelta.y < 0)
-        {
-            zoom += sensitivity * Time.deltaTime;
-        }
-
-        if (Input.mouseScrollDelta.y > 0)
-        {
-            zoom -= sensitivity * Time.deltaTime;
-        }
-
-        // Zoom In/ Out based on mouse wheel scroll by changing camera's orthographic size
-
-        Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y); ;
-
-        //zoom for prepective camera
-        //Zoom In/Out based on mouse wheel scroll by changing camera's Y position
-        // currentPosition.y = -Input.mouseScrollDelta.y * sensitivity * Time.deltaTime;
-
 
         Vector3 move = new Vector3(currentPosition.x, currentPosition.y, currentPosition.z) + desiredPosition;
         move.x = Mathf.Clamp(move.x, moveLimitsX.x, moveLimitsX.y);
@@ -141,5 +100,34 @@ public class CameraMovement : MonoBehaviour
         // move.z = Mathf.Clamp(move.z, moveLimitsX.x, moveLimitsX.y);
         desiredPosition = move;
         transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothFactor);
+    }
+
+    void HandleRotation() {
+        if (Input.mousePosition.x < scrollZone) {
+            transform.Rotate(0,0,1);
+        } else if (Input.mousePosition.x > Screen.width - scrollZone) {
+            transform.Rotate(0,0,-1);
+        }
+
+        if (Input.mousePosition.y < scrollZone) {
+            transform.RotateAround(Vector3.zero,new Vector3(1.0f,0f,0f),20 * Time.deltaTime);
+        } else if (Input.mousePosition.y > Screen.height - scrollZone) {
+            transform.RotateAround(Vector3.zero,new Vector3(-1.0f,0f,0f),20 * Time.deltaTime);
+        }
+
+        currentPosition = new Vector3(transform.position.x,transform.position.y,transform.position.z);
+        desiredPosition = currentPosition;
+    }
+
+    void HandleZoom() {
+        if (Input.mouseScrollDelta.y < 0) {
+            zoom += sensitivity * Time.deltaTime;
+        }
+
+        if (Input.mouseScrollDelta.y > 0) {
+            zoom -= sensitivity * Time.deltaTime;
+        }
+
+        Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
     }
 }
