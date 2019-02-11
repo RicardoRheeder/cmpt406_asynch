@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour {
         unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
         unitDisplayAOE = GameObject.Find("unitDisplayAOE").GetComponent<TMP_Text>();
         unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
-        unitDisplayMovementSpeed = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
+        unitDisplayMovementSpeed = GameObject.Find("unitDisplaySpeed").GetComponent<TMP_Text>();
         unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
     }
 
