@@ -25,58 +25,54 @@ public static class HexUtility {
 
     // returns the distance (number of tiles) between two hex positions
     public static float HexDistance(Vector3Int a, Vector3Int b) {
-		Vector3Int dA = OddrToCube( a);
-		Vector3Int dB = OddrToCube( b);
+		Vector3Int dA = OddrToCube(a);
+		Vector3Int dB = OddrToCube(b);
 		return (Math.Abs(dA.x - dB.x) 
           + Math.Abs(dA.x + dA.y - dB.x - dB.y)
           + Math.Abs(dA.y - dB.y)) / 2;
 	}
 
-    public static List<Vector3Int> FindLine(Vector3Int starting, Vector3Int ending) {
-        List<Vector3Int > tileCache;
-        
-        float distance = HexDistance( starting, ending );
+    // Returns a list of tiles that form a straight line between two tile positions
+    public static List<Vector3Int> FindLine(Vector3Int startPos, Vector3Int endPos) {
+        float distance = HexDistance( startPos, endPos );
         List<Vector3Int> resultsCube = new List<Vector3Int>();
-        Vector3 dA = OddrToCube( starting );
-        Vector3 dB = OddrToCube( ending );
-        if(dA == dB)
-        {
-            resultsCube.Add(CubeRound(dA));
-        }
-        else{
+        Vector3 cubeStart = OddrToCube( startPos );
+        Vector3 cubeEnd = OddrToCube( endPos );
+        if(cubeStart == cubeEnd) {
+            resultsCube.Add(CubeRound(cubeStart));
+        } else {
             Vector3 epsilonHex = new Vector3(1e-6f, 2e-6f, -3e-6f);
-            if(dB.z-dA.z>=0){
-                dB = dB + epsilonHex;
+            if(cubeEnd.z-cubeStart.z>=0) {
+                cubeEnd = cubeEnd + epsilonHex;
+            } else {
+                cubeEnd = cubeEnd - epsilonHex;
             }
-            else{
-                dB = dB - epsilonHex;
-            }
-            for( int i = 0; i <= distance; i++){
-                resultsCube.Add( CubeRound( CubeLerp( dA, dB, (1.0f / distance)*i)));
+            for( int i = 0; i <= distance; i++) {
+                resultsCube.Add( CubeRound( CubeLerp( cubeStart, cubeEnd, (1.0f / distance)*i)));
             }
         }
-        tileCache = new List<Vector3Int>();
-        foreach(Vector3Int CubeHex in resultsCube){
-            Vector3Int OffsetHex = CubeToOddr(CubeHex);
-
+        List<Vector3Int> tileCache = new List<Vector3Int>();
+        for(int i = 0; i < resultsCube.Count; i++) {
+            Vector3Int OffsetHex = CubeToOddr(resultsCube[i]);
             tileCache.Insert(0, OffsetHex);
         }
-        if(tileCache == null || tileCache.Count == 0){
+        if(tileCache == null || tileCache.Count == 0) {
             Debug.Log("tilecache is 0");
         }
         return tileCache;
 
     }
 
-    //Finds the direction based on a starting and end position
-    public static int FindDirection(Vector3Int starting, Vector3Int ending ) {
-        float distance = HexDistance( starting, ending );
-        Vector3Int dA = OddrToCube( starting );
-        Vector3Int dB = OddrToCube( ending );
-        Vector3Int neighborCubeHex = CubeRound( CubeLerp(dA, dB, 1.0f / (distance == 0f ? 1.0f : distance)));
+    // Finds the direction based on a starting and end position
+    // Useful for facing characters the direction they are moving
+    public static int FindDirection(Vector3Int startPos, Vector3Int endPos ) {
+        float distance = HexDistance( startPos, endPos );
+        Vector3Int cubeStart = OddrToCube( startPos );
+        Vector3Int cubeEnd = OddrToCube( endPos );
+        Vector3Int neighborCubeHex = CubeRound( CubeLerp(cubeStart, cubeEnd, 1.0f / (distance == 0f ? 1.0f : distance)));
         int direction = 0;
         for(int i = 0; i < cubeDirections.Count; i++) {
-            if(neighborCubeHex == dA + cubeDirections[i]) {
+            if(neighborCubeHex == cubeStart + cubeDirections[i]) {
                 direction = i;
             }
         }
@@ -126,16 +122,15 @@ public static class HexUtility {
     }
 
     //Given a tile and a direction integer, return the tile found in that direction.
-    public static Vector3Int NeighborTile(Vector3Int starting, int direction ) {
+    public static Vector3Int NeighborTile(Vector3Int startPos, int direction ) {
         direction = direction % 6;
         Vector3Int directionVector;
-        if ( starting.y % 2 == 0 ) {
+        if ( startPos.y % 2 == 0 ) {
             directionVector = evenYOffsetDirections[direction];
-        }
-        else {
+        } else {
             directionVector = oddYOffsetDirections[direction];
         }
-        return starting + directionVector;
+        return startPos + directionVector;
     }
 
     //Given two tiles, determine whether they are neighbors.
@@ -143,15 +138,16 @@ public static class HexUtility {
         
         Vector3Int cubeStart = OddrToCube(startingTile);
         Vector3Int cubePosNeighbor = OddrToCube(possibleNeighbor);
-        Vector3Int difference = cubePosNeighbor-cubeStart;
-        foreach(Vector3Int direction in cubeDirections){
-            if(difference==direction){
+        Vector3Int difference = cubePosNeighbor - cubeStart;
+        foreach(Vector3Int direction in cubeDirections) {
+            if(difference==direction) {
                 return true;
             }
         }
         return false;
     }
 
+    // Returns a list containing the positions of all immediate neighbours to a tile
     public static List<Vector3Int> GetNeighbors(Vector3Int hex, Tilemap tilemap, bool ignoreElevation) {
         List<Vector3Int> neighbors = new List<Vector3Int>();
         HexTile currTile = tilemap.GetTile(hex) as HexTile;
@@ -170,49 +166,20 @@ public static class HexUtility {
     public static List<Vector3Int> GetTilePositionsInRange( Tilemap tilemap, Vector3Int startingPos, int range ) {
         List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
         List<Vector3Int> paddedList = new List<Vector3Int>();
-        foreach (Vector3Int tile in tileList) {
-            if (!tilemap.HasTile( tile )) {
-                paddedList.Add( tile );
+        for(int i = 0; i < tileList.Count; i++) {
+            if(!tilemap.HasTile(tileList[i])) {
+                paddedList.Add(tileList[i]);
             }
         }
-        foreach (Vector3Int tile in paddedList) {
-            tileList.Remove( tile );
+        for(int i = 0; i < paddedList.Count; i++) {
+            tileList.Remove(paddedList[i]);
         }
         return new List<Vector3Int>( tileList );
-    }
-
-    public static List<Vector3Int> TestGetTilePositionsInRange(Tilemap tilemap, Vector3Int startingPos, int range){
-        Tuple<Vector3Int,int> posAndRange = new Tuple<Vector3Int,int>(startingPos, range);
-        if(!testRangeCalculationCache.ContainsKey(posAndRange)){
-            List<Vector3Int> results = new List<Vector3Int>();
-            for (int x = -range; x<=range; x++){
-                for( int y = Math.Max(-range, -x-range); y <= Math.Min(+range, -x+range); y++){
-                    int z = -x-y;
-                    Vector3Int startingPosCube = OddrToCube(startingPos);
-                    Vector3Int tileInRange = startingPosCube + new Vector3Int(x,y,z);
-                    tileInRange = CubeToOddr(tileInRange);
-                    if(tilemap.HasTile(tileInRange)){
-                        results.Add(tileInRange);
-                    }   
-                }   
-            }
-            testRangeCalculationCache.Add(posAndRange, results);
-            return results;
-            }
-        else {
-            return testRangeCalculationCache[posAndRange];
-        }          
     }
 
     //This function will will remove any tiles from the list of tiles that the board does not actually contain
     public static List<Vector3Int> GetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector3Int startingPos, int range ) {
         List<Vector3Int> tileList = GetTilePositionsInRange(tilemap, startingPos, range);
-        tileList.Remove( startingPos );
-        return new List<Vector3Int>( tileList );
-    }
-
-    public static List<Vector3Int> TestGetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector3Int startingPos, int range ) {
-        List<Vector3Int> tileList = TestGetTilePositionsInRange(tilemap, startingPos, range);
         tileList.Remove( startingPos );
         return new List<Vector3Int>( tileList );
     }
@@ -340,7 +307,6 @@ public static class HexUtility {
     // the list will be of size n, where n is the highest range we calculated
     // List(1) will return List<Vector3Int>, where each Vector3Int in that list is a tile within 1 range of the key
     private static Dictionary<Vector3Int, List<List<Vector3Int>>> rangeCalculationCache = new Dictionary<Vector3Int, List<List<Vector3Int>>>();
-    private static Dictionary<Tuple<Vector3Int, int>, List<Vector3Int>> testRangeCalculationCache = new Dictionary<Tuple<Vector3Int, int>, List<Vector3Int>>();
 
     //Note: this function will add tiles that do not exist to the cache (which is required for some uses that need padding around the tiles)
     private static List<Vector3Int> BuildCacheAndGetTiles( Vector3Int startingPos, int range) {
