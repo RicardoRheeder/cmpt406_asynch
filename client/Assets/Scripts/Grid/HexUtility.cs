@@ -154,7 +154,7 @@ public static class HexUtility {
         for(int i = 0; i<=5; i++){
             Vector3Int neighbor = NeighborTile(hex, i);
             HexTile neighborTile = tilemap.GetTile(neighbor) as HexTile;
-            if((neighborTile != null && (!ignoreElevation && Math.Abs(neighborTile.elevation - currTile.elevation) < 2))) {
+            if((neighborTile != null && (ignoreElevation || (!ignoreElevation && Math.Abs(neighborTile.elevation - currTile.elevation) < 2)))) {
                 neighbors.Add(neighbor);
             }
             
@@ -197,28 +197,31 @@ public static class HexUtility {
         return new List<Vector3Int>( tileList );
     }
 
-    // This function returns a list of hexes that can be reached, given a a certain movement range.
+    // This function returns a list of hexes that can be reached, given a certain movement range.
     // Obstacles and the edge of the map are taken into account, and will prevent certain hexes from being reached.
     // if ignoreElevation is false, it won't include tiles with an elevation difference >= 2
-    public static HashSet<Vector3Int> HexReachable(Vector3Int starting, int movementRange, Tilemap tilemap){
-        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
-        visited.Add(starting);
+    public static List<Vector3Int> HexReachable(Vector3Int startPos, int movementRange, Tilemap tilemap, bool ignoreElevation){
+        List<Vector3Int> visited = new List<Vector3Int>();
+        visited.Add(startPos);
         List<List<Vector3Int>> fringes = new List<List<Vector3Int>>();
         List<Vector3Int> startList = new List<Vector3Int>();
-        startList.Add(starting);
+        startList.Add(startPos);
         fringes.Add(startList);
         for(int movement = 1; movement <= movementRange; movement++){
             fringes.Add(new List<Vector3Int>());
-            foreach(Vector3Int hex in fringes[movement-1]){
+            foreach(Vector3Int hex in fringes[movement-1]) {
+                HexTile fringeTile = tilemap.GetTile(hex) as HexTile;
                 for(int dir = 0; dir < 6; dir++){
                     Vector3Int neighbor = NeighborTile(hex, dir);
-                    if(!visited.Contains(neighbor) && tilemap.HasTile(neighbor)){
+                    HexTile neighborTile = tilemap.GetTile(neighbor) as HexTile;
+                    if(!visited.Contains(neighbor) && tilemap.HasTile(neighbor) && (ignoreElevation || (!ignoreElevation && Math.Abs(neighborTile.elevation - fringeTile.elevation) < 2))) {
                         visited.Add(neighbor);
                         fringes[movement].Add(neighbor);
                     }
                 }
             }
         }
+
         return visited;
     }
 	
