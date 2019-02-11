@@ -95,11 +95,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2e9239d88a4554d9f30ca1baa27cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollZone: 30
-  sensitivity: 10
+  scrollZone: 100
+  sensitivity: 50
   smoothFactor: 0.2
-  moveLimitsX: {x: 0, y: 0}
-  scrollLimitsY: {x: 0, y: 0}
-  moveLimitsZ: {x: 0, y: 0}
+  moveLimitsX: {x: -50, y: 50}
+  moveLimitsY: {x: -50, y: 50}
+  zoomLimits: {x: 10, y: 50}
   useCursor: 1
-  mouseRotationSpeed: 100
