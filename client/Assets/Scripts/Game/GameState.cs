@@ -74,6 +74,7 @@ public class GameStateCollection {
     //you can use this to set default values, or ensure values are within some valid context
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
+        idToStateMap = new Dictionary<string, GameState>();
         foreach(var state in states) {
             idToStateMap.Add(state.id, state);
         }

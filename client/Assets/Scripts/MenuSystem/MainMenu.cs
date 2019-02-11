@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
 
@@ -14,12 +16,19 @@ public class MainMenu : MonoBehaviour {
     private GameObject createGamePanel;
     private GameObject joinGamePanel;
 
+    //Variables and prefabs to populate friends list
+    [SerializeField]
+    private GameObject friendsViewTextPrefab;
+    private GameObject friendsViewContent;
+
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
         pendingGamesPanel = GameObject.Find("PendingGamesPanel");
         activeGamesPanel = GameObject.Find("ActiveGamesPanel");
         createGamePanel = GameObject.Find("CreateGamePanel");
         joinGamePanel = GameObject.Find("JoinGamePanel");
+
+        friendsViewContent = GameObject.Find("friendsListContent");
     }
 
     // Start is called before the first frame update
@@ -72,9 +81,8 @@ public class MainMenu : MonoBehaviour {
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         if (response.First) {
             foreach(var state in response.Second.states) {
-                Debug.Log(state);
+                //we can deal with displaying the game states
             }
-            //we can deal with displaying the game states
         }
         else {
             //the request failed, inform the user
@@ -83,15 +91,20 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuAddFriendButton() {
         //Here we need to somehow get the string of the username we would like to add
-        string userToAdd = "1";
-        if (!networkApi.AddFriend(userToAdd)) {
+        string userToAdd = "test";
+        if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
+            GameObject friendText = Instantiate(friendsViewTextPrefab);
+            friendText.GetComponent<TMP_Text>().text = userToAdd;
+            friendText.transform.SetParent(friendsViewContent.transform, false);
+        }
+        else {
             //adding a user failed
         }
     }
 
     public void MainMenuRemoveUserButton() {
         //Here we need to somehow get the string of the username we would like to add
-        string userToRemove = "1";
+        string userToRemove = "test";
         if (!networkApi.RemoveFriend(userToRemove)) {
             //removing a user failed
         }

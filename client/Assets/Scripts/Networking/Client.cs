@@ -39,6 +39,10 @@ public class Client : MonoBehaviour {
         DontDestroyOnLoad(this.gameObject);
     }
 
+    public string GetUsername() {
+        return user.username;
+    }
+
     //Sends new user information to the server
     public bool CreateUser(string username, string password) {
         user = new Credentials(username, password);

@@ -12,6 +12,10 @@ public static class StringValidation {
     private static readonly int GAME_NAME_LOWER_LIMIT = 4;
     private static readonly int GAME_NAME_UPPER_LIMIT = 20;
 
+    public static bool ValidateUsername(string username) {
+        return ValidateString(username, CREDENTIALS_LOWER_LIMIT, CREDENTIALS_UPPER_LIMIT, CREDENTIALS_PATTERN);
+    }
+
     public static bool ValidateUsernamePassword(string username, string password) {
         return ValidateString(username, CREDENTIALS_LOWER_LIMIT, CREDENTIALS_UPPER_LIMIT, CREDENTIALS_PATTERN) &&
             ValidateString(password, CREDENTIALS_LOWER_LIMIT, CREDENTIALS_UPPER_LIMIT, CREDENTIALS_PATTERN);

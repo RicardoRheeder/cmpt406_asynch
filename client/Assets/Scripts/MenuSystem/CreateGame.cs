@@ -18,7 +18,7 @@ public class CreateGame : MonoBehaviour {
     TMP_Text forfeitDuration;
     Slider forfeitSlider;
     TMP_InputField invitePlayer;
-    TMP_Dropdown mapSelection;
+    Dropdown mapSelection;
 
     GameManager manager;
 
@@ -31,17 +31,21 @@ public class CreateGame : MonoBehaviour {
         forfeitDuration = GameObject.Find("ForfeitTimeDisplay").GetComponent<TMP_Text>();
         forfeitSlider = GameObject.Find("ForfeitTimeSlider").GetComponent<Slider>();
         invitePlayer = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
-        mapSelection = GameObject.Find("MapDropdown").GetComponent<TMP_Dropdown>();
+        mapSelection = GameObject.Find("MapDropdown").GetComponent<Dropdown>();
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         //populate the map selection with proper values
+        List<string> mapNames = new List<string>();
+        foreach(BoardType name in Enum.GetValues(typeof(BoardType))) {
+            mapNames.Add(name.ToString());
+        }
+        mapSelection.AddOptions(mapNames);
     }
 
     void Start() {
         opponents = new List<string>();
     }
 
-    //TODO: input validation both client and backend side
     public void ConfirmCreate() {
         //Check if we are creating a public or a private game
         string gameName = GameObject.Find("GameNameInputField").GetComponent<TMP_InputField>().text;
@@ -53,7 +57,8 @@ public class CreateGame : MonoBehaviour {
         int turnTime = (int)turnSlider.value;
         int forfeitTime = (int)forfeitSlider.value;
 
-        int boardId = 1; //Hardcoded, properly parse this in the future
+        Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum);
+        int boardId = (int)boardEnum;
 
         if (networkApi.CreatePrivateGame(gameName, turnTime, forfeitTime, opponents, boardId)) {
             opponents.Clear();
@@ -66,9 +71,11 @@ public class CreateGame : MonoBehaviour {
     }
 
     public void InvitePlayer() {
-        Debug.Log("Adding: " + invitePlayer.text);
-        opponents.Add(invitePlayer.text);
-        invitePlayer.text = "";
+        string username = invitePlayer.text;
+        if (StringValidation.ValidateUsername(username)) {
+            opponents.Add(invitePlayer.text);
+            invitePlayer.text = "";
+        }
     }
 
     public void UpdateTurnDuration(string value) {
