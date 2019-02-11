@@ -108,15 +108,6 @@ public class CameraMovement : MonoBehaviour
         } else if (Input.mousePosition.x > Screen.width - scrollZone) {
             transform.Rotate(0,0,-1);
         }
-
-        if (Input.mousePosition.y < scrollZone) {
-            transform.RotateAround(Vector3.zero,new Vector3(1.0f,0f,0f),20 * Time.deltaTime);
-        } else if (Input.mousePosition.y > Screen.height - scrollZone) {
-            transform.RotateAround(Vector3.zero,new Vector3(-1.0f,0f,0f),20 * Time.deltaTime);
-        }
-
-        currentPosition = new Vector3(transform.position.x,transform.position.y,transform.position.z);
-        desiredPosition = currentPosition;
     }
 
     void HandleZoom() {
