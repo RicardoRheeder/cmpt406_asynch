@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
 
@@ -34,12 +32,17 @@ public class MainMenu : MonoBehaviour {
     private GameObject turnNum;
     public Dictionary<string, GameState> gamesListCellDict;
 
+    //Reference to the game manager to start a game
+    private Dictionary<string, GameState> gameStateStorage = new Dictionary<string, GameState>();
+    private GameManager manager;
+
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
         pendingGamesPanel = GameObject.Find("PendingGamesPanel");
         activeGamesPanel = GameObject.Find("ActiveGamesPanel");
         createGamePanel = GameObject.Find("CreateGamePanel");
         joinGamePanel = GameObject.Find("JoinGamePanel");
+<<<<<<< HEAD
         friendsViewContent = GameObject.Find("FriendsListViewport");
         friendsListInputField = GameObject.Find("FriendsInputField").GetComponent<TMP_InputField>();
         friendsListDict = new Dictionary<string, GameObject> {};
@@ -50,6 +53,12 @@ public class MainMenu : MonoBehaviour {
         joinGameViewContent = GameObject.Find("JoinPublicGameViewport");
         activeGamesViewContent = GameObject.Find("ActiveGamesViewport");
         pendingGamesViewContent = GameObject.Find("PendingGamesViewport");
+=======
+
+        friendsViewContent = GameObject.Find("friendsListContent");
+
+        manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+>>>>>>> e5d2152c31b84f3e86a7b592ccb79d232970caba
     }
 
     // Start is called before the first frame update
@@ -113,6 +122,7 @@ public class MainMenu : MonoBehaviour {
         string gameId;
         if (response.First) {
             foreach(var state in response.Second.states) {
+                gameStateStorage.Add(state.id, state);
                 //we can deal with displaying the game states
                 GameObject newGameCell = Instantiate(gameListCell);
                 newGameCell.transform.SetParent(pendingGamesViewContent.transform, false);
@@ -153,5 +163,14 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuLogoutButton() {
         networkApi.LogoutUser();
         SceneManager.LoadScene("LoginScreen");
+    }
+
+    public void MainMenuJoinPendingGame() {
+        GameState state = null;
+        foreach(string key in gameStateStorage.Keys) {
+            state = gameStateStorage[key];
+        }
+        //Just load the first state right now for testing
+        manager.LoadGame(state, networkApi.GetUsername());
     }
 }

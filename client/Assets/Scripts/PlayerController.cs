@@ -6,15 +6,17 @@ public class PlayerController : MonoBehaviour {
 
     private CardController deck;
     private GameManager manager;
-    public Tilemap tilemap;
+    private Tilemap tilemap;
 
-    public TMP_Text unitDisplayHealth;
-    public TMP_Text unitDisplayArmour;
-    public TMP_Text unitDisplayRange;
-    public TMP_Text unitDisplayDamage;
-    public TMP_Text unitDisplayAOE;
-    public TMP_Text unitDisplayPierce;
-    public TMP_Text unitDisplayMovementSpeed;
+    private TMP_Text unitDisplayHealth;
+    private TMP_Text unitDisplayArmour;
+    private TMP_Text unitDisplayRange;
+    private TMP_Text unitDisplayDamage;
+    private TMP_Text unitDisplayAOE;
+    private TMP_Text unitDisplayPierce;
+    private TMP_Text unitDisplayMovementSpeed;
+
+    private bool initialized = false;
 
     public void Initialize(GameManager manager, CardController deck) {
         this.deck = deck;
@@ -26,10 +28,15 @@ public class PlayerController : MonoBehaviour {
         unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
         unitDisplayMovementSpeed = GameObject.Find("unitDisplaySpeed").GetComponent<TMP_Text>();
         unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
+        tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+
+        initialized = true;
     }
 
     void Update() {
-        InputController();
+        if(initialized) {
+            InputController();
+        }
     }
 
     private void InputController() {
@@ -38,11 +45,11 @@ public class PlayerController : MonoBehaviour {
         
         //test
         if (Input.GetMouseButtonDown(0)) { //on mouse left click
-            print(tilePos);
-           
             UnitStats unit = manager.GetUnitOnTile(tilePos);
-            if(unit != null)
+            if (unit != null)
                 UpdateUnitDisplay(unit);
+            else
+                UpdateUnitDisplay(UnitFactory.GetBaseUnit(UnitType.claymore));
         }
     }
 

@@ -61,3 +61,8 @@ type MakeMove struct {
 	Cards       []gamestate.Cards  `json:"cards"`
 	Actions     []gamestate.Action `json:"actions"`
 }
+
+// MultiStatesResponse is here because client requires that states to be one field nested
+type MultiStatesResponse struct {
+	States []gamestate.GameState `json:"states"`
+}

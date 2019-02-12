@@ -17,8 +17,13 @@ public class CreateGame : MonoBehaviour {
     Slider turnSlider;
     TMP_Text forfeitDuration;
     Slider forfeitSlider;
-    TMP_InputField invitePlayer;
+    TMP_InputField invitePlayerInput;
     Dropdown mapSelection;
+
+    //Variables needed to populate the invited players list
+    [SerializeField]
+    private GameObject invitedPlayersTextPrefab;
+    private GameObject inviedPlayersViewContent;
 
     GameManager manager;
 
@@ -30,8 +35,10 @@ public class CreateGame : MonoBehaviour {
         turnSlider = GameObject.Find("DurationSlider").GetComponent<Slider>();
         forfeitDuration = GameObject.Find("ForfeitTimeDisplay").GetComponent<TMP_Text>();
         forfeitSlider = GameObject.Find("ForfeitTimeSlider").GetComponent<Slider>();
-        invitePlayer = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
+        invitePlayerInput = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
         mapSelection = GameObject.Find("MapDropdown").GetComponent<Dropdown>();
+        inviedPlayersViewContent = GameObject.Find("invitedFriendsViewport");
+
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         //populate the map selection with proper values
@@ -70,11 +77,16 @@ public class CreateGame : MonoBehaviour {
         }
     }
 
+    Dictionary<string, GameObject> invitedPlayers = new Dictionary<string, GameObject>();
     public void InvitePlayer() {
-        string username = invitePlayer.text;
+        string username = invitePlayerInput.text;
         if (StringValidation.ValidateUsername(username)) {
-            opponents.Add(invitePlayer.text);
-            invitePlayer.text = "";
+            GameObject invitedUser = Instantiate(invitedPlayersTextPrefab);
+            invitedUser.GetComponent<TMP_Text>().text = username;
+            invitedUser.transform.SetParent(inviedPlayersViewContent.transform, false);
+            opponents.Add(invitePlayerInput.text);
+            invitedPlayers.Add(username, invitedUser);
+            invitePlayerInput.text = "";
         }
     }
 

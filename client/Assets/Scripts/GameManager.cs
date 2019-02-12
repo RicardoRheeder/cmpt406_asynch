@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, state.userCardsMap[username]);
+        playerController.Initialize(this, null);
 
         //Since the only scene we can load from this point is the main menu, we can prep 
         SceneManager.sceneLoaded -= OnGameLoaded;
