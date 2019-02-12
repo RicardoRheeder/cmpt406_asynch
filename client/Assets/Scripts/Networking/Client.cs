@@ -58,8 +58,10 @@ public class Client : MonoBehaviour {
             //This will come in place later once more functionality is in place
             try {
                 request.GetResponse();
+                userInformation = new PlayerMetadata();
             }
             catch (WebException e) {
+                user = null;
                 PrettyPrint(CREATE_USER, (HttpWebResponse)e.Response);
                 return false;
             }
