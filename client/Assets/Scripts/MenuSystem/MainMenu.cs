@@ -18,8 +18,21 @@ public class MainMenu : MonoBehaviour {
 
     //Variables and prefabs to populate friends list
     [SerializeField]
-    private GameObject friendsViewTextPrefab;
+    private GameObject friendsListCell;
     private GameObject friendsViewContent;
+    TMP_InputField friendsListInputField;
+    public Dictionary<string, GameObject> friendsListDict;
+
+    //Variables and prefabs to populate game lists
+    private GameObject gameListCell;
+    private GameObject joinGameViewContent;
+    private GameObject activeGamesViewContent;
+    private GameObject pendingGamesViewContent;
+    private GameObject mapName;
+    private GameObject playersNum;
+    private GameObject maxPlayersNum;
+    private GameObject turnNum;
+    public Dictionary<string, GameState> gamesListCellDict;
 
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
@@ -27,8 +40,16 @@ public class MainMenu : MonoBehaviour {
         activeGamesPanel = GameObject.Find("ActiveGamesPanel");
         createGamePanel = GameObject.Find("CreateGamePanel");
         joinGamePanel = GameObject.Find("JoinGamePanel");
-
-        friendsViewContent = GameObject.Find("friendsListContent");
+        friendsViewContent = GameObject.Find("FriendsListViewport");
+        friendsListInputField = GameObject.Find("FriendsInputField").GetComponent<TMP_InputField>();
+        friendsListDict = new Dictionary<string, GameObject> {};
+        mapName = GameObject.Find("ThisMap");
+        playersNum = GameObject.Find("ThisPlayersNum");
+        maxPlayersNum = GameObject.Find("ThisMaxPlayersNum");
+        turnNum = GameObject.Find("ThisTurnNum");
+        joinGameViewContent = GameObject.Find("JoinPublicGameViewport");
+        activeGamesViewContent = GameObject.Find("ActiveGamesViewport");
+        pendingGamesViewContent = GameObject.Find("PendingGamesViewport");
     }
 
     // Start is called before the first frame update
@@ -47,6 +68,16 @@ public class MainMenu : MonoBehaviour {
     //Helper function so that other buttons can easily return to this state when they are done in their sub menu
     public void SetInitialMenuState() {
         SetMenuState(false, false, false, false);
+    }
+
+    public void GameCellDetailsButton(){
+        GameObject GameToDisplay;//grab the game from the details button.
+        string map;
+        string players;
+        string maxPlayers;
+        string turn;
+        //set the text of the info panel elements (This******)
+
     }
 
     public void MainMenuJoinGameButton() {
@@ -79,9 +110,15 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuPendingGamesButton() {
         SetMenuState(true, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
+        string gameId;
         if (response.First) {
             foreach(var state in response.Second.states) {
                 //we can deal with displaying the game states
+                GameObject newGameCell = Instantiate(gameListCell);
+                newGameCell.transform.SetParent(pendingGamesViewContent.transform, false);
+                gameId = state.id;
+                gamesListCellDict.Add(gameId, state);
+
             }
         }
         else {
@@ -91,11 +128,12 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuAddFriendButton() {
         //Here we need to somehow get the string of the username we would like to add
-        string userToAdd = "test";
+        string userToAdd = friendsListInputField.text;
         if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
-            GameObject friendText = Instantiate(friendsViewTextPrefab);
+            GameObject friendText = Instantiate(friendsListCell);
             friendText.GetComponent<TMP_Text>().text = userToAdd;
             friendText.transform.SetParent(friendsViewContent.transform, false);
+            friendsListDict.Add(userToAdd, friendText);
         }
         else {
             //adding a user failed
@@ -104,10 +142,12 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuRemoveUserButton() {
         //Here we need to somehow get the string of the username we would like to add
-        string userToRemove = "test";
-        if (!networkApi.RemoveFriend(userToRemove)) {
-            //removing a user failed
+        string userToRemove = friendsListInputField.text;
+        if (networkApi.RemoveFriend(userToRemove)) {
+            Destroy(friendsListDict[userToRemove]);
+            friendsListDict.Remove(userToRemove);
         }
+
     }
 
     public void MainMenuLogoutButton() {

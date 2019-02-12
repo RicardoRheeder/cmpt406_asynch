@@ -43,6 +43,10 @@ public class Client : MonoBehaviour {
         return user.username;
     }
 
+    public List<string> getFriendsList(){
+        return userInformation.friends;
+    }
+
     //Sends new user information to the server
     public bool CreateUser(string username, string password) {
         user = new Credentials(username, password);
