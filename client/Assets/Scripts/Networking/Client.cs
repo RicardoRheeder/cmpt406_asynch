@@ -94,7 +94,6 @@ public class Client : MonoBehaviour {
                 using (var reader = new StreamReader(response.GetResponseStream())) {
                     responseJson = reader.ReadToEnd();
                 }
-                Debug.Log(responseJson);
                 userInformation = JsonConversion.CreateFromJson<PlayerMetadata>(responseJson, typeof(PlayerMetadata));
                 user = new Credentials(username, password);
                 return true;

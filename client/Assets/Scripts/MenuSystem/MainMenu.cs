@@ -62,7 +62,6 @@ public class MainMenu : MonoBehaviour {
 
         List<string> userFriends = networkApi.GetFriendsList();
         foreach(string friend in userFriends) {
-            Debug.Log("here");
             GameObject friendText = Instantiate(friendsListCellPrefab);
             friendText.GetComponent<TMP_Text>().text = friend;
             friendText.transform.SetParent(friendsViewContent.transform, false);
@@ -120,7 +119,6 @@ public class MainMenu : MonoBehaviour {
                 gameStateStorage.Add(state.id, state);
                 GameObject newGameCell = Instantiate(gameListCellPrefab);
                 newGameCell.transform.SetParent(pendingGamesViewContent.transform, false);
-
             }
         }
         else {
@@ -149,7 +147,6 @@ public class MainMenu : MonoBehaviour {
             Destroy(friendsListDict[userToRemove]);
             friendsListDict.Remove(userToRemove);
         }
-
     }
 
     public void MainMenuLogoutButton() {

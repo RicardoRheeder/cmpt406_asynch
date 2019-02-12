@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 [DataContract]
 public class PlayerMetadata {
 
-    [DataMember]
+    [DataMember(Name = "freinds")]
     public List<string> friends = new List<string>();
 
     [DataMember]
