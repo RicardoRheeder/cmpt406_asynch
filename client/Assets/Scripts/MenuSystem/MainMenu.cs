@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
 
@@ -21,6 +19,10 @@ public class MainMenu : MonoBehaviour {
     private GameObject friendsViewTextPrefab;
     private GameObject friendsViewContent;
 
+    //Reference to the game manager to start a game
+    private Dictionary<string, GameState> gameStateStorage = new Dictionary<string, GameState>();
+    private GameManager manager;
+
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
         pendingGamesPanel = GameObject.Find("PendingGamesPanel");
@@ -29,6 +31,8 @@ public class MainMenu : MonoBehaviour {
         joinGamePanel = GameObject.Find("JoinGamePanel");
 
         friendsViewContent = GameObject.Find("friendsListContent");
+
+        manager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Start is called before the first frame update
@@ -81,6 +85,7 @@ public class MainMenu : MonoBehaviour {
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         if (response.First) {
             foreach(var state in response.Second.states) {
+                gameStateStorage.Add(state.id, state);
                 //we can deal with displaying the game states
             }
         }
@@ -113,5 +118,14 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuLogoutButton() {
         networkApi.LogoutUser();
         SceneManager.LoadScene("LoginScreen");
+    }
+
+    public void MainMenuJoinPendingGame() {
+        GameState state = null;
+        foreach(string key in gameStateStorage.Keys) {
+            state = gameStateStorage[key];
+        }
+        //Just load the first state right now for testing
+        manager.LoadGame(state, networkApi.GetUsername());
     }
 }
