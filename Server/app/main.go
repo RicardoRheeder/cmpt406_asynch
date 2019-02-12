@@ -344,7 +344,9 @@ func handleGetGameStateMulti(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(gameStates)
+	response := &request.MultiStatesResponse{States: gameStates}
+
+	json.NewEncoder(w).Encode(response)
 
 	w.WriteHeader(http.StatusOK)
 	return
@@ -372,8 +374,9 @@ func handleGetPublicGamesSummary(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	response := &request.MultiStatesResponse{States: publicGameStates}
 
-	json.NewEncoder(w).Encode(publicGameStates)
+	json.NewEncoder(w).Encode(response)
 
 	w.WriteHeader(http.StatusOK)
 	return
