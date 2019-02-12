@@ -16,13 +16,14 @@ public class MainMenu : MonoBehaviour {
 
     //Variables and prefabs to populate friends list
     [SerializeField]
-    private GameObject friendsListCell;
+    private GameObject friendsListCellPrefab;
     private GameObject friendsViewContent;
     TMP_InputField friendsListInputField;
     public Dictionary<string, GameObject> friendsListDict;
 
     //Variables and prefabs to populate game lists
-    private GameObject gameListCell;
+    [SerializeField]
+    private GameObject gameListCellPrefab;
     private GameObject joinGameViewContent;
     private GameObject activeGamesViewContent;
     private GameObject pendingGamesViewContent;
@@ -30,7 +31,6 @@ public class MainMenu : MonoBehaviour {
     private GameObject playersNum;
     private GameObject maxPlayersNum;
     private GameObject turnNum;
-    public Dictionary<string, GameState> gamesListCellDict;
 
     //Reference to the game manager to start a game
     private Dictionary<string, GameState> gameStateStorage = new Dictionary<string, GameState>();
@@ -42,8 +42,6 @@ public class MainMenu : MonoBehaviour {
         activeGamesPanel = GameObject.Find("ActiveGamesPanel");
         createGamePanel = GameObject.Find("CreateGamePanel");
         joinGamePanel = GameObject.Find("JoinGamePanel");
-<<<<<<< HEAD
-        friendsViewContent = GameObject.Find("FriendsListViewport");
         friendsListInputField = GameObject.Find("FriendsInputField").GetComponent<TMP_InputField>();
         friendsListDict = new Dictionary<string, GameObject> {};
         mapName = GameObject.Find("ThisMap");
@@ -53,17 +51,28 @@ public class MainMenu : MonoBehaviour {
         joinGameViewContent = GameObject.Find("JoinPublicGameViewport");
         activeGamesViewContent = GameObject.Find("ActiveGamesViewport");
         pendingGamesViewContent = GameObject.Find("PendingGamesViewport");
-=======
-
-        friendsViewContent = GameObject.Find("friendsListContent");
+        friendsViewContent = GameObject.Find("FriendsListViewport");
 
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
->>>>>>> e5d2152c31b84f3e86a7b592ccb79d232970caba
     }
 
     // Start is called before the first frame update
     void Start() {
         SetInitialMenuState();
+
+        List<string> userFriends = networkApi.GetFriendsList();
+        foreach(string friend in userFriends) {
+            Debug.Log("here");
+            GameObject friendText = Instantiate(friendsListCellPrefab);
+            friendText.GetComponent<TMP_Text>().text = friend;
+            friendText.transform.SetParent(friendsViewContent.transform, false);
+            friendsListDict.Add(friend, friendText);
+        }
+    }
+
+    //Helper function so that other buttons can easily return to this state when they are done in their sub menu
+    public void SetInitialMenuState() {
+        SetMenuState(false, false, false, false);
     }
 
     //Helper function to enable/disable menus with boolean flags
@@ -72,11 +81,6 @@ public class MainMenu : MonoBehaviour {
         activeGamesPanel.SetActive(activeState);
         createGamePanel.SetActive(createState);
         joinGamePanel.SetActive(joinState);
-    }
-
-    //Helper function so that other buttons can easily return to this state when they are done in their sub menu
-    public void SetInitialMenuState() {
-        SetMenuState(false, false, false, false);
     }
 
     public void GameCellDetailsButton(){
@@ -91,14 +95,6 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuJoinGameButton() {
         SetMenuState(false, false, false, true);
-        Tuple<bool, GameState> response = networkApi.GetGamestate("3ed32d75-8d7c-45cc-bd2f-c79f98634172"); //Hardcoded for testing purposes
-        if (response.First) {
-            Debug.Log(JsonConversion.ConvertObjectToJson(typeof(GameState), response.Second));
-        }
-        else {
-            Debug.Log("getting the gamestate failed");
-            //the request failed, inform the user
-        }
     }
 
     public void MainMenuCreateGameButton() {
@@ -119,15 +115,11 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuPendingGamesButton() {
         SetMenuState(true, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
-        string gameId;
         if (response.First) {
             foreach(var state in response.Second.states) {
                 gameStateStorage.Add(state.id, state);
-                //we can deal with displaying the game states
-                GameObject newGameCell = Instantiate(gameListCell);
+                GameObject newGameCell = Instantiate(gameListCellPrefab);
                 newGameCell.transform.SetParent(pendingGamesViewContent.transform, false);
-                gameId = state.id;
-                gamesListCellDict.Add(gameId, state);
 
             }
         }
@@ -140,7 +132,7 @@ public class MainMenu : MonoBehaviour {
         //Here we need to somehow get the string of the username we would like to add
         string userToAdd = friendsListInputField.text;
         if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
-            GameObject friendText = Instantiate(friendsListCell);
+            GameObject friendText = Instantiate(friendsListCellPrefab);
             friendText.GetComponent<TMP_Text>().text = userToAdd;
             friendText.transform.SetParent(friendsViewContent.transform, false);
             friendsListDict.Add(userToAdd, friendText);

@@ -39,11 +39,12 @@ public class Client : MonoBehaviour {
         DontDestroyOnLoad(this.gameObject);
     }
 
+    //Methods to get information about the user
     public string GetUsername() {
         return user.username;
     }
 
-    public List<string> getFriendsList(){
+    public List<string> GetFriendsList(){
         return userInformation.friends;
     }
 
@@ -93,6 +94,7 @@ public class Client : MonoBehaviour {
                 using (var reader = new StreamReader(response.GetResponseStream())) {
                     responseJson = reader.ReadToEnd();
                 }
+                Debug.Log(responseJson);
                 userInformation = JsonConversion.CreateFromJson<PlayerMetadata>(responseJson, typeof(PlayerMetadata));
                 user = new Credentials(username, password);
                 return true;
