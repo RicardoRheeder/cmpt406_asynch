@@ -17,18 +17,18 @@ type Friend struct {
 type CreatePrivateGame struct {
 	GameName          string   `json:"gameName"`
 	TurnTime          int      `json:"turnTime"`
-	TimeToStartTurn   int      `json:"timeToStartTurn"`
+	ForfeitTime       int      `json:"forfeitTime"`
 	OpponentUsernames []string `json:"opponentUsernames"`
 	BoardID           int      `json:"boardId"`
 }
 
 // CreatePublicGame is a struct to handle the request of creating a public game
 type CreatePublicGame struct {
-	GameName        string `json:"gameName"`
-	TurnTime        int    `json:"turnTime"`
-	TimeToStartTurn int    `json:"timeToStartTurn"`
-	MaxUsers        int    `json:"maxUsers"`
-	BoardID         int    `json:"boardId"`
+	GameName    string `json:"gameName"`
+	TurnTime    int    `json:"turnTime"`
+	ForfeitTime int    `json:"forfeitTime"`
+	MaxUsers    int    `json:"maxUsers"`
+	BoardID     int    `json:"boardId"`
 }
 
 // OnlyGameID is a struct to handle payloads that consist of only the GameID

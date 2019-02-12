@@ -9,25 +9,25 @@ import (
 
 // GameState is everything the client needs to know to construct the state of the game
 type GameState struct {
-	ID              string    `json:"id,omitempty"`
-	GameName        string    `json:"gameName,omitempty"`
-	CreatedBy       string    `json:"createdBy,omitempty"`
-	BoardID         int       `json:"boardId,omitempty"`
-	MaxUsers        int       `json:"maxUsers,omitempty"`
-	SpotsAvailable  int       `json:"spotsAvailable,omitempty"`
-	IsPublic        bool      `json:"isPublic"`
-	Users           []string  `json:"users,omitempty"`
-	AcceptedUsers   []string  `json:"acceptedUsers,omitempty"`
-	ReadyUsers      []string  `json:"readyUsers,omitempty"`
-	AliveUsers      []string  `json:"aliveUsers,omitempty"`
-	UsersTurn       string    `json:"usersTurn,omitempty"`
-	Units           []Unit    `json:"units,omitempty"`
-	Cards           []Cards   `json:"cards,omitempty" datastore:"-"`
-	CardIDs         []string  `json:"-"`
-	Actions         []Action  `json:"actions,omitempty"`
-	TurnTime        int       `json:"turnTime,omitempty"`
-	TimeToStateTurn int       `json:"timeToStartTurn,omitempty"`
-	Created         time.Time `json:"created,omitempty"`
+	ID             string    `json:"id,omitempty"`
+	GameName       string    `json:"gameName,omitempty"`
+	CreatedBy      string    `json:"createdBy,omitempty"`
+	BoardID        int       `json:"boardId,omitempty"`
+	MaxUsers       int       `json:"maxUsers,omitempty"`
+	SpotsAvailable int       `json:"spotsAvailable,omitempty"`
+	IsPublic       bool      `json:"isPublic"`
+	Users          []string  `json:"users,omitempty"`
+	AcceptedUsers  []string  `json:"acceptedUsers,omitempty"`
+	ReadyUsers     []string  `json:"readyUsers,omitempty"`
+	AliveUsers     []string  `json:"aliveUsers,omitempty"`
+	UsersTurn      string    `json:"usersTurn,omitempty"`
+	Units          []Unit    `json:"units,omitempty"`
+	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
+	CardIDs        []string  `json:"-"`
+	Actions        []Action  `json:"actions,omitempty"`
+	TurnTime       int       `json:"turnTime,omitempty"`
+	ForfeitTime    int       `json:"forfeitTime,omitempty"`
+	Created        time.Time `json:"created,omitempty"`
 }
 
 // Unit is a game piece on the board

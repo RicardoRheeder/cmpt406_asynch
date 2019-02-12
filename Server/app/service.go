@@ -191,7 +191,7 @@ func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
 /************************************/
 
 // CreatePrivateGame will create a private game with the requested users
-func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, timeToStartTurn int) error {
+func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, forfeitTime int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -217,7 +217,7 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 		log.Errorf(ctx, "Create Private Game failed: invalid turnTime number")
 		return errors.New("turnTime number invalid")
 	}
-	if timeToStartTurn == 0 || timeToStartTurn < -1 {
+	if forfeitTime == 0 || forfeitTime < -1 {
 		log.Errorf(ctx, "Create Private Game failed: timeToStartTurn turnTime number")
 		return errors.New("timeToStartTurn number invalid")
 	}
@@ -233,7 +233,7 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 	}
 
 	/* Update the user, all other invite and create a shell game state*/
-	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID, gameName, turnTime, timeToStartTurn))
+	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID, gameName, turnTime, forfeitTime))
 	if err != nil {
 		return err
 	}

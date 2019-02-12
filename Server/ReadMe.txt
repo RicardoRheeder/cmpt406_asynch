@@ -428,7 +428,7 @@ type GameState struct {
 	Cards           []Cards
 	Actions         []Action
 	TurnTime        int
-	TimeToStateTurn int
+	ForfeitTIme     int
 	Created         time.Time
 }
 
