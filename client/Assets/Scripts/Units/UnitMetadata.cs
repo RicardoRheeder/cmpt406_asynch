@@ -23,7 +23,6 @@ public static class UnitMetadata {
         {new Tuple<UnitType, UnitType>(UnitType.compensator, UnitType.pewpew), 1.5f },
         {new Tuple<UnitType, UnitType>(UnitType.foundation, UnitType.steamer), 1.5f },
         {new Tuple<UnitType, UnitType>(UnitType.foundation, UnitType.pewpew), 1.5f },
-
     };
 
     public static float GetMultiplier(UnitType attacker, UnitType victim) {

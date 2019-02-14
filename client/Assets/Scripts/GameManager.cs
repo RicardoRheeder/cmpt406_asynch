@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour {
     private GameObject playerControllerObject;
     private PlayerController playerController;
 
+    //Stores the list of actions made by the user so that they can be serialized and sent to the server
     private List<Action> turnActions;
 
     //Two variables that should be set by the "Load game" method
@@ -21,8 +22,8 @@ public class GameManager : MonoBehaviour {
     private GameState state;
     private string username;
 
-    //For testing the units
-    Dictionary<Vector3Int, UnitStats> unitPositions = new Dictionary<Vector3Int, UnitStats>();
+    //Dictionary used to store the units.
+    Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
 
     UnitStats testUnit_1 = UnitFactory.GetBaseUnit(UnitType.claymore);
     UnitStats testUnit_2 = UnitFactory.GetBaseUnit(UnitType.compensator);
@@ -34,9 +35,9 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(this.gameObject);
 
         // for testing
-        unitPositions.Add(new Vector3Int(0,0,0),testUnit_1);
-        unitPositions.Add(new Vector3Int(0, -2, 0), testUnit_2);
-        unitPositions.Add(new Vector3Int(1, 3, 0), testUnit_3);
+        unitPositions.Add(new Vector2Int(0, 0),testUnit_1);
+        unitPositions.Add(new Vector2Int(0, -2), testUnit_2);
+        unitPositions.Add(new Vector2Int(1, 3), testUnit_3);
     }
 
     //The method called when the load game button is pressed
@@ -77,11 +78,41 @@ public class GameManager : MonoBehaviour {
         //This function will need to figure out how to send the updated gamestate to the server
     }
 
-    public void AddAction(Action action) {
-        turnActions.Add(action);
+    //===================== Functions used to handle units ===================
+    //In this case, we are using null as a way to say 
+    public bool GetUnitOnTile(Vector2Int tile, out UnitStats unit) {
+        bool containsUnit = unitPositions.ContainsKey(tile);
+        unit = containsUnit ? unitPositions[tile] : null;
+        return containsUnit;
     }
 
-    public UnitStats GetUnitOnTile(Vector3Int tile) {
-        return unitPositions.ContainsKey(tile) ? unitPositions[tile] : null;
+    //If the following conditions are true:
+    //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
+    public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
+        if (!unitPositions.ContainsKey(endpoint)) {
+            UnitStats unit;
+            if (GetUnitOnTile(targetUnit, out unit)) {
+                unitPositions.Remove(targetUnit);
+                unitPositions[endpoint] = unit;
+                unit.Move(endpoint);
+            }
+        }
+    }
+
+    public void AttackUnit(Vector2Int source, Vector2Int target) {
+        UnitStats sourceUnit;
+        if(GetUnitOnTile(source, out sourceUnit)) {
+            List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
+            foreach(var damage in damages) {
+                UnitStats targetUnit;
+                if(GetUnitOnTile(damage.First, out targetUnit)) {
+                    int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
+                    if(targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
+                        unitPositions.Remove(damage.First);
+                        //Destroy the related gameobject
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 [DataContract]
@@ -6,23 +7,24 @@ public class UnitStats {
 
     //General Unit information
     [DataMember]
-    int serverUnitType = -1;
-    UnitType unitType;
-    int cost;
+    private int serverUnitType = -1;
+    public UnitType UnitType { get; private set; }
+    private int cost;
     [DataMember]
-    string owner;
+    public string Owner { get; private set; }
 
     //defense stats
-    [DataMember]
-    public int currentHP;
-    public int maxHP;
-    public int armour;
+    [DataMember(Name = "currentHp")]
+    public int CurrentHP { get; private set; }
+    public int MaxHP { get; private set; }
+    public int Armour { get; private set; }
 
     //offense stats
-    public int damage;
-    public int pierce;
-    public int range;
-    public int aoe;
+    public int Damage { get; private set; }
+    public int Pierce { get; private set; }
+    public int Range { get; private set; }
+    //Note: the aoe works as follows: 0 means "just hit the hex you're targeting"
+    public int Aoe { get; private set; }
 
     //mobility
     public int movementSpeed;
@@ -35,15 +37,15 @@ public class UnitStats {
 
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
     public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost) {
-        this.unitType = type;
+        this.UnitType = type;
         this.serverUnitType = (int)type;
-        this.currentHP = maxHP;
-        this.maxHP = maxHP;
-        this.armour = armour;
-        this.range = range;
-        this.damage = damage;
-        this.pierce = pierce;
-        this.aoe = aoe;
+        this.CurrentHP = maxHP;
+        this.MaxHP = maxHP;
+        this.Armour = armour;
+        this.Range = range;
+        this.Damage = damage;
+        this.Pierce = pierce;
+        this.Aoe = aoe;
         this.movementSpeed = movementSpeed;
         this.cost = cost;
     }
@@ -58,22 +60,25 @@ public class UnitStats {
     }
 
     //Returns a value based on the target
-    public int Attack(UnitStats target) {
-        return System.Convert.ToInt32(this.damage * UnitMetadata.GetMultiplier(this.unitType, target.unitType));
+    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target) {
+        return new List<Tuple<Vector2Int, int>>() {
+            new Tuple<Vector2Int, int>(target, this.Damage)
+        };
     }
 
     //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
-    public bool TakeDamage(int damage) {
-        damage -= armour;
+    public bool TakeDamage(int damage, int pierce) {
+        int resistance = Armour - pierce;
+        resistance = resistance < 0 ? 0 : resistance;
+        damage -= resistance;
         damage = damage <= 0 ? 1 : damage;
-        currentHP -= damage;
-        return currentHP >= 0;
+        CurrentHP -= damage;
+        return CurrentHP >= 0;
     }
 
-    //TODO
-    //Note: the game manager will actually move the unit if valid. This method will basically be to handle animations and thats it.
-    public void Move() {
-
+    //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
+    public void Move(Vector2Int position) {
+        this.position = position;
     }
 
     //We need to convert the xPos and yPos variables to be Position
@@ -81,15 +86,15 @@ public class UnitStats {
     [OnDeserialized()]
     internal void OnDeserializedMethod(StreamingContext context) {
         position = new Vector2Int(xPos, yPos);
-        unitType = (UnitType)serverUnitType;
-        UnitStats baseUnit = UnitFactory.GetBaseUnit(unitType);
+        UnitType = (UnitType)serverUnitType;
+        UnitStats baseUnit = UnitFactory.GetBaseUnit(UnitType);
         this.cost = baseUnit.cost;
-        this.maxHP = baseUnit.maxHP;
-        this.armour = baseUnit.armour;
-        this.damage = baseUnit.damage;
-        this.pierce = baseUnit.pierce;
-        this.range = baseUnit.range;
-        this.aoe = baseUnit.aoe;
+        this.MaxHP = baseUnit.MaxHP;
+        this.Armour = baseUnit.Armour;
+        this.Damage = baseUnit.Damage;
+        this.Pierce = baseUnit.Pierce;
+        this.Range = baseUnit.Range;
+        this.Aoe = baseUnit.Aoe;
         this.movementSpeed = baseUnit.movementSpeed;
     }
 
