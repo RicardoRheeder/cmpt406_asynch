@@ -37,14 +37,6 @@ public class CameraMovement : MonoBehaviour
     public Vector2 zoomLimits;
 
 
-
-    //Since we dont need Z movement for orthographic camera
-    //[Tooltip("Movement limits on the Z-axis. X represents the lowest and Y the highest value.")]
-    //public Vector2 moveLimitsZ;
-
-    //Camera Bounds end
-
-
     [Tooltip("Whether the position changes using the cursor.")]
     public bool useCursor = true;
 
@@ -52,6 +44,10 @@ public class CameraMovement : MonoBehaviour
     private Vector3 currentPosition;
 
     private float zoom = 50f;
+
+    public Transform target;
+
+    private Vector3 cameraOffset;
 
     // public float mouseRotationSpeed = 100f;
 
@@ -62,6 +58,8 @@ public class CameraMovement : MonoBehaviour
     // Use this for initialization
     private void Start() {
         desiredPosition = transform.position;
+        transform.LookAt(target);
+        cameraOffset = transform.position - target.position;
     }
 
     // LateUpdate is called every frame, if the Behaviour is enabled
@@ -79,15 +77,15 @@ public class CameraMovement : MonoBehaviour
             currentPosition = Vector3.zero;
 
             if (Input.mousePosition.x < scrollZone) {
-                currentPosition.x -= sensitivity * Time.deltaTime;
+                transform.Translate(-transform.right*Time.deltaTime*sensitivity,Space.World);
             } else if (Input.mousePosition.x > Screen.width - scrollZone) {
-                currentPosition.x = sensitivity * Time.deltaTime;
+                transform.Translate(transform.right*Time.deltaTime*sensitivity,Space.World);
             }
 
             if (Input.mousePosition.y < scrollZone) {
-                currentPosition.y -= sensitivity * Time.deltaTime;
+                transform.Translate(-transform.up*Time.deltaTime*sensitivity,Space.World);
             } else if (Input.mousePosition.y > Screen.height - scrollZone) {
-                currentPosition.y = sensitivity * Time.deltaTime;
+                transform.Translate(transform.up*Time.deltaTime*sensitivity,Space.World);
             }
         } else {
             currentPosition.x = Input.GetAxis("Horizontal") * sensitivity * Time.deltaTime;
@@ -98,15 +96,24 @@ public class CameraMovement : MonoBehaviour
         move.x = Mathf.Clamp(move.x, moveLimitsX.x, moveLimitsX.y);
         move.y = Mathf.Clamp(move.y, moveLimitsY.x, moveLimitsY.y);
         // move.z = Mathf.Clamp(move.z, moveLimitsX.x, moveLimitsX.y);
-        desiredPosition = move;
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothFactor);
+        // desiredPosition = move;
+        // transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothFactor);
     }
 
     void HandleRotation() {
+        Quaternion rotateAngle = Quaternion.AngleAxis(50 * Time.deltaTime, -target.forward);
+        cameraOffset = rotateAngle * cameraOffset;
+        Vector3 newPos = target.position + cameraOffset;
+        transform.position = Vector3.Slerp(transform.position, newPos, 5f);
+        transform.LookAt(target);
         if (Input.mousePosition.x < scrollZone) {
-            transform.Rotate(0,0,1);
+            // transform.Rotate(new Vector3(0,-1f,0));
+            // transform.RotateAround(Vector3.zero,-transform.up, 50*Time.deltaTime);
+            // transform.RotateAround(Vector3.zero,new Vector3(0,-1f,1f),50*Time.deltaTime);
         } else if (Input.mousePosition.x > Screen.width - scrollZone) {
-            transform.Rotate(0,0,-1);
+            // transform.Rotate(new Vector3(0,1f,0));
+            // transform.RotateAround(Vector3.zero,transform.up, 50*Time.deltaTime);
+            // transform.RotateAround(Vector3.zero,new Vector3(0,1f,-1f),50*Time.deltaTime);
         }
     }
 
