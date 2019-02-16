@@ -49,16 +49,22 @@ public class CameraMovement : MonoBehaviour
 
     private Vector3 cameraOffset;
 
+    private Vector3 cameraCenter = Vector3.zero;
+
+    private RaycastHit hitPoint;
+
+    private Camera childCamera;
+
     // public float mouseRotationSpeed = 100f;
 
     private void Awake() {
         zoom = Camera.main.orthographicSize;
+        childCamera = GetComponentInChildren<Camera>();
     }
 
     // Use this for initialization
     private void Start() {
         desiredPosition = transform.position;
-        transform.LookAt(target);
         cameraOffset = transform.position - target.position;
     }
 
@@ -67,6 +73,9 @@ public class CameraMovement : MonoBehaviour
         if(Input.GetMouseButton(1)) {
             HandleRotation();
         } else {
+            cameraCenter = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width/2, Camera.main.nearClipPlane, Screen.height/2));
+            var ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
+            Physics.Raycast( ray, out hitPoint, 100.0f );
             HandlePan();
             HandleZoom();
         }
@@ -95,25 +104,15 @@ public class CameraMovement : MonoBehaviour
         Vector3 move = new Vector3(currentPosition.x, currentPosition.y, currentPosition.z) + desiredPosition;
         move.x = Mathf.Clamp(move.x, moveLimitsX.x, moveLimitsX.y);
         move.y = Mathf.Clamp(move.y, moveLimitsY.x, moveLimitsY.y);
-        // move.z = Mathf.Clamp(move.z, moveLimitsX.x, moveLimitsX.y);
         // desiredPosition = move;
         // transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothFactor);
     }
 
     void HandleRotation() {
-        Quaternion rotateAngle = Quaternion.AngleAxis(50 * Time.deltaTime, -target.forward);
-        cameraOffset = rotateAngle * cameraOffset;
-        Vector3 newPos = target.position + cameraOffset;
-        transform.position = Vector3.Slerp(transform.position, newPos, 5f);
-        transform.LookAt(target);
         if (Input.mousePosition.x < scrollZone) {
-            // transform.Rotate(new Vector3(0,-1f,0));
-            // transform.RotateAround(Vector3.zero,-transform.up, 50*Time.deltaTime);
-            // transform.RotateAround(Vector3.zero,new Vector3(0,-1f,1f),50*Time.deltaTime);
+            transform.Rotate(new Vector3(0,0,-1f));
         } else if (Input.mousePosition.x > Screen.width - scrollZone) {
-            // transform.Rotate(new Vector3(0,1f,0));
-            // transform.RotateAround(Vector3.zero,transform.up, 50*Time.deltaTime);
-            // transform.RotateAround(Vector3.zero,new Vector3(0,1f,-1f),50*Time.deltaTime);
+            transform.Rotate(new Vector3(0,0,1f));
         }
     }
 
