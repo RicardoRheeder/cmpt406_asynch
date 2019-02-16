@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 //This script is mostly from the RTSCamera script in the package "Virtual Cameras for Unity Lite"
 
@@ -110,11 +111,11 @@ public class CameraMovement : MonoBehaviour
 
     void HandleZoom() {
         if (Input.mouseScrollDelta.y < 0) {
-            zoom += sensitivity * Time.deltaTime;
+            zoom += sensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
         }
 
         if (Input.mouseScrollDelta.y > 0) {
-            zoom -= sensitivity * Time.deltaTime;
+            zoom -= sensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
         }
 
         Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
