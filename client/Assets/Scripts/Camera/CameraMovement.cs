@@ -45,27 +45,15 @@ public class CameraMovement : MonoBehaviour
 
     private float zoom = 50f;
 
-    public Transform target;
-
-    private Vector3 cameraOffset;
-
-    private Vector3 cameraCenter = Vector3.zero;
-
-    private RaycastHit hitPoint;
-
-    private Camera childCamera;
-
     // public float mouseRotationSpeed = 100f;
 
     private void Awake() {
         zoom = Camera.main.orthographicSize;
-        childCamera = GetComponentInChildren<Camera>();
     }
 
     // Use this for initialization
     private void Start() {
         desiredPosition = transform.position;
-        cameraOffset = transform.position - target.position;
     }
 
     // LateUpdate is called every frame, if the Behaviour is enabled
@@ -73,9 +61,6 @@ public class CameraMovement : MonoBehaviour
         if(Input.GetMouseButton(1)) {
             HandleRotation();
         } else {
-            cameraCenter = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width/2, Camera.main.nearClipPlane, Screen.height/2));
-            var ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
-            Physics.Raycast( ray, out hitPoint, 100.0f );
             HandlePan();
             HandleZoom();
         }
