@@ -14,9 +14,13 @@ public class CameraMovement : MonoBehaviour
     [Range(0f, 100f)]
     public float scrollZone = 100f;
 
-    [Tooltip("Multiplier for camera sensitivity.")]
+    [Tooltip("Multiplier for camera movement sensitivity.")]
     [Range(0f, 2f)]
     public float sensitivity = 1f;
+
+    [Tooltip("Multiplier for camera zoom sensitivity.")]
+    [Range(0f, 20f)]
+    public float zoomSensitivity = 10f;
 
     [Tooltip("Smoothing factor.")]
     [Range(0f, 10f)]
@@ -111,13 +115,15 @@ public class CameraMovement : MonoBehaviour
 
     void HandleZoom() {
         if (Input.mouseScrollDelta.y < 0) {
-            zoom += sensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
+            zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
         }
 
         if (Input.mouseScrollDelta.y > 0) {
-            zoom -= sensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
+            zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
         }
 
+        zoom = Mathf.Lerp(zoom,Camera.main.orthographicSize,Time.deltaTime);
         Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
+        zoom = Camera.main.orthographicSize;
     }
 }
