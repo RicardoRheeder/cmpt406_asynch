@@ -1663,8 +1663,6 @@ MonoBehaviour:
   sensitivity: 0.7
   zoomSensitivity: 10
   smoothFactor: 0.2
-  moveLimitsX: {x: -50, y: 50}
-  moveLimitsY: {x: -50, y: 50}
   zoomLimits: {x: 10, y: 100}
   useCursor: 1
   maxRotationSpeed: 100
