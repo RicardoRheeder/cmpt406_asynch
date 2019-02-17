@@ -99,10 +99,9 @@ public class GameManager : MonoBehaviour {
     }
 
     public void AttackUnit(Vector2Int source, Vector2Int target) {
-        UnitStats sourceUnit;
-        if(GetUnitOnTile(source, out sourceUnit)) {
+        if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
             List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
-            foreach(var damage in damages) {
+            foreach (var damage in damages) {
                 if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
                     int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
                     if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
