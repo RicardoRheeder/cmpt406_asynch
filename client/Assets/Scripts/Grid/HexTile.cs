@@ -24,8 +24,8 @@ public class HexTile: TileBase {
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
-            go.transform.rotation = Quaternion.Euler(90,0,0);
-            go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y, (go.transform.position.z - (ELEVATION_MULTIPLIER) * (int)elevation));
+            go.transform.rotation = Quaternion.Euler(0,0,0);
+            go.transform.position = new Vector3(go.transform.position.x,(go.transform.position.y + (ELEVATION_MULTIPLIER) * (int)elevation),go.transform.position.z);
         }
 
         #if UNITY_EDITOR
