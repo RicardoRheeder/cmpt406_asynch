@@ -9,7 +9,7 @@ public class UnitStats {
     [DataMember]
     private int serverUnitType = -1;
     public UnitType UnitType { get; private set; }
-    private int cost;
+    public int Cost { get; private set; }
     [DataMember]
     public string Owner { get; private set; }
 
@@ -28,13 +28,13 @@ public class UnitStats {
     private IAttackStrategy attackStrategy;
 
     //mobility
-    public int movementSpeed;
-    private Vector2Int position;
+    public int MovementSpeed { get; private set; }
+    public Vector2Int Position { get; private set; }
     //xPos and yPos are the variables sent by the server, so we have to convert them to position
     [DataMember]
-    int xPos;
+    private int xPos;
     [DataMember]
-    int yPos;
+    private int yPos;
 
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
     public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost, IAttackStrategy attackStrategy) {
@@ -47,8 +47,8 @@ public class UnitStats {
         this.Damage = damage;
         this.Pierce = pierce;
         this.Aoe = aoe;
-        this.movementSpeed = movementSpeed;
-        this.cost = cost;
+        this.MovementSpeed = movementSpeed;
+        this.Cost = cost;
         this.attackStrategy = attackStrategy;
     }
 
@@ -76,32 +76,37 @@ public class UnitStats {
         return CurrentHP >= 0;
     }
 
+    public void Heal(int amount) {
+        this.CurrentHP += amount;
+        CurrentHP = CurrentHP > MaxHP ? MaxHP : CurrentHP;
+    }
+
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position) {
-        this.position = position;
+        this.Position = position;
     }
 
     //We need to convert the xPos and yPos variables to be Position
     //We also need to get a base unit and copy over the stats that weren't stored on the server.
     [OnDeserialized()]
     internal void OnDeserializedMethod(StreamingContext context) {
-        position = new Vector2Int(xPos, yPos);
+        this.Position = new Vector2Int(xPos, yPos);
         UnitType = (UnitType)serverUnitType;
         UnitStats baseUnit = UnitFactory.GetBaseUnit(UnitType);
-        this.cost = baseUnit.cost;
+        this.Cost = baseUnit.Cost;
         this.MaxHP = baseUnit.MaxHP;
         this.Armour = baseUnit.Armour;
         this.Damage = baseUnit.Damage;
         this.Pierce = baseUnit.Pierce;
         this.Range = baseUnit.Range;
         this.Aoe = baseUnit.Aoe;
-        this.movementSpeed = baseUnit.movementSpeed;
+        this.MovementSpeed = baseUnit.MovementSpeed;
     }
 
     //Note: the unit type will never change so we don't have to update the int value
     [OnSerializing()]
     internal void OnSerializingMethod(StreamingContext context) {
-        xPos = position.x;
-        yPos = position.y;
+        xPos = Position.x;
+        yPos = Position.y;
     }
 }

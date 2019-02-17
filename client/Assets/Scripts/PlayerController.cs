@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour {
         string damage = "Damage: " + unit.Damage;
         string aoe = "AOE: " + unit.Aoe;
         string pierce = "Pierce: " + unit.Pierce;
-        string movementSpeed = "Movement Speed: " + unit.movementSpeed;
+        string movementSpeed = "Movement Speed: " + unit.MovementSpeed;
 
         //Finders to find which text to change for what attribute
         unitDisplayHealth.text = hp;

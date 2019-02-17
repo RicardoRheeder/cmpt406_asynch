@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CleaveStrategy : IAttackStrategy {
     public List<Tuple<Vector2Int, int>> Attack(UnitStats source, Vector2Int target) {
-        throw new System.NotImplementedException();
+        return new List<Tuple<Vector2Int, int>>() {
+            new Tuple<Vector2Int, int>(target, source.Damage)
+        };
     }
 }
