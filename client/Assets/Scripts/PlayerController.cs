@@ -55,13 +55,13 @@ public class PlayerController : MonoBehaviour {
 
     private void UpdateUnitDisplay(UnitStats unit) {
         //Strings to display the information
-        string hp = "Health: " + unit.currentHP + " / " + unit.maxHP;
-        string armour = "Armour: " + unit.armour;
-        string range = "Range: " + unit.range;
-        string damage = "Damage: " + unit.damage;
-        string aoe = "AOE: " + unit.aoe;
-        string pierce = "Pierce: " + unit.pierce;
-        string movementSpeed = "Movement Speed: " + unit.movementSpeed;
+        string hp = "" + unit.currentHP + " / " + unit.maxHP;
+        string armour = "" + unit.armour;
+        string range = "" + unit.range;
+        string damage = "" + unit.damage;
+        string aoe = "" + unit.aoe;
+        string pierce = ""+unit.pierce;
+        string movementSpeed = ""+unit.movementSpeed;
 
         //Finders to find which text to change for what attribute
         unitDisplayHealth.text = hp;
