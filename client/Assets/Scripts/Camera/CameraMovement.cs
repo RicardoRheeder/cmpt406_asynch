@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Tilemaps;
 
 //This script is partly from the RTSCamera script in the package "Virtual Cameras for Unity Lite"
 public class CameraMovement : MonoBehaviour
@@ -47,6 +48,8 @@ public class CameraMovement : MonoBehaviour
     private float zoom;
     private Vector2 rotationAnchorPoint;
 
+    public Tilemap tilemap;
+
     private void Awake() {
         zoom = Camera.main.orthographicSize;
     }
@@ -71,6 +74,9 @@ public class CameraMovement : MonoBehaviour
     }
 
     void HandlePan() {
+        Vector3 tilemapMin = (transform.rotation * Quaternion.Euler(-90,0,0)) * new Vector3(tilemap.localBounds.min.x,0,tilemap.localBounds.min.y);
+        Vector3 tilemapMax = (transform.rotation * Quaternion.Euler(-90,0,0)) * new Vector3(tilemap.localBounds.max.x,0,tilemap.localBounds.max.y);
+
         if (useCursor) {
             currentPosition = Vector3.zero;
             float percentOutsideScrollZone = 0f;
@@ -78,7 +84,7 @@ public class CameraMovement : MonoBehaviour
             if (Input.mousePosition.x < scrollZone) {   // pan left
                 percentOutsideScrollZone = scrollZone - Input.mousePosition.x;
                 transform.Translate(-transform.right*Time.deltaTime*sensitivity*percentOutsideScrollZone,Space.World);
-            } else if (Input.mousePosition.x > Screen.width - scrollZone) { // pan right
+            } else if (Input.mousePosition.x > Screen.width - scrollZone && transform.position.x < tilemapMax.x) { // pan right
                 percentOutsideScrollZone = Input.mousePosition.x - (Screen.width - scrollZone);
                 transform.Translate(transform.right*Time.deltaTime*sensitivity*percentOutsideScrollZone,Space.World);
             }
@@ -95,9 +101,12 @@ public class CameraMovement : MonoBehaviour
             currentPosition.y = Input.GetAxis("Vertical") * sensitivity * Time.deltaTime;
         }
 
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x,tilemap.localBounds.min.x,tilemap.localBounds.max.x),transform.position.y,Mathf.Clamp(transform.position.z,tilemap.localBounds.min.y,tilemap.localBounds.max.y));
+
         Vector3 move = new Vector3(currentPosition.x, currentPosition.y, currentPosition.z) + desiredPosition;
-        move.x = Mathf.Clamp(move.x, moveLimitsX.x, moveLimitsX.y);
-        move.y = Mathf.Clamp(move.y, moveLimitsY.x, moveLimitsY.y);
+        move.x = Mathf.Clamp(move.x, tilemap.localBounds.min.x, tilemap.localBounds.max.x);
+        move.y = Mathf.Clamp(move.y, tilemap.localBounds.min.y, tilemap.localBounds.max.y);
+
         // desiredPosition = move;
         // transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothFactor);
     }
