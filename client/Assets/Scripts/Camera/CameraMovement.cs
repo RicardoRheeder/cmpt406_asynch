@@ -48,11 +48,9 @@ public class CameraMovement : MonoBehaviour
     private Vector3 desiredPosition;
     private Vector3 currentPosition;
 
-    private float percentOutsideScrollZone;
+    private float zoom;
 
-    private float zoom = 50f;
-
-    // public float mouseRotationSpeed = 100f;
+    private Vector2 rotationAnchorPoint;
 
     private void Awake() {
         zoom = Camera.main.orthographicSize;
@@ -65,6 +63,10 @@ public class CameraMovement : MonoBehaviour
 
     // LateUpdate is called every frame, if the Behaviour is enabled
     void LateUpdate() {
+        if(Input.GetMouseButtonDown(1)) {
+            rotationAnchorPoint = Input.mousePosition;
+        }
+
         if(Input.GetMouseButton(1)) {
             HandleRotation();
         } else {
@@ -76,7 +78,7 @@ public class CameraMovement : MonoBehaviour
     void HandlePan() {
         if (useCursor) {
             currentPosition = Vector3.zero;
-            percentOutsideScrollZone = 0f;
+            float percentOutsideScrollZone = 0f;
 
             if (Input.mousePosition.x < scrollZone) {   // pan left
                 percentOutsideScrollZone = scrollZone - Input.mousePosition.x;
@@ -106,10 +108,12 @@ public class CameraMovement : MonoBehaviour
     }
 
     void HandleRotation() {
-        if (Input.mousePosition.x < scrollZone) {
-            transform.Rotate(new Vector3(0,0,-1f));
-        } else if (Input.mousePosition.x > Screen.width - scrollZone) {
-            transform.Rotate(new Vector3(0,0,1f));
+        float rotationSpeed = Math.Abs(Input.mousePosition.x - rotationAnchorPoint.x);
+
+        if (Input.mousePosition.x < rotationAnchorPoint.x) {
+            transform.Rotate(new Vector3(0,0,-1f * rotationSpeed * Time.deltaTime));
+        } else if (Input.mousePosition.x > rotationAnchorPoint.x) {
+            transform.Rotate(new Vector3(0,0,1f * rotationSpeed * Time.deltaTime));
         }
     }
 
@@ -122,7 +126,7 @@ public class CameraMovement : MonoBehaviour
             zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
         }
 
-        zoom = Mathf.Lerp(zoom,Camera.main.orthographicSize,Time.deltaTime);
+        zoom = Mathf.Lerp(zoom,Camera.main.orthographicSize,smoothFactor);
         Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
         zoom = Camera.main.orthographicSize;
     }
