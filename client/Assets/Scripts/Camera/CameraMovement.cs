@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-//This script is mostly from the RTSCamera script in the package "Virtual Cameras for Unity Lite"
-
-//Attach this script to the Camera object
+//This script is partly from the RTSCamera script in the package "Virtual Cameras for Unity Lite"
 public class CameraMovement : MonoBehaviour
 {
 
@@ -26,9 +24,6 @@ public class CameraMovement : MonoBehaviour
     [Range(0f, 10f)]
     public float smoothFactor = 0.2f;
 
-
-    //Camera Bounds begin
-
     //For left/right movement
     [Tooltip("Movement limits on the X-axis. X represents the lowest and Y the highest value.")]
     public Vector2 moveLimitsX;
@@ -41,15 +36,15 @@ public class CameraMovement : MonoBehaviour
     [Tooltip("Zoom limits . X represents the lowest and Y the highest value.")]
     public Vector2 zoomLimits;
 
-
     [Tooltip("Whether the position changes using the cursor.")]
     public bool useCursor = true;
 
+    [Tooltip("Maximum speed the camera can rotate")]
+    public float maxRotationSpeed = 20f;
+
     private Vector3 desiredPosition;
     private Vector3 currentPosition;
-
     private float zoom;
-
     private Vector2 rotationAnchorPoint;
 
     private void Awake() {
@@ -109,11 +104,14 @@ public class CameraMovement : MonoBehaviour
 
     void HandleRotation() {
         float rotationSpeed = Math.Abs(Input.mousePosition.x - rotationAnchorPoint.x);
+        if(rotationSpeed > maxRotationSpeed) {
+            rotationSpeed = maxRotationSpeed;
+        }
 
         if (Input.mousePosition.x < rotationAnchorPoint.x) {
-            transform.Rotate(new Vector3(0,0,-1f * rotationSpeed * Time.deltaTime));
+            transform.Rotate(new Vector3(0,0,-rotationSpeed*Time.deltaTime*sensitivity));
         } else if (Input.mousePosition.x > rotationAnchorPoint.x) {
-            transform.Rotate(new Vector3(0,0,1f * rotationSpeed * Time.deltaTime));
+            transform.Rotate(new Vector3(0,0,rotationSpeed*Time.deltaTime*sensitivity));
         }
     }
 
