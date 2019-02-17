@@ -45,8 +45,7 @@ public class PlayerController : MonoBehaviour {
         
         //test
         if (Input.GetMouseButtonDown(0)) { //on mouse left click
-            UnitStats unit;
-            if (manager.GetUnitOnTile((Vector2Int)tilePos, out unit))
+            if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit))
                 UpdateUnitDisplay(unit);
             else
                 UpdateUnitDisplay(UnitFactory.GetBaseUnit(UnitType.claymore));

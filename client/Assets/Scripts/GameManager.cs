@@ -90,8 +90,7 @@ public class GameManager : MonoBehaviour {
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
         if (!unitPositions.ContainsKey(endpoint)) {
-            UnitStats unit;
-            if (GetUnitOnTile(targetUnit, out unit)) {
+            if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
                 unitPositions.Remove(targetUnit);
                 unitPositions[endpoint] = unit;
                 unit.Move(endpoint);
@@ -104,10 +103,9 @@ public class GameManager : MonoBehaviour {
         if(GetUnitOnTile(source, out sourceUnit)) {
             List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
             foreach(var damage in damages) {
-                UnitStats targetUnit;
-                if(GetUnitOnTile(damage.First, out targetUnit)) {
+                if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
                     int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
-                    if(targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
+                    if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
                         unitPositions.Remove(damage.First);
                         //Destroy the related gameobject
                     }

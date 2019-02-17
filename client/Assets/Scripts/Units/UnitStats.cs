@@ -25,6 +25,7 @@ public class UnitStats {
     public int Range { get; private set; }
     //Note: the aoe works as follows: 0 means "just hit the hex you're targeting"
     public int Aoe { get; private set; }
+    private IAttackStrategy attackStrategy;
 
     //mobility
     public int movementSpeed;
@@ -36,7 +37,7 @@ public class UnitStats {
     int yPos;
 
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
-    public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost) {
+    public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost, IAttackStrategy attackStrategy) {
         this.UnitType = type;
         this.serverUnitType = (int)type;
         this.CurrentHP = maxHP;
@@ -48,6 +49,7 @@ public class UnitStats {
         this.Aoe = aoe;
         this.movementSpeed = movementSpeed;
         this.cost = cost;
+        this.attackStrategy = attackStrategy;
     }
 
     //TODO: see if HexDistance() works for range finding
@@ -61,9 +63,7 @@ public class UnitStats {
 
     //Returns a value based on the target
     public List<Tuple<Vector2Int, int>> Attack(Vector2Int target) {
-        return new List<Tuple<Vector2Int, int>>() {
-            new Tuple<Vector2Int, int>(target, this.Damage)
-        };
+        return attackStrategy.Attack(this, target);
     }
 
     //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
