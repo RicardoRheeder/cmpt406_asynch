@@ -1675,7 +1675,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010126204}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: -2}
+  m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 774369287}
@@ -2248,7 +2248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 722bf6d333505481abd1fd924781693c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemap: {fileID: 316003744}
   currentTestType: 1
 --- !u!114 &1399326833
 MonoBehaviour:
