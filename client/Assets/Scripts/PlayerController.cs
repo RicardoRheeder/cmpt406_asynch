@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour {
 
     private CardController deck;
     private GameManager manager;
-    private Tilemap tilemap;
+    private BoardController boardController;
 
     private TMP_Text unitDisplayHealth;
     private TMP_Text unitDisplayArmour;
@@ -18,9 +18,10 @@ public class PlayerController : MonoBehaviour {
 
     private bool initialized = false;
 
-    public void Initialize(GameManager manager, CardController deck) {
+    public void Initialize(GameManager manager, CardController deck, BoardController board) {
         this.deck = deck;
         this.manager = manager;
+        this.boardController = board;
         unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
         unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
         unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
@@ -28,7 +29,6 @@ public class PlayerController : MonoBehaviour {
         unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
         unitDisplayMovementSpeed = GameObject.Find("unitDisplaySpeed").GetComponent<TMP_Text>();
         unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
-        tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
 
         initialized = true;
     }
@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour {
 
     private void InputController() {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int tilePos = tilemap.WorldToCell(mousePos);
+        Vector3Int tilePos = boardController.WorldToCell(mousePos);
         
         //test
         if (Input.GetMouseButtonDown(0)) { //on mouse left click

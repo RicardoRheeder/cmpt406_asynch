@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour {
     private GameObject playerControllerObject;
     private PlayerController playerController;
 
+    private BoardController boardController;
+
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
     private List<Action> turnActions;
 
@@ -61,9 +63,12 @@ public class GameManager : MonoBehaviour {
 
         turnActions = new List<Action>();
 
+        boardController = new BoardController();
+        boardController.Initialize();
+
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null);
+        playerController.Initialize(this, null, boardController);
 
         //Since the only scene we can load from this point is the main menu, we can prep 
         SceneManager.sceneLoaded -= OnGameLoaded;

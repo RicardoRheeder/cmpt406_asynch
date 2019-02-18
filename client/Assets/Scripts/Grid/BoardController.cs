@@ -7,8 +7,11 @@ public class BoardController {
 
     Tilemap tilemap;
 
-    void Initialize() {
+    public void Initialize() {
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+        if(tilemap == null) {
+            Debug.Log("Tilemap is null. This will result in problems");
+        }
     }
 
     public Tilemap GetTilemap() {
@@ -16,7 +19,9 @@ public class BoardController {
     }
 
     public Vector3Int WorldToCell(Vector3 position) {
-        return tilemap.WorldToCell(new Vector3(position.x,position.z,0));
+        Transform camera = Camera.main.transform;
+        Vector3 correctedPosition = camera.rotation * (new Vector3(0,camera.position.y,camera.position.z) - position);
+        return tilemap.WorldToCell(correctedPosition);
     }
 
     public Vector3 CellToWorld(Vector3Int position) {
