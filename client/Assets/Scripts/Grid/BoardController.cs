@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class BoardController : MonoBehaviour {
+public class BoardController {
 
     Tilemap tilemap;
 
-    void Awake(){
-        tilemap = GetComponent<Tilemap>();
+    void Initialize() {
+        tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+    }
+
+    public Tilemap GetTilemap() {
+        return tilemap;
     }
 
     public Vector3Int WorldToCell(Vector3 position) {
@@ -22,5 +26,25 @@ public class BoardController : MonoBehaviour {
 
     public HexTile GetHexTile(Vector3Int position) {
         return tilemap.GetTile(position) as HexTile;
+    }
+
+    public Elevation GetElevation(Vector3Int position) {
+        HexTile tile = GetHexTile(position);
+        return tile != null ? tile.elevation : 0;
+    }
+
+    public List<TileAttribute> GetTileAttributes(Vector3Int position) {
+        HexTile tile = GetHexTile(position);
+        return tile != null ? tile.attributes : new List<TileAttribute>();
+    }
+
+    public bool CheckIfAttributeExists(Vector3Int position, TileAttribute attribute) {
+        List<TileAttribute> attributes = GetTileAttributes(position);
+        for(int i = 0; i < attributes.Count; i++) {
+            if(attributes[i] == attribute) {
+                return true;
+            }
+        }
+        return false;
     }
 }
