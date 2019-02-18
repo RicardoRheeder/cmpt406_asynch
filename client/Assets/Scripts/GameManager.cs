@@ -55,7 +55,9 @@ public class GameManager : MonoBehaviour {
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(state);
+        gameBuilder.Build(ref state, ref username);
+
+        unitPositions = gameBuilder.unitPositions;
 
         turnActions = new List<Action>();
 
@@ -70,6 +72,8 @@ public class GameManager : MonoBehaviour {
 
     private void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
         state = null; //Verify that the state is destroyed;
+        unitPositions.Clear();
+        turnActions.Clear();
         //Anything else that the game manager has to reset needs to be done here
     }
 
@@ -89,6 +93,7 @@ public class GameManager : MonoBehaviour {
     //If the following conditions are true:
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
+        turnActions.Add(new Action(username, ActionType.Movement, targetUnit, endpoint));
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
                 unitPositions.Remove(targetUnit);
@@ -99,6 +104,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void AttackUnit(Vector2Int source, Vector2Int target) {
+        turnActions.Add(new Action(username, ActionType.Attack, source, target));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
             List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
             foreach (var damage in damages) {
