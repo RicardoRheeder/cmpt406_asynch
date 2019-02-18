@@ -48,10 +48,10 @@ public class GridTester : MonoBehaviour {
 
     void TestPathfinding() {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int endPosition = boardController.WorldToCell(mousePosition);
+        Vector3Int endPosition = boardController.MousePosToCell(Input.mousePosition);
         Debug.Log("mouse: " + mousePosition.ToString() + " cell: " + endPosition.ToString());
-        // List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,boardController.GetTilemap(),false);
-        // StartCoroutine(PathMovement(path, 5f));
+        List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,boardController.GetTilemap(),false);
+        StartCoroutine(PathMovement(path, 5f));
     }
 
     IEnumerator PathMovement(List<Vector3Int> path, float speed) {

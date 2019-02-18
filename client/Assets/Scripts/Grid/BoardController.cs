@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System;
 
 public class BoardController {
 
@@ -19,14 +20,20 @@ public class BoardController {
     }
 
     public Vector3Int WorldToCell(Vector3 position) {
+        return tilemap.WorldToCell(position);
+    }
+
+    public Vector3Int MousePosToCell(Vector3 position) {
         Transform camera = Camera.main.transform;
-        Vector3 correctedPosition = camera.rotation * (new Vector3(0,camera.position.y,camera.position.z) - position);
-        return tilemap.WorldToCell(correctedPosition);
+        Vector3 screenPoint = new Vector3(position.x, position.y, camera.position.y);
+        Vector3 worldPoint = Camera.main.ScreenToWorldPoint(screenPoint);
+        return tilemap.WorldToCell(worldPoint);
     }
 
     public Vector3 CellToWorld(Vector3Int position) {
         Vector3 worldPosition = tilemap.CellToWorld(position);
-        return new Vector3(worldPosition.x,0,worldPosition.y);
+        // TODO: take elevation into account
+        return worldPosition;
     }
 
     public HexTile GetHexTile(Vector3Int position) {

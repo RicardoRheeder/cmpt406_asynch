@@ -40,8 +40,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void InputController() {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int tilePos = boardController.WorldToCell(mousePos);
+        Vector3Int tilePos = boardController.MousePosToCell(Input.mousePosition);
         
         //test
         if (Input.GetMouseButtonDown(0)) { //on mouse left click
