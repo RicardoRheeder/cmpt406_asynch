@@ -42,7 +42,8 @@ public static class HexUtility {
         Vector3 cubeEnd = OddrToCube( endPos );
         if(cubeStart == cubeEnd) {
             resultsCube.Add(CubeRound(cubeStart));
-        } else {
+        }
+        else {
             Vector3 epsilonHex = new Vector3(1e-6f, 2e-6f, -3e-6f);
             if(cubeEnd.z-cubeStart.z>=0) {
                 cubeEnd = cubeEnd + epsilonHex;
@@ -62,7 +63,6 @@ public static class HexUtility {
             Debug.Log("tilecache is 0");
         }
         return tileCache;
-
     }
 
     // Finds the direction based on a starting and end position
@@ -161,7 +161,7 @@ public static class HexUtility {
         return neighbors;
     }
 
-    //This function will will remove any tiles from the list of tiles that the board does not actually contain
+    //This function will remove any tiles from the list of tiles that the board does not actually contain
     public static List<Vector3Int> GetTilePositionsInRange( Tilemap tilemap, Vector3Int startingPos, int range ) {
         List<Vector3Int> tileList = BuildCacheAndGetTiles( startingPos, range );
         List<Vector3Int> paddedList = new List<Vector3Int>();
@@ -176,7 +176,12 @@ public static class HexUtility {
         return new List<Vector3Int>( tileList );
     }
 
-    //This function will will remove any tiles from the list of tiles that the board does not actually contain
+    //This function will get all hex coordinates in range, despite the map having them or not
+    public static List<Vector3Int> GetTilePositionsInRangeWithoutMap(Vector3Int startingPos, int range) {
+        return BuildCacheAndGetTiles(startingPos, range);
+    }
+
+    //This function will remove any tiles from the list of tiles that the board does not actually contain
     public static List<Vector3Int> GetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector3Int startingPos, int range ) {
         List<Vector3Int> tileList = GetTilePositionsInRange(tilemap, startingPos, range);
         tileList.Remove( startingPos );

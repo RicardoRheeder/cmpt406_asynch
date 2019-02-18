@@ -45,8 +45,7 @@ public class PlayerController : MonoBehaviour {
         
         //test
         if (Input.GetMouseButtonDown(0)) { //on mouse left click
-            UnitStats unit;
-            if (manager.GetUnitOnTile((Vector2Int)tilePos, out unit))
+            if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit))
                 UpdateUnitDisplay(unit);
             else
                 UpdateUnitDisplay(UnitFactory.GetBaseUnit(UnitType.claymore));
@@ -55,13 +54,13 @@ public class PlayerController : MonoBehaviour {
 
     private void UpdateUnitDisplay(UnitStats unit) {
         //Strings to display the information
-        string hp = "Health: " + unit.CurrentHP + " / " + unit.MaxHP;
-        string armour = "Armour: " + unit.Armour;
-        string range = "Range: " + unit.Range;
-        string damage = "Damage: " + unit.Damage;
-        string aoe = "AOE: " + unit.Aoe;
-        string pierce = "Pierce: " + unit.Pierce;
-        string movementSpeed = "Movement Speed: " + unit.movementSpeed;
+        string hp = "" + unit.CurrentHP + " / " + unit.MaxHP;
+        string armour = "" + unit.Armour;
+        string range = "" + unit.Range;
+        string damage = "" + unit.Damage;
+        string aoe = "" + unit.Aoe;
+        string pierce = ""+unit.Pierce;
+        string movementSpeed = ""+unit.MovementSpeed;
 
         //Finders to find which text to change for what attribute
         unitDisplayHealth.text = hp;

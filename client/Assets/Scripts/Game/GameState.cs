@@ -60,6 +60,20 @@ public class GameState {
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(typeof(GameState), this);
     }
+
+    [OnDeserialized]
+    public void OnDeserialized(StreamingContext c) {
+        foreach(UnitStats unit in units) {
+            if (userUnitsMap.ContainsKey(unit.Owner))
+                userUnitsMap[unit.Owner].Add(unit);
+            else
+                userUnitsMap.Add(unit.Owner, new List<UnitStats>() { unit });
+        }
+
+        foreach(CardController card in cards) {
+            userCardsMap.Add(card.owner, card);
+        }
+    }
 }
 
 //Used to create a collection of gamestates from a server response
