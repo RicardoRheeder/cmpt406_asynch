@@ -6,7 +6,8 @@ using System;
 
 public class BoardController {
 
-    public float tileHeight = 5f;
+    public float tileHeight = 4.5f;
+    public float elevationHeight = 2.4f;
     Tilemap tilemap;
 
     public void Initialize() {
@@ -44,10 +45,9 @@ public class BoardController {
 
     public Vector3 CellToWorld(Vector3Int position) {
         Vector3 worldPosition = tilemap.CellToWorld(position);
-        // TODO: take elevation into account
         HexTile tile = tilemap.GetTile(position) as HexTile;
         if(tile != null) {
-            return new Vector3(worldPosition.x,worldPosition.y+((int)tile.elevation*tileHeight),worldPosition.z);
+            return new Vector3(worldPosition.x,worldPosition.y+tileHeight+((int)tile.elevation*elevationHeight),worldPosition.z);
         }
         return worldPosition;
     }
