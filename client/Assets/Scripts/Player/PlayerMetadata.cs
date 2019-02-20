@@ -59,8 +59,8 @@ public class PlayerMetadata {
             for(int i = 0; i < armyPresets.Count; i++) {
                 ArmyBuilder.AddPreset(armyPresets[i].presetName, armyPresets[i]);
             }
-            ArmyBuilder.InsertDefaultPresets();
         }
+        ArmyBuilder.InsertDefaultPresets();
     }
 }
 
