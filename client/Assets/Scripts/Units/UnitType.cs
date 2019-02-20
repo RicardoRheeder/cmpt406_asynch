@@ -13,3 +13,11 @@ public enum UnitType {
 
     //All generals are above 100s
 }
+
+public enum UnitClass {
+    heavy = 0,
+    light = 1,
+    piercing = 2,
+    support = 3,
+    general = 100,
+}

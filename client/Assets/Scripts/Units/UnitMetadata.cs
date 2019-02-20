@@ -25,6 +25,27 @@ public static class UnitMetadata {
         {new Tuple<UnitType, UnitType>(UnitType.foundation, UnitType.pewpew), 1.5f },
     };
 
+    public readonly static Dictionary<UnitType, UnitClass> UnitAssociations = new Dictionary<UnitType, UnitClass>() {
+        //Support Associations
+        {UnitType.claymore, UnitClass.support },
+        {UnitType.powerSurge, UnitClass.support },
+        {UnitType.midas, UnitClass.support },
+
+        //Piercing Associations
+        {UnitType.compensator, UnitClass.piercing },
+        {UnitType.foundation, UnitClass.piercing },
+
+        //Light Associations
+        {UnitType.reacon, UnitClass.light },
+        {UnitType.trooper, UnitClass.light },
+
+        //Heavy Associations
+        {UnitType.pewpew, UnitClass.heavy },
+        {UnitType.steamer, UnitClass.heavy },
+
+        //General Associations
+    };
+
     public static float GetMultiplier(UnitType attacker, UnitType victim) {
         Tuple<UnitType, UnitType> pair = new Tuple<UnitType, UnitType>(attacker, victim);
         if(Strengths.ContainsKey(pair)) {
