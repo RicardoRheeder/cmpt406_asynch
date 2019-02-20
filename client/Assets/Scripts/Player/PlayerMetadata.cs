@@ -25,6 +25,9 @@ public class PlayerMetadata {
     [DataMember]
     public List<string> completedGames = new List<string>();
 
+    [DataMember]
+    public List<ArmyPreset> armyPresets = new List<ArmyPreset>();
+
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(typeof(PlayerMetadata), this);
     }
@@ -33,10 +36,10 @@ public class PlayerMetadata {
     //you can use this to set default values, or ensure values are within some valid context
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
-        if( friends == null) {
+        if(friends == null) {
             friends = new List<string>();
         }
-        if( activeGames == null) {
+        if(activeGames == null) {
             activeGames = new List<string>();
         }
         if(pendingPrivateGames == null) {
@@ -47,6 +50,16 @@ public class PlayerMetadata {
         }
         if(completedGames == null) {
             completedGames = new List<string>();
+        }
+        if (armyPresets == null) {
+            armyPresets = new List<ArmyPreset>();
+        }
+        else {
+            //This is where the army builder cache is made.
+            for(int i = 0; i < armyPresets.Count; i++) {
+                ArmyBuilder.AddPreset(armyPresets[i].presetName, armyPresets[i]);
+            }
+            ArmyBuilder.InsertDefaultPresets();
         }
     }
 }

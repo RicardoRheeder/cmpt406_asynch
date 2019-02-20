@@ -12,6 +12,7 @@ public enum UnitType {
     claymore = 8,
 
     //All generals are above 100s
+    general1 = 101
 }
 
 public enum UnitClass {
