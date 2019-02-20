@@ -110,6 +110,7 @@ public class Client : MonoBehaviour {
     public void LogoutUser() {
         user = null;
         userInformation = null;
+        ArmyBuilder.Clear();
     }
 
     //This method is used to get the summary of the games that are considered pending for the logged in user

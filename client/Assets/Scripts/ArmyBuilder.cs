@@ -22,6 +22,12 @@ public static class ArmyBuilder {
         return false;
     }
 
+    //ONLY CALL THIS WHEN WE NEED TO CLEAR THE PRESETS FOR SOME REASON
+    //The only use case I can think of for this is when the user is logged out.
+    public static void Clear() {
+        ARMY_PRESETS.Clear();
+    }
+
 
     private static readonly string presetOneName = "Preset One";
     private static readonly ArmyPreset presetOne = new ArmyPreset(
