@@ -121,6 +121,34 @@ freinds must actually be on their freinds list.
     }
  - Return: Http Resonse Code
 
+Add Army Preset:
+-----------------------
+This endpoint will add an army preset to the user model. Allowing them to save
+army builds that they like for another time
+
+ - Path: /AddArmyPreset
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "units": [1,5,6,9,9,9,9],
+        "general": 4
+    }
+ - Return: Http Resonse Code
+
+Remove Army Preset:
+-----------------------
+This endpoint will remove an army preset from the user
+
+ - Path: /RemoveArmyPreset
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "armyPresetId": "1234-1234-2134"
+    }
+ - Return: Http Resonse Code
+
 
 Create Private Game:
 -----------------------

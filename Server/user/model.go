@@ -11,7 +11,7 @@ type User struct {
 	PendingPrivateGames []string     `json:"pendingPrivateGames,omitempty" datastore:",omitempty,noindex"`
 	PendingPublicGames  []string     `json:"pendingPublicGames,omitempty" datastore:",omitempty,noindex"`
 	CompletedGames      []string     `json:"completedGames,omitempty" datastore:",omitempty,noindex"`
-	ArmyPresets         []ArmyPreset `json:"armyPreset,omitempty" datastore:"-"`
+	ArmyPresets         []ArmyPreset `json:"armyPresets,omitempty" datastore:"-"`
 	ArmyPresetIDs       []string     `json:"-" datastore:",omitempty,noindex"`
 }
 
