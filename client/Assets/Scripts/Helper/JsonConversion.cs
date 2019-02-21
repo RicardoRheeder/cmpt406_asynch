@@ -35,4 +35,8 @@ public static class JsonConversion {
     public static string GetJsonForSingleField(string key, string value) {
         return "{\"" + key + "\":\"" + value + "\"}";
     }
+
+    public static string GetJsonForSingleInt(string key, int value) {
+        return "{\"" + key + "\":" + value + "}";
+    }
 }

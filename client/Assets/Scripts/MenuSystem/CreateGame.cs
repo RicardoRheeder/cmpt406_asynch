@@ -106,7 +106,6 @@ public class CreateGame : MonoBehaviour {
         if (Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum)) {
             int maxPlayers = BoardMetadata.MaxPlayersDict[boardEnum];
             List<string> playerOptions = new List<string>(from number in Enumerable.Range(2, maxPlayers + 1) select "" + number);
-            Debug.Log(playerOptions);
             maxPlayersDropdown.ClearOptions();
             maxPlayersDropdown.AddOptions(playerOptions);
         }

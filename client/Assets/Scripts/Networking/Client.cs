@@ -30,6 +30,7 @@ public class Client : MonoBehaviour {
     private const string CREATE_PUBLIC_GAME = "/CreatePublicGame"; //Used to create a public game
     private const string CREATE_PRIVATE_GAME = "/CreatePrivateGame"; //Used to create a private game
     private const string GET_GAME_STATE = "/GetGameState"; //Used to get the state of a game
+    private const string GET_PUBLIC_GAMES = "/GetPublicGamesSummary"; //Used to get a number of public gmaes
 
     //Networking constants
     private const string JSON_TYPE = "application/json";
@@ -167,6 +168,26 @@ public class Client : MonoBehaviour {
         }
         catch (WebException e) {
             PrettyPrint(GET_GAME_STATE_MULTI, (HttpWebResponse)e.Response);
+            return new Tuple<bool, GameStateCollection>(false, null);
+        }
+    }
+
+    public Tuple<bool, GameStateCollection> GetPublicGames() {
+        HttpWebRequest request = CreatePostRequest(GET_PUBLIC_GAMES);
+        string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100); //just get up to 100 states for now
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            string responseJson;
+            using (var reader = new StreamReader(response.GetResponseStream())) {
+                responseJson = reader.ReadToEnd();
+            }
+            GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
+            return new Tuple<bool, GameStateCollection>(true, states);
+        }
+        catch (WebException e) {
+            PrettyPrint(GET_PUBLIC_GAMES, (HttpWebResponse)e.Response);
             return new Tuple<bool, GameStateCollection>(false, null);
         }
     }

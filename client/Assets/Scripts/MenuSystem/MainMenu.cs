@@ -95,7 +95,7 @@ public class MainMenu : MonoBehaviour {
         armyBuilderPanel.SetActive(builderState);
     }
 
-    public void GameCellDetailsButton(GameState state) {
+    public void PendingGameCellDetailsButton(GameState state) {
         //Set up the display information
         pendingMapName.SetText(state.boardId.ToString());
         pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -107,8 +107,10 @@ public class MainMenu : MonoBehaviour {
         pendingJoinButton.onClick.AddListener(() => MainMenuJoinPendingGame(state));
     }
 
-    public void MainMenuJoinGameButton() {
-        SetMenuState(false, false, false, true, false);
+    public void ActiveGameCellDetailsButton(GameState state) {
+    }
+
+    public void PublicGameCellDetailsButton(GameState state) {
     }
 
     public void MainMenuCreateGameButton() {
@@ -125,11 +127,40 @@ public class MainMenu : MonoBehaviour {
         SetMenuState(false, false, false, false, false);
     }
 
+    public void MainMenuJoinGameButton() {
+        gameStateStorage.Clear();
+        SetMenuState(false, false, false, true, false);
+        Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
+        if (response.First) {
+            foreach (var state in response.Second.states) {
+                if(state.isPublic && state.createdBy != networkApi.GetUsername()) {
+                    gameStateStorage.Add(state.id, state);
+                    GameObject newGameCell = Instantiate(gameListCellPrefab);
+                    Button cellButton = newGameCell.GetComponent<Button>();
+                    cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
+                    cellButton.onClick.AddListener(() => PublicGameCellDetailsButton(state));
+                    newGameCell.transform.SetParent(joinGameViewContent.transform, false);
+                }
+            }
+        }
+        else {
+            //the request failed, inform the user
+        }
+    }
+
     public void MainMenuActiveGamesButton() {
+        gameStateStorage.Clear();
         SetMenuState(false, true, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
-            //we can deal with displaying the game states
+            foreach (var state in response.Second.states) {
+                gameStateStorage.Add(state.id, state);
+                GameObject newGameCell = Instantiate(gameListCellPrefab);
+                Button cellButton = newGameCell.GetComponent<Button>();
+                cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
+                cellButton.onClick.AddListener(() => ActiveGameCellDetailsButton(state));
+                newGameCell.transform.SetParent(activeGamesViewContent.transform, false);
+            }
         }
         else {
             //the request failed, inform the user
@@ -137,17 +168,19 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuPendingGamesButton() {
+        gameStateStorage.Clear();
         SetMenuState(true, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         if (response.First) {
             foreach(var state in response.Second.states) {
-                gameStateStorage.Add(state.id, state);
-                //Create the 
-                GameObject newGameCell = Instantiate(gameListCellPrefab);
-                Button cellButton = newGameCell.GetComponent<Button>();
-                cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
-                cellButton.onClick.AddListener(() => GameCellDetailsButton(state));
-                newGameCell.transform.SetParent(pendingGamesViewContent.transform, false);
+                if (!state.isPublic) {
+                    gameStateStorage.Add(state.id, state);
+                    GameObject newGameCell = Instantiate(gameListCellPrefab);
+                    Button cellButton = newGameCell.GetComponent<Button>();
+                    cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
+                    cellButton.onClick.AddListener(() => PendingGameCellDetailsButton(state));
+                    newGameCell.transform.SetParent(pendingGamesViewContent.transform, false);
+                }
             }
         }
         else {
