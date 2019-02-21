@@ -256,6 +256,29 @@ public class Client : MonoBehaviour {
         return false;
     }
 
+    public bool CreatePublicGame(string name, int turnTime, int forfeitTime, int maxPlayers, int boardId) {
+        CreatePublicGameState state = new CreatePublicGameState(name, turnTime, forfeitTime, maxPlayers, boardId);
+        if(debugMode) {
+
+        }
+        else {
+            //Setting up the request object
+            HttpWebRequest request = CreatePostRequest(CREATE_PUBLIC_GAME);
+            string requestJson = JsonConversion.ConvertObjectToJson<CreatePublicGameState>(typeof(CreatePublicGameState), state);
+            AddJsonToRequest(requestJson, ref request);
+
+            try {
+                var response = (HttpWebResponse)request.GetResponse();
+                return true;
+            }
+            catch (WebException e) {
+                PrettyPrint(CREATE_PRIVATE_GAME, (HttpWebResponse)e.Response);
+                return false;
+            }
+        }
+        return false;
+    }
+
     //Helper methods for the API
     private HttpWebRequest CreatePostRequest(string endpoint) {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + endpoint);

@@ -121,7 +121,7 @@ public class CreatePrivateGameState {
     [DataMember]
     private int turnTime;
 
-    [DataMember( Name = "timeToStartTurn")]
+    [DataMember(Name = "timeToStartTurn")]
     private int forfeitTime;
 
     [DataMember]
@@ -135,6 +135,33 @@ public class CreatePrivateGameState {
         this.turnTime = turnTime;
         this.forfeitTime = forfeitTime;
         this.opponentUsernames = opponents;
+        this.boardId = boardId;
+    }
+}
+
+//Special object used to create a public game
+[DataContract]
+public class CreatePublicGameState {
+    [DataMember]
+    private string gameName;
+
+    [DataMember]
+    private int turnTime;
+
+    [DataMember(Name = "timeToStartTurn")]
+    private int forfeitTime;
+
+    [DataMember]
+    private int maxUsers;
+
+    [DataMember]
+    private int boardId;
+
+    public CreatePublicGameState(string name, int turnTime, int forfeitTime, int maxPlayers, int boardId) {
+        this.gameName = name;
+        this.turnTime = turnTime;
+        this.forfeitTime = forfeitTime;
+        this.maxUsers = maxPlayers;
         this.boardId = boardId;
     }
 }
