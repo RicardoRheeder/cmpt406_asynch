@@ -128,6 +128,9 @@ public class CreateGame : MonoBehaviour {
 
         if (networkApi.CreatePrivateGame(gameName, turnTime, forfeitTime, opponents, boardId)) {
             opponents.Clear();
+            foreach (var item in invitedPlayers) {
+                Destroy(item.Value);
+            }
             GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
             //Maybe pop up a game created message that fades out?
         }
@@ -143,7 +146,7 @@ public class CreateGame : MonoBehaviour {
             GameObject invitedUser = Instantiate(invitedPlayersTextPrefab);
             invitedUser.GetComponent<TMP_Text>().text = username;
             invitedUser.transform.SetParent(inviedPlayersViewContent.transform, false);
-            opponents.Add(invitePlayerInput.text);
+            opponents.Add(username);
             invitedPlayers.Add(username, invitedUser);
             invitePlayerInput.text = "";
         }
@@ -169,6 +172,10 @@ public class CreateGame : MonoBehaviour {
 
         if (networkApi.CreatePublicGame(gameName, turnTime, forfeitTime, maxPlayers, boardId)) {
             GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
+            foreach (var item in invitedPlayers) {
+                Destroy(item.Value);
+            }
+            invitedPlayers.Clear();
             //Maybe pop up a game created message that fades out?
         }
         else {

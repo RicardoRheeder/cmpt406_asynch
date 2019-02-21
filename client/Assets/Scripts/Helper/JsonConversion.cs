@@ -17,7 +17,8 @@ public static class JsonConversion {
 
     //Takes in a type and an object and serializes it into JSON
     //Used for server communication
-    public static string ConvertObjectToJson<T>(System.Type type, T thingToConvert) {
+    public static string ConvertObjectToJson<T>(T thingToConvert) {
+        System.Type type = typeof(T);
         if (thingToConvert != null) {
             MemoryStream stream = new MemoryStream();
             DataContractJsonSerializer ser = new DataContractJsonSerializer(type);

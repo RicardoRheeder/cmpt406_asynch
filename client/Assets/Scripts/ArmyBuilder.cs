@@ -78,7 +78,10 @@ public static class ArmyBuilder {
 public class ArmyPreset {
 
     [DataMember]
-    public string presetName;
+    public string id;
+
+    [DataMember]
+    public string name;
 
     [DataMember(Name = "units")]
     private List<int> serverUnits = new List<int>();
@@ -89,7 +92,8 @@ public class ArmyPreset {
     public UnitType general;
 
     public ArmyPreset(string presetName, List<UnitType> units, UnitType general) {
-        this.presetName = presetName;
+        id = "";
+        this.name = presetName;
         this.units = units;
         this.general = general;
     }

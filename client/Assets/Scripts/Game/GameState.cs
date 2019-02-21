@@ -61,7 +61,7 @@ public class GameState {
     public int TurnNumber { get; private set; }
 
     public override string ToString() {
-        return JsonConversion.ConvertObjectToJson(typeof(GameState), this);
+        return JsonConversion.ConvertObjectToJson(this);
     }
 
     public string GetDescription() {
@@ -107,7 +107,7 @@ public class GameStateCollection {
     }
 
     public override string ToString() {
-        return JsonConversion.ConvertObjectToJson(typeof(GameStateCollection), this);
+        return JsonConversion.ConvertObjectToJson(this);
     }
 }
 

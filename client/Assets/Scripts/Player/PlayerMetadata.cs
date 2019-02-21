@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 [DataContract]
 public class PlayerMetadata {
 
-    [DataMember(Name = "freinds")]
+    [DataMember]
     public List<string> friends = new List<string>();
 
     [DataMember]
@@ -29,7 +29,7 @@ public class PlayerMetadata {
     public List<ArmyPreset> armyPresets = new List<ArmyPreset>();
 
     public override string ToString() {
-        return JsonConversion.ConvertObjectToJson(typeof(PlayerMetadata), this);
+        return JsonConversion.ConvertObjectToJson(this);
     }
 
     //This function will be run after the class is serialized from the JSON string
@@ -57,7 +57,7 @@ public class PlayerMetadata {
         else {
             //This is where the army builder cache is made.
             for(int i = 0; i < armyPresets.Count; i++) {
-                ArmyBuilder.AddPreset(armyPresets[i].presetName, armyPresets[i]);
+                ArmyBuilder.AddPreset(armyPresets[i].name, armyPresets[i]);
             }
         }
         ArmyBuilder.InsertDefaultPresets();

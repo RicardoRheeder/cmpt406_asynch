@@ -74,10 +74,7 @@ public class MainMenu : MonoBehaviour {
 
         List<string> userFriends = networkApi.GetFriendsList();
         foreach(string friend in userFriends) {
-            GameObject friendText = Instantiate(friendsListCellPrefab);
-            friendText.GetComponent<TMP_Text>().text = friend;
-            friendText.transform.SetParent(friendsViewContent.transform, false);
-            friendsListDict.Add(friend, friendText);
+            AddFriendHelper(friend);
         }
     }
 
@@ -192,14 +189,18 @@ public class MainMenu : MonoBehaviour {
         //Here we need to somehow get the string of the username we would like to add
         string userToAdd = friendsListInputField.text;
         if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
-            GameObject friendText = Instantiate(friendsListCellPrefab);
-            friendText.GetComponent<TMP_Text>().text = userToAdd;
-            friendText.transform.SetParent(friendsViewContent.transform, false);
-            friendsListDict.Add(userToAdd, friendText);
+            AddFriendHelper(userToAdd);
         }
         else {
             //adding a user failed
         }
+    }
+
+    private void AddFriendHelper(string username) {
+        GameObject friendText = Instantiate(friendsListCellPrefab);
+        friendText.GetComponent<TMP_Text>().text = username;
+        friendText.transform.SetParent(friendsViewContent.transform, false);
+        friendsListDict.Add(username, friendText);
     }
 
     public void MainMenuRemoveUserButton() {
