@@ -10,7 +10,7 @@ import (
 )
 
 // CreateGameState will create a game state in DataStore
-func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, turnTime, timeToStartTurn int) error {
+func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, turnTime, forfeitTime int) error {
 
 	_, err := GetGameState(ctx, ID)
 	if err == nil {
@@ -26,24 +26,25 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 	}
 
 	gameState := &GameState{
-		ID:              ID,
-		GameName:        gameName,
-		CreatedBy:       acceptedUsers[0],
-		BoardID:         boardID,
-		IsPublic:        isPublic,
-		MaxUsers:        maxUsers,
-		SpotsAvailable:  spotsAvailable,
-		UsersTurn:       "",
-		Users:           users,
-		AcceptedUsers:   acceptedUsers,
-		ReadyUsers:      []string{},
-		AliveUsers:      users,
-		Units:           []Unit{},
-		CardIDs:         []string{},
-		Actions:         []Action{},
-		TurnTime:        turnTime,
-		TimeToStateTurn: timeToStartTurn,
-		Created:         time.Now().UTC(),
+		ID:             ID,
+		GameName:       gameName,
+		CreatedBy:      acceptedUsers[0],
+		BoardID:        boardID,
+		IsPublic:       isPublic,
+		MaxUsers:       maxUsers,
+		SpotsAvailable: spotsAvailable,
+		UsersTurn:      "",
+		Users:          users,
+		AcceptedUsers:  acceptedUsers,
+		ReadyUsers:     []string{},
+		AliveUsers:     users,
+		Units:          []Unit{},
+		Generals:       []Unit{},
+		CardIDs:        []string{},
+		Actions:        []Action{},
+		TurnTime:       turnTime,
+		ForfeitTime:    forfeitTime,
+		Created:        time.Now().UTC(),
 	}
 
 	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
@@ -164,7 +165,7 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]G
 	q := datastore.NewQuery("GameState").
 		Filter("IsPublic =", true).
 		Filter("SpotsAvailable >", 0).
-		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable").
+		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable", "CreatedBy").
 		Limit(limit)
 	t := q.Run(ctx)
 	for {

@@ -121,6 +121,35 @@ freinds must actually be on their freinds list.
     }
  - Return: Http Resonse Code
 
+Add Army Preset:
+-----------------------
+This endpoint will add an army preset to the user model. Allowing them to save
+army builds that they like for another time
+
+ - Path: /AddArmyPreset
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "name": "Best Army Ever",
+        "units": [1,5,6,9,9,9,9],
+        "general": 4
+    }
+ - Return: Http Resonse Code
+
+Remove Army Preset:
+-----------------------
+This endpoint will remove an army preset from the user
+
+ - Path: /RemoveArmyPreset
+ - POST
+ - Auth: Basic Auth
+  - Request Body Example:
+    {   
+        "armyPresetId": "1234-1234-2134"
+    }
+ - Return: Http Resonse Code
+
 
 Create Private Game:
 -----------------------
@@ -332,6 +361,13 @@ For when you are placing your army in a public or private game.
                     "coord": {"Lat": 1, "Lng": 2}
                 }
             ],
+        "general":
+            {
+                "owner": "ParkerReese1",
+                "unitType": 101,
+                "health": 10,
+                "coord": {"Lat": 1, "Lng": 2}
+            }
         "cards":        // Note: Should just be the cards that the user now has. (No one elses).  
             {
                 "owner": "ParkerReese1",
@@ -366,6 +402,22 @@ server know what you did.
                 {
                     "owner": "ParkerReese2",
                     "unitType": 2,
+                    "health": 5,
+                    "coord": {"Lat": 1, "Lng": 4}
+                }
+            ]
+        },
+        "generals":        // Note: Should be ALL of the generals on the board, for all users.
+            [
+                {
+                    "owner": "ParkerReese1",
+                    "unitType": 101,
+                    "health": 10,
+                    "coord": {"Lat": 1, "Lng": 2}
+                },
+                {
+                    "owner": "ParkerReese2",
+                    "unitType": 102,
                     "health": 5,
                     "coord": {"Lat": 1, "Lng": 4}
                 }
@@ -425,19 +477,22 @@ type GameState struct {
 	AliveUsers      []string
 	UsersTurn       string
 	Units           []Unit
+	Generals        []Unit
 	Cards           []Cards
 	Actions         []Action
 	TurnTime        int
-	TimeToStateTurn int
+	ForfeitTIme     int
 	Created         time.Time
 }
 
 // Unit is a game piece on the board
 type Unit struct {
-	Owner    string
-	UnitType int
-	Health   float32
-	Coord    appengine.GeoPoint
+	Owner               string
+	UnitType            int
+	Health              float32
+	Coord               appengine.GeoPoint
+    Ability1CoolDown    int
+    Ability2CoolDown    int
 }
 
 // Cards contains all the card information on a per user bases

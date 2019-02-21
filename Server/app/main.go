@@ -15,6 +15,9 @@ func main() {
 	http.HandleFunc("/AddFriend", handleAddFriend)
 	http.HandleFunc("/RemoveFriend", handleRemoveFriend)
 
+	http.HandleFunc("/AddArmyPreset", handleAddArmyPreset)
+	http.HandleFunc("/RemoveArmyPreset", handleRemoveArmyPreset)
+
 	http.HandleFunc("/CreatePrivateGame", handleCreatePrivateGame)
 	http.HandleFunc("/CreatePublicGame", handleCreatePublicGame)
 	http.HandleFunc("/AcceptGame", handleAcceptGame)
@@ -46,6 +49,7 @@ func handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	err = CreateUser(ctx, ur.Username, ur.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -130,6 +134,60 @@ func handleRemoveFriend(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func handleAddArmyPreset(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var aap request.AddArmyPreset
+	err = decoder.Decode(&aap)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = AddArmyPreset(ctx, username, aap.Name, aap.Units, aap.General)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleRemoveArmyPreset(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var rap request.RemoveArmyPreset
+	err = decoder.Decode(&rap)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = RemoveArmyPreset(ctx, username, rap.ArmyPresetID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
 func handleCreatePrivateGame(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
@@ -147,7 +205,7 @@ func handleCreatePrivateGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID, pg.GameName, pg.TurnTime, pg.TimeToStartTurn)
+	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID, pg.GameName, pg.TurnTime, pg.ForfeitTime)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -174,7 +232,7 @@ func handleCreatePublicGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers, pg.GameName, pg.TurnTime, pg.TimeToStartTurn)
+	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers, pg.GameName, pg.TurnTime, pg.ForfeitTime)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -399,7 +457,7 @@ func handleReadyUnits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.Cards)
+	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.General, ru.Cards)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -426,7 +484,7 @@ func handleMakeMove(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Cards, mm.Actions, mm.KilledUsers)
+	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Generals, mm.Cards, mm.Actions, mm.KilledUsers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
