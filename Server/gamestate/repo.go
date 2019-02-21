@@ -164,7 +164,7 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]G
 	q := datastore.NewQuery("GameState").
 		Filter("IsPublic =", true).
 		Filter("SpotsAvailable >", 0).
-		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable").
+		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable", "CreatedBy").
 		Limit(limit)
 	t := q.Run(ctx)
 	for {

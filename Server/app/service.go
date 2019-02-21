@@ -187,6 +187,68 @@ func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
 	}
 }
 
+// AddArmyPreset will add an army preset to the users model
+func AddArmyPreset(ctx context.Context, username string, units []int, general int) error {
+	if general <= 0 {
+		log.Errorf(ctx, "AddArmyPreset Failed: General int must be greated than 0")
+		return errors.New("General int must be greated than 0")
+	}
+	if len(units) <= 0 {
+		log.Errorf(ctx, "AddArmyPreset Failed: There must be at least 1 unit provided")
+		return errors.New("There must be at least 1 unit provided")
+	}
+
+	err := user.UpdateUserWithT(ctx, username, addArmyPreset(ctx, username, units, general))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Helper function to editing the User model
+func addArmyPreset(ctx context.Context, username string, units []int, general int) user.UpdateUserFunc {
+
+	return func(ctx context.Context, u *user.User) error {
+
+		armyPresetID := common.GetRandomID()
+		armyPreset := user.ArmyPreset{ID: armyPresetID, Units: units, General: general}
+
+		u.ArmyPresetIDs = append(u.ArmyPresetIDs, armyPresetID)
+		u.ArmyPresets = append(u.ArmyPresets, armyPreset)
+		return nil
+	}
+}
+
+// RemoveArmyPreset will remove an army preset from the users model
+func RemoveArmyPreset(ctx context.Context, username string, armyPresetID string) error {
+	err := common.StringNotEmpty(armyPresetID)
+	if err != nil {
+		log.Errorf(ctx, "RemoveArmyPreset Failed: armyPresetId required")
+		return errors.New("armyPresetId required")
+	}
+
+	err = user.UpdateUserWithT(ctx, username, removeArmyPreset(ctx, armyPresetID))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Helper function to editing the User model
+func removeArmyPreset(ctx context.Context, armyPresetID string) user.UpdateUserFunc {
+
+	return func(ctx context.Context, u *user.User) error {
+
+		if !common.Remove(&u.ArmyPresetIDs, armyPresetID) {
+			return errors.New("Provided Army Preset ID doesn't exist on user ")
+		}
+		/* TODO: this just orphans the army preset, it doesn't actually delete it */
+		return nil
+	}
+}
+
 /* GameState / User Section */
 /************************************/
 

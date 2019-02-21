@@ -15,6 +15,9 @@ func main() {
 	http.HandleFunc("/AddFriend", handleAddFriend)
 	http.HandleFunc("/RemoveFriend", handleRemoveFriend)
 
+	http.HandleFunc("/AddArmyPreset", handleAddArmyPreset)
+	http.HandleFunc("/RemoveArmyPreset", handleRemoveArmyPreset)
+
 	http.HandleFunc("/CreatePrivateGame", handleCreatePrivateGame)
 	http.HandleFunc("/CreatePublicGame", handleCreatePublicGame)
 	http.HandleFunc("/AcceptGame", handleAcceptGame)
@@ -46,6 +49,7 @@ func handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	err = CreateUser(ctx, ur.Username, ur.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -121,6 +125,60 @@ func handleRemoveFriend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = RemoveFriend(ctx, username, f.Username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleAddArmyPreset(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var aap request.AddArmyPreset
+	err = decoder.Decode(&aap)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = AddArmyPreset(ctx, username, aap.Units, aap.General)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleRemoveArmyPreset(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var rap request.RemoveArmyPreset
+	err = decoder.Decode(&rap)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = RemoveArmyPreset(ctx, username, rap.ArmyPresetID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

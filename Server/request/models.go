@@ -13,6 +13,17 @@ type Friend struct {
 	Username string `json:"username"`
 }
 
+// AddArmyPreset has the info needed to add an army preset
+type AddArmyPreset struct {
+	Units   []int `json:"units"`
+	General int   `json:"general"`
+}
+
+// RemoveArmyPreset will remove the given army preset
+type RemoveArmyPreset struct {
+	ArmyPresetID string `json:"armyPresetId"`
+}
+
 // CreatePrivateGame is a struct to handle the request of inviting users to a private game
 type CreatePrivateGame struct {
 	GameName          string   `json:"gameName"`
