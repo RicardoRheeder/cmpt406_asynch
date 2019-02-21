@@ -188,7 +188,7 @@ func removeFriend(ctx context.Context, friendName string) user.UpdateUserFunc {
 }
 
 // AddArmyPreset will add an army preset to the users model
-func AddArmyPreset(ctx context.Context, username string, units []int, general int) error {
+func AddArmyPreset(ctx context.Context, username string, presetName string, units []int, general int) error {
 	if general <= 0 {
 		log.Errorf(ctx, "AddArmyPreset Failed: General int must be greated than 0")
 		return errors.New("General int must be greated than 0")
@@ -197,8 +197,13 @@ func AddArmyPreset(ctx context.Context, username string, units []int, general in
 		log.Errorf(ctx, "AddArmyPreset Failed: There must be at least 1 unit provided")
 		return errors.New("There must be at least 1 unit provided")
 	}
+	err := common.StringNotEmpty(presetName)
+	if err != nil {
+		log.Errorf(ctx, "AddArmyPreset Failed: name is required")
+		return errors.New("name is required")
+	}
 
-	err := user.UpdateUserWithT(ctx, username, addArmyPreset(ctx, username, units, general))
+	err = user.UpdateUserWithT(ctx, username, addArmyPreset(ctx, presetName, units, general))
 	if err != nil {
 		return err
 	}
@@ -207,12 +212,12 @@ func AddArmyPreset(ctx context.Context, username string, units []int, general in
 }
 
 // Helper function to editing the User model
-func addArmyPreset(ctx context.Context, username string, units []int, general int) user.UpdateUserFunc {
+func addArmyPreset(ctx context.Context, presetName string, units []int, general int) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 
 		armyPresetID := common.GetRandomID()
-		armyPreset := user.ArmyPreset{ID: armyPresetID, Units: units, General: general}
+		armyPreset := user.ArmyPreset{ID: armyPresetID, Name: presetName, Units: units, General: general}
 
 		u.ArmyPresetIDs = append(u.ArmyPresetIDs, armyPresetID)
 		u.ArmyPresets = append(u.ArmyPresets, armyPreset)
@@ -775,7 +780,7 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]g
 }
 
 // ReadyUnits is used to place your units on the field and be provided cards
-func ReadyUnits(ctx context.Context, username, gameID string, units []gamestate.Unit, cards gamestate.Cards) error {
+func ReadyUnits(ctx context.Context, username, gameID string, units []gamestate.Unit, general gamestate.Unit, cards gamestate.Cards) error {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
@@ -791,16 +796,20 @@ func ReadyUnits(ctx context.Context, username, gameID string, units []gamestate.
 		log.Errorf(ctx, "Ready Units failed: units are required")
 		return errors.New("units are required")
 	}
+	if len(general.Owner) <= 0 {
+		log.Errorf(ctx, "Ready Units failed: general is required")
+		return errors.New("general is required")
+	}
 	if cards.Owner == "" {
 		log.Errorf(ctx, "Ready Units failed: cards are required")
 		return errors.New("cards are required")
 	}
 
-	return gamestate.UpdateGameState(ctx, gameID, readyUnits(username, units, cards))
+	return gamestate.UpdateGameState(ctx, gameID, readyUnits(username, units, general, cards))
 }
 
 // readyUnits is a helper function to assigning a player units and making them considered "Ready"
-func readyUnits(username string, units []gamestate.Unit, cards gamestate.Cards) gamestate.UpdateGameStateFunc {
+func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit, cards gamestate.Cards) gamestate.UpdateGameStateFunc {
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 		if !common.Contains(gs.AcceptedUsers, username) {
@@ -815,6 +824,8 @@ func readyUnits(username string, units []gamestate.Unit, cards gamestate.Cards) 
 		gs.ReadyUsers = append(gs.ReadyUsers, username)
 		/* Add Provided Units */
 		gs.Units = append(gs.Units, units...)
+		/* add the provided general */
+		gs.Generals = append(gs.Generals, general)
 
 		/* Assign the Cards an ID */
 		cards.ID = common.GetRandomID()
@@ -847,10 +858,11 @@ func readyUnits(username string, units []gamestate.Unit, cards gamestate.Cards) 
 
 		return nil
 	}
+
 }
 
 // MakeMove is used to initiate a turn in the game
-func MakeMove(ctx context.Context, username, gameID string, units []gamestate.Unit, cards []gamestate.Cards, actions []gamestate.Action, killedUsers []string) error {
+func MakeMove(ctx context.Context, username, gameID string, units []gamestate.Unit, generals []gamestate.Unit, cards []gamestate.Cards, actions []gamestate.Action, killedUsers []string) error {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
@@ -863,11 +875,11 @@ func MakeMove(ctx context.Context, username, gameID string, units []gamestate.Un
 		return errors.New("gameID is required")
 	}
 
-	return gamestate.UpdateGameState(ctx, gameID, makeMove(username, units, cards, actions, killedUsers))
+	return gamestate.UpdateGameState(ctx, gameID, makeMove(username, units, generals, cards, actions, killedUsers))
 }
 
 // makeMove is a helper function to update the GameState for doing a turn
-func makeMove(username string, units []gamestate.Unit, cards []gamestate.Cards, actions []gamestate.Action, killedUsers []string) gamestate.UpdateGameStateFunc {
+func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit, cards []gamestate.Cards, actions []gamestate.Action, killedUsers []string) gamestate.UpdateGameStateFunc {
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 
@@ -910,9 +922,10 @@ func makeMove(username string, units []gamestate.Unit, cards []gamestate.Cards, 
 			log.Criticalf(ctx, "The user %s died in his turn and now no next user has been selected", username)
 		}
 
-		/* assign the new units and cards of the gamestate*/
+		/* assign the new units, generals, and cards of the gamestate*/
 		gs.Units = units
 		gs.Cards = cards
+		gs.Generals = generals
 
 		return nil
 	}

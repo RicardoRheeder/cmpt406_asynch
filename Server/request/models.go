@@ -15,8 +15,9 @@ type Friend struct {
 
 // AddArmyPreset has the info needed to add an army preset
 type AddArmyPreset struct {
-	Units   []int `json:"units"`
-	General int   `json:"general"`
+	Name    string `json:"name"`
+	Units   []int  `json:"units"`
+	General int    `json:"general"`
 }
 
 // RemoveArmyPreset will remove the given army preset
@@ -59,9 +60,10 @@ type GetPublicGamesSummary struct {
 
 // ReadyUnits holds all the information to ready up in a game
 type ReadyUnits struct {
-	GameID string           `json:"gameId"`
-	Units  []gamestate.Unit `json:"units"`
-	Cards  gamestate.Cards  `json:"cards"`
+	GameID  string           `json:"gameId"`
+	Units   []gamestate.Unit `json:"units"`
+	General gamestate.Unit   `json:"general"`
+	Cards   gamestate.Cards  `json:"cards"`
 }
 
 // MakeMove holds all the information for doing a turn
@@ -69,6 +71,7 @@ type MakeMove struct {
 	GameID      string             `json:"gameId"`
 	KilledUsers []string           `json:"killedUsers"`
 	Units       []gamestate.Unit   `json:"units"`
+	Generals    []gamestate.Unit   `json:"generals"`
 	Cards       []gamestate.Cards  `json:"cards"`
 	Actions     []gamestate.Action `json:"actions"`
 }

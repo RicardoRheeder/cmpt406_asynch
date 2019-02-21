@@ -18,6 +18,7 @@ type User struct {
 // ArmyPreset is an army created and saved by the user for future use
 type ArmyPreset struct {
 	ID      string `json:"id,omitempty" datastore:",omitempty,noindex"`
+	Name    string `json:"name,omitempty" datastore:",omitempty,noindex"`
 	Units   []int  `json:"units,omitempty" datastore:",omitempty,noindex"`
 	General int    `json:"general,omitempty" datastore:",omitempty,noindex"`
 }

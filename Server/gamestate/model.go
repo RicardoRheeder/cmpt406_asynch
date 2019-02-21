@@ -22,6 +22,7 @@ type GameState struct {
 	AliveUsers     []string  `json:"aliveUsers,omitempty"`
 	UsersTurn      string    `json:"usersTurn,omitempty"`
 	Units          []Unit    `json:"units,omitempty"`
+	Generals       []Unit    `json:"generals,omitempty"`
 	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
 	CardIDs        []string  `json:"-"`
 	Actions        []Action  `json:"actions,omitempty"`
@@ -32,10 +33,12 @@ type GameState struct {
 
 // Unit is a game piece on the board
 type Unit struct {
-	Owner    string             `json:"owner,omitempty" datastore:",omitempty"`
-	UnitType int                `json:"unitType,omitempty" datastore:",omitempty"`
-	Health   float32            `json:"health,omitempty" datastore:",omitempty"`
-	Coord    appengine.GeoPoint `json:"coord,omitempty" datastore:",omitempty"`
+	Owner            string             `json:"owner,omitempty" datastore:",omitempty"`
+	UnitType         int                `json:"unitType,omitempty" datastore:",omitempty"`
+	Health           float32            `json:"health,omitempty" datastore:",omitempty"`
+	Coord            appengine.GeoPoint `json:"coord,omitempty" datastore:",omitempty"`
+	Ability1CoolDown int                `json:"ability1CoolDown,omitempty" datastore:",omitempty"`
+	Ability2CoolDown int                `json:"ability2CoolDown,omitempty" datastore:",omitempty"`
 }
 
 // Cards contains all the card information on a per user bases

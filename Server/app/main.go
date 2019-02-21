@@ -151,7 +151,7 @@ func handleAddArmyPreset(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = AddArmyPreset(ctx, username, aap.Units, aap.General)
+	err = AddArmyPreset(ctx, username, aap.Name, aap.Units, aap.General)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -457,7 +457,7 @@ func handleReadyUnits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.Cards)
+	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.General, ru.Cards)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -484,7 +484,7 @@ func handleMakeMove(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Cards, mm.Actions, mm.KilledUsers)
+	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Generals, mm.Cards, mm.Actions, mm.KilledUsers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

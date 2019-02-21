@@ -131,6 +131,7 @@ army builds that they like for another time
  - Auth: Basic Auth
   - Request Body Example:
     {   
+        "name": "Best Army Ever",
         "units": [1,5,6,9,9,9,9],
         "general": 4
     }
@@ -360,6 +361,13 @@ For when you are placing your army in a public or private game.
                     "coord": {"Lat": 1, "Lng": 2}
                 }
             ],
+        "general":
+            {
+                "owner": "ParkerReese1",
+                "unitType": 101,
+                "health": 10,
+                "coord": {"Lat": 1, "Lng": 2}
+            }
         "cards":        // Note: Should just be the cards that the user now has. (No one elses).  
             {
                 "owner": "ParkerReese1",
@@ -394,6 +402,22 @@ server know what you did.
                 {
                     "owner": "ParkerReese2",
                     "unitType": 2,
+                    "health": 5,
+                    "coord": {"Lat": 1, "Lng": 4}
+                }
+            ]
+        },
+        "generals":        // Note: Should be ALL of the generals on the board, for all users.
+            [
+                {
+                    "owner": "ParkerReese1",
+                    "unitType": 101,
+                    "health": 10,
+                    "coord": {"Lat": 1, "Lng": 2}
+                },
+                {
+                    "owner": "ParkerReese2",
+                    "unitType": 102,
                     "health": 5,
                     "coord": {"Lat": 1, "Lng": 4}
                 }
@@ -453,6 +477,7 @@ type GameState struct {
 	AliveUsers      []string
 	UsersTurn       string
 	Units           []Unit
+	Generals        []Unit
 	Cards           []Cards
 	Actions         []Action
 	TurnTime        int
@@ -462,10 +487,12 @@ type GameState struct {
 
 // Unit is a game piece on the board
 type Unit struct {
-	Owner    string
-	UnitType int
-	Health   float32
-	Coord    appengine.GeoPoint
+	Owner               string
+	UnitType            int
+	Health              float32
+	Coord               appengine.GeoPoint
+    Ability1CoolDown    int
+    Ability2CoolDown    int
 }
 
 // Cards contains all the card information on a per user bases
