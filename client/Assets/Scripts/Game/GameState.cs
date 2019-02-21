@@ -121,7 +121,7 @@ public class CreatePrivateGameState {
     [DataMember]
     private int turnTime;
 
-    [DataMember(Name = "timeToStartTurn")]
+    [DataMember]
     private int forfeitTime;
 
     [DataMember]
@@ -148,7 +148,7 @@ public class CreatePublicGameState {
     [DataMember]
     private int turnTime;
 
-    [DataMember(Name = "timeToStartTurn")]
+    [DataMember]
     private int forfeitTime;
 
     [DataMember]
