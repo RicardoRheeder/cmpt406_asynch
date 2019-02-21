@@ -2,7 +2,6 @@ package gamestate
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"google.golang.org/appengine/datastore"
@@ -11,12 +10,6 @@ import (
 
 // CreateGameState will create a game state in DataStore
 func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, turnTime, forfeitTime int) error {
-
-	_, err := GetGameState(ctx, ID)
-	if err == nil {
-		log.Errorf(ctx, "Attempted to create GameState: %s, that already exists", ID)
-		return errors.New("GameState Already Exists")
-	}
 
 	var spotsAvailable int
 	if isPublic {
@@ -48,7 +41,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 	}
 
 	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
-	_, err = datastore.Put(ctx, key, gameState)
+	_, err := datastore.Put(ctx, key, gameState)
 	if err != nil {
 		log.Errorf(ctx, "Failed to Put (create) gameState: %s", ID)
 		return err
