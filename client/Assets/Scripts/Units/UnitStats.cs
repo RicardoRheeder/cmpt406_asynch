@@ -37,6 +37,8 @@ public class UnitStats {
     [DataMember]
     private int yPos;
 
+    Unit myUnit;
+
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
     public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost, IAttackStrategy attackStrategy) {
         this.UnitType = type;
@@ -52,6 +54,10 @@ public class UnitStats {
         this.Cost = cost;
         this.attackStrategy = attackStrategy;
         this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
+    }
+
+    public void SetUnit(Unit unit) {
+        this.myUnit = unit;
     }
 
     //TODO: see if HexDistance() works for range finding

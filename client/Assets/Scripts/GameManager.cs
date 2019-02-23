@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour {
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, ref username);
+        gameBuilder.Build(ref state, ref username, ref boardController);
 
         unitPositions = gameBuilder.unitPositions;
 
