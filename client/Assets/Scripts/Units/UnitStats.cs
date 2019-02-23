@@ -9,6 +9,7 @@ public class UnitStats {
     [DataMember]
     private int serverUnitType = -1;
     public UnitType UnitType { get; private set; }
+    public UnitClass UnitClass { get; private set; }
     public int Cost { get; private set; }
     [DataMember]
     public string Owner { get; private set; }
@@ -50,6 +51,7 @@ public class UnitStats {
         this.MovementSpeed = movementSpeed;
         this.Cost = cost;
         this.attackStrategy = attackStrategy;
+        this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
     }
 
     //TODO: see if HexDistance() works for range finding

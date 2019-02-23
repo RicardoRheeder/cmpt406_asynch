@@ -5,73 +5,85 @@ using System.Runtime.Serialization;
 public class GameState {
 
     [DataMember(IsRequired=true)]
-    public string id;
+    public readonly string id;
 
     [DataMember(IsRequired = true)]
-    private string gameName;
+    public readonly string gameName;
 
     [DataMember(IsRequired = true)]
-    private string createdBy;
+    public readonly string createdBy;
 
     [DataMember(IsRequired = true)]
-    public BoardType boardId;
+    public readonly BoardType boardId;
 
     [DataMember]
-    private int maxUsers;
+    public readonly int maxUsers;
 
     [DataMember]
-    private int spotsAvailable;
+    public readonly int spotsAvailable;
 
     [DataMember]
-    private bool isPublic;
+    public readonly bool isPublic;
 
-    [DataMember]
-    private List<string> users;
+    [DataMember(Name = "users")]
+    public List<string> Users { get; private set; }
 
-    [DataMember]
-    private List<string> acceptedUsers;
+    [DataMember(Name = "acceptedUsers")]
+    public List<string> AcceptedUsers { get; private set; }
 
-    [DataMember]
-    private List<string> readyUsers;
+    [DataMember(Name = "readyUsers")]
+    public List<string> ReadyUsers { get; private set; }
 
-    [DataMember]
-    private List<string> aliveUsers;
+    [DataMember(Name = "aliveUsers")]
+    public List<string> AliveUsers { get; private set; }
 
-    [DataMember]
-    private string usersTurn;
+    [DataMember(Name = "usersTurn")]
+    public string UsersTurn { get; private set; }
 
     [DataMember]
     private List<UnitStats> units;
-    public Dictionary<string, List<UnitStats>> userUnitsMap;
+    public Dictionary<string, List<UnitStats>> UserUnitsMap { get; private set; }
 
     [DataMember]
     private List<CardController> cards;
-    public Dictionary<string, CardController> userCardsMap;
+    public Dictionary<string, CardController> UserCardsMap { get; private set; }
 
-    [DataMember]
-    public List<Action> actions;
+    [DataMember(Name = "actions")]
+    public List<Action> Actions { get; private set; }
 
-    [DataMember]
-    private int turnTime;
+    [DataMember(Name = "turnTime")]
+    public int TurnTime { get; private set; }
 
-    [DataMember(Name="timeToStartTurn")]
-    private int forfeitTime;
+    [DataMember(Name="forfeitTime")]
+    public int ForfeitTime { get; private set; }
+
+    [DataMember(Name = "turnNumber")]
+    public int TurnNumber { get; private set; }
 
     public override string ToString() {
-        return JsonConversion.ConvertObjectToJson(typeof(GameState), this);
+        return JsonConversion.ConvertObjectToJson(this);
+    }
+
+    public string GetDescription() {
+        return this.gameName + ", " + this.createdBy;
     }
 
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
+        if (units == null) units = new List<UnitStats>();
+        if (Users == null) Users = new List<string>();
+        if (AcceptedUsers == null) AcceptedUsers = new List<string>();
+        if (ReadyUsers == null) ReadyUsers = new List<string>();
+        if (cards == null) cards = new List<CardController>();
         foreach(UnitStats unit in units) {
-            if (userUnitsMap.ContainsKey(unit.Owner))
-                userUnitsMap[unit.Owner].Add(unit);
+            if (UserUnitsMap.ContainsKey(unit.Owner))
+                UserUnitsMap[unit.Owner].Add(unit);
             else
-                userUnitsMap.Add(unit.Owner, new List<UnitStats>() { unit });
+                UserUnitsMap.Add(unit.Owner, new List<UnitStats>() { unit });
         }
 
         foreach(CardController card in cards) {
-            userCardsMap.Add(card.owner, card);
+            UserCardsMap.Add(card.owner, card);
         }
     }
 }
@@ -95,7 +107,7 @@ public class GameStateCollection {
     }
 
     public override string ToString() {
-        return JsonConversion.ConvertObjectToJson(typeof(GameStateCollection), this);
+        return JsonConversion.ConvertObjectToJson(this);
     }
 }
 
@@ -109,7 +121,7 @@ public class CreatePrivateGameState {
     [DataMember]
     private int turnTime;
 
-    [DataMember( Name = "timeToStartTurn")]
+    [DataMember]
     private int forfeitTime;
 
     [DataMember]
@@ -123,6 +135,33 @@ public class CreatePrivateGameState {
         this.turnTime = turnTime;
         this.forfeitTime = forfeitTime;
         this.opponentUsernames = opponents;
+        this.boardId = boardId;
+    }
+}
+
+//Special object used to create a public game
+[DataContract]
+public class CreatePublicGameState {
+    [DataMember]
+    private string gameName;
+
+    [DataMember]
+    private int turnTime;
+
+    [DataMember]
+    private int forfeitTime;
+
+    [DataMember]
+    private int maxUsers;
+
+    [DataMember]
+    private int boardId;
+
+    public CreatePublicGameState(string name, int turnTime, int forfeitTime, int maxPlayers, int boardId) {
+        this.gameName = name;
+        this.turnTime = turnTime;
+        this.forfeitTime = forfeitTime;
+        this.maxUsers = maxPlayers;
         this.boardId = boardId;
     }
 }

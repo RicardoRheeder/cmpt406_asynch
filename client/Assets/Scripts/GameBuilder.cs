@@ -17,7 +17,7 @@ public class GameBuilder : MonoBehaviour {
     }
 
     private void InstantiateUnits() {
-        List<UnitStats> units = state.userUnitsMap[username];
+        List<UnitStats> units = state.UserUnitsMap[username];
         for (int i = 0; i < units.Count; i++) {
             UnitStats unit = units[i];
             unitPositions.Add(unit.Position, unit);

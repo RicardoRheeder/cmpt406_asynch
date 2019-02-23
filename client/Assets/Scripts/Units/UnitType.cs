@@ -12,4 +12,13 @@ public enum UnitType {
     claymore = 8,
 
     //All generals are above 100s
+    general1 = 101
+}
+
+public enum UnitClass {
+    heavy = 0,
+    light = 1,
+    piercing = 2,
+    support = 3,
+    general = 100,
 }
