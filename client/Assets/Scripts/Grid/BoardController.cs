@@ -6,6 +6,8 @@ using System;
 
 public class BoardController {
 
+    public float tileHeight = 4.5f;
+    public float elevationHeight = 2.4f;
     Tilemap tilemap;
 
     public void Initialize() {
@@ -24,16 +26,34 @@ public class BoardController {
     }
 
     public Vector3Int MousePosToCell(Vector3 position) {
-        Transform camera = Camera.main.transform;
-        Vector3 screenPoint = new Vector3(position.x, position.y, camera.position.y);
-        Vector3 worldPoint = Camera.main.ScreenToWorldPoint(screenPoint);
+        Vector3 worldPoint = Vector3.zero;
+        Ray ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+
+        // if a raycast hits a tile, use that position
+        if(Physics.Raycast(ray,out hit)) {
+            worldPoint = new Vector3(hit.point.x,0,hit.point.z);
+        } else {    // otherwise take our best guess
+            Transform camera = Camera.main.transform;
+            Vector3 screenPoint = new Vector3(position.x, position.y - camera.position.z, camera.position.y);
+            // TODO: this algorithm isn't completely accurate, try to improve it
+            worldPoint = Camera.main.ScreenToWorldPoint(screenPoint);
+        }
+
         return tilemap.WorldToCell(worldPoint);
     }
 
     public Vector3 CellToWorld(Vector3Int position) {
         Vector3 worldPosition = tilemap.CellToWorld(position);
-        // TODO: take elevation into account
+        HexTile tile = tilemap.GetTile(position) as HexTile;
+        if(tile != null) {
+            return new Vector3(worldPosition.x,worldPosition.y+tileHeight+((int)tile.elevation*elevationHeight),worldPosition.z);
+        }
         return worldPosition;
+    }
+
+    public bool HasHexTile(Vector3Int position) {
+        return tilemap.GetTile(position) is HexTile;
     }
 
     public HexTile GetHexTile(Vector3Int position) {

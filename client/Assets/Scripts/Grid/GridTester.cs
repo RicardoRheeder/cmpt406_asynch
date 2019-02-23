@@ -5,7 +5,8 @@ using UnityEngine.Tilemaps;
 
 public enum GridTestType { 
     HasTile, 
-    Pathfinding 
+    Pathfinding,
+    GetTile 
 }
 
 /*
@@ -35,6 +36,9 @@ public class GridTester : MonoBehaviour {
                 case GridTestType.Pathfinding:
                     TestPathfinding();
                     break;
+                case GridTestType.GetTile:
+                    TestGetTile();
+                    break;
                 default:
                     break;
             }
@@ -42,14 +46,21 @@ public class GridTester : MonoBehaviour {
     }
 
     void CheckHasTile() {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int cellPosition = boardController.WorldToCell(mousePosition);
+        Vector3Int cellPosition = boardController.MousePosToCell(Input.mousePosition);
+        Debug.Log("hasHexTile: " + boardController.HasHexTile(cellPosition));
+    }
+
+    void TestGetTile() {
+        Vector3Int cellPosition = boardController.MousePosToCell(Input.mousePosition);
+        HexTile tile = boardController.GetHexTile(cellPosition);
+        if(tile != null) {
+            Debug.Log(tile.GetTileObject());
+        }
     }
 
     void TestPathfinding() {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int endPosition = boardController.MousePosToCell(Input.mousePosition);
-        Debug.Log("mouse: " + mousePosition.ToString() + " cell: " + endPosition.ToString());
+        Debug.Log("mouse: " + Input.mousePosition.ToString() + " cell: " + endPosition.ToString());
         List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,boardController.GetTilemap(),false);
         StartCoroutine(PathMovement(path, 5f));
     }
