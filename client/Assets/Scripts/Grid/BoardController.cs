@@ -52,6 +52,10 @@ public class BoardController {
         return worldPosition;
     }
 
+    public bool HasHexTile(Vector3Int position) {
+        return tilemap.GetTile(position) is HexTile;
+    }
+
     public HexTile GetHexTile(Vector3Int position) {
         return tilemap.GetTile(position) as HexTile;
     }
