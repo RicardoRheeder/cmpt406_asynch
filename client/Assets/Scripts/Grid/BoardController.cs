@@ -9,12 +9,15 @@ public class BoardController {
     public float tileHeight = 4.5f; // the height of the tile model. used to calculate the y world position
     public float elevationHeight = 2.4f; // the difference between each elevation level. used to calculate the y world position
     Tilemap tilemap; // the tilemap instance
+    Plane plane;
 
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         if(tilemap == null) {
             Debug.Log("Tilemap is null. This will result in problems");
+        } else {
+            plane = new Plane(Vector3.up, Vector3.zero); // creates a flat horizontal plane at y = 0
         }
     }
 
@@ -65,7 +68,7 @@ public class BoardController {
             throw new MissingComponentException("Tilemap is missing");
         }
 
-        Vector3 position = Input.mousePosition;
+        Vector3 position = Input.mousePosition; // get mouse position
         Vector3 worldPoint = Vector3.zero;
         Ray ray = Camera.main.ScreenPointToRay(position); // create a raycast from the mouse position
         RaycastHit hit;
@@ -73,11 +76,9 @@ public class BoardController {
         // if a raycast hits a tile, use that position
         if(Physics.Raycast(ray,out hit)) {
             worldPoint = new Vector3(hit.point.x,0,hit.point.z);
-        } else {    // otherwise take our best calculated guess
-            Transform camera = Camera.main.transform;
-            Vector3 screenPoint = new Vector3(position.x, position.y - camera.position.z, camera.position.y);
-            // TODO: this algorithm isn't completely accurate, try to improve it
-            worldPoint = Camera.main.ScreenToWorldPoint(screenPoint);
+        } else if(plane.Raycast(ray, out float enter)) {    // otherwise cast a ray at the flat plane to get position
+            Vector3 hitPoint = ray.GetPoint(enter);
+            worldPoint = new Vector3(hitPoint.x,0,hitPoint.z);
         }
 
         return tilemap.WorldToCell(worldPoint);

@@ -47,7 +47,7 @@ public class GridTester : MonoBehaviour {
 
     void CheckHasTile() {
         Vector3Int cellPosition = boardController.MousePosToCell();
-        Debug.Log("hasHexTile: " + boardController.HasHexTile(cellPosition));
+        Debug.Log("hasHexTile: " + boardController.HasHexTile(cellPosition) + " " + cellPosition.ToString());
     }
 
     void TestGetTile() {
