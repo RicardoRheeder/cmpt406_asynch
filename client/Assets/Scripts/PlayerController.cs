@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Tilemaps;
-
+using cakeslice; //for Outline effect package
 public class PlayerController : MonoBehaviour {
 
+   //public Tilemap tileMap;
     private CardController deck;
     private GameManager manager;
     private BoardController boardController;
@@ -35,6 +38,7 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if(initialized) {
+            print("initileized is true");
             InputController();
         }
     }
@@ -44,12 +48,28 @@ public class PlayerController : MonoBehaviour {
         
         //test
         if (Input.GetMouseButtonDown(0)) { //on mouse left click
+            //print("should call highlight");
+            //HighlightTile(tilePos, 5);
             if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit))
                 UpdateUnitDisplay(unit);
             else
                 UpdateUnitDisplay(UnitFactory.GetBaseUnit(UnitType.claymore));
         }
     }
+
+
+    //private void HighlightTile(Vector3Int pos, int range)
+    //{
+    //    print("In highlight");
+    //    List<Vector3Int> temp = HexUtility.HexReachable(pos, range, tileMap, true);
+    //    foreach (var t in temp)
+    //    {
+    //        HexTile tile = boardController.GetHexTile(t);
+    //        GameObject go = tile.GetTileObject();
+    //        go.GetComponent<Outline>().enabled = true;
+    //    }
+    //}
+
 
     private void UpdateUnitDisplay(UnitStats unit) {
         //Strings to display the information
