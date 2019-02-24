@@ -46,12 +46,12 @@ public class GridTester : MonoBehaviour {
     }
 
     void CheckHasTile() {
-        Vector3Int cellPosition = boardController.MousePosToCell(Input.mousePosition);
+        Vector3Int cellPosition = boardController.MousePosToCell();
         Debug.Log("hasHexTile: " + boardController.HasHexTile(cellPosition));
     }
 
     void TestGetTile() {
-        Vector3Int cellPosition = boardController.MousePosToCell(Input.mousePosition);
+        Vector3Int cellPosition = boardController.MousePosToCell();
         HexTile tile = boardController.GetHexTile(cellPosition);
         if(tile != null) {
             Debug.Log(tile.GetTileObject());
@@ -59,7 +59,7 @@ public class GridTester : MonoBehaviour {
     }
 
     void TestPathfinding() {
-        Vector3Int endPosition = boardController.MousePosToCell(Input.mousePosition);
+        Vector3Int endPosition = boardController.MousePosToCell();
         Debug.Log("mouse: " + Input.mousePosition.ToString() + " cell: " + endPosition.ToString());
         List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,boardController.GetTilemap(),false);
         StartCoroutine(PathMovement(path, 5f));
