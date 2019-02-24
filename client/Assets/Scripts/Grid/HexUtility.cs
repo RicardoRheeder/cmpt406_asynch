@@ -272,7 +272,7 @@ public static class HexUtility {
         }
         List<Vector3Int> path = new List<Vector3Int> ();
         Vector3Int stepBack = end;
-        while(cameFrom[stepBack] != stepBack){
+        while(cameFrom.ContainsKey(stepBack) && cameFrom[stepBack] != stepBack){
             path.Insert(0, stepBack);
             stepBack = cameFrom[stepBack];
         }

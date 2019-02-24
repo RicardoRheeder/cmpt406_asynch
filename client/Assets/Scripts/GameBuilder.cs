@@ -43,7 +43,8 @@ public class GameBuilder : MonoBehaviour {
     }
 
     private void InstantiateUnits() {
-        List<UnitStats> units = state.UserUnitsMap[username];
+        //this check shouldn't be required
+        List<UnitStats> units = state.UserUnitsMap.ContainsKey(username) ? state.UserUnitsMap[username] : new List<UnitStats>();
         for (int i = 0; i < units.Count; i++) {
             UnitStats unitStats = units[i];
             unitPositions.Add(unitStats.Position, unitStats);

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -16,7 +17,15 @@ public class PlayerController : MonoBehaviour {
     private TMP_Text unitDisplayPierce;
     private TMP_Text unitDisplayMovementSpeed;
 
+    private Button attackButton;
+    private Button movementButton;
+
+    private UnitStats selectedUnit;
+
     private bool initialized = false;
+
+    private bool isMoving = false;
+    private bool isAttacking = false;
 
     public void Initialize(GameManager manager, CardController deck, BoardController board) {
         this.deck = deck;
@@ -30,6 +39,12 @@ public class PlayerController : MonoBehaviour {
         unitDisplayMovementSpeed = GameObject.Find("unitDisplaySpeed").GetComponent<TMP_Text>();
         unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
 
+        attackButton = GameObject.Find("AttackButton").GetComponent<Button>();
+        attackButton.onClick.AddListener(AttackButton);
+
+        movementButton = GameObject.Find("MovementButton").GetComponent<Button>();
+        movementButton.onClick.AddListener(MovementButton);
+
         initialized = true;
     }
 
@@ -40,15 +55,34 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void InputController() {
-        Vector3Int tilePos = boardController.MousePosToCell(Input.mousePosition);
+        Vector3Int tilePos = boardController.MousePosToCell();
         
-        //test
-        if (Input.GetMouseButtonDown(0)) { //on mouse left click
-            if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit))
-                UpdateUnitDisplay(unit);
-            else
-                UpdateUnitDisplay(UnitFactory.GetBaseUnit(UnitType.claymore));
+        if (Input.GetMouseButtonDown(0)) {
+            if(isMoving) {
+                manager.MoveUnit(selectedUnit.Position, (Vector2Int)tilePos);
+                isMoving = false;
+            }
+            else if(isAttacking) {
+                manager.AttackUnit(selectedUnit.Position, (Vector2Int)tilePos);
+                isAttacking = false;
+            }
+            if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit)) {
+                selectedUnit = unit;
+                UpdateUnitDisplay(selectedUnit);
+            }
+            else { //Remove this in the future
+                selectedUnit = UnitFactory.GetBaseUnit(UnitType.claymore);
+                UpdateUnitDisplay(selectedUnit);
+            }
         }
+    }
+
+    private void MovementButton() {
+        isMoving = true;
+    }
+
+    private void AttackButton() {
+        isAttacking = true;
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {
