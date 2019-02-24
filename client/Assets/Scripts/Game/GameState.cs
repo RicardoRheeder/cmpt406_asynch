@@ -75,6 +75,7 @@ public class GameState {
         if (AcceptedUsers == null) AcceptedUsers = new List<string>();
         if (ReadyUsers == null) ReadyUsers = new List<string>();
         if (cards == null) cards = new List<CardController>();
+        UserUnitsMap = new Dictionary<string, List<UnitStats>>();
         foreach(UnitStats unit in units) {
             if (UserUnitsMap.ContainsKey(unit.Owner))
                 UserUnitsMap[unit.Owner].Add(unit);
@@ -82,6 +83,7 @@ public class GameState {
                 UserUnitsMap.Add(unit.Owner, new List<UnitStats>() { unit });
         }
 
+        UserCardsMap = new Dictionary<string, CardController>();
         foreach(CardController card in cards) {
             UserCardsMap.Add(card.owner, card);
         }

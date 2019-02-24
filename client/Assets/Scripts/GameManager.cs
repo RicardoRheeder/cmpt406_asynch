@@ -55,16 +55,15 @@ public class GameManager : MonoBehaviour {
 
     //This method has to be called immediately after we've loaded a scene
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
+        boardController = new BoardController();
+        boardController.Initialize();
+
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(ref state, ref username, ref boardController);
 
         unitPositions = gameBuilder.unitPositions;
-
         turnActions = new List<Action>();
-
-        boardController = new BoardController();
-        boardController.Initialize();
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();

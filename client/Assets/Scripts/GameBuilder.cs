@@ -16,9 +16,19 @@ public class GameBuilder : MonoBehaviour {
 
     private BoardController board;
 
-    public void Start() {
+    public void Awake() {
+        //Populate the dictionary whenever we build the map
         typePrefabStorage = new Dictionary<UnitType, GameObject>() {
-            {UnitType.compensator, compensatorPrefab }
+            {UnitType.claymore, compensatorPrefab },
+            {UnitType.compensator, compensatorPrefab },
+            {UnitType.trooper, compensatorPrefab },
+            {UnitType.reacon, compensatorPrefab },
+            {UnitType.steamer, compensatorPrefab },
+            {UnitType.pewpew, compensatorPrefab },
+            {UnitType.foundation, compensatorPrefab },
+            {UnitType.powerSurge, compensatorPrefab },
+            {UnitType.midas, compensatorPrefab },
+            {UnitType.general1, compensatorPrefab }
         };
     }
 
@@ -28,6 +38,8 @@ public class GameBuilder : MonoBehaviour {
         this.state = state;
         this.username = username;
         this.board = board;
+
+        InstantiateUnits();
     }
 
     private void InstantiateUnits() {
