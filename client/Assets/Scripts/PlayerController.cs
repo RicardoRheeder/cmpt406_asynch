@@ -59,17 +59,17 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void InputController() {
-        Vector3Int tilePos = boardController.MousePosToCell();
+        Vector2Int tilePos = boardController.MousePosToCell();
         if (Input.GetMouseButtonDown(0)) {
             if(isMoving) {
-                manager.MoveUnit(selectedUnit.Position, (Vector2Int)tilePos);
+                manager.MoveUnit(selectedUnit.Position,tilePos);
                 isMoving = false;
             }
             else if(isAttacking) {
-                manager.AttackUnit(selectedUnit.Position, (Vector2Int)tilePos);
+                manager.AttackUnit(selectedUnit.Position,tilePos);
                 isAttacking = false;
             }
-            if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit)) {
+            if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
                 selectedUnit = unit;
                 UpdateUnitDisplay(selectedUnit);
             }
