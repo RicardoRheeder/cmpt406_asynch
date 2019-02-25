@@ -63,7 +63,7 @@ public class BoardController {
     // Converts the mouse position to a cell position
     // Fires a raycast and returns the position of the tile it hits,
     // otherwise it will account for the camera position/rotation and calculate the tile position
-    public Vector3Int MousePosToCell() {
+    public Vector2Int MousePosToCell() {
         if(tilemap == null) {   // throw exception if tilemap is null
             throw new MissingComponentException("Tilemap is missing");
         }
@@ -81,7 +81,7 @@ public class BoardController {
             worldPoint = new Vector3(hitPoint.x,0,hitPoint.z);
         }
 
-        return tilemap.WorldToCell(worldPoint);
+        return (Vector2Int)tilemap.WorldToCell(worldPoint);
     }
 
     // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position
