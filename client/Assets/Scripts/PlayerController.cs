@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour {
                 manager.AttackUnit(selectedUnit.Position, (Vector2Int)tilePos);
                 isAttacking = false;
             }
-            if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit)) {
+            else if (manager.GetUnitOnTile((Vector2Int)tilePos, out UnitStats unit)) {
                 selectedUnit = unit;
                 UpdateUnitDisplay(selectedUnit);
             }

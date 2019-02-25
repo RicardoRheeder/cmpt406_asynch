@@ -117,6 +117,7 @@ public class GameManager : MonoBehaviour {
                     if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
                         unitPositions.Remove(damage.First);
                         //Destroy the related gameobject
+                        Destroy(targetUnit.MyUnit);
                     }
                 }
             }
