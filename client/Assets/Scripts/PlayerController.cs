@@ -81,11 +81,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void MovementButton() {
-        isMoving = true;
+        isMoving = !isMoving;
+        isAttacking = false;
     }
 
     private void AttackButton() {
-        isAttacking = true;
+        isAttacking = !isAttacking;
+        isMoving = false;
     }
 
 
