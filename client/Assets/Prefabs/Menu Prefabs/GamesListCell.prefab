@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.3925018, y: 1.8000002}
-  m_SizeDelta: {x: -2.785, y: -3.6}
+  m_AnchoredPosition: {x: 0, y: -1.1368684e-13}
+  m_SizeDelta: {x: 0, y: -2.2737368e-13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8587791827467157458
 CanvasRenderer:
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 1.0342407, y: 0.6476135, z: 1.442627, w: -0.64759827}
+  m_margin: {x: 1.0342407, y: 1.5456085, z: 1.442627, w: 1.1484375}
   m_textInfo:
     textComponent: {fileID: 0}
     characterCount: 16
@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 8587791827467283776}
   - component: {fileID: 8587791827467283791}
   - component: {fileID: 2274468393476252528}
+  - component: {fileID: 8343633537672963645}
   m_Layer: 5
   m_Name: GamesListCell
   m_TagString: Untagged
@@ -200,7 +201,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.0025024, y: -0.0000061989}
-  m_SizeDelta: {x: 223.27, y: 30}
+  m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8587791827467283777
 CanvasRenderer:
@@ -296,3 +297,23 @@ MonoBehaviour:
   m_EffectColor: {r: 0.7607843, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &8343633537672963645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8587791827467283789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 200
+  m_MinHeight: -1
+  m_PreferredWidth: 230
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
