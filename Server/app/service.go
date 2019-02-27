@@ -746,7 +746,7 @@ func GetGameStateMulti(ctx context.Context, gameStateIDs []string, username stri
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
-		log.Errorf(ctx, "Get Game failed: username is required")
+		log.Errorf(ctx, "Get Game Multi failed: username is required")
 		return nil, errors.New("username is required")
 	}
 	err = common.StringSliceGreaterThanLength(gameStateIDs, 0)
@@ -771,7 +771,7 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]g
 		return nil, errors.New("username is required")
 	}
 	if limit < 0 {
-		log.Errorf(ctx, "Get Game Multi failed: limit invalid")
+		log.Errorf(ctx, "Get Public Games failed: limit invalid")
 		return nil, errors.New("Invalid limit given")
 	} else if limit == 0 {
 		limit = 100
@@ -784,11 +784,11 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]g
 func GetCompletedGames(ctx context.Context, username string, limit int) ([]gamestate.GameState, error) {
 	err := common.StringNotEmpty(username)
 	if err != nil {
-		log.Errorf(ctx, "Get Public Games failed: username is required")
+		log.Errorf(ctx, "Get Completed Games failed: username is required")
 		return nil, errors.New("username is required")
 	}
 	if limit < 0 {
-		log.Errorf(ctx, "Get Game Multi failed: limit invalid")
+		log.Errorf(ctx, "Get Completed Games failed: limit invalid")
 		return nil, errors.New("Invalid limit given")
 	} else if limit == 0 {
 		limit = 100
