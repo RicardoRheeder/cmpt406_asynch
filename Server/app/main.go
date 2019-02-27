@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/GetGameState", handleGetGameState)
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
 	http.HandleFunc("/GetPublicGamesSummary", handleGetPublicGamesSummary)
+	http.HandleFunc("/GetCompletedGames", handleGetCompletedGames)
 
 	http.HandleFunc("/ReadyUnits", handleReadyUnits)
 	http.HandleFunc("/MakeMove", handleMakeMove)
@@ -420,19 +421,49 @@ func handleGetPublicGamesSummary(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var pgs request.GetPublicGamesSummary
-	err = decoder.Decode(&pgs)
+	var ol request.OnlyLimit
+	err = decoder.Decode(&ol)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	publicGameStates, err := GetPublicGamesSummary(ctx, username, pgs.Limit)
+	publicGameStates, err := GetPublicGamesSummary(ctx, username, ol.Limit)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	response := &request.MultiStatesResponse{States: publicGameStates}
+
+	json.NewEncoder(w).Encode(response)
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleGetCompletedGames(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	username, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var ol request.OnlyLimit
+	err = decoder.Decode(&ol)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	completedGameStates, err := GetCompletedGames(ctx, username, ol.Limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	response := &request.MultiStatesResponse{States: completedGameStates}
 
 	json.NewEncoder(w).Encode(response)
 

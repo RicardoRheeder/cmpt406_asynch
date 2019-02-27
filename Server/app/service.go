@@ -648,6 +648,7 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 				return err
 			}
 			gs.UsersTurn = ""
+			gs.IsComplete = true
 		}
 
 		return nil
@@ -776,7 +777,24 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]g
 		limit = 100
 	}
 
-	return gamestate.GetPublicGamesSummary(ctx, username, limit)
+	return gamestate.GetPublicGamesSummary(ctx, limit)
+}
+
+// GetCompletedGames will query and return all finished public games
+func GetCompletedGames(ctx context.Context, username string, limit int) ([]gamestate.GameState, error) {
+	err := common.StringNotEmpty(username)
+	if err != nil {
+		log.Errorf(ctx, "Get Public Games failed: username is required")
+		return nil, errors.New("username is required")
+	}
+	if limit < 0 {
+		log.Errorf(ctx, "Get Game Multi failed: limit invalid")
+		return nil, errors.New("Invalid limit given")
+	} else if limit == 0 {
+		limit = 100
+	}
+
+	return gamestate.GetCompletedGames(ctx, limit)
 }
 
 // ReadyUnits is used to place your units on the field and be provided cards
@@ -824,6 +842,7 @@ func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit,
 		gs.ReadyUsers = append(gs.ReadyUsers, username)
 		/* Add Provided Units */
 		gs.Units = append(gs.Units, units...)
+		gs.InitUnits = append(gs.InitUnits, units...)
 		/* add the provided general */
 		gs.Generals = append(gs.Generals, general)
 
@@ -899,9 +918,6 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 				common.Remove(&gs.AliveUsers, v)
 			}
 		}
-		if len(gs.AliveUsers) == 1 {
-			// TODO: a user has won!
-		}
 
 		/* Choose the next user that should go */
 		var found = false
@@ -920,6 +936,12 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 		if !found {
 			/* TODO: I'm not sure if this is possible so I'll fix it later if it is */
 			log.Criticalf(ctx, "The user %s died in his turn and now no next user has been selected", username)
+		}
+
+		if len(gs.AliveUsers) == 1 {
+			// TODO: a user has won!
+			gs.IsComplete = true
+			gs.UsersTurn = ""
 		}
 
 		/* assign the new units, generals, and cards of the gamestate*/

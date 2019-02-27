@@ -53,8 +53,8 @@ type GetGameStateMulti struct {
 	GameIDs []string `json:"gameIds"`
 }
 
-// GetPublicGamesSummary is a struct to handle the /GetPublicGamesSummary payload
-type GetPublicGamesSummary struct {
+// OnlyLimit is a struct to handle the payloads of just a limit
+type OnlyLimit struct {
 	Limit int `json:"limit"`
 }
 

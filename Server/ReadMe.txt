@@ -43,6 +43,11 @@ Deploy Project:
     - gcloud app deploy ./app/app.yaml
     - Should only be done on the clean MASTER BRANCH
 
+Change Project:
+-----------------------
+    - gcloud config set project my-project
+    (for if you're a part of multiple projects)
+
 Indexes:
 -----------------------
 - To remove indexes no longer in the index.yaml file:
