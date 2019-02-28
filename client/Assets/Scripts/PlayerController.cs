@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using cakeslice; //for Outline effect package
 public class PlayerController : MonoBehaviour {
 
-   
+   //public Tilemap tileMap;
     private CardController deck;
     private GameManager manager;
     private BoardController boardController;
@@ -24,19 +24,12 @@ public class PlayerController : MonoBehaviour {
     private Button attackButton;
     private Button movementButton;
 
-    //private List<Vector3Int> highlightedMovementTiles; //test
-
-    private GameObject tileObject; //test
-
     private UnitStats selectedUnit;
 
     private bool initialized = false;
 
     private bool isMoving = false;
     private bool isAttacking = false;
-
-   
-
 
     public void Initialize(GameManager manager, CardController deck, BoardController board) {
         this.deck = deck;
@@ -60,26 +53,15 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-
-        
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3Int tempPos = boardController.MousePosToCell(Input.mousePosition);
-            
-        }
-        
-        if (initialized) {
+        if(initialized) {
             InputController();
         }
     }
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
-        Vector3Int tempPos = boardController.MousePosToCell(Input.mousePosition);  //using Vector3Int because boardController.GetHexTile takes Vector3Int
         if (Input.GetMouseButtonDown(0)) {
-            HighlightTile(tempPos);
-
-            if (isMoving) {
+            if(isMoving) {
                 manager.MoveUnit(selectedUnit.Position,tilePos);
                 isMoving = false;
             }
@@ -109,48 +91,17 @@ public class PlayerController : MonoBehaviour {
     }
 
 
-    //Feel free to make changes as necessary -jp
-    //This function highlights a single tile. And disables the previous highlighted when another tile is selected
-    private void HighlightTile(Vector3Int pos){
-
-        if (boardController.GetTilemap().HasTile(pos)){
-            //if tileObject is not null that means a previous tile is highlighted
-            if (tileObject != null){
-               
-                    DisableHighlight(tileObject); //so, disable that object
-                
-            }
-               HexTile tile = boardController.GetHexTile(pos); //get the Hex tile using Vector3Int position
-               tileObject = tile.GetTileObject(); //get the tile game object 
-            
-            //check if tileObject has the Outline component attached -- using cakeslice.Outline because it was giving this error "'Outline' is an ambiguous reference between 'cakeslice.Outline' and 'UnityEngine.UI.Outline'"
-            if (tileObject.GetComponent<cakeslice.Outline>()){
-                EnableHighlight(tileObject);
-            }
-            else {
-                tileObject = null;  //this is for tiles that do not have the Outline component from the prefab but are stored in tileObject. Might remove in future 
-            }
-        }
-    }
-
-
-    //enables the outline script component on the tile game object 
-    private void EnableHighlight(GameObject go){
-        if (go.GetComponent<cakeslice.Outline>())
-        {
-            go.GetComponent<cakeslice.Outline>().enabled = true;
-        }
-    }
-    //disables the outline script component on the tile game object 
-    private void DisableHighlight(GameObject go){
-        if (go.GetComponent<cakeslice.Outline>())
-        {
-            go.GetComponent<cakeslice.Outline>().enabled = false;
-        }
-    }
-
-
-
+    //private void HighlightTile(Vector3Int pos, int range)
+    //{
+    //    print("In highlight");
+    //    List<Vector3Int> temp = HexUtility.HexReachable(pos, range, tileMap, true);
+    //    foreach (var t in temp)
+    //    {
+    //        HexTile tile = boardController.GetHexTile(t);
+    //        GameObject go = tile.GetTileObject();
+    //        go.GetComponent<Outline>().enabled = true;
+    //    }
+    //}
 
     private void UpdateUnitDisplay(UnitStats unit) {
         //Strings to display the information
