@@ -2,7 +2,6 @@ package gamestate
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"google.golang.org/appengine/datastore"
@@ -10,13 +9,7 @@ import (
 )
 
 // CreateGameState will create a game state in DataStore
-func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, turnTime, timeToStartTurn int) error {
-
-	_, err := GetGameState(ctx, ID)
-	if err == nil {
-		log.Errorf(ctx, "Attempted to create GameState: %s, that already exists", ID)
-		return errors.New("GameState Already Exists")
-	}
+func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, turnTime, forfeitTime int) error {
 
 	var spotsAvailable int
 	if isPublic {
@@ -26,28 +19,31 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 	}
 
 	gameState := &GameState{
-		ID:              ID,
-		GameName:        gameName,
-		CreatedBy:       acceptedUsers[0],
-		BoardID:         boardID,
-		IsPublic:        isPublic,
-		MaxUsers:        maxUsers,
-		SpotsAvailable:  spotsAvailable,
-		UsersTurn:       "",
-		Users:           users,
-		AcceptedUsers:   acceptedUsers,
-		ReadyUsers:      []string{},
-		AliveUsers:      users,
-		Units:           []Unit{},
-		CardIDs:         []string{},
-		Actions:         []Action{},
-		TurnTime:        turnTime,
-		TimeToStateTurn: timeToStartTurn,
-		Created:         time.Now().UTC(),
+		ID:             ID,
+		GameName:       gameName,
+		CreatedBy:      acceptedUsers[0],
+		BoardID:        boardID,
+		IsPublic:       isPublic,
+		IsComplete:     false,
+		MaxUsers:       maxUsers,
+		SpotsAvailable: spotsAvailable,
+		UsersTurn:      "",
+		Users:          users,
+		AcceptedUsers:  acceptedUsers,
+		ReadyUsers:     []string{},
+		AliveUsers:     users,
+		Units:          []Unit{},
+		InitUnits:      []Unit{},
+		Generals:       []Unit{},
+		CardIDs:        []string{},
+		Actions:        []Action{},
+		TurnTime:       turnTime,
+		ForfeitTime:    forfeitTime,
+		Created:        time.Now().UTC(),
 	}
 
 	key := datastore.NewKey(ctx, "GameState", ID, 0, nil)
-	_, err = datastore.Put(ctx, key, gameState)
+	_, err := datastore.Put(ctx, key, gameState)
 	if err != nil {
 		log.Errorf(ctx, "Failed to Put (create) gameState: %s", ID)
 		return err
@@ -157,14 +153,39 @@ func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 }
 
 // GetPublicGamesSummary queries for public available games
-func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]GameState, error) {
+func GetPublicGamesSummary(ctx context.Context, limit int) ([]GameState, error) {
 
 	var gameStates = []GameState{}
 
 	q := datastore.NewQuery("GameState").
 		Filter("IsPublic =", true).
 		Filter("SpotsAvailable >", 0).
-		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable").
+		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable", "CreatedBy").
+		Limit(limit)
+	t := q.Run(ctx)
+	for {
+		var gs GameState
+		_, err := t.Next(&gs)
+		if err == datastore.Done {
+			break // No further entities match the query.
+		}
+		if err != nil {
+			log.Errorf(ctx, "fetching next Summary: %v", err)
+			break
+		}
+		gameStates = append(gameStates, gs)
+	}
+
+	return gameStates, nil
+}
+
+// GetCompletedGames queries for finished games
+func GetCompletedGames(ctx context.Context, limit int) ([]GameState, error) {
+
+	var gameStates = []GameState{}
+
+	q := datastore.NewQuery("GameState").
+		Filter("IsComplete =", true).
 		Limit(limit)
 	t := q.Run(ctx)
 	for {
