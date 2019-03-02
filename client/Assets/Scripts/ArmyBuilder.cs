@@ -12,6 +12,16 @@ public static class ArmyBuilder {
         ARMY_PRESETS[armyName] = army;
     }
 
+    public static List<ArmyPreset> GetPresetsUnderCost(int cost) {
+        List<ArmyPreset> presets = new List<ArmyPreset>();
+        foreach (var pair in ARMY_PRESETS) {
+            if(pair.Value.Cost < cost) {
+                presets.Add(pair.Value);
+            }
+        }
+        return presets;
+    }
+
     //This method will be used to get the list of units we are going to be placing on the board
     public static bool GetPreset(string armyName, out ArmyPreset army) {
         if(ARMY_PRESETS.ContainsKey(armyName)) {
@@ -101,5 +111,9 @@ public class ArmyPreset {
     [OnDeserialized]
     public void OnDeserialized() {
         Cost = UnitFactory.GetCost(Units);
+    }
+
+    public string GetDescription() {
+        return Name;
     }
 }

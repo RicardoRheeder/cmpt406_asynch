@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour {
     private CardController deck;
     private GameManager manager;
     private BoardController boardController;
+    private GameBuilder builder;
 
     private TMP_Text unitDisplayHealth;
     private TMP_Text unitDisplayArmour;
@@ -40,33 +41,37 @@ public class PlayerController : MonoBehaviour {
         placing
     };
     private PlayerState controllerState;
-
     private ArmyPreset armyPreset;
+    private List<Vector2Int> spawnTiles;
 
-    public void Initialize(GameManager manager, CardController deck, BoardController board, bool isPlacing, ArmyPreset armyPreset = null) {
+    public void Initialize(GameManager manager, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
-        unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
-        unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
-        unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
-        unitDisplayAOE = GameObject.Find("unitDisplayAOE").GetComponent<TMP_Text>();
-        unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
-        unitDisplayMovementSpeed = GameObject.Find("unitDisplaySpeed").GetComponent<TMP_Text>();
-        unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
-
-        attackButton = GameObject.Find("AttackButton").GetComponent<Button>();
-        attackButton.onClick.AddListener(AttackButton);
-
-        movementButton = GameObject.Find("MovementButton").GetComponent<Button>();
-        movementButton.onClick.AddListener(MovementButton);
+        this.builder = builder;
 
         if(isPlacing) {
             controllerState = PlayerState.placing;
             this.armyPreset = armyPreset;
+            //Highlight spawn tiles and cache dictionary of spawns
+            spawnTiles = new List<Vector2Int>();
+            boardController.HighlightSpawnZone(SpawnPoint.Player1);
         }
         else {
             controllerState = PlayerState.playing;
+            unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
+            unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
+            unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
+            unitDisplayAOE = GameObject.Find("unitDisplayAOE").GetComponent<TMP_Text>();
+            unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
+            unitDisplayMovementSpeed = GameObject.Find("unitDisplaySpeed").GetComponent<TMP_Text>();
+            unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
+
+            attackButton = GameObject.Find("AttackButton").GetComponent<Button>();
+            attackButton.onClick.AddListener(AttackButton);
+
+            movementButton = GameObject.Find("MovementButton").GetComponent<Button>();
+            movementButton.onClick.AddListener(MovementButton);
         }
 
         initialized = true;
@@ -104,7 +109,11 @@ public class PlayerController : MonoBehaviour {
                 }
                 break;
             case (PlayerState.placing):
+                if (Input.GetMouseButtonDown(0)) {
+                    if(boardController.CellIsSpawnTile(SpawnPoint.Player1, tilePos)) {
 
+                    }
+                }
                 break;
             default:
                 Debug.Log("Player controller is in an invalid state");
@@ -157,9 +166,6 @@ public class PlayerController : MonoBehaviour {
             go.GetComponent<cakeslice.Outline>().enabled = false;
         }
     }
-
-
-
 
     private void UpdateUnitDisplay(UnitStats unit) {
         //Strings to display the information

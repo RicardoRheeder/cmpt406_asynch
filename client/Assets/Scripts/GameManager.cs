@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
     //They are only used for persistant information between scenes
     private GameState state;
     private PlayerMetadata user;
-    private int selectedPreset;
+    private ArmyPreset selectedPreset;
 
     //Dictionary used to store the units.
     Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour {
     void Start() {
         DontDestroyOnLoad(this.gameObject);
 
-        client = GameObject.Find("").GetComponent<Client>();
+        client = GameObject.Find("Networking").GetComponent<Client>();
 
         // for testing
         unitPositions.Add(new Vector2Int(0, 0),testUnit_1);
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour {
     }
 
     //This method is called when we need to place units
-    public void PlaceUnits(GameState state, int selectedPreset) {
+    public void PlaceUnits(GameState state, ArmyPreset selectedPreset) {
         this.state = state;
         this.user = client.UserInformation;
         this.selectedPreset = selectedPreset;
@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, boardController, false);
+        playerController.Initialize(this, null, gameBuilder, boardController, false);
   
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -95,14 +95,14 @@ public class GameManager : MonoBehaviour {
 
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, user.Username, ref boardController, true);
+        gameBuilder.Build(ref state, user.Username, ref boardController, true, selectedPreset);
 
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, boardController, true, user.ArmyPresets[selectedPreset]);
+        playerController.Initialize(this, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts);
 
         SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;

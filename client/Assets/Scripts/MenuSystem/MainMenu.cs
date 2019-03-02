@@ -39,6 +39,9 @@ public class MainMenu : MonoBehaviour {
     private TMP_Text pendingTurnNumber;
     private Button pendingJoinButton;
 
+    //Variables for the army selector display
+    private GameObject armyChooserViewport;
+
     //Reference to the game manager to start a game
     private Dictionary<string, GameState> gameStateStorage = new Dictionary<string, GameState>();
     private GameManager manager;
@@ -66,6 +69,8 @@ public class MainMenu : MonoBehaviour {
         pendingMaxPlayers = GameObject.Find("PendingMaxPlayers").GetComponent<TMP_Text>();
         pendingTurnNumber = GameObject.Find("PendingTurnNumber").GetComponent<TMP_Text>();
         pendingJoinButton = GameObject.Find("PendingJoinButton").GetComponent<Button>();
+
+        armyChooserViewport = GameObject.Find("ArmyChooserViewport");
 
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
@@ -203,6 +208,7 @@ public class MainMenu : MonoBehaviour {
         string userToAdd = friendsListInputField.text;
         if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
             AddFriendHelper(userToAdd);
+            friendsListInputField.text = "";
         }
         else {
             //adding a user failed
@@ -232,13 +238,14 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuJoinPendingGame(GameState state) {
         MainMenuArmySelectorButton();
-        List<ArmyPreset> presets = networkApi.UserInformation.ArmyPresets;
         int maxCost = BoardMetadata.CostDict[state.boardId];
+        List<ArmyPreset> presets = ArmyBuilder.GetPresetsUnderCost(maxCost);
         foreach(var preset in presets) {
-            if (preset.Cost < maxCost) {
-
-            }
+            GameObject armyCell = Instantiate(gameListCellPrefab);
+            Button armyButton = armyCell.GetComponent<Button>();
+            armyButton.GetComponentsInChildren<TMP_Text>()[0].SetText(preset.GetDescription());
+            armyButton.onClick.AddListener(() => manager.PlaceUnits(state, preset));
+            armyCell.transform.SetParent(armyChooserViewport.transform, false);
         }
-
     }
 }

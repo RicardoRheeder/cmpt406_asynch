@@ -15,22 +15,22 @@ public class PlayerMetadata {
     public string Username { get; set; }
 
     [DataMember(Name = "friends")]
-    public List<string> Friends { get; private set; }
+    public List<string> Friends { get; private set; } = new List<string>();
 
     [DataMember(Name = "activeGames")]
-    public List<string> ActiveGames { get; private set; }
+    public List<string> ActiveGames { get; private set; } = new List<string>();
 
     [DataMember(Name = "pendingPrivateGames")]
-    public List<string> PendingPrivateGames { get; private set; }
+    public List<string> PendingPrivateGames { get; private set; } = new List<string>();
 
     [DataMember(Name = "pendingPublicGames")]
-    public List<string> PendingPublicGames { get; private set; }
+    public List<string> PendingPublicGames { get; private set; } = new List<string>();
 
     [DataMember(Name = "completedGames")]
-    public List<string> CompletedGames { get; private set; }
+    public List<string> CompletedGames { get; private set; } = new List<string>();
 
     [DataMember(Name = "armyPresets")]
-    public List<ArmyPreset> ArmyPresets { get; private set; }
+    public List<ArmyPreset> ArmyPresets { get; private set; } = new List<ArmyPreset>();
 
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(this);

@@ -122,6 +122,18 @@ public class BoardController {
         return tile != null ? tile.elevation : Elevation.Low;
     }
 
+    public void HighlightSpawnZone(SpawnPoint player) {
+        foreach (HexTile tile in tilemap.GetTilesBlock(tilemap.cellBounds)) {
+            if (tile.spawnPoint == player) {
+                //highlight said tile
+            }
+        }
+    }
+
+    public bool CellIsSpawnTile(SpawnPoint player, Vector2Int pos) {
+        return GetHexTile((Vector3Int)pos).spawnPoint == player;
+    }
+
     // Returns a list of attributes of the tile at a position, or empty list if tile doesn't exist
     public List<TileAttribute> GetTileAttributes(Vector3Int position) {
         HexTile tile = GetHexTile(position);
