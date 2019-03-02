@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour {
 
         SceneManager.sceneLoaded += OnGameLoaded;
 
-        SceneManager.LoadScene(SceneMetadata.BoardNames[state.boardId]);
+        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
     }
 
     //This method has to be called immediately after we've loaded a scene
