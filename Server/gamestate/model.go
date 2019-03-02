@@ -16,11 +16,13 @@ type GameState struct {
 	MaxUsers       int       `json:"maxUsers,omitempty"`
 	SpotsAvailable int       `json:"spotsAvailable,omitempty"`
 	IsPublic       bool      `json:"isPublic"`
+	IsComplete     bool      `json:"isComplete"`
 	Users          []string  `json:"users,omitempty"`
 	AcceptedUsers  []string  `json:"acceptedUsers,omitempty"`
 	ReadyUsers     []string  `json:"readyUsers,omitempty"`
 	AliveUsers     []string  `json:"aliveUsers,omitempty"`
 	UsersTurn      string    `json:"usersTurn,omitempty"`
+	InitUnits      []Unit    `json:"initUnits,omitempty"`
 	Units          []Unit    `json:"units,omitempty"`
 	Generals       []Unit    `json:"generals,omitempty"`
 	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`

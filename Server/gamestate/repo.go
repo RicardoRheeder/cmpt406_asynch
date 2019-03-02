@@ -24,6 +24,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		CreatedBy:      acceptedUsers[0],
 		BoardID:        boardID,
 		IsPublic:       isPublic,
+		IsComplete:     false,
 		MaxUsers:       maxUsers,
 		SpotsAvailable: spotsAvailable,
 		UsersTurn:      "",
@@ -32,6 +33,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		ReadyUsers:     []string{},
 		AliveUsers:     users,
 		Units:          []Unit{},
+		InitUnits:      []Unit{},
 		Generals:       []Unit{},
 		CardIDs:        []string{},
 		Actions:        []Action{},
@@ -151,7 +153,7 @@ func GetGameStateMulti(ctx context.Context, IDs []string) ([]GameState, error) {
 }
 
 // GetPublicGamesSummary queries for public available games
-func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]GameState, error) {
+func GetPublicGamesSummary(ctx context.Context, limit int) ([]GameState, error) {
 
 	var gameStates = []GameState{}
 
@@ -159,6 +161,31 @@ func GetPublicGamesSummary(ctx context.Context, username string, limit int) ([]G
 		Filter("IsPublic =", true).
 		Filter("SpotsAvailable >", 0).
 		Project("ID", "GameName", "BoardID", "MaxUsers", "SpotsAvailable", "CreatedBy").
+		Limit(limit)
+	t := q.Run(ctx)
+	for {
+		var gs GameState
+		_, err := t.Next(&gs)
+		if err == datastore.Done {
+			break // No further entities match the query.
+		}
+		if err != nil {
+			log.Errorf(ctx, "fetching next Summary: %v", err)
+			break
+		}
+		gameStates = append(gameStates, gs)
+	}
+
+	return gameStates, nil
+}
+
+// GetCompletedGames queries for finished games
+func GetCompletedGames(ctx context.Context, limit int) ([]GameState, error) {
+
+	var gameStates = []GameState{}
+
+	q := datastore.NewQuery("GameState").
+		Filter("IsComplete =", true).
 		Limit(limit)
 	t := q.Run(ctx)
 	for {

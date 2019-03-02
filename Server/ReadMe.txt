@@ -43,6 +43,13 @@ Deploy Project:
     - gcloud app deploy ./app/app.yaml
     - Should only be done on the clean MASTER BRANCH
 
+
+Change Project:
+-----------------------
+    - gcloud config set project my-project
+    (for if you're a part of multiple projects)
+
+
 Indexes:
 -----------------------
 - To remove indexes no longer in the index.yaml file:
@@ -332,6 +339,36 @@ Gets a subset of the fields for all Public GameStates that have open spots
             "spotsAvailable": 3,
             "maxUsers": 4,
         }
+    ]
+    
+
+Get Complete Games:
+-----------------------
+Gets all of the Games that are completed and returns a list of all of their data
+
+- Path: /GetCompletedGames
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {
+        "limit": 100
+    }
+ - Return: Array of Completed GameState Data (includes all fields)
+ - Example Return Data:
+    [
+        {   
+            "id": "123-456",
+            "boardId": 9,
+            "initUnits": []Unit,
+            "actions": []Action
+        },
+         {   
+            "id": "123-459",
+            "boardId": 4,
+            "initUnits": []Unit,
+            "actions": []Action
+        },
     ]
     
 
