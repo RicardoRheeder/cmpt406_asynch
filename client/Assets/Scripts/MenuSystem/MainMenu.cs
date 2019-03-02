@@ -16,6 +16,7 @@ public class MainMenu : MonoBehaviour {
     private GameObject createGamePanel;
     private GameObject joinGamePanel;
     private GameObject armyBuilderPanel;
+    private GameObject armySelectorPanel;
 
     //Variables and prefabs to populate friends list
     [SerializeField]
@@ -51,6 +52,7 @@ public class MainMenu : MonoBehaviour {
         createGamePanel = GameObject.Find("CreateGamePanel");
         joinGamePanel = GameObject.Find("JoinGamePanel");
         armyBuilderPanel = GameObject.Find("ArmyBuilder");
+        armySelectorPanel = GameObject.Find("ArmySelector");
 
         friendsListInputField = GameObject.Find("FriendsInputField").GetComponent<TMP_InputField>();
         friendsListDict = new Dictionary<string, GameObject> {};
@@ -80,16 +82,17 @@ public class MainMenu : MonoBehaviour {
 
     //Helper function so that other buttons can easily return to this state when they are done in their sub menu
     public void SetInitialMenuState() {
-        SetMenuState(false, false, false, false, false);
+        SetMenuState(false, false, false, false, false, false);
     }
 
     //Helper function to enable/disable menus with boolean flags
-    private void SetMenuState(bool pendingState, bool activeState, bool createState, bool joinState, bool builderState) {
+    private void SetMenuState(bool pendingState, bool activeState, bool createState, bool joinState, bool builderState, bool selectorState) {
         pendingGamesPanel.SetActive(pendingState);
         activeGamesPanel.SetActive(activeState);
         createGamePanel.SetActive(createState);
         joinGamePanel.SetActive(joinState);
         armyBuilderPanel.SetActive(builderState);
+        armySelectorPanel.SetActive(selectorState);
     }
 
     public void PendingGameCellDetailsButton(GameState state) {
@@ -111,22 +114,32 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuCreateGameButton() {
-        SetMenuState(false, false, true, false, false);
+        SetMenuState(false, false, true, false, false, false);
     }
 
     public void MainMenuArmyBuilderButton() {
         mainMenuContainer.SetActive(false);
-        SetMenuState(false, false, false, false, true);
+        SetMenuState(false, false, false, false, true, false);
     }
 
     public void MainMenuArmyBuilderBack() {
         mainMenuContainer.SetActive(true);
-        SetMenuState(false, false, false, false, false);
+        SetMenuState(false, false, false, false, false, false);
+    }
+
+    public void MainMenuArmySelectorButton() {
+        mainMenuContainer.SetActive(false);
+        SetMenuState(false, false, false, false, false, true);
+    }
+
+    public void MainMenuArmySelectorBack() {
+        mainMenuContainer.SetActive(true);
+        SetMenuState(false, false, false, false, false, false);
     }
 
     public void MainMenuJoinGameButton() {
         gameStateStorage.Clear();
-        SetMenuState(false, false, false, true, false);
+        SetMenuState(false, false, false, true, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
             foreach (var state in response.Second.states) {
@@ -147,7 +160,7 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuActiveGamesButton() {
         gameStateStorage.Clear();
-        SetMenuState(false, true, false, false, false);
+        SetMenuState(false, true, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
             foreach (var state in response.Second.states) {
@@ -166,7 +179,7 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuPendingGamesButton() {
         gameStateStorage.Clear();
-        SetMenuState(true, false, false, false, false);
+        SetMenuState(true, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         if (response.First) {
             foreach(var state in response.Second.states) {

@@ -3,7 +3,15 @@ guid: 0782e1cfcec098a41af51cb3e4a69351
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - inGameUiPrefab: {fileID: 7353812693754844151, guid: be9815c941804ff459f73c13fc608b2a,
+      type: 3}
+  - inGameCameraPrefab: {fileID: 6525353358816934744, guid: 2b74a8ee51273884f95f90516c324933,
+      type: 3}
+  - inGameLightPrefab: {fileID: 1778019805711422241, guid: 4e8f84756649b444785ad82134a9b826,
+      type: 3}
+  - compensatorPrefab: {fileID: 3069374731066623444, guid: 798afdcebfafb9248beab8f67c219e1f,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

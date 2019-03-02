@@ -53,41 +53,72 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
     }
 
-    //This method has to be called immediately after we've loaded a scene
+    //This method is called when we need to place units
+    public void PlaceUnits(GameState state, string username) {
+        this.state = state;
+        this.username = username;
+
+        SceneManager.sceneLoaded += OnPlaceUnits;
+        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+    }
+
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         boardController = new BoardController();
         boardController.Initialize();
 
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, ref username, ref boardController);
+        gameBuilder.Build(ref state, ref username, ref boardController, false);
 
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, boardController);
+        playerController.Initialize(this, null, boardController, false);
   
-        //Since the only scene we can load from this point is the main menu, we can prep 
         SceneManager.sceneLoaded -= OnGameLoaded;
+        SceneManager.sceneLoaded += OnMenuLoaded;
+    }
+
+    private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
+        boardController = new BoardController();
+        boardController.Initialize();
+
+        gameBuilderObject = Instantiate(gameBuilderPrefab);
+        gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
+        gameBuilder.Build(ref state, ref username, ref boardController, true);
+
+        unitPositions = gameBuilder.unitPositions;
+        turnActions = new List<Action>();
+
+        playerControllerObject = Instantiate(playerControllerPrefab);
+        playerController = playerControllerObject.GetComponent<PlayerController>();
+        playerController.Initialize(this, null, boardController, true);
+
+        SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
 
     private void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
         state = null; //Verify that the state is destroyed;
+        username = "";
         unitPositions.Clear();
         turnActions.Clear();
         //Anything else that the game manager has to reset needs to be done here
     }
 
-    //end the users turn
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
     }
 
+    public void EndUnitPlacement() {
+        //This function will have to figure out how to send the unit data to the server, and confirm that we are going
+        //to be playing in this game
+    }
+
     //===================== Functions used to handle units ===================
-    //In this case, we are using null as a way to say 
+    //Null is used in the event there isn't a unit on the tile
     public bool GetUnitOnTile(Vector2Int tile, out UnitStats unit) {
         bool containsUnit = unitPositions.ContainsKey(tile);
         unit = containsUnit ? unitPositions[tile] : null;
@@ -116,7 +147,6 @@ public class GameManager : MonoBehaviour {
                     int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
                     if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
                         unitPositions.Remove(damage.First);
-                        //Destroy the related gameobject
                         Destroy(targetUnit.MyUnit);
                     }
                 }

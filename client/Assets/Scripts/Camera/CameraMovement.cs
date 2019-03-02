@@ -44,6 +44,10 @@ public class CameraMovement : MonoBehaviour {
         zoom = Camera.main.orthographicSize;
     }
 
+    public void UpdateLimits() {
+
+    }
+
     // LateUpdate is called every frame, if the Behaviour is enabled
     void LateUpdate() {
         if(Input.GetMouseButtonDown(1)) {

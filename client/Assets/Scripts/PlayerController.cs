@@ -35,10 +35,13 @@ public class PlayerController : MonoBehaviour {
     private bool isMoving = false;
     private bool isAttacking = false;
 
-   
+    private enum PlayerState {
+        playing,
+        placing
+    };
+    private PlayerState controllerState;
 
-
-    public void Initialize(GameManager manager, CardController deck, BoardController board) {
+    public void Initialize(GameManager manager, CardController deck, BoardController board, bool isPlacing) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
@@ -56,18 +59,17 @@ public class PlayerController : MonoBehaviour {
         movementButton = GameObject.Find("MovementButton").GetComponent<Button>();
         movementButton.onClick.AddListener(MovementButton);
 
+        if(isPlacing) {
+            controllerState = PlayerState.placing;
+        }
+        else {
+            controllerState = PlayerState.playing;
+        }
+
         initialized = true;
     }
 
     void Update() {
-
-        
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3Int tempPos = boardController.MousePosToCell(Input.mousePosition);
-            
-        }
-        
         if (initialized) {
             InputController();
         }
@@ -75,26 +77,35 @@ public class PlayerController : MonoBehaviour {
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
-        Vector3Int tempPos = boardController.MousePosToCell(Input.mousePosition);  //using Vector3Int because boardController.GetHexTile takes Vector3Int
-        if (Input.GetMouseButtonDown(0)) {
-            HighlightTile(tempPos);
+        switch(controllerState) {
+            case (PlayerState.playing):
+                if (Input.GetMouseButtonDown(0)) {
+                    HighlightTile((Vector3Int)tilePos);
 
-            if (isMoving) {
-                manager.MoveUnit(selectedUnit.Position,tilePos);
-                isMoving = false;
-            }
-            else if(isAttacking) {
-                manager.AttackUnit(selectedUnit.Position,tilePos);
-                isAttacking = false;
-            }
-            else if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
-                selectedUnit = unit;
-                UpdateUnitDisplay(selectedUnit);
-            }
-            else { //Remove this in the future
-                selectedUnit = UnitFactory.GetBaseUnit(UnitType.claymore);
-                UpdateUnitDisplay(selectedUnit);
-            }
+                    if (isMoving) {
+                        manager.MoveUnit(selectedUnit.Position, tilePos);
+                        isMoving = false;
+                    }
+                    else if (isAttacking) {
+                        manager.AttackUnit(selectedUnit.Position, tilePos);
+                        isAttacking = false;
+                    }
+                    else if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                        selectedUnit = unit;
+                        UpdateUnitDisplay(selectedUnit);
+                    }
+                    else { //Remove this in the future
+                        selectedUnit = UnitFactory.GetBaseUnit(UnitType.claymore);
+                        UpdateUnitDisplay(selectedUnit);
+                    }
+                }
+                break;
+            case (PlayerState.placing):
+
+                break;
+            default:
+                Debug.Log("Player controller is in an invalid state");
+                break;
         }
     }
 
@@ -107,21 +118,18 @@ public class PlayerController : MonoBehaviour {
         isAttacking = !isAttacking;
         isMoving = false;
     }
-
-
+    
     //Feel free to make changes as necessary -jp
     //This function highlights a single tile. And disables the previous highlighted when another tile is selected
     private void HighlightTile(Vector3Int pos){
 
-        if (boardController.GetTilemap().HasTile(pos)){
+        if (boardController.HasHexTile(pos)){
             //if tileObject is not null that means a previous tile is highlighted
-            if (tileObject != null){
-               
-                    DisableHighlight(tileObject); //so, disable that object
-                
+            if (tileObject != null) {
+                DisableHighlight(tileObject); //so, disable that object
             }
-               HexTile tile = boardController.GetHexTile(pos); //get the Hex tile using Vector3Int position
-               tileObject = tile.GetTileObject(); //get the tile game object 
+            HexTile tile = boardController.GetHexTile(pos); //get the Hex tile using Vector3Int position
+            tileObject = tile.GetTileObject(); //get the tile game object 
             
             //check if tileObject has the Outline component attached -- using cakeslice.Outline because it was giving this error "'Outline' is an ambiguous reference between 'cakeslice.Outline' and 'UnityEngine.UI.Outline'"
             if (tileObject.GetComponent<cakeslice.Outline>()){
@@ -133,18 +141,16 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-
     //enables the outline script component on the tile game object 
     private void EnableHighlight(GameObject go){
-        if (go.GetComponent<cakeslice.Outline>())
-        {
+        if (go.GetComponent<cakeslice.Outline>()) {
             go.GetComponent<cakeslice.Outline>().enabled = true;
         }
     }
+
     //disables the outline script component on the tile game object 
     private void DisableHighlight(GameObject go){
-        if (go.GetComponent<cakeslice.Outline>())
-        {
+        if (go.GetComponent<cakeslice.Outline>()) {
             go.GetComponent<cakeslice.Outline>().enabled = false;
         }
     }

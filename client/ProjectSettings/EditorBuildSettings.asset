@@ -15,12 +15,15 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuSystem/MainMenu.unity
     guid: 32fe4c0c857e9ef46b8775eca2ceceaa
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Med_Pinnicle.unity
+    path: Assets/Scenes/Maps/InGameMaps/Map_Med_Pinnicle.unity
     guid: 4ba238380591141b2922f51c2bf84c06
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Med_Valley.unity
+    path: Assets/Scenes/Maps/InGameMaps/Map_Med_Valley.unity
     guid: 2d90ffdb0b31043aaa59a042359ed910
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Small_Coloured_Hawkpoint.unity
+    path: Assets/Scenes/Maps/InGameMaps/Map_Small_Coloured_Hawkpoint.unity
     guid: 61f2e5ffd298e459484a746cbd6e8dfc
+  - enabled: 1
+    path: Assets/Scenes/Maps/SampleMap.unity
+    guid: 49e4792b837854980a370bfb7523d5f8
   m_configObjects: {}
