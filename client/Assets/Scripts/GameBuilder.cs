@@ -44,7 +44,7 @@ public class GameBuilder : MonoBehaviour {
 
     //Method that takes in a game state, instantiates all of the objects and makes sure the scene is setup how it should be.
     //Note: the game manager is responsible for creating the other managers, the game builder is just responsible for creating the playable objects.
-    public void Build(ref GameState state, ref string username, ref BoardController board, bool isPlacing) {
+    public void Build(ref GameState state, string username, ref BoardController board, bool isPlacing) {
         this.state = state;
         this.username = username;
         this.board = board;

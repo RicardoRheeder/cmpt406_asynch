@@ -32,32 +32,32 @@ public static class ArmyBuilder {
     private static readonly string presetOneName = "Preset One";
     private static readonly ArmyPreset presetOne = new ArmyPreset(
         presetOneName,
-        new List<UnitType>() {
-            UnitType.compensator,
-            UnitType.compensator,
-            UnitType.compensator
+        new List<int>() {
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator
         },
-        UnitType.general1
+        (int)UnitType.general1
     );
     private static readonly string presetTwoName = "Preset Two";
     private static readonly ArmyPreset presetTwo = new ArmyPreset(
         presetTwoName,
-        new List<UnitType>() {
-            UnitType.compensator,
-            UnitType.compensator,
-            UnitType.compensator
+        new List<int>() {
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator
         },
-        UnitType.general1
+        (int)UnitType.general1
     );
     private static readonly string presetThreeName = "Preset Three";
     private static readonly ArmyPreset presetThree = new ArmyPreset(
         presetThreeName,
-        new List<UnitType>() {
-            UnitType.compensator,
-            UnitType.compensator,
-            UnitType.compensator
+        new List<int>() {
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator
         },
-        UnitType.general1
+        (int)UnitType.general1
     );
     //Method used to create the default presets and add them to the dictionary
     public static void InsertDefaultPresets() {
@@ -77,32 +77,29 @@ public static class ArmyBuilder {
 [DataContract]
 public class ArmyPreset {
 
-    [DataMember]
-    public string id;
+    [DataMember(Name = "id")]
+    public string Id;
 
-    [DataMember]
-    public string name;
+    [DataMember(Name = "name")]
+    public string Name;
+
+    public int Cost { get; private set; }
 
     [DataMember(Name = "units")]
-    private List<int> serverUnits = new List<int>();
-    public List<UnitType> units = new List<UnitType>();
+    public List<int> Units { get; private set; }
 
     [DataMember(Name = "general")]
-    private int serverGeneral;
-    public UnitType general;
+    public int General { get; private set; }
 
-    public ArmyPreset(string presetName, List<UnitType> units, UnitType general) {
-        id = "";
-        this.name = presetName;
-        this.units = units;
-        this.general = general;
+    public ArmyPreset(string presetName, List<int> units, int general) {
+        Id = "";
+        this.Name = presetName;
+        this.Units = units;
+        this.General = general;
     }
 
-    [OnDeserialized()]
-    internal void OnDeserializedMethod(StreamingContext context) {
-        for(int i = 0; i < serverUnits.Count; i++) {
-            units.Add((UnitType)serverUnits[i]);
-        }
-        general = (UnitType)serverGeneral;
+    [OnDeserialized]
+    public void OnDeserialized() {
+        Cost = UnitFactory.GetCost(Units);
     }
 }

@@ -15,7 +15,7 @@ public class Client : MonoBehaviour {
 
     //Client cache
     private Credentials user;
-    private PlayerMetadata userInformation;
+    public PlayerMetadata UserInformation { get; private set; }
 
     //Server information
     private const string URL = "https://async-406.appspot.com";
@@ -39,15 +39,6 @@ public class Client : MonoBehaviour {
         DontDestroyOnLoad(this.gameObject);
     }
 
-    //Methods to get information about the user
-    public string GetUsername() {
-        return user.username;
-    }
-
-    public List<string> GetFriendsList(){
-        return userInformation.friends;
-    }
-
     //Requests
     //Sends new user information to the server
     public bool CreateUser(string username, string password) {
@@ -60,7 +51,8 @@ public class Client : MonoBehaviour {
         //This will come in place later once more functionality is in place
         try {
             request.GetResponse();
-            userInformation = new PlayerMetadata();
+            UserInformation = new PlayerMetadata();
+            UserInformation.Username = username;
         }
         catch (WebException e) {
             user = null;
@@ -85,7 +77,8 @@ public class Client : MonoBehaviour {
             using (var reader = new StreamReader(response.GetResponseStream())) {
                 responseJson = reader.ReadToEnd();
             }
-            userInformation = JsonConversion.CreateFromJson<PlayerMetadata>(responseJson, typeof(PlayerMetadata));
+            UserInformation = JsonConversion.CreateFromJson<PlayerMetadata>(responseJson, typeof(PlayerMetadata));
+            UserInformation.Username = username;
             user = new Credentials(username, password);
             return true;
         }
@@ -98,29 +91,29 @@ public class Client : MonoBehaviour {
     //Make sure any cached is cleared so that another user can login
     public void LogoutUser() {
         user = null;
-        userInformation = null;
+        UserInformation = null;
         ArmyBuilder.Clear();
     }
 
     //This method is used to get the summary of the games that are considered pending for the logged in user
     public Tuple<bool, GameStateCollection> GetPendingGamesInformation() {
-        if ((userInformation.pendingPrivateGames != null && userInformation.pendingPrivateGames.Count > 0) ||
-            (userInformation.pendingPublicGames != null && userInformation.pendingPublicGames.Count > 0)) {
-            return GetGameStateCollectionHelper(new GameIds(userInformation.pendingPublicGames, userInformation.pendingPrivateGames));
+        if ((UserInformation.PendingPrivateGames != null && UserInformation.PendingPrivateGames.Count > 0) ||
+            (UserInformation.PendingPublicGames != null && UserInformation.PendingPublicGames.Count > 0)) {
+            return GetGameStateCollectionHelper(new GameIds(UserInformation.PendingPublicGames, UserInformation.PendingPrivateGames));
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }
 
     public Tuple<bool, GameStateCollection> GetActiveGamesInformation() {
-        if (userInformation.activeGames.Count > 0) {
-            return GetGameStateCollectionHelper(new GameIds(userInformation.activeGames));
+        if (UserInformation.ActiveGames.Count > 0) {
+            return GetGameStateCollectionHelper(new GameIds(UserInformation.ActiveGames));
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }
 
     public Tuple<bool, GameStateCollection> GetCompletedGamesInformation() {
-        if (userInformation.completedGames.Count > 0) {
-            return GetGameStateCollectionHelper(new GameIds(userInformation.completedGames));
+        if (UserInformation.CompletedGames.Count > 0) {
+            return GetGameStateCollectionHelper(new GameIds(UserInformation.CompletedGames));
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }

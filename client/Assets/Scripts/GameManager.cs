@@ -4,6 +4,9 @@ using UnityEngine.SceneManagement;
 
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
 public class GameManager : MonoBehaviour {
+
+    private Client client;
+
     [SerializeField]
     private GameObject gameBuilderPrefab;
     private GameObject gameBuilderObject;
@@ -22,7 +25,8 @@ public class GameManager : MonoBehaviour {
     //Two variables that should be set by the "Load game" method
     //They are only used for persistant information between scenes
     private GameState state;
-    private string username;
+    private PlayerMetadata user;
+    private int selectedPreset;
 
     //Dictionary used to store the units.
     Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
@@ -36,6 +40,8 @@ public class GameManager : MonoBehaviour {
     void Start() {
         DontDestroyOnLoad(this.gameObject);
 
+        client = GameObject.Find("").GetComponent<Client>();
+
         // for testing
         unitPositions.Add(new Vector2Int(0, 0),testUnit_1);
         unitPositions.Add(new Vector2Int(0, -2), testUnit_2);
@@ -44,9 +50,9 @@ public class GameManager : MonoBehaviour {
 
     //The method called when the load game button is pressed
     //Since we are loading the correct scene, we have to setup the onsceneloaded function
-    public void LoadGame(GameState state, string username) {
+    public void LoadGame(GameState state) {
         this.state = state;
-        this.username = username;
+        this.user = client.UserInformation;
 
         SceneManager.sceneLoaded += OnGameLoaded;
 
@@ -54,11 +60,13 @@ public class GameManager : MonoBehaviour {
     }
 
     //This method is called when we need to place units
-    public void PlaceUnits(GameState state, string username) {
+    public void PlaceUnits(GameState state, int selectedPreset) {
         this.state = state;
-        this.username = username;
+        this.user = client.UserInformation;
+        this.selectedPreset = selectedPreset;
 
         SceneManager.sceneLoaded += OnPlaceUnits;
+
         SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
     }
 
@@ -68,7 +76,7 @@ public class GameManager : MonoBehaviour {
 
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, ref username, ref boardController, false);
+        gameBuilder.Build(ref state, user.Username, ref boardController, false);
 
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
@@ -87,14 +95,14 @@ public class GameManager : MonoBehaviour {
 
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, ref username, ref boardController, true);
+        gameBuilder.Build(ref state, user.Username, ref boardController, true);
 
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, boardController, true);
+        playerController.Initialize(this, null, boardController, true, user.ArmyPresets[selectedPreset]);
 
         SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -102,7 +110,6 @@ public class GameManager : MonoBehaviour {
 
     private void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
         state = null; //Verify that the state is destroyed;
-        username = "";
         unitPositions.Clear();
         turnActions.Clear();
         //Anything else that the game manager has to reset needs to be done here
@@ -128,7 +135,7 @@ public class GameManager : MonoBehaviour {
     //If the following conditions are true:
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
-        turnActions.Add(new Action(username, ActionType.Movement, targetUnit, endpoint));
+        turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint));
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
                 unitPositions.Remove(targetUnit);
@@ -139,7 +146,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void AttackUnit(Vector2Int source, Vector2Int target) {
-        turnActions.Add(new Action(username, ActionType.Attack, source, target));
+        turnActions.Add(new Action(user.Username, ActionType.Attack, source, target));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
             List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
             foreach (var damage in damages) {

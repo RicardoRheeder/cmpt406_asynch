@@ -244,4 +244,20 @@ public static class UnitFactory {
     public static UnitStats GetBaseUnit(UnitType type) {
         return UnitCreationMethods[type]();
     }
+
+    public static List<UnitStats> GetUnitsFromInt(List<int> units) {
+        List<UnitStats> returnUnits = new List<UnitStats>();
+        foreach(int i in units) {
+            returnUnits.Add(GetBaseUnit((UnitType)i));
+        }
+        return returnUnits;
+    }
+    
+    public static int GetCost(List<int> units) {
+        int cost = 0;
+        foreach (int i in units) {
+            cost += GetBaseUnit((UnitType)i).Cost;
+        }
+        return cost;
+    }
 }

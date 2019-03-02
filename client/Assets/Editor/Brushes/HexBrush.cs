@@ -10,6 +10,7 @@ namespace UnityEditor {
 
         public Elevation currentElevation; // the elevation to place a tile at
         public GameObject model; // the tile prefab to place
+        public SpawnPoint spawnPoint; // set if the tile is a spawn point
         public List<TileAttribute> attributes = new List<TileAttribute>();
         
         public override void Paint(GridLayout grid, GameObject brushTarget, Vector3Int position) {
@@ -24,8 +25,9 @@ namespace UnityEditor {
             //create a new serialized object from new tile instance
             SerializedObject serializedTile = new SerializedObject(tile);
             //set values for the serialized object
-            serializedTile.FindProperty("elevation").intValue = (int)currentElevation;
             serializedTile.FindProperty("tileModel").objectReferenceValue = model;
+            serializedTile.FindProperty("elevation").intValue = (int)currentElevation;
+            serializedTile.FindProperty("spawnPoint").intValue = (int)spawnPoint;
             SerializeAttributes(serializedTile.FindProperty("attributes"));
             //apply the modified properties so that unity saves the instance
             serializedTile.ApplyModifiedProperties();
@@ -73,7 +75,8 @@ namespace UnityEditor {
             serializedBrush.UpdateIfRequiredOrScript();
             hexBrush.model = EditorGUILayout.ObjectField(hexBrush.model, typeof(GameObject), true) as GameObject;
             hexBrush.currentElevation = (Elevation)EditorGUILayout.EnumPopup("Elevation: ", hexBrush.currentElevation);
-            for(int i = 0; i < hexBrush.attributes.Count; i++) {
+            hexBrush.spawnPoint = (SpawnPoint)EditorGUILayout.EnumPopup("Spawn Point: ", hexBrush.spawnPoint);
+            for (int i = 0; i < hexBrush.attributes.Count; i++) {
                 hexBrush.attributes[i] = (TileAttribute)EditorGUILayout.EnumPopup("Attribute " + i + ": ", hexBrush.attributes[i]);
             }
             GUILayout.BeginHorizontal();

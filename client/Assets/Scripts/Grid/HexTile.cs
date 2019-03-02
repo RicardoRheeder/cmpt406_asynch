@@ -19,6 +19,9 @@ public class HexTile: TileBase {
     [SerializeField]
     [HideInInspector]
     public List<TileAttribute> attributes = new List<TileAttribute>();
+    [SerializeField]
+    [HideInInspector]
+    public SpawnPoint spawnPoint = SpawnPoint.none;
 
     GameObject tileObject;
 

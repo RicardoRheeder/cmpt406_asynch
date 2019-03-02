@@ -41,7 +41,9 @@ public class PlayerController : MonoBehaviour {
     };
     private PlayerState controllerState;
 
-    public void Initialize(GameManager manager, CardController deck, BoardController board, bool isPlacing) {
+    private ArmyPreset armyPreset;
+
+    public void Initialize(GameManager manager, CardController deck, BoardController board, bool isPlacing, ArmyPreset armyPreset = null) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
@@ -61,6 +63,7 @@ public class PlayerController : MonoBehaviour {
 
         if(isPlacing) {
             controllerState = PlayerState.placing;
+            this.armyPreset = armyPreset;
         }
         else {
             controllerState = PlayerState.playing;

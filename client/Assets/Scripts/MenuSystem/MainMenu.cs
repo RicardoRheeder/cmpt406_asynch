@@ -74,7 +74,7 @@ public class MainMenu : MonoBehaviour {
     void Start() {
         SetInitialMenuState();
 
-        List<string> userFriends = networkApi.GetFriendsList();
+        List<string> userFriends = networkApi.UserInformation.Friends;
         foreach(string friend in userFriends) {
             AddFriendHelper(friend);
         }
@@ -143,7 +143,7 @@ public class MainMenu : MonoBehaviour {
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
             foreach (var state in response.Second.states) {
-                if(state.isPublic && state.createdBy != networkApi.GetUsername()) {
+                if(state.isPublic && state.createdBy != networkApi.UserInformation.Username) {
                     gameStateStorage.Add(state.id, state);
                     GameObject newGameCell = Instantiate(gameListCellPrefab);
                     Button cellButton = newGameCell.GetComponent<Button>();
@@ -231,7 +231,14 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuJoinPendingGame(GameState state) {
-        //Just load the first state right now for testing
-        manager.LoadGame(state, networkApi.GetUsername());
+        MainMenuArmySelectorButton();
+        List<ArmyPreset> presets = networkApi.UserInformation.ArmyPresets;
+        int maxCost = BoardMetadata.CostDict[state.boardId];
+        foreach(var preset in presets) {
+            if (preset.Cost < maxCost) {
+
+            }
+        }
+
     }
 }
