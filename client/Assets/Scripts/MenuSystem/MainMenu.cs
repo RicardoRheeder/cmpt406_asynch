@@ -45,7 +45,7 @@ public class MainMenu : MonoBehaviour {
     //Reference to the game manager to start a game
     private Dictionary<string, GameState> gameStateStorage = new Dictionary<string, GameState>();
     private GameManager manager;
-
+    
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
 
@@ -135,11 +135,6 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuArmySelectorButton() {
         mainMenuContainer.SetActive(false);
         SetMenuState(false, false, false, false, false, true);
-    }
-
-    public void MainMenuArmySelectorBack() {
-        mainMenuContainer.SetActive(true);
-        SetMenuState(false, false, false, false, false, false);
     }
 
     public void MainMenuJoinGameButton() {
@@ -236,7 +231,10 @@ public class MainMenu : MonoBehaviour {
         SceneManager.LoadScene("LoginScreen");
     }
 
+    public string storedId;
     public void MainMenuJoinPendingGame(GameState state) {
+        storedId = state.id;
+        networkApi.AcceptGame(storedId);
         MainMenuArmySelectorButton();
         int maxCost = BoardMetadata.CostDict[state.boardId];
         List<ArmyPreset> presets = ArmyBuilder.GetPresetsUnderCost(maxCost);
@@ -247,5 +245,16 @@ public class MainMenu : MonoBehaviour {
             armyButton.onClick.AddListener(() => manager.PlaceUnits(state, preset));
             armyCell.transform.SetParent(armyChooserViewport.transform, false);
         }
+    }
+
+    public void MainMenuArmySelectorBack() {
+        mainMenuContainer.SetActive(true);
+        networkApi.BackOutGame(storedId);
+        SetMenuState(true, false, false, false, false, false);
+    }
+
+    //This method will have to refresh the ui, and redraw any existing panels
+    public void MainMenuRefreshButton() {
+
     }
 }
