@@ -148,6 +148,10 @@ public class GameManager : MonoBehaviour {
         return containsUnit;
     }
 
+    public bool TileContainsUnit(Vector2Int tile) {
+        return unitPositions.ContainsKey(tile);
+    }
+
     //If the following conditions are true:
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {

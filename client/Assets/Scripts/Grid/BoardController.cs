@@ -131,7 +131,10 @@ public class BoardController {
     }
 
     public bool CellIsSpawnTile(SpawnPoint player, Vector2Int pos) {
-        return GetHexTile((Vector3Int)pos).spawnPoint == player;
+        if(HasHexTile((Vector3Int) pos)) {
+            return GetHexTile((Vector3Int)pos).spawnPoint == player;
+        }
+        return false;
     }
 
     // Returns a list of attributes of the tile at a position, or empty list if tile doesn't exist

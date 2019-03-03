@@ -4,94 +4,94 @@ using System.Collections.Generic;
 
 public static class UnitFactory {
 
-    private readonly static int TROOPER_HP = 20;
-    private readonly static int TROOPER_ARMOUR = 0;
+    private readonly static int TROOPER_HP = 100;
+    private readonly static int TROOPER_ARMOUR = 10;
     private readonly static int TROOPER_RANGE = 2;
-    private readonly static int TROOPER_DAMAGE = 3;
+    private readonly static int TROOPER_DAMAGE = 25;
     private readonly static int TROOPER_PIERCE = 0;
     private readonly static int TROOPER_AOE = 0;
-    private readonly static int TROOPER_SPEED = 2;
+    private readonly static int TROOPER_SPEED = 6;
     private readonly static int TROOPER_COST = 1;
     private readonly static IAttackStrategy TROOPER_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int REACON_HP = 20;
+    private readonly static int REACON_HP = 85;
     private readonly static int REACON_ARMOUR = 0;
-    private readonly static int REACON_RANGE = 2;
-    private readonly static int REACON_DAMAGE = 3;
+    private readonly static int REACON_RANGE = 3;
+    private readonly static int REACON_DAMAGE = 15;
     private readonly static int REACON_PIERCE = 0;
     private readonly static int REACON_AOE = 0;
-    private readonly static int REACON_SPEED = 2;
+    private readonly static int REACON_SPEED = 9;
     private readonly static int REACON_COST = 1;
     private readonly static IAttackStrategy REACON_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int STEAMER_HP = 20;
-    private readonly static int STEAMER_ARMOUR = 0;
-    private readonly static int STEAMER_RANGE = 2;
-    private readonly static int STEAMER_DAMAGE = 3;
+    private readonly static int STEAMER_HP = 120;
+    private readonly static int STEAMER_ARMOUR = 50;
+    private readonly static int STEAMER_RANGE = 1;
+    private readonly static int STEAMER_DAMAGE = 30;
     private readonly static int STEAMER_PIERCE = 0;
     private readonly static int STEAMER_AOE = 0;
-    private readonly static int STEAMER_SPEED = 2;
-    private readonly static int STEAMER_COST = 1;
+    private readonly static int STEAMER_SPEED = 6;
+    private readonly static int STEAMER_COST = 2;
     private readonly static IAttackStrategy STEAMER_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int PEWPEW_HP = 20;
-    private readonly static int PEWPEW_ARMOUR = 0;
-    private readonly static int PEWPEW_RANGE = 2;
-    private readonly static int PEWPEW_DAMAGE = 3;
+    private readonly static int PEWPEW_HP = 150;
+    private readonly static int PEWPEW_ARMOUR = 20;
+    private readonly static int PEWPEW_RANGE = 3;
+    private readonly static int PEWPEW_DAMAGE = 20;
     private readonly static int PEWPEW_PIERCE = 0;
     private readonly static int PEWPEW_AOE = 0;
-    private readonly static int PEWPEW_SPEED = 2;
+    private readonly static int PEWPEW_SPEED = 5;
     private readonly static int PEWPEW_COST = 1;
     private readonly static IAttackStrategy PEWPEW_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int COMPENSATOR_HP = 20;
+    private readonly static int COMPENSATOR_HP = 90;
     private readonly static int COMPENSATOR_ARMOUR = 0;
-    private readonly static int COMPENSATOR_RANGE = 2;
-    private readonly static int COMPENSATOR_DAMAGE = 3;
-    private readonly static int COMPENSATOR_PIERCE = 0;
+    private readonly static int COMPENSATOR_RANGE = 3;
+    private readonly static int COMPENSATOR_DAMAGE = 35;
+    private readonly static int COMPENSATOR_PIERCE = 20;
     private readonly static int COMPENSATOR_AOE = 0;
-    private readonly static int COMPENSATOR_SPEED = 2;
-    private readonly static int COMPENSATOR_COST = 1;
+    private readonly static int COMPENSATOR_SPEED = 7;
+    private readonly static int COMPENSATOR_COST = 3;
     private readonly static IAttackStrategy COMPENSATOR_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int FOUNDATION_HP = 20;
-    private readonly static int FOUNDATION_ARMOUR = 0;
+    private readonly static int FOUNDATION_HP = 75;
+    private readonly static int FOUNDATION_ARMOUR = 10;
     private readonly static int FOUNDATION_RANGE = 2;
-    private readonly static int FOUNDATION_DAMAGE = 3;
-    private readonly static int FOUNDATION_PIERCE = 0;
+    private readonly static int FOUNDATION_DAMAGE = 25;
+    private readonly static int FOUNDATION_PIERCE = 15;
     private readonly static int FOUNDATION_AOE = 0;
-    private readonly static int FOUNDATION_SPEED = 2;
-    private readonly static int FOUNDATION_COST = 1;
+    private readonly static int FOUNDATION_SPEED = 6;
+    private readonly static int FOUNDATION_COST = 2;
     private readonly static IAttackStrategy FOUNDATION_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int POWER_SURGE_HP = 20;
-    private readonly static int POWER_SURGE_ARMOUR = 0;
+    private readonly static int POWER_SURGE_HP = 80;
+    private readonly static int POWER_SURGE_ARMOUR = 10;
     private readonly static int POWER_SURGE_RANGE = 2;
-    private readonly static int POWER_SURGE_DAMAGE = 3;
+    private readonly static int POWER_SURGE_DAMAGE = 15;
     private readonly static int POWER_SURGE_PIERCE = 0;
     private readonly static int POWER_SURGE_AOE = 0;
-    private readonly static int POWER_SURGE_SPEED = 2;
+    private readonly static int POWER_SURGE_SPEED = 6;
     private readonly static int POWER_SURGE_COST = 1;
     private readonly static IAttackStrategy POWER_SURGE_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int MIDAS_HP = 20;
-    private readonly static int MIDAS_ARMOUR = 0;
-    private readonly static int MIDAS_RANGE = 2;
-    private readonly static int MIDAS_DAMAGE = 3;
+    private readonly static int MIDAS_HP = 80;
+    private readonly static int MIDAS_ARMOUR = 20;
+    private readonly static int MIDAS_RANGE = 3;
+    private readonly static int MIDAS_DAMAGE = -20;
     private readonly static int MIDAS_PIERCE = 0;
     private readonly static int MIDAS_AOE = 0;
-    private readonly static int MIDAS_SPEED = 2;
-    private readonly static int MIDAS_COST = 1;
+    private readonly static int MIDAS_SPEED = 4;
+    private readonly static int MIDAS_COST = 2;
     private readonly static IAttackStrategy MIDAS_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int CLAYMORE_HP = 20;
+    private readonly static int CLAYMORE_HP = 50;
     private readonly static int CLAYMORE_ARMOUR = 0;
-    private readonly static int CLAYMORE_RANGE = 2;
-    private readonly static int CLAYMORE_DAMAGE = 3;
+    private readonly static int CLAYMORE_RANGE = 1;
+    private readonly static int CLAYMORE_DAMAGE = 30;
     private readonly static int CLAYMORE_PIERCE = 0;
     private readonly static int CLAYMORE_AOE = 0;
-    private readonly static int CLAYMORE_SPEED = 2;
-    private readonly static int CLAYMORE_COST = 1;
+    private readonly static int CLAYMORE_SPEED = 9;
+    private readonly static int CLAYMORE_COST = 2;
     private readonly static IAttackStrategy CLAYMORE_ATTACK_STRATEGY = new AreaStrategy();
 
     private static UnitStats CreateTrooper() {
@@ -229,6 +229,32 @@ public static class UnitFactory {
         );
     }
 
+
+    private readonly static int General1_HP = 50;
+    private readonly static int General1_ARMOUR = 0;
+    private readonly static int General1_RANGE = 1;
+    private readonly static int General1_DAMAGE = 30;
+    private readonly static int General1_PIERCE = 0;
+    private readonly static int General1_AOE = 0;
+    private readonly static int General1_SPEED = 9;
+    private readonly static int General1_COST = 2;
+    private readonly static IAttackStrategy General1_ATTACK_STRATEGY = new AreaStrategy();
+
+    private static UnitStats CreateGeneral1() {
+        return new UnitStats(
+            UnitType.general1,
+            General1_HP,
+            General1_ARMOUR,
+            General1_RANGE,
+            General1_DAMAGE,
+            General1_PIERCE,
+            General1_AOE,
+            General1_SPEED,
+            General1_COST,
+            General1_ATTACK_STRATEGY
+        );
+    }
+
     private static Dictionary<UnitType, Func<UnitStats>> UnitCreationMethods = new Dictionary<UnitType, Func<UnitStats>>() {
         {UnitType.trooper, CreateTrooper},
         {UnitType.reacon, CreateReacon},
@@ -238,7 +264,8 @@ public static class UnitFactory {
         {UnitType.foundation, CreateFoundation},
         {UnitType.powerSurge, CreatePowerSurge},
         {UnitType.midas, CreateMidas},
-        {UnitType.claymore, CreateClaymore}
+        {UnitType.claymore, CreateClaymore},
+        {UnitType.general1, CreateGeneral1}
     };
 
     public static UnitStats GetBaseUnit(UnitType type) {
