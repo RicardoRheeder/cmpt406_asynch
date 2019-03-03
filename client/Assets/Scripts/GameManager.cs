@@ -114,7 +114,6 @@ public class GameManager : MonoBehaviour {
 
         SpawnPoint spawnPoint = SpawnPoint.none;
         for (int i = 0; i < state.AcceptedUsers.Count; i++) {
-            Debug.Log(state.AcceptedUsers[i]);
             if( state.AcceptedUsers[i] == user.Username) {
                 spawnPoint = (SpawnPoint)i;
                 break;
