@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour {
         switch(controllerState) {
             case (PlayerState.playing):
                 if (Input.GetMouseButtonDown(0)) {
-                    boardController.HighlightTile((Vector3Int)tilePos);
+                    boardController.HighlightTile(tilePos);
 
                     if (isMoving) {
                         manager.MoveUnit(selectedUnit.Position, tilePos);

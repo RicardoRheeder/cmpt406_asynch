@@ -16,7 +16,7 @@ public class GridTester : MonoBehaviour {
 
     public GridTestType currentTestType = GridTestType.HasTile;
 
-    Vector3Int currTilePosition;
+    Vector2Int currTilePosition;
     BoardController boardController;
 
     void Start() {
@@ -47,12 +47,12 @@ public class GridTester : MonoBehaviour {
 
     void CheckHasTile() {
         Vector2Int cellPosition = boardController.MousePosToCell();
-        Debug.Log("hasHexTile: " + boardController.HasHexTile((Vector3Int)cellPosition) + " " + cellPosition.ToString());
+        Debug.Log("hasHexTile: " + boardController.HasHexTile(cellPosition) + " " + cellPosition.ToString());
     }
 
     void TestGetTile() {
         Vector2Int cellPosition = boardController.MousePosToCell();
-        HexTile tile = boardController.GetHexTile((Vector3Int)cellPosition);
+        HexTile tile = boardController.GetHexTile(cellPosition);
         if(tile != null) {
             Debug.Log(tile.GetTileObject());
         }
@@ -61,11 +61,11 @@ public class GridTester : MonoBehaviour {
     void TestPathfinding() {
         Vector2Int endPosition = boardController.MousePosToCell();
         Debug.Log("mouse: " + Input.mousePosition.ToString() + " cell: " + endPosition.ToString());
-        List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,(Vector3Int)endPosition,boardController.GetTilemap(),false);
+        List<Vector2Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,boardController.GetTilemap(),false);
         StartCoroutine(PathMovement(path, 5f));
     }
 
-    IEnumerator PathMovement(List<Vector3Int> path, float speed) {
+    IEnumerator PathMovement(List<Vector2Int> path, float speed) {
          float step = speed * Time.fixedDeltaTime;
          float t = 0;
          Vector3 prevPos = transform.position;
