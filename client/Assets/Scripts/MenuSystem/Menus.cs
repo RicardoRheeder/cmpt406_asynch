@@ -28,7 +28,6 @@ public class Menus : MonoBehaviour {
 
         if (!networkApi.LoginUser(username, password)) {
             //For some reason login failed, we have to figure out what to do here
-            Debug.Log("Creating an account failed, the username must already exist");
             return;
         }
         SceneManager.LoadScene("MainMenu");

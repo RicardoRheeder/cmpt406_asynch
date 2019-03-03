@@ -3,6 +3,8 @@
 //Helper class to get a damage multiplier
 public static class UnitMetadata {
 
+    public readonly static int GENERAL_THRESHOLD = 100;
+
     private readonly static float LIGHT_STRENGTH = 1.5f;
     private readonly static float HEAVY_STRENGHTH = 1.5f;
     private readonly static float PIERCING_STRENGTH = 1.5f;
@@ -48,6 +50,7 @@ public static class UnitMetadata {
         {UnitType.steamer, UnitClass.heavy },
 
         //General Associations
+        {UnitType.general1, UnitClass.general }
     };
 
     public static float GetMultiplier(UnitType attacker, UnitType victim) {

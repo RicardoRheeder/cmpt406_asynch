@@ -25,8 +25,6 @@ public class PlayerController : MonoBehaviour {
     private Button attackButton;
     private Button movementButton;
 
-    //private List<Vector3Int> highlightedMovementTiles; //test
-
     private GameObject tileObject; //test
 
     private UnitStats selectedUnit;
@@ -41,9 +39,10 @@ public class PlayerController : MonoBehaviour {
         placing
     };
     private PlayerState controllerState;
-    private ArmyPreset armyPreset;
+    private List<int> armyPreset;
     private List<GameObject> presetTexts;
     private List<UnitStats> placedUnits;
+    private int armyPositionCount = 0;
 
 
     public void Initialize(GameManager manager, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null) {
@@ -54,7 +53,10 @@ public class PlayerController : MonoBehaviour {
 
         if(isPlacing) {
             controllerState = PlayerState.placing;
-            this.armyPreset = armyPreset;
+            this.armyPreset = new List<int>() {
+                armyPreset.General,
+            };
+            this.armyPreset.AddRange(armyPreset.Units);
             this.presetTexts = presetTexts;
             //Highlight spawn tiles and cache dictionary of spawns
             boardController.HighlightSpawnZone(SpawnPoint.Player1);
@@ -115,12 +117,15 @@ public class PlayerController : MonoBehaviour {
                     manager.EndUnitPlacement(placedUnits);
                 }
                 if (Input.GetMouseButtonDown(0)) {
-                    if(boardController.CellIsSpawnTile(SpawnPoint.Player1, tilePos)) {
-                        int unit = armyPreset.Units[0];
+                    //if(boardController.CellIsSpawnTile(SpawnPoint.Player1, tilePos) && !manager.TileContainsUnit(tilePos)) {
+                        int unit = armyPreset[armyPositionCount];
+                        armyPositionCount++;
+                        manager.CreateUnitAtPos(tilePos, unit);
                         GameObject unitText = presetTexts[0];
                         Destroy(unitText);
                         presetTexts.RemoveAt(0);
-                    }
+                    Debug.Log(tilePos);
+                    //}
                 }
                 break;
             default:
