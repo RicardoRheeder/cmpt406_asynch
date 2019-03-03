@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour {
         switch(controllerState) {
             case (PlayerState.playing):
                 if (Input.GetMouseButtonDown(0)) {
-                    HighlightTile((Vector3Int)tilePos);
+                    HighlightTile(tilePos);
 
                     if (isMoving) {
                         manager.MoveUnit(selectedUnit.Position, tilePos);
@@ -145,7 +145,7 @@ public class PlayerController : MonoBehaviour {
     
     //Feel free to make changes as necessary -jp
     //This function highlights a single tile. And disables the previous highlighted when another tile is selected
-    private void HighlightTile(Vector3Int pos){
+    private void HighlightTile(Vector2Int pos){
 
         if (boardController.HasHexTile(pos)){
             //if tileObject is not null that means a previous tile is highlighted
