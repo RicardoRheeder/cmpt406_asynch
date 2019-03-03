@@ -53,9 +53,10 @@ public class GameManager : MonoBehaviour {
     //The method called when the load game button is pressed
     //Since we are loading the correct scene, we have to setup the onsceneloaded function
     public void LoadGame(GameState state) {
-        this.state = state;
+        this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
         this.user = client.UserInformation;
 
+        SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
 
         SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
@@ -63,10 +64,11 @@ public class GameManager : MonoBehaviour {
 
     //This method is called when we need to place units
     public void PlaceUnits(GameState state, ArmyPreset selectedPreset) {
-        this.state = state;
+        this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
         this.user = client.UserInformation;
         this.selectedPreset = selectedPreset;
 
+        SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnPlaceUnits;
 
         SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
@@ -112,6 +114,7 @@ public class GameManager : MonoBehaviour {
 
         SpawnPoint spawnPoint = SpawnPoint.none;
         for (int i = 0; i < state.AcceptedUsers.Count; i++) {
+            Debug.Log(state.AcceptedUsers[i]);
             if( state.AcceptedUsers[i] == user.Username) {
                 spawnPoint = (SpawnPoint)i;
                 break;
@@ -120,7 +123,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts);
+        playerController.Initialize(this, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
         SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;

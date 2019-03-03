@@ -43,7 +43,6 @@ public class MainMenu : MonoBehaviour {
     private GameObject armyChooserViewport;
 
     //Reference to the game manager to start a game
-    private Dictionary<string, GameState> gameStateStorage = new Dictionary<string, GameState>();
     private GameManager manager;
     
     private void Awake() {
@@ -138,13 +137,11 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuJoinGameButton() {
-        gameStateStorage.Clear();
         SetMenuState(false, false, false, true, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
             foreach (var state in response.Second.states) {
                 if(state.isPublic && state.createdBy != networkApi.UserInformation.Username) {
-                    gameStateStorage.Add(state.id, state);
                     GameObject newGameCell = Instantiate(gameListCellPrefab);
                     Button cellButton = newGameCell.GetComponent<Button>();
                     cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
@@ -159,12 +156,10 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuActiveGamesButton() {
-        gameStateStorage.Clear();
         SetMenuState(false, true, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
             foreach (var state in response.Second.states) {
-                gameStateStorage.Add(state.id, state);
                 GameObject newGameCell = Instantiate(gameListCellPrefab);
                 Button cellButton = newGameCell.GetComponent<Button>();
                 cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
@@ -178,13 +173,11 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuPendingGamesButton() {
-        gameStateStorage.Clear();
         SetMenuState(true, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         if (response.First) {
             foreach(var state in response.Second.states) {
-                if (!state.isPublic) {
-                    gameStateStorage.Add(state.id, state);
+                if (!state.isPublic && !state.AcceptedUsers.Contains(networkApi.UserInformation.Username)) {
                     GameObject newGameCell = Instantiate(gameListCellPrefab);
                     Button cellButton = newGameCell.GetComponent<Button>();
                     cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
