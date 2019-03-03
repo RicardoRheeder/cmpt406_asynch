@@ -106,7 +106,7 @@ public class BoardController {
 
     //Feel free to make changes as necessary -jp
     //This function highlights a single tile. And disables the previous highlighted when another tile is selected
-    private void HighlightTile(Vector3Int pos) {
+    private void HighlightTile(Vector2Int pos) {
         GameObject tileObject;
         if (this.HasHexTile(pos)) {
             HexTile tile = this.GetHexTile(pos); //get the Hex tile using Vector3Int position
