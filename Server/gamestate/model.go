@@ -3,8 +3,6 @@ package gamestate
 import (
 	"context"
 	"time"
-
-	"google.golang.org/appengine"
 )
 
 // GameState is everything the client needs to know to construct the state of the game
@@ -33,12 +31,13 @@ type GameState struct {
 
 // Unit is a game piece on the board
 type Unit struct {
-	Owner            string             `json:"owner,omitempty" datastore:",omitempty"`
-	UnitType         int                `json:"unitType,omitempty" datastore:",omitempty"`
-	Health           float32            `json:"health,omitempty" datastore:",omitempty"`
-	Coord            appengine.GeoPoint `json:"coord,omitempty" datastore:",omitempty"`
-	Ability1CoolDown int                `json:"ability1CoolDown,omitempty" datastore:",omitempty"`
-	Ability2CoolDown int                `json:"ability2CoolDown,omitempty" datastore:",omitempty"`
+	Owner            string  `json:"owner,omitempty" datastore:",omitempty"`
+	UnitType         int     `json:"unitType,omitempty" datastore:",omitempty"`
+	Health           float32 `json:"health,omitempty" datastore:",omitempty"`
+	XPos             int     `json:"xPos,omitempty" datastore:",omitempty"`
+	YPos             int     `json:"yPos,omitempty" datastore:",omitempty"`
+	Ability1CoolDown int     `json:"ability1CoolDown,omitempty" datastore:",omitempty"`
+	Ability2CoolDown int     `json:"ability2CoolDown,omitempty" datastore:",omitempty"`
 }
 
 // Cards contains all the card information on a per user bases
@@ -52,11 +51,13 @@ type Cards struct {
 
 // Action contains the info for a single action in the game
 type Action struct {
-	Username   string             `json:"username,omitempty" datastore:",omitempty"`
-	ActionType ActionType         `json:"actionType,omitempty" datastore:",omitempty"`
-	Origin     appengine.GeoPoint `json:"origin,omitempty" datastore:",omitempty"`
-	Target     appengine.GeoPoint `json:"target,omitempty" datastore:",omitempty"`
-	CardID     int                `json:"cardId,omitempty" datastore:",omitempty"`
+	Username   string     `json:"username,omitempty" datastore:",omitempty"`
+	ActionType ActionType `json:"actionType,omitempty" datastore:",omitempty"`
+	OriginXPos int        `json:"originXPos,omitempty" datastore:",omitempty"`
+	OriginYPos int        `json:"originYPos,omitempty" datastore:",omitempty"`
+	TargetXPos int        `json:"targetXPos,omitempty" datastore:",omitempty"`
+	TargetYPos int        `json:"targetYPos,omitempty" datastore:",omitempty"`
+	CardID     int        `json:"cardId,omitempty" datastore:",omitempty"`
 }
 
 // ActionType Enum for use in the Action struct

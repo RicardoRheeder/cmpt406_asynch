@@ -352,13 +352,15 @@ For when you are placing your army in a public or private game.
                     "owner": "ParkerReese1",
                     "unitType": 5,
                     "health": 10,
-                    "coord": {"Lat": 1, "Lng": 2}
+                    "xPos": 1,
+                    "yPos": 2,
                 },
                 {
                     "owner": "ParkerReese1",
                     "unitType": 2,
                     "health": 5,
-                    "coord": {"Lat": 1, "Lng": 2}
+                    "xPos": 1,
+                    "yPos": 2,
                 }
             ],
         "general":
@@ -366,7 +368,8 @@ For when you are placing your army in a public or private game.
                 "owner": "ParkerReese1",
                 "unitType": 101,
                 "health": 10,
-                "coord": {"Lat": 1, "Lng": 2}
+                "xPos": 1,
+                "yPos": 2,
             }
         "cards":        // Note: Should just be the cards that the user now has. (No one elses).  
             {
@@ -397,13 +400,15 @@ server know what you did.
                     "owner": "ParkerReese1",
                     "unitType": 5,
                     "health": 10,
-                    "coord": {"Lat": 1, "Lng": 2}
+                    "xPos": 1,
+                    "yPos": 2,
                 },
                 {
                     "owner": "ParkerReese2",
                     "unitType": 2,
                     "health": 5,
-                    "coord": {"Lat": 1, "Lng": 4}
+                    "xPos": 1,
+                    "yPos": 4,
                 }
             ]
         },
@@ -413,13 +418,15 @@ server know what you did.
                     "owner": "ParkerReese1",
                     "unitType": 101,
                     "health": 10,
-                    "coord": {"Lat": 1, "Lng": 2}
+                    "xPos": 1,
+                    "yPos": 2,
                 },
                 {
                     "owner": "ParkerReese2",
                     "unitType": 102,
                     "health": 5,
-                    "coord": {"Lat": 1, "Lng": 4}
+                    "xPos": 1,
+                    "yPos": 4,
                 }
             ]
         },
@@ -442,15 +449,19 @@ server know what you did.
             [
                 {
                     "username":   "ParkerReese1",            
-                    "actionType": 1,         
-                    "origin":     {"Lat": 1, "Lng": 2},
-                    "target":     {"Lat": 2, "Lng": 2}
+                    "actionType": 1, 
+                    "originXPos": 1,
+                    "originYPos": 2,
+                    "targetXPos": 2,
+                    "targetYPos": 2,
                 },
                 {
                     "username":   "ParkerReese1",            
                     "actionType": 1,       
-                    "origin":     {"Lat": 1, "Lng": 4},
-                    "target":     {"Lat": 2, "Lng": 2}
+                    "originXPos": 1,
+                    "originYPos": 4,
+                    "targetXPos": 2,
+                    "targetYPos": 2,
                 }
             ],
         "killedUsers": ["ParkerReese3"]
@@ -464,53 +475,57 @@ Structures
 
 // GameState is everything the client needs to know to construct the state of the game
 type GameState struct {
-	ID              string
-	GameName        string
-	CreatedBy       string
-	BoardID         int
-	MaxUsers        int
-	SpotsAvailable  int     
-	IsPublic        bool
-	Users           []string
-	AcceptedUsers   []string
-	ReadyUsers      []string
-	AliveUsers      []string
-	UsersTurn       string
-	Units           []Unit
-	Generals        []Unit
-	Cards           []Cards
-	Actions         []Action
-	TurnTime        int
-	ForfeitTIme     int
-	Created         time.Time
+	ID             string    `json:"id,omitempty"`
+	GameName       string    `json:"gameName,omitempty"`
+	CreatedBy      string    `json:"createdBy,omitempty"`
+	BoardID        int       `json:"boardId,omitempty"`
+	MaxUsers       int       `json:"maxUsers,omitempty"`
+	SpotsAvailable int       `json:"spotsAvailable,omitempty"`
+	IsPublic       bool      `json:"isPublic"`
+	Users          []string  `json:"users,omitempty"`
+	AcceptedUsers  []string  `json:"acceptedUsers,omitempty"`
+	ReadyUsers     []string  `json:"readyUsers,omitempty"`
+	AliveUsers     []string  `json:"aliveUsers,omitempty"`
+	UsersTurn      string    `json:"usersTurn,omitempty"`
+	Units          []Unit    `json:"units,omitempty"`
+	Generals       []Unit    `json:"generals,omitempty"`
+	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
+	CardIDs        []string  `json:"-"`
+	Actions        []Action  `json:"actions,omitempty"`
+	TurnTime       int       `json:"turnTime,omitempty"`
+	ForfeitTime    int       `json:"forfeitTime,omitempty"`
+	Created        time.Time `json:"created,omitempty"`
 }
 
 // Unit is a game piece on the board
 type Unit struct {
-	Owner               string
-	UnitType            int
-	Health              float32
-	Coord               appengine.GeoPoint
-    Ability1CoolDown    int
-    Ability2CoolDown    int
+	Owner            string  `json:"owner,omitempty" datastore:",omitempty"`
+	UnitType         int     `json:"unitType,omitempty" datastore:",omitempty"`
+	Health           float32 `json:"health,omitempty" datastore:",omitempty"`
+	XPos             int     `json:"xPos,omitempty" datastore:",omitempty"`
+	YPos             int     `json:"yPos,omitempty" datastore:",omitempty"`
+	Ability1CoolDown int     `json:"ability1CoolDown,omitempty" datastore:",omitempty"`
+	Ability2CoolDown int     `json:"ability2CoolDown,omitempty" datastore:",omitempty"`
 }
 
 // Cards contains all the card information on a per user bases
 type Cards struct {
-	ID      string
-	Owner   string
-	Hand    []string
-	Deck    []string
-	Discard []string
+	ID      string   `json:"id,omitempty" datastore:",omitempty"`
+	Owner   string   `json:"owner,omitempty" datastore:",omitempty"`
+	Hand    []string `json:"hand,omitempty" datastore:",omitempty"`
+	Deck    []string `json:"deck,omitempty" datastore:",omitempty"`
+	Discard []string `json:"discard,omitempty" datastore:",omitempty"`
 }
 
 // Action contains the info for a single action in the game
 type Action struct {
-	Username   string
-	ActionType ActionType
-	Origin     appengine.GeoPoint
-	Target     appengine.GeoPoint
-	CardID     int
+	Username   string     `json:"username,omitempty" datastore:",omitempty"`
+	ActionType ActionType `json:"actionType,omitempty" datastore:",omitempty"`
+	OriginXPos int        `json:"originXPos,omitempty" datastore:",omitempty"`
+	OriginYPos int        `json:"originYPos,omitempty" datastore:",omitempty"`
+	TargetXPos int        `json:"targetXPos,omitempty" datastore:",omitempty"`
+	TargetYPos int        `json:"targetYPos,omitempty" datastore:",omitempty"`
+	CardID     int        `json:"cardId,omitempty" datastore:",omitempty"`
 }
 
 // User is a human player of the game
