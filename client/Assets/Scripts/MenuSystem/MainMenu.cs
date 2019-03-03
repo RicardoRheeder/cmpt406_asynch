@@ -99,7 +99,7 @@ public class MainMenu : MonoBehaviour {
         armySelectorPanel.SetActive(selectorState);
     }
 
-    public void PendingGameCellDetailsButton(GameState state) {
+    public void PendingGameCellDetailsButton(GameState state, bool needToAccept) {
         //Set up the display information
         pendingMapName.SetText(state.boardId.ToString());
         pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -108,7 +108,7 @@ public class MainMenu : MonoBehaviour {
 
         //Set up the join button to call the join function with the current state
         pendingJoinButton.onClick.RemoveAllListeners();
-        pendingJoinButton.onClick.AddListener(() => MainMenuJoinPendingGame(state));
+        pendingJoinButton.onClick.AddListener(() => MainMenuJoinPendingGame(state, needToAccept));
     }
 
     public void ActiveGameCellDetailsButton(GameState state) {
@@ -177,11 +177,11 @@ public class MainMenu : MonoBehaviour {
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         if (response.First) {
             foreach(var state in response.Second.states) {
-                if (!state.isPublic && !state.AcceptedUsers.Contains(networkApi.UserInformation.Username)) {
+                if (!state.isPublic && !state.ReadyUsers.Contains(networkApi.UserInformation.Username)) {
                     GameObject newGameCell = Instantiate(gameListCellPrefab);
                     Button cellButton = newGameCell.GetComponent<Button>();
                     cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
-                    cellButton.onClick.AddListener(() => PendingGameCellDetailsButton(state));
+                    cellButton.onClick.AddListener(() => PendingGameCellDetailsButton(state, !state.AcceptedUsers.Contains(networkApi.UserInformation.Username)));
                     newGameCell.transform.SetParent(pendingGamesViewContent.transform, false);
                 }
             }
@@ -224,8 +224,10 @@ public class MainMenu : MonoBehaviour {
         SceneManager.LoadScene("LoginScreen");
     }
 
-    public void MainMenuJoinPendingGame(GameState state) {
-        networkApi.AcceptGame(state.id);
+    public void MainMenuJoinPendingGame(GameState state, bool needToAccept) {
+        if(needToAccept) {
+            networkApi.AcceptGame(state.id);
+        }
         MainMenuArmySelectorButton();
         int maxCost = BoardMetadata.CostDict[state.boardId];
         List<ArmyPreset> presets = ArmyBuilder.GetPresetsUnderCost(maxCost);

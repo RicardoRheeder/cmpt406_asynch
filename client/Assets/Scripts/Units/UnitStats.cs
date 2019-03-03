@@ -11,7 +11,7 @@ public class UnitStats {
     public UnitType UnitType { get; private set; }
     public UnitClass UnitClass { get; private set; }
     public int Cost { get; private set; }
-    [DataMember]
+    [DataMember(Name = "owner", IsRequired = true)]
     public string Owner { get; set; }
 
     //defense stats

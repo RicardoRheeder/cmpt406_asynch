@@ -14,10 +14,14 @@ public class Action {
     private ActionType type;
 
     [DataMember]
-    private Vector2Int sourceTile;
+    private int originXPos;
+    [DataMember]
+    private int originYPos;
 
     [DataMember]
-    private Vector2Int targetTile;
+    private int targetXPos;
+    [DataMember]
+    private int targetYPos;
 
     [DataMember]
     private int cardId;
@@ -25,8 +29,10 @@ public class Action {
     public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile) {
         this.owner = owner;
         this.type = type;
-        this.sourceTile = sourceTile;
-        this.targetTile = targetTile;
+        this.originXPos = sourceTile.x;
+        this.originYPos = sourceTile.y;
+        this.targetXPos = targetTile.x;
+        this.targetYPos = targetTile.y;
     }
 
     [OnDeserialized]

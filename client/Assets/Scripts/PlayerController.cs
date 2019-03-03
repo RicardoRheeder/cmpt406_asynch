@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour {
                 }
                 if (Input.GetMouseButtonDown(0)) {
                     if(boardController.CellIsSpawnTile(spawnPoint, tilePos) && !manager.TileContainsUnit(tilePos)) {
-                    int unit = armyPreset[armyPositionCount];
+                        int unit = armyPreset[armyPositionCount];
                         armyPositionCount++;
                         manager.CreateUnitAtPos(tilePos, unit);
                         GameObject unitText = presetTexts[0];
