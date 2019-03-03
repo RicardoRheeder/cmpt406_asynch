@@ -15,14 +15,14 @@ public static class UnitMetadata {
         //Light unit strengths
         {new Tuple<UnitType, UnitType>(UnitType.trooper, UnitType.compensator), LIGHT_STRENGTH },
         {new Tuple<UnitType, UnitType>(UnitType.trooper, UnitType.foundation), LIGHT_STRENGTH },
-        {new Tuple<UnitType, UnitType>(UnitType.reacon, UnitType.compensator), LIGHT_STRENGTH },
-        {new Tuple<UnitType, UnitType>(UnitType.reacon, UnitType.foundation), LIGHT_STRENGTH },
+        {new Tuple<UnitType, UnitType>(UnitType.recon, UnitType.compensator), LIGHT_STRENGTH },
+        {new Tuple<UnitType, UnitType>(UnitType.recon, UnitType.foundation), LIGHT_STRENGTH },
 
         //Heavy unit strengths
         {new Tuple<UnitType, UnitType>(UnitType.steamer, UnitType.trooper), HEAVY_STRENGHTH },
-        {new Tuple<UnitType, UnitType>(UnitType.steamer, UnitType.reacon), HEAVY_STRENGHTH },
+        {new Tuple<UnitType, UnitType>(UnitType.steamer, UnitType.recon), HEAVY_STRENGHTH },
         {new Tuple<UnitType, UnitType>(UnitType.pewpew, UnitType.trooper), HEAVY_STRENGHTH },
-        {new Tuple<UnitType, UnitType>(UnitType.pewpew, UnitType.reacon), HEAVY_STRENGHTH },
+        {new Tuple<UnitType, UnitType>(UnitType.pewpew, UnitType.recon), HEAVY_STRENGHTH },
 
         //Piercing unit strengths
         {new Tuple<UnitType, UnitType>(UnitType.compensator, UnitType.steamer), PIERCING_STRENGTH },
@@ -42,7 +42,7 @@ public static class UnitMetadata {
         {UnitType.foundation, UnitClass.piercing },
 
         //Light Associations
-        {UnitType.reacon, UnitClass.light },
+        {UnitType.recon, UnitClass.light },
         {UnitType.trooper, UnitClass.light },
 
         //Heavy Associations
@@ -50,7 +50,35 @@ public static class UnitMetadata {
         {UnitType.steamer, UnitClass.heavy },
 
         //General Associations
-        {UnitType.general1, UnitClass.general }
+        { UnitType.heavy_albarn,  UnitClass.general },
+        { UnitType.piercing_tungsten,  UnitClass.general },
+        { UnitType.light_adren,  UnitClass.general },
+        { UnitType.support_sandman,  UnitClass.general },
+    };
+
+    public readonly static Dictionary<UnitType, string> ReadableNames = new Dictionary<UnitType, string>() {
+        //Support names
+        { UnitType.powerSurge, "Power Surge" },
+        { UnitType.midas, "M.I.D.A.S" },
+        { UnitType.claymore, "Claymore" },
+
+        //Piercing names
+        { UnitType.compensator, "Compensator" },
+        { UnitType.foundation, "Foundation" },
+
+        //Light names
+        { UnitType.trooper, "Trooper" },
+        { UnitType.recon, "Recon" },
+
+        //Heavy names
+        { UnitType.steamer, "Steamer" },
+        { UnitType.pewpew, "Pew Pew" },
+
+        //General names
+        { UnitType.heavy_albarn, "Albarn" },
+        { UnitType.piercing_tungsten, "Tungsten" },
+        { UnitType.light_adren, "Adren-LN" },
+        { UnitType.support_sandman, "The Sandman" },
     };
 
     public static float GetMultiplier(UnitType attacker, UnitType victim) {

@@ -43,11 +43,11 @@ public static class ArmyBuilder {
     private static readonly ArmyPreset presetOne = new ArmyPreset(
         presetOneName,
         new List<int>() {
-            (int)UnitType.compensator,
-            (int)UnitType.compensator,
-            (int)UnitType.compensator
+            (int)UnitType.steamer,
+            (int)UnitType.steamer,
+            (int)UnitType.pewpew
         },
-        (int)UnitType.general1
+        (int)UnitType.heavy_albarn
     );
     private static readonly string presetTwoName = "Preset Two";
     private static readonly ArmyPreset presetTwo = new ArmyPreset(
@@ -55,19 +55,28 @@ public static class ArmyBuilder {
         new List<int>() {
             (int)UnitType.compensator,
             (int)UnitType.compensator,
-            (int)UnitType.compensator
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
         },
-        (int)UnitType.general1
+        (int)UnitType.piercing_tungsten
     );
     private static readonly string presetThreeName = "Preset Three";
     private static readonly ArmyPreset presetThree = new ArmyPreset(
         presetThreeName,
         new List<int>() {
-            (int)UnitType.compensator,
-            (int)UnitType.compensator,
-            (int)UnitType.compensator
+            (int)UnitType.trooper,
+            (int)UnitType.trooper,
+            (int)UnitType.recon,
+            (int)UnitType.recon,
+            (int)UnitType.recon,
         },
-        (int)UnitType.general1
+        (int)UnitType.light_adren
     );
     //Method used to create the default presets and add them to the dictionary
     public static void InsertDefaultPresets() {

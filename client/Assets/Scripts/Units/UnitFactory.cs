@@ -111,7 +111,7 @@ public static class UnitFactory {
 
     private static UnitStats CreateReacon() {
         return new UnitStats(
-            UnitType.reacon,
+            UnitType.recon,
             REACON_HP,
             REACON_ARMOUR,
             REACON_RANGE,
@@ -229,35 +229,105 @@ public static class UnitFactory {
         );
     }
 
-
-    private readonly static int General1_HP = 50;
-    private readonly static int General1_ARMOUR = 0;
-    private readonly static int General1_RANGE = 1;
-    private readonly static int General1_DAMAGE = 30;
-    private readonly static int General1_PIERCE = 0;
-    private readonly static int General1_AOE = 0;
-    private readonly static int General1_SPEED = 9;
-    private readonly static int General1_COST = 2;
-    private readonly static IAttackStrategy General1_ATTACK_STRATEGY = new AreaStrategy();
-
-    private static UnitStats CreateGeneral1() {
+    private readonly static int HEAVY_ALBARN_HP = 200;
+    private readonly static int HEAVY_ALBARN_ARMOUR = 30;
+    private readonly static int HEAVY_ALBARN_RANGE = 10;
+    private readonly static int HEAVY_ALBARN_DAMAGE = 25;
+    private readonly static int HEAVY_ALBARN_PIERCE = 0;
+    private readonly static int HEAVY_ALBARN_AOE = 0;
+    private readonly static int HEAVY_ALBARN_SPEED = 0;
+    private readonly static int HEAVY_ALBARN_COST = 0;
+    private readonly static IAttackStrategy HEAVY_ALBARN_ATTACK_STRATEGY = new AreaStrategy();
+    private static UnitStats CreateHeavyAlbarn() {
         return new UnitStats(
-            UnitType.general1,
-            General1_HP,
-            General1_ARMOUR,
-            General1_RANGE,
-            General1_DAMAGE,
-            General1_PIERCE,
-            General1_AOE,
-            General1_SPEED,
-            General1_COST,
-            General1_ATTACK_STRATEGY
+            UnitType.heavy_albarn,
+            HEAVY_ALBARN_HP,
+            HEAVY_ALBARN_ARMOUR,
+            HEAVY_ALBARN_RANGE,
+            HEAVY_ALBARN_DAMAGE,
+            HEAVY_ALBARN_PIERCE,
+            HEAVY_ALBARN_AOE,
+            HEAVY_ALBARN_SPEED,
+            HEAVY_ALBARN_COST,
+            HEAVY_ALBARN_ATTACK_STRATEGY
+        );
+    }
+
+    private readonly static int PIERCING_TUNGSTEN_HP = 200;
+    private readonly static int PIERCING_TUNGSTEN_ARMOUR = 30;
+    private readonly static int PIERCING_TUNGSTEN_RANGE = 10;
+    private readonly static int PIERCING_TUNGSTEN_DAMAGE = 25;
+    private readonly static int PIERCING_TUNGSTEN_PIERCE = 0;
+    private readonly static int PIERCING_TUNGSTEN_AOE = 0;
+    private readonly static int PIERCING_TUNGSTEN_SPEED = 0;
+    private readonly static int PIERCING_TUNGSTEN_COST = 0;
+    private readonly static IAttackStrategy PIERCING_TUNGSTEN_ATTACK_STRATEGY = new AreaStrategy();
+    private static UnitStats CreatePiercingTungsten() {
+        return new UnitStats(
+            UnitType.piercing_tungsten,
+            PIERCING_TUNGSTEN_HP,
+            PIERCING_TUNGSTEN_ARMOUR,
+            PIERCING_TUNGSTEN_RANGE,
+            PIERCING_TUNGSTEN_DAMAGE,
+            PIERCING_TUNGSTEN_PIERCE,
+            PIERCING_TUNGSTEN_AOE,
+            PIERCING_TUNGSTEN_SPEED,
+            PIERCING_TUNGSTEN_COST,
+            PIERCING_TUNGSTEN_ATTACK_STRATEGY
+        );
+    }
+
+    private readonly static int LIGHT_ADREN_HP = 200;
+    private readonly static int LIGHT_ADREN_ARMOUR = 30;
+    private readonly static int LIGHT_ADREN_RANGE = 10;
+    private readonly static int LIGHT_ADREN_DAMAGE = 25;
+    private readonly static int LIGHT_ADREN_PIERCE = 0;
+    private readonly static int LIGHT_ADREN_AOE = 0;
+    private readonly static int LIGHT_ADREN_SPEED = 0;
+    private readonly static int LIGHT_ADREN_COST = 0;
+    private readonly static IAttackStrategy LIGHT_ADREN_ATTACK_STRATEGY = new AreaStrategy();
+    private static UnitStats CreateLightAdren() {
+        return new UnitStats(
+            UnitType.light_adren,
+            LIGHT_ADREN_HP,
+            LIGHT_ADREN_ARMOUR,
+            LIGHT_ADREN_RANGE,
+            LIGHT_ADREN_DAMAGE,
+            LIGHT_ADREN_PIERCE,
+            LIGHT_ADREN_AOE,
+            LIGHT_ADREN_SPEED,
+            LIGHT_ADREN_COST,
+            LIGHT_ADREN_ATTACK_STRATEGY
+        );
+    }
+
+    private readonly static int SUPPORT_SANDMAN_HP = 200;
+    private readonly static int SUPPORT_SANDMAN_ARMOUR = 30;
+    private readonly static int SUPPORT_SANDMAN_RANGE = 10;
+    private readonly static int SUPPORT_SANDMAN_DAMAGE = 25;
+    private readonly static int SUPPORT_SANDMAN_PIERCE = 0;
+    private readonly static int SUPPORT_SANDMAN_AOE = 0;
+    private readonly static int SUPPORT_SANDMAN_SPEED = 0;
+    private readonly static int SUPPORT_SANDMAN_COST = 0;
+    private readonly static IAttackStrategy SUPPORT_SANDMAN_ATTACK_STRATEGY = new AreaStrategy();
+    private static UnitStats CreateSupportSandman() {
+        return new UnitStats(
+            UnitType.support_sandman,
+            SUPPORT_SANDMAN_HP,
+            SUPPORT_SANDMAN_ARMOUR,
+            SUPPORT_SANDMAN_RANGE,
+            SUPPORT_SANDMAN_DAMAGE,
+            SUPPORT_SANDMAN_PIERCE,
+            SUPPORT_SANDMAN_AOE,
+            SUPPORT_SANDMAN_SPEED,
+            SUPPORT_SANDMAN_COST,
+            SUPPORT_SANDMAN_ATTACK_STRATEGY
         );
     }
 
     private static Dictionary<UnitType, Func<UnitStats>> UnitCreationMethods = new Dictionary<UnitType, Func<UnitStats>>() {
         {UnitType.trooper, CreateTrooper},
-        {UnitType.reacon, CreateReacon},
+        {UnitType.recon, CreateReacon},
         {UnitType.steamer, CreateSteamer},
         {UnitType.pewpew, CreatePewPew},
         {UnitType.compensator, CreateCompensator},
@@ -265,7 +335,12 @@ public static class UnitFactory {
         {UnitType.powerSurge, CreatePowerSurge},
         {UnitType.midas, CreateMidas},
         {UnitType.claymore, CreateClaymore},
-        {UnitType.general1, CreateGeneral1}
+
+        //Generals
+        {UnitType.heavy_albarn, CreateHeavyAlbarn},
+        {UnitType.piercing_tungsten, CreatePiercingTungsten},
+        {UnitType.light_adren, CreateLightAdren},
+        {UnitType.support_sandman, CreateSupportSandman},
     };
 
     public static UnitStats GetBaseUnit(UnitType type) {

@@ -14,7 +14,19 @@ public class GameBuilder : MonoBehaviour {
     public List<GameObject> UnitDisplayTexts { get; private set; }
 
     //Prefabs for each unit for instantiation purposes
+    public GameObject claymorePrefab;
     public GameObject compensatorPrefab;
+    public GameObject trooperPrefab;
+    public GameObject reconPrefab;
+    public GameObject steamerPrefab;
+    public GameObject pewpewPrefab;
+    public GameObject foundationPrefab;
+    public GameObject powerSurgePrefab;
+    public GameObject midasPrefab;
+    public GameObject heavyAlbarnPrefab;
+    public GameObject piercingTungstenPrefab;
+    public GameObject lightAdrenPrefab;
+    public GameObject supportSandmanPrefab;
     public Dictionary<UnitType, GameObject> typePrefabStorage;
 
     private GameState state;
@@ -26,16 +38,19 @@ public class GameBuilder : MonoBehaviour {
     public void Awake() {
         //Populate the dictionary whenever we build the map
         typePrefabStorage = new Dictionary<UnitType, GameObject>() {
-            {UnitType.claymore, compensatorPrefab },
+            {UnitType.claymore, claymorePrefab },
             {UnitType.compensator, compensatorPrefab },
-            {UnitType.trooper, compensatorPrefab },
-            {UnitType.reacon, compensatorPrefab },
-            {UnitType.steamer, compensatorPrefab },
-            {UnitType.pewpew, compensatorPrefab },
-            {UnitType.foundation, compensatorPrefab },
-            {UnitType.powerSurge, compensatorPrefab },
-            {UnitType.midas, compensatorPrefab },
-            {UnitType.general1, compensatorPrefab }
+            {UnitType.trooper, trooperPrefab },
+            {UnitType.recon, reconPrefab },
+            {UnitType.steamer, steamerPrefab },
+            {UnitType.pewpew, pewpewPrefab },
+            {UnitType.foundation, foundationPrefab },
+            {UnitType.powerSurge, powerSurgePrefab },
+            {UnitType.midas, midasPrefab },
+            {UnitType.heavy_albarn, heavyAlbarnPrefab },
+            {UnitType.piercing_tungsten, piercingTungstenPrefab },
+            {UnitType.light_adren, lightAdrenPrefab },
+            {UnitType.support_sandman, supportSandmanPrefab }
         };
     }
 
@@ -66,12 +81,12 @@ public class GameBuilder : MonoBehaviour {
             GameObject generalText = Instantiate(unitDisplayPrefab);
             UnitDisplayTexts.Add(generalText);
             generalText.transform.SetParent(unitPlacementViewport.transform, false);
-            generalText.GetComponent<TMP_Text>().text = ((UnitType)armyPreset.General).ToString();
+            generalText.GetComponent<TMP_Text>().text = UnitMetadata.ReadableNames[(UnitType)armyPreset.General];
             foreach (int unit in armyPreset.Units) {
                 GameObject unitText = Instantiate(unitDisplayPrefab);
                 UnitDisplayTexts.Add(unitText);
                 unitText.transform.SetParent(unitPlacementViewport.transform, false);
-                unitText.GetComponent<TMP_Text>().SetText(((UnitType)unit).ToString());
+                unitText.GetComponent<TMP_Text>().text = UnitMetadata.ReadableNames[(UnitType)unit];
             }
         }
     }

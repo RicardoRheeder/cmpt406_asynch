@@ -124,7 +124,6 @@ public class PlayerController : MonoBehaviour {
                         GameObject unitText = presetTexts[0];
                         Destroy(unitText);
                         presetTexts.RemoveAt(0);
-                    Debug.Log(tilePos);
                     //}
                 }
                 break;

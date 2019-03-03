@@ -9,9 +9,13 @@ using System.IO;
 using System.Net;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //This class has a monobehaviour attached so that the "DebugMode" can be easily toggled on and off without going into the code
 public class Client : MonoBehaviour {
+
+    //Event System to enable/disable event system
+    GameObject eventSystem;
 
     //Client cache
     private Credentials user;
@@ -30,18 +34,40 @@ public class Client : MonoBehaviour {
     private const string GET_PUBLIC_GAMES = "/GetPublicGamesSummary"; //Used to get a number of public games
     private const string ADD_ARMY_PRESET = "/AddArmyPreset"; //Used to import army presets
     private const string REMOVE_ARMY_PRESET = "/RemoveArmyPreset"; //Used to delete existing presets
+    private const string ACCEPT_GAME = "/AcceptGame";
+    private const string DECLINE_GAME = "/DeclineGame";
+    private const string BACKOUT_GAME = "/BackOutGame";
+    private const string FORFEIT_GAME = "/ForfeitGame";
+    private const string READY_UNITS = "/ReadyUnits";
 
     //Networking constants
     private const string JSON_TYPE = "application/json";
 
+
+
     //Make sure this object is not destroyed on scene transitions
     public void Start() {
         DontDestroyOnLoad(this.gameObject);
+        eventSystem = GameObject.Find("EventSystem");
+        SceneManager.sceneLoaded += FindEventSystem;
+    }
+
+    private void FindEventSystem(Scene scene, LoadSceneMode mode) {
+        eventSystem = GameObject.Find("EventSystem");
+    }
+
+    private void BeginRequest() {
+        eventSystem.SetActive(false);
+    }
+
+    private void EndRequest() {
+        eventSystem.SetActive(true);
     }
 
     //Requests
     //Sends new user information to the server
     public bool CreateUser(string username, string password) {
+        BeginRequest();
         user = new Credentials(username, password);
         HttpWebRequest request = CreatePostRequestWithoutAuth(CREATE_USER);
         string requestJson = JsonConversion.ConvertObjectToJson<Credentials>(user);
@@ -57,14 +83,17 @@ public class Client : MonoBehaviour {
         catch (WebException e) {
             user = null;
             PrettyPrint(CREATE_USER, (HttpWebResponse)e.Response);
+            EndRequest();
             return false;
         }
+        EndRequest();
         return true;
     }
 
     //Logs the specified user in
     //This function should cache the username within the client so that we can use it in future functions
     public bool LoginUser(string username, string password) {
+        BeginRequest();
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + GET_USER_INFO);
         request.Method = "GET";
         request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes( username + ":" + password));
@@ -80,10 +109,12 @@ public class Client : MonoBehaviour {
             UserInformation = JsonConversion.CreateFromJson<PlayerMetadata>(responseJson, typeof(PlayerMetadata));
             UserInformation.Username = username;
             user = new Credentials(username, password);
+            EndRequest();
             return true;
         }
         catch (WebException e) {
             PrettyPrint(GET_USER_INFO, (HttpWebResponse)e.Response);
+            EndRequest();
             return false;
         }
     }
@@ -119,6 +150,7 @@ public class Client : MonoBehaviour {
     }
 
     private Tuple<bool, GameStateCollection> GetGameStateCollectionHelper(GameIds ids) {
+        BeginRequest();
         HttpWebRequest request = CreatePostRequest(GET_GAME_STATE_MULTI);
         string requestJson = JsonConversion.ConvertObjectToJson<GameIds>(ids);
         AddJsonToRequest(requestJson, ref request);
@@ -130,15 +162,18 @@ public class Client : MonoBehaviour {
                 responseJson = reader.ReadToEnd();
             }
             GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
+            EndRequest();
             return new Tuple<bool, GameStateCollection>(true, states);
         }
         catch (WebException e) {
             PrettyPrint(GET_GAME_STATE_MULTI, (HttpWebResponse)e.Response);
+            EndRequest();
             return new Tuple<bool, GameStateCollection>(false, null);
         }
     }
 
     public Tuple<bool, GameStateCollection> GetPublicGames() {
+        BeginRequest();
         HttpWebRequest request = CreatePostRequest(GET_PUBLIC_GAMES);
         string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100); //just get up to 100 states for now
         AddJsonToRequest(requestJson, ref request);
@@ -150,10 +185,12 @@ public class Client : MonoBehaviour {
                 responseJson = reader.ReadToEnd();
             }
             GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
+            EndRequest();
             return new Tuple<bool, GameStateCollection>(true, states);
         }
         catch (WebException e) {
             PrettyPrint(GET_PUBLIC_GAMES, (HttpWebResponse)e.Response);
+            EndRequest();
             return new Tuple<bool, GameStateCollection>(false, null);
         }
     }
@@ -167,22 +204,25 @@ public class Client : MonoBehaviour {
     }
 
     private bool FriendHelper(string targetUser, string endpoint) {
+        BeginRequest();
         HttpWebRequest request = CreatePostRequest(endpoint);
         string requestJson = JsonConversion.GetJsonForSingleField("username", targetUser);
         AddJsonToRequest(requestJson, ref request);
 
         try {
             var response = (HttpWebResponse)request.GetResponse();
-            Debug.Log("friend request sent!");
+            EndRequest();
             return true;
         }
         catch (WebException e) {
             PrettyPrint(endpoint, (HttpWebResponse)e.Response);
+            EndRequest();
             return false;
         }
     }
 
     public Tuple<bool, GameState> GetGamestate(string id) {
+        BeginRequest();
         HttpWebRequest request = CreatePostRequest(GET_GAME_STATE);
         string requestJson = JsonConversion.GetJsonForSingleField("gameId", id);
         AddJsonToRequest(requestJson, ref request);
@@ -194,15 +234,18 @@ public class Client : MonoBehaviour {
                 responseJson = reader.ReadToEnd();
             }
             GameState state = JsonConversion.CreateFromJson<GameState>(responseJson, typeof(GameState));
+            EndRequest();
             return new Tuple<bool, GameState>(true, state);
         }
         catch (WebException e) {
             PrettyPrint(GET_GAME_STATE, (HttpWebResponse)e.Response);
+            EndRequest();
             return new Tuple<bool, GameState>(false, null);
         }
     }
 
     public bool CreatePrivateGame(string name, int turnTime, int forfeitTime, List<string> opponents, int boardId) {
+        BeginRequest();
         CreatePrivateGameState state = new CreatePrivateGameState(name, turnTime, forfeitTime, opponents, boardId);
         //Setting up the request object
         HttpWebRequest request = CreatePostRequest(CREATE_PRIVATE_GAME);
@@ -211,15 +254,18 @@ public class Client : MonoBehaviour {
 
         try {
             var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
             return true;
         }
         catch (WebException e) {
             PrettyPrint(CREATE_PRIVATE_GAME, (HttpWebResponse)e.Response);
+            EndRequest();
             return false;
         }
     }
 
     public bool CreatePublicGame(string name, int turnTime, int forfeitTime, int maxPlayers, int boardId) {
+        BeginRequest();
         CreatePublicGameState state = new CreatePublicGameState(name, turnTime, forfeitTime, maxPlayers, boardId);
         //Setting up the request object
         HttpWebRequest request = CreatePostRequest(CREATE_PUBLIC_GAME);
@@ -228,40 +274,120 @@ public class Client : MonoBehaviour {
 
         try {
             var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
             return true;
         }
         catch (WebException e) {
             PrettyPrint(CREATE_PRIVATE_GAME, (HttpWebResponse)e.Response);
+            EndRequest();
             return false;
         }
     }
 
     public bool RegisterArmyPreset(ArmyPreset preset) {
+        BeginRequest();
         HttpWebRequest request = CreatePostRequest(ADD_ARMY_PRESET);
         string requestJson = JsonConversion.ConvertObjectToJson<ArmyPreset>(preset);
         AddJsonToRequest(requestJson, ref request);
 
         try {
             var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
             return true;
         }
         catch (WebException e) {
             PrettyPrint(ADD_ARMY_PRESET, (HttpWebResponse)e.Response);
+            EndRequest();
             return false;
         }
     }
 
     public bool RemoveArmyPreset(string presetId) {
+        BeginRequest();
         HttpWebRequest request = CreatePostRequest(REMOVE_ARMY_PRESET);
         string requestJson = JsonConversion.GetJsonForSingleField("armyPresetId", presetId);
         AddJsonToRequest(requestJson, ref request);
 
         try {
             var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
             return true;
         }
         catch (WebException e) {
             PrettyPrint(REMOVE_ARMY_PRESET, (HttpWebResponse)e.Response);
+            EndRequest();
+            return false;
+        }
+    }
+
+    public bool AcceptGame(string gameId) {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(ACCEPT_GAME);
+        string requestJson = JsonConversion.GetJsonForSingleField("gameId", gameId);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
+            return true;
+        }
+        catch (WebException e) {
+            PrettyPrint(ACCEPT_GAME, (HttpWebResponse)e.Response);
+            EndRequest();
+            return false;
+        }
+    }
+
+    public bool DeclineGame(string gameId) {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(DECLINE_GAME);
+        string requestJson = JsonConversion.GetJsonForSingleField("gameId", gameId);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
+            return true;
+        }
+        catch (WebException e) {
+            PrettyPrint(DECLINE_GAME, (HttpWebResponse)e.Response);
+            EndRequest();
+            return false;
+        }
+    }
+
+    public bool BackOutGame(string gameId) {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(BACKOUT_GAME);
+        string requestJson = JsonConversion.GetJsonForSingleField("gameId", gameId);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
+            return true;
+        }
+        catch (WebException e) {
+            PrettyPrint(BACKOUT_GAME, (HttpWebResponse)e.Response);
+            EndRequest();
+            return false;
+        }
+    }
+
+    public bool ForfeitGame(string gameId) {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(FORFEIT_GAME);
+        string requestJson = JsonConversion.GetJsonForSingleField("gameId", gameId);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
+            return true;
+        }
+        catch (WebException e) {
+            PrettyPrint(FORFEIT_GAME, (HttpWebResponse)e.Response);
+            EndRequest();
             return false;
         }
     }

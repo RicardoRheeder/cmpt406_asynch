@@ -2,7 +2,7 @@
 public enum UnitType {
     tile = -1,
     trooper = 0,
-    reacon = 1,
+    recon = 1,
     steamer = 2,
     pewpew = 3,
     compensator = 4,
@@ -12,7 +12,10 @@ public enum UnitType {
     claymore = 8,
 
     //All generals are above 100s
-    general1 = 101
+    heavy_albarn = 101,
+    piercing_tungsten = 102,
+    light_adren = 103,
+    support_sandman = 104
 }
 
 public enum UnitClass {
