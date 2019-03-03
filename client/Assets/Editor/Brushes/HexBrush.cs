@@ -58,8 +58,7 @@ namespace UnityEditor {
     }
 
     [CustomEditor(typeof(HexBrush))]
-    public class HexBrushEditor : GridBrushEditor
-    {
+    public class HexBrushEditor : GridBrushEditor {
         private HexBrush hexBrush { get { return target as HexBrush; } }
 
         private SerializedObject serializedBrush;
