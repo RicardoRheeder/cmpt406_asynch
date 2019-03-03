@@ -392,6 +392,24 @@ public class Client : MonoBehaviour {
         }
     }
 
+    public bool ReadyUnits(ReadyUnitsGameState state) {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(READY_UNITS);
+        string requestJson = JsonConversion.ConvertObjectToJson<ReadyUnitsGameState>(state);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
+            return true;
+        }
+        catch (WebException e) {
+            PrettyPrint(READY_UNITS, (HttpWebResponse)e.Response);
+            EndRequest();
+            return false;
+        }
+    }
+
     //Helper methods for the API
     private HttpWebRequest CreatePostRequest(string endpoint) {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + endpoint);

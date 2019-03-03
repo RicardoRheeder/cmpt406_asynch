@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour {
     private List<UnitStats> placedUnits;
     private int armyPositionCount = 0;
     private SpawnPoint spawnPoint;
-
+    private bool donePlacing = false;
 
     public void Initialize(GameManager manager, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
         this.deck = deck;
@@ -81,8 +81,11 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-        if (initialized) {
+        if (initialized && !donePlacing) {
             InputController();
+        }
+        if (donePlacing) {
+            manager.EndUnitPlacement();
         }
     }
 
@@ -113,7 +116,7 @@ public class PlayerController : MonoBehaviour {
                 break;
             case (PlayerState.placing):
                 if (presetTexts.Count == 0) {
-                    manager.EndUnitPlacement(placedUnits);
+                    donePlacing = true;
                 }
                 if (Input.GetMouseButtonDown(0)) {
                     if(boardController.CellIsSpawnTile(spawnPoint, tilePos) && !manager.TileContainsUnit(tilePos)) {

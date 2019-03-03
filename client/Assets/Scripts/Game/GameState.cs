@@ -167,3 +167,27 @@ public class CreatePublicGameState {
         this.boardId = boardId;
     }
 }
+
+//Special object used to ready Units
+[DataContract]
+public class ReadyUnitsGameState {
+
+    [DataMember]
+    private string gameId;
+
+    [DataMember]
+    private List<UnitStats> units;
+
+    [DataMember]
+    private UnitStats general;
+
+    [DataMember]
+    private CardController cards;
+
+    public ReadyUnitsGameState(string gameId, List<UnitStats> units, UnitStats general, CardController cards) {
+        this.gameId = gameId;
+        this.units = units;
+        this.general = general;
+        this.cards = cards;
+    }
+}

@@ -18,7 +18,8 @@ public class CardController {
     [DataMember]
     private List<Card> discardPile;
 
-    public CardController(List<Card> hand, List<Card> drawPile, List<Card> discardPile) {
+    public CardController(string username, List<Card> hand, List<Card> drawPile, List<Card> discardPile) {
+        this.owner = username;
         this.hand = hand;
         this.drawPile = drawPile;
         this.discardPile = discardPile;

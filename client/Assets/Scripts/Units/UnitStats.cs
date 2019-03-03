@@ -6,16 +6,16 @@ using UnityEngine;
 public class UnitStats {
 
     //General Unit information
-    [DataMember]
+    [DataMember(Name = "unitType")]
     private int serverUnitType = -1;
     public UnitType UnitType { get; private set; }
     public UnitClass UnitClass { get; private set; }
     public int Cost { get; private set; }
     [DataMember]
-    public string Owner { get; private set; }
+    public string Owner { get; set; }
 
     //defense stats
-    [DataMember(Name = "currentHp")]
+    [DataMember(Name = "health")]
     public int CurrentHP { get; private set; }
     public int MaxHP { get; private set; }
     public int Armour { get; private set; }

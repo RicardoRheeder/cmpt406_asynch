@@ -31,23 +31,17 @@ public class GameManager : MonoBehaviour {
     private ArmyPreset selectedPreset;
 
     //Dictionary used to store the units.
-    Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
+    private Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
 
-    UnitStats testUnit_1 = UnitFactory.GetBaseUnit(UnitType.claymore);
-    UnitStats testUnit_2 = UnitFactory.GetBaseUnit(UnitType.compensator);
-    UnitStats testUnit_3 = UnitFactory.GetBaseUnit(UnitType.steamer);
-    UnitStats temp = UnitFactory.GetBaseUnit(UnitType.trooper);
+    //Logic to handle the case where we are placing units;
+    private List<UnitStats> placedUnits;
+    private bool isPlacing = false;
 
     // Start is called before the first frame update
     void Start() {
         DontDestroyOnLoad(this.gameObject);
 
         client = GameObject.Find("Networking").GetComponent<Client>();
-
-        // for testing
-        unitPositions.Add(new Vector2Int(0, 0),testUnit_1);
-        unitPositions.Add(new Vector2Int(0, -2), testUnit_2);
-        unitPositions.Add(new Vector2Int(1, 3), testUnit_3);
     }
 
     //The method called when the load game button is pressed
@@ -55,6 +49,7 @@ public class GameManager : MonoBehaviour {
     public void LoadGame(GameState state) {
         this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
         this.user = client.UserInformation;
+        this.isPlacing = false;
 
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
@@ -67,6 +62,8 @@ public class GameManager : MonoBehaviour {
         this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
         this.user = client.UserInformation;
         this.selectedPreset = selectedPreset;
+        this.isPlacing = true;
+        this.placedUnits = new List<UnitStats>();
 
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnPlaceUnits;
@@ -91,7 +88,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, gameBuilder, boardController, false);
+        playerController.Initialize(this, null, gameBuilder, boardController, isPlacing);
   
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -107,7 +104,7 @@ public class GameManager : MonoBehaviour {
 
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, user.Username, ref boardController, true, selectedPreset);
+        gameBuilder.Build(ref state, user.Username, ref boardController, isPlacing, selectedPreset);
 
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
@@ -140,14 +137,23 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadScene("MainMenu");
     }
 
-    public void EndUnitPlacement(List<UnitStats> placedUnits) {
+    public void EndUnitPlacement() {
         //This function will have to figure out how to send the unit data to the server, and confirm that we are going
         //to be playing in this game
+        UnitStats general = placedUnits[0];
+        CardController cards = CardFactory.GetCardControllerFromUnits(placedUnits, user.Username);
+        placedUnits.RemoveAt(0);
+        ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general, cards);
+        client.ReadyUnits(readyState);
         SceneManager.LoadScene("MainMenu");
     }
 
+    //Used for unit placement
     public void CreateUnitAtPos(Vector2Int position, int unit) {
-        unitPositions.Add(position, gameBuilder.InstantiateUnit(position, unit));
+        UnitStats createdUnit = gameBuilder.InstantiateUnit(position, unit);
+        createdUnit.Owner = user.Username;
+        placedUnits.Add(createdUnit);
+        unitPositions.Add(position, createdUnit);
     }
 
     //===================== Functions used to handle units ===================
