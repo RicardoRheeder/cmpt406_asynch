@@ -39,6 +39,9 @@ public class MainMenu : MonoBehaviour {
     private TMP_Text pendingTurnNumber;
     private Button pendingJoinButton;
 
+    //Variables for the active games  display
+    private Button activeJoinButton;
+
     //Variables for the army selector display
     private GameObject armyChooserViewport;
 
@@ -68,6 +71,8 @@ public class MainMenu : MonoBehaviour {
         pendingMaxPlayers = GameObject.Find("PendingMaxPlayers").GetComponent<TMP_Text>();
         pendingTurnNumber = GameObject.Find("PendingTurnNumber").GetComponent<TMP_Text>();
         pendingJoinButton = GameObject.Find("PendingJoinButton").GetComponent<Button>();
+
+        activeJoinButton = GameObject.Find("ActiveJoinButton").GetComponent<Button>();
 
         armyChooserViewport = GameObject.Find("ArmyChooserViewport");
 
@@ -112,6 +117,17 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void ActiveGameCellDetailsButton(GameState state) {
+        //Set up the display information
+        /*
+        pendingMapName.SetText(state.boardId.ToString());
+        pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
+        pendingMaxPlayers.SetText("" + state.maxUsers);
+        pendingTurnNumber.SetText("" + state.TurnNumber);
+        */
+
+        //Set up the join button to call the join function with the current state
+        activeJoinButton.onClick.RemoveAllListeners();
+        activeJoinButton.onClick.AddListener(() => manager.LoadGame(state));
     }
 
     public void PublicGameCellDetailsButton(GameState state) {
@@ -160,11 +176,13 @@ public class MainMenu : MonoBehaviour {
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
             foreach (var state in response.Second.states) {
-                GameObject newGameCell = Instantiate(gameListCellPrefab);
-                Button cellButton = newGameCell.GetComponent<Button>();
-                cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
-                cellButton.onClick.AddListener(() => ActiveGameCellDetailsButton(state));
-                newGameCell.transform.SetParent(activeGamesViewContent.transform, false);
+                if (state.UsersTurn == networkApi.UserInformation.Username) {
+                    GameObject newGameCell = Instantiate(gameListCellPrefab);
+                    Button cellButton = newGameCell.GetComponent<Button>();
+                    cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.GetDescription());
+                    cellButton.onClick.AddListener(() => ActiveGameCellDetailsButton(state));
+                    newGameCell.transform.SetParent(activeGamesViewContent.transform, false);
+                }
             }
         }
         else {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
 public class GameManager : MonoBehaviour {
@@ -47,7 +48,7 @@ public class GameManager : MonoBehaviour {
     //The method called when the load game button is pressed
     //Since we are loading the correct scene, we have to setup the onsceneloaded function
     public void LoadGame(GameState state) {
-        this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
+        this.state = state;
         this.user = client.UserInformation;
         this.isPlacing = false;
 
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour {
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
+        GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
 
         inGameMenu.SetupPanels(isPlacing: false);
 

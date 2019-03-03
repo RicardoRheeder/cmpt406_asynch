@@ -56,6 +56,10 @@ public class UnitStats {
         this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
     }
 
+    public string GetDisplayName() {
+        return UnitMetadata.ReadableNames[this.UnitType];
+    }
+
     public void SetUnit(Unit unit) {
         this.MyUnit = unit;
     }

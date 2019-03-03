@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour {
     private TMP_Text unitDisplayAOE;
     private TMP_Text unitDisplayPierce;
     private TMP_Text unitDisplayMovementSpeed;
+    private TMP_Text unitDisplayName;
 
     private Button attackButton;
     private Button movementButton;
@@ -67,8 +68,9 @@ public class PlayerController : MonoBehaviour {
             unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
             unitDisplayAOE = GameObject.Find("unitDisplayAOE").GetComponent<TMP_Text>();
             unitDisplayDamage = GameObject.Find("unitDisplayDamage").GetComponent<TMP_Text>();
-            unitDisplayMovementSpeed = GameObject.Find("unitDisplaySpeed").GetComponent<TMP_Text>();
+            unitDisplayMovementSpeed = GameObject.Find("unitDisplayMove").GetComponent<TMP_Text>();
             unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
+            unitDisplayName = GameObject.Find("unitName").GetComponent<TMP_Text>();
 
             attackButton = GameObject.Find("AttackButton").GetComponent<Button>();
             attackButton.onClick.AddListener(AttackButton);
@@ -163,5 +165,6 @@ public class PlayerController : MonoBehaviour {
         unitDisplayDamage.text = damage;
         unitDisplayMovementSpeed.text = movementSpeed;
         unitDisplayPierce.text = pierce;
+        unitDisplayName.text = unit.GetDisplayName();
     }
 }
