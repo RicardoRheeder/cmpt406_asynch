@@ -4,10 +4,10 @@ using UnityEngine;
 
 public enum SpawnPoint {
     none = -1,
-    Player1 = 1,
-    Player2 = 2,
-    Player3 = 3,
-    Player4 = 4,
-    Player5 = 5,
-    Player6 = 6
+    Player1 = 0,
+    Player2 = 1,
+    Player3 = 2,
+    Player4 = 3,
+    Player5 = 4,
+    Player6 = 5
 }
