@@ -42,7 +42,9 @@ public class PlayerController : MonoBehaviour {
     };
     private PlayerState controllerState;
     private ArmyPreset armyPreset;
-    private List<Vector2Int> spawnTiles;
+    private List<GameObject> presetTexts;
+    private List<UnitStats> placedUnits;
+
 
     public void Initialize(GameManager manager, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null) {
         this.deck = deck;
@@ -53,8 +55,8 @@ public class PlayerController : MonoBehaviour {
         if(isPlacing) {
             controllerState = PlayerState.placing;
             this.armyPreset = armyPreset;
+            this.presetTexts = presetTexts;
             //Highlight spawn tiles and cache dictionary of spawns
-            spawnTiles = new List<Vector2Int>();
             boardController.HighlightSpawnZone(SpawnPoint.Player1);
         }
         else {
@@ -109,9 +111,15 @@ public class PlayerController : MonoBehaviour {
                 }
                 break;
             case (PlayerState.placing):
+                if (presetTexts.Count == 0) {
+                    manager.EndUnitPlacement(placedUnits);
+                }
                 if (Input.GetMouseButtonDown(0)) {
                     if(boardController.CellIsSpawnTile(SpawnPoint.Player1, tilePos)) {
-
+                        int unit = armyPreset.Units[0];
+                        GameObject unitText = presetTexts[0];
+                        Destroy(unitText);
+                        presetTexts.RemoveAt(0);
                     }
                 }
                 break;

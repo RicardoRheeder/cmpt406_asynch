@@ -124,7 +124,7 @@ public class BoardController {
 
     public void HighlightSpawnZone(SpawnPoint player) {
         foreach (HexTile tile in tilemap.GetTilesBlock(tilemap.cellBounds)) {
-            if (tile.spawnPoint == player) {
+            if (tile != null && tile.spawnPoint == player) {
                 //highlight said tile
             }
         }

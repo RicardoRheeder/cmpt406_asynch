@@ -8,16 +8,6 @@ public class GameBuilder : MonoBehaviour {
 
     public Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
 
-    //Prefabs used to set up the scene
-    public GameObject inGameUiPrefab;
-    private GameObject inGameUi;
-    public GameObject placementUiPrefab;
-    private GameObject placementUi;
-    public GameObject inGameCameraPrefab;
-    private GameObject inGameCamera;
-    public GameObject inGameLightPrefab;
-    private GameObject inGameLight;
-
     //Reference to the menus
     public GameObject unitDisplayPrefab;
     private GameObject unitPlacementViewport;
@@ -68,12 +58,9 @@ public class GameBuilder : MonoBehaviour {
     //Method responsible for instantiate the canvas, the camera rig, the light(s),
     //  and making sure the camera rig script has the appropriate parameters
     private void SetupScene() {
-        inGameCamera = Instantiate(inGameCameraPrefab);
-        inGameCamera.GetComponent<CameraMovement>().UpdateLimits();
-        inGameLight = Instantiate(inGameLightPrefab);
+        GameObject.Find("CameraRig").GetComponent<CameraMovement>().UpdateLimits();
         if (isPlacing) {
-            placementUi = Instantiate(placementUiPrefab);
-            unitPlacementViewport = GameObject.Find("UnitPlacementViewport");
+            unitPlacementViewport = GameObject.Find("PlaceUnitsViewport");
             UnitDisplayTexts = new List<GameObject>();
 
             GameObject generalText = Instantiate(unitDisplayPrefab);
@@ -87,9 +74,6 @@ public class GameBuilder : MonoBehaviour {
                 unitText.GetComponent<TMP_Text>().SetText(((UnitType)unit).ToString());
             }
         }
-        else {
-            inGameUi = Instantiate(inGameUiPrefab);
-        }
     }
 
     //Method responsible for making sure all of the units are created with the appropriate gameobjects
@@ -98,14 +82,15 @@ public class GameBuilder : MonoBehaviour {
         List<UnitStats> units = state.UserUnitsMap.ContainsKey(username) ? state.UserUnitsMap[username] : new List<UnitStats>();
         for (int i = 0; i < units.Count; i++) {
             UnitStats unitStats = units[i];
-            unitPositions.Add(unitStats.Position, unitStats);
-            GameObject unit = Instantiate(typePrefabStorage[unitStats.UnitType]);
-            unit.transform.position = board.CellToWorld((Vector3Int)unitStats.Position);
-            unitStats.SetUnit(unit.GetComponent<Unit>());
+            unitPositions.Add(unitStats.Position, InstantiateUnit(unitStats.Position, (int)unitStats.UnitType));
         }
     }
 
-    public void InstantiateUnit(int unit) {
-
+    public UnitStats InstantiateUnit(Vector2Int position, int type) {
+        UnitStats unit = UnitFactory.GetBaseUnit((UnitType)type);
+        GameObject unitObject = Instantiate(typePrefabStorage[unit.UnitType]);
+        unit.SetUnit(unitObject.GetComponent<Unit>());
+        unit.Move(position, ref board);
+        return unit;
     }
 }

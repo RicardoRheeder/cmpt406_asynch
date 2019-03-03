@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour {
 
     private BoardController boardController;
 
+    private InGameMenu inGameMenu;
+
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
     private List<Action> turnActions;
 
@@ -71,6 +73,10 @@ public class GameManager : MonoBehaviour {
     }
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
+        inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
+
+        inGameMenu.SetupPanels(isPlacing: false);
+
         boardController = new BoardController();
         boardController.Initialize();
 
@@ -90,6 +96,10 @@ public class GameManager : MonoBehaviour {
     }
 
     private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
+        inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
+
+        inGameMenu.SetupPanels(isPlacing: true);
+
         boardController = new BoardController();
         boardController.Initialize();
 
@@ -117,11 +127,17 @@ public class GameManager : MonoBehaviour {
 
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
+        SceneManager.LoadScene("MainMenu");
     }
 
-    public void EndUnitPlacement() {
+    public void EndUnitPlacement(List<UnitStats> placedUnits) {
         //This function will have to figure out how to send the unit data to the server, and confirm that we are going
         //to be playing in this game
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void CreateUnitAtPos(Vector2Int position, int unit) {
+        unitPositions.Add(position, gameBuilder.InstantiateUnit(position, unit));
     }
 
     //===================== Functions used to handle units ===================
@@ -140,7 +156,7 @@ public class GameManager : MonoBehaviour {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
                 unitPositions.Remove(targetUnit);
                 unitPositions[endpoint] = unit;
-                unit.Move(endpoint);
+                unit.Move(endpoint, ref boardController);
             }
         }
     }
