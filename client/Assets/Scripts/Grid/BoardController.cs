@@ -130,6 +130,38 @@ public class BoardController {
         }
     }
 
+    //Feel free to make changes as necessary -jp
+    //This function highlights a single tile. And disables the previous highlighted when another tile is selected
+    private void HighlightTile(Vector3Int pos) {
+        GameObject tileObject;
+        if (this.HasHexTile(pos)) {
+            HexTile tile = this.GetHexTile(pos); //get the Hex tile using Vector3Int position
+            tileObject = tile.GetTileObject(); //get the tile game object 
+
+            //check if tileObject has the Outline component attached -- using cakeslice.Outline because it was giving this error "'Outline' is an ambiguous reference between 'cakeslice.Outline' and 'UnityEngine.UI.Outline'"
+            if (tileObject.GetComponent<cakeslice.Outline>()) {
+                EnableHighlight(tileObject);
+            }
+            else {
+                tileObject = null;  //this is for tiles that do not have the Outline component from the prefab but are stored in tileObject. Might remove in future 
+            }
+        }
+    }
+    
+    //enables the outline script component on the tile game object 
+    private void EnableHighlight(GameObject go) {
+        if (go.GetComponent<cakeslice.Outline>()) {
+            go.GetComponent<cakeslice.Outline>().enabled = true;
+        }
+    }
+
+    //disables the outline script component on the tile game object 
+    private void DisableHighlight(GameObject go) {
+        if (go.GetComponent<cakeslice.Outline>()) {
+            go.GetComponent<cakeslice.Outline>().enabled = false;
+        }
+    }
+
     public bool CellIsSpawnTile(SpawnPoint player, Vector2Int pos) {
         if(HasHexTile((Vector3Int) pos)) {
             return GetHexTile((Vector3Int)pos).spawnPoint == player;

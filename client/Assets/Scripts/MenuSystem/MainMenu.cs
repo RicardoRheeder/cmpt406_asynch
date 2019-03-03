@@ -231,14 +231,12 @@ public class MainMenu : MonoBehaviour {
         SceneManager.LoadScene("LoginScreen");
     }
 
-    public string storedId;
     public void MainMenuJoinPendingGame(GameState state) {
-        storedId = state.id;
-        networkApi.AcceptGame(storedId);
+        networkApi.AcceptGame(state.id);
         MainMenuArmySelectorButton();
         int maxCost = BoardMetadata.CostDict[state.boardId];
         List<ArmyPreset> presets = ArmyBuilder.GetPresetsUnderCost(maxCost);
-        foreach(var preset in presets) {
+        foreach (var preset in presets) {
             GameObject armyCell = Instantiate(gameListCellPrefab);
             Button armyButton = armyCell.GetComponent<Button>();
             armyButton.GetComponentsInChildren<TMP_Text>()[0].SetText(preset.GetDescription());
@@ -249,7 +247,6 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuArmySelectorBack() {
         mainMenuContainer.SetActive(true);
-        networkApi.BackOutGame(storedId);
         SetMenuState(true, false, false, false, false, false);
     }
 

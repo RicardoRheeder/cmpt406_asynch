@@ -103,12 +103,20 @@ public class GameManager : MonoBehaviour {
         boardController = new BoardController();
         boardController.Initialize();
 
+        unitPositions = gameBuilder.unitPositions;
+        turnActions = new List<Action>();
+
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(ref state, user.Username, ref boardController, true, selectedPreset);
 
-        unitPositions = gameBuilder.unitPositions;
-        turnActions = new List<Action>();
+        SpawnPoint spawnPoint = SpawnPoint.none;
+        for (int i = 0; i < state.AcceptedUsers.Count; i++) {
+            if( state.AcceptedUsers[i] == user.Username) {
+                spawnPoint = (SpawnPoint)i;
+                break;
+            }
+        }
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();

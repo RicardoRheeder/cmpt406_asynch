@@ -25,8 +25,6 @@ public class PlayerController : MonoBehaviour {
     private Button attackButton;
     private Button movementButton;
 
-    private GameObject tileObject; //test
-
     private UnitStats selectedUnit;
 
     private bool initialized = false;
@@ -43,13 +41,15 @@ public class PlayerController : MonoBehaviour {
     private List<GameObject> presetTexts;
     private List<UnitStats> placedUnits;
     private int armyPositionCount = 0;
+    private SpawnPoint spawnPoint;
 
 
-    public void Initialize(GameManager manager, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null) {
+    public void Initialize(GameManager manager, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
         this.builder = builder;
+        this.spawnPoint = spawnPoint;
 
         if(isPlacing) {
             controllerState = PlayerState.placing;
@@ -58,8 +58,7 @@ public class PlayerController : MonoBehaviour {
             };
             this.armyPreset.AddRange(armyPreset.Units);
             this.presetTexts = presetTexts;
-            //Highlight spawn tiles and cache dictionary of spawns
-            boardController.HighlightSpawnZone(SpawnPoint.Player1);
+            boardController.HighlightSpawnZone(spawnPoint);
         }
         else {
             controllerState = PlayerState.playing;
@@ -92,7 +91,7 @@ public class PlayerController : MonoBehaviour {
         switch(controllerState) {
             case (PlayerState.playing):
                 if (Input.GetMouseButtonDown(0)) {
-                    HighlightTile((Vector3Int)tilePos);
+                    boardController.HighlightTile((Vector3Int)tilePos);
 
                     if (isMoving) {
                         manager.MoveUnit(selectedUnit.Position, tilePos);
@@ -117,14 +116,14 @@ public class PlayerController : MonoBehaviour {
                     manager.EndUnitPlacement(placedUnits);
                 }
                 if (Input.GetMouseButtonDown(0)) {
-                    //if(boardController.CellIsSpawnTile(SpawnPoint.Player1, tilePos) && !manager.TileContainsUnit(tilePos)) {
-                        int unit = armyPreset[armyPositionCount];
+                    if(boardController.CellIsSpawnTile(spawnPoint, tilePos) && !manager.TileContainsUnit(tilePos)) {
+                    int unit = armyPreset[armyPositionCount];
                         armyPositionCount++;
                         manager.CreateUnitAtPos(tilePos, unit);
                         GameObject unitText = presetTexts[0];
                         Destroy(unitText);
                         presetTexts.RemoveAt(0);
-                    //}
+                    }
                 }
                 break;
             default:
@@ -141,42 +140,6 @@ public class PlayerController : MonoBehaviour {
     private void AttackButton() {
         isAttacking = !isAttacking;
         isMoving = false;
-    }
-    
-    //Feel free to make changes as necessary -jp
-    //This function highlights a single tile. And disables the previous highlighted when another tile is selected
-    private void HighlightTile(Vector3Int pos){
-
-        if (boardController.HasHexTile(pos)){
-            //if tileObject is not null that means a previous tile is highlighted
-            if (tileObject != null) {
-                DisableHighlight(tileObject); //so, disable that object
-            }
-            HexTile tile = boardController.GetHexTile(pos); //get the Hex tile using Vector3Int position
-            tileObject = tile.GetTileObject(); //get the tile game object 
-            
-            //check if tileObject has the Outline component attached -- using cakeslice.Outline because it was giving this error "'Outline' is an ambiguous reference between 'cakeslice.Outline' and 'UnityEngine.UI.Outline'"
-            if (tileObject.GetComponent<cakeslice.Outline>()){
-                EnableHighlight(tileObject);
-            }
-            else {
-                tileObject = null;  //this is for tiles that do not have the Outline component from the prefab but are stored in tileObject. Might remove in future 
-            }
-        }
-    }
-
-    //enables the outline script component on the tile game object 
-    private void EnableHighlight(GameObject go){
-        if (go.GetComponent<cakeslice.Outline>()) {
-            go.GetComponent<cakeslice.Outline>().enabled = true;
-        }
-    }
-
-    //disables the outline script component on the tile game object 
-    private void DisableHighlight(GameObject go){
-        if (go.GetComponent<cakeslice.Outline>()) {
-            go.GetComponent<cakeslice.Outline>().enabled = false;
-        }
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {
