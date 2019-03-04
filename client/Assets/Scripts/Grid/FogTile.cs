@@ -16,6 +16,7 @@ public class FogTile : TileBase {
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
             go.transform.rotation = Quaternion.Euler(0,0,0);
+            go.transform.lossyScale.Set(1,5,1);
             tileObject = go;
         }
 

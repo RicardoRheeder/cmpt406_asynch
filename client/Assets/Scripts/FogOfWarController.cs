@@ -8,6 +8,11 @@ public class FogOfWarController : MonoBehaviour {
     Tilemap fogTilemap;
     Tilemap baseTilemap;
 
+    void Start() {
+        Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+        InitializeFogOfWar(tilemap);
+    }
+
     public void InitializeFogOfWar(Tilemap tilemap) {
         if(tilemap == null) {
             return;
@@ -16,6 +21,8 @@ public class FogOfWarController : MonoBehaviour {
         if(fogTilemap == null) {
             GameObject newTilemap = new GameObject();
             newTilemap.AddComponent(typeof(Tilemap));
+            newTilemap.AddComponent(typeof(TilemapRenderer));
+            newTilemap.name = "FogTilemap";
             fogTilemap = newTilemap.GetComponent<Tilemap>();
         }
         fogTilemap.ClearAllTiles();
@@ -23,10 +30,11 @@ public class FogOfWarController : MonoBehaviour {
         fogTilemap.transform.position = tilemap.transform.position;
 
         TileBase[] tiles = tilemap.GetTilesBlock(tilemap.cellBounds);
-        for(int x = 0; x < tilemap.cellBounds.x; x++) {
-            for(int y = 0; y < tilemap.cellBounds.y; y++) {
+        for(int x = 0; x < tilemap.cellBounds.size.x; x++) {
+            for(int y = 0; y < tilemap.cellBounds.size.y; y++) {
                 if(tiles[x + y * tilemap.cellBounds.size.x] != null) {
-                    fogTilemap.SetTile(new Vector3Int(x,y,0), new FogTile());
+                    FogTile fogTile = ScriptableObject.CreateInstance(typeof(FogTile)) as FogTile;
+                    fogTilemap.SetTile(new Vector3Int(x,y,0), fogTile);
                 }
             }
         }
