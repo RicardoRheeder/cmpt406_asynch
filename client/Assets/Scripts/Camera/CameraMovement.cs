@@ -34,18 +34,19 @@ public class CameraMovement : MonoBehaviour {
     [Tooltip("Maximum speed the camera can rotate")]
     public float maxRotationSpeed = 20f;
 
-    [Tooltip("The tilemap used to determine camera bounds")]
-    public Tilemap tilemap;
-
+    private Tilemap tilemap; // used to determine camera bounds
     private float zoom;
     private Vector2 rotationAnchorPoint;
+    private Vector3 maxBound;
+    private Vector3 minBound;
 
     private void Awake() {
         zoom = Camera.main.orthographicSize;
-    }
-
-    public void UpdateLimits() {
-
+        tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+        if(tilemap != null) {
+            maxBound = tilemap.CellToWorld(tilemap.cellBounds.max);
+            minBound = tilemap.CellToWorld(tilemap.cellBounds.min);
+        }
     }
 
     // LateUpdate is called every frame, if the Behaviour is enabled
@@ -87,7 +88,7 @@ public class CameraMovement : MonoBehaviour {
         }
 
         if(tilemap != null) {
-            transform.position = new Vector3(Mathf.Clamp(transform.position.x,tilemap.localBounds.min.x,tilemap.localBounds.max.x),transform.position.y,Mathf.Clamp(transform.position.z,tilemap.localBounds.min.y,tilemap.localBounds.max.y));
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x,minBound.x,maxBound.x),transform.position.y,Mathf.Clamp(transform.position.z,minBound.z,maxBound.z));
         }
     }
 

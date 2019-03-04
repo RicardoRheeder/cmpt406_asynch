@@ -71,9 +71,7 @@ public class GameBuilder : MonoBehaviour {
     }
 
     //Method responsible for instantiate the canvas, the camera rig, the light(s),
-    //  and making sure the camera rig script has the appropriate parameters
     private void SetupScene() {
-        GameObject.Find("CameraRig").GetComponent<CameraMovement>().UpdateLimits();
         if (isPlacing) {
             unitPlacementViewport = GameObject.Find("PlaceUnitsViewport");
             UnitDisplayTexts = new List<GameObject>();
