@@ -5,6 +5,7 @@ using UnityEngine;
 public class AnalyticsManager : MonoBehaviour
 {
     public Client client;
+    public GameManager gm;
 
     /* We're gonna sum up the total damage each UnitType did */
     /* As well as the total damage it did to each individual other UnitType */
@@ -14,7 +15,7 @@ public class AnalyticsManager : MonoBehaviour
         public Dictionary<UnitType, int> DamagePerUnitType;
     }
 
-    private Dictionary<Vector2Int, UnitType> localBoard;
+    private Dictionary<Vector2Int, UnitStats> localBoard;
 
     void Start()
     {
@@ -38,7 +39,7 @@ public class AnalyticsManager : MonoBehaviour
         
         /* We now have a list of GameStates to loop over and build data with */
         foreach(GameState gameState in response.Second.states) {
-            if (gameState.InitUnits.Count <= 0) {
+            if (gameState.InitUnits == null || gameState.InitUnits.Count <= 0) {
                 Debug.LogError("There are no units for this game??");
                 continue;
             }
@@ -48,9 +49,9 @@ public class AnalyticsManager : MonoBehaviour
             }
             
             /* Initialize the local board given the initUnits */
-            localBoard = new Dictionary<Vector2Int, UnitType>();
+            localBoard = new Dictionary<Vector2Int, UnitStats>();
             foreach(UnitStats unit in gameState.InitUnits) {
-                localBoard[unit.Position] = unit.UnitType;
+                localBoard[unit.Position] = UnitFactory.GetBaseUnit(unit.UnitType);
             }
 
             /* Loop over the actions and pool the data */
@@ -73,15 +74,18 @@ public class AnalyticsManager : MonoBehaviour
         /* TODO: Now show this data somehow */
         foreach(KeyValuePair<UnitType, UnitAnalyticsValue> pair in unitStats) {
             Debug.Log("UnitType: " + pair.Key + " Has a total damage of: " + pair.Value.TotalDamage);
+            foreach(KeyValuePair<UnitType, int> innerPair in pair.Value.DamagePerUnitType ) {
+                Debug.Log("UnitType: " + pair.Key + " Has a total damage of: " + innerPair.Value + " to UnitType: " + innerPair.Key);
+            }
         }
     }
 
     private void movementAction(int sourceXPos, int sourceYPos, int targetXPos, int targetYPos) {
-        UnitType unitTypeThatMoved;
+        UnitStats unitThatMoved;
         Vector2Int source = new Vector2Int(sourceXPos, sourceYPos);
         Vector2Int target = new Vector2Int(targetXPos, targetYPos);
         /* Error checks */
-        if (!localBoard.TryGetValue(source, out unitTypeThatMoved)){
+        if (!localBoard.TryGetValue(source, out unitThatMoved)){
             Debug.LogError("No unit with this source");
             return;
         }
@@ -92,55 +96,88 @@ public class AnalyticsManager : MonoBehaviour
 
         /* Move the unit */
         localBoard.Remove(source);
-        localBoard.Add(target, unitTypeThatMoved);
+        localBoard.Add(target, unitThatMoved);
 
         return;
     }
 
     private void attackAction(int sourceXPos, int sourceYPos, int targetXPos, int targetYPos) {
-        UnitType sourceUnitType;
-        UnitType targetUnitType;
+        UnitStats sourceUnit;
         
         Vector2Int source = new Vector2Int(sourceXPos, sourceYPos);
         Vector2Int target = new Vector2Int(targetXPos, targetYPos);
 
         /* Get the units that are involved */
-        if (!localBoard.TryGetValue(source, out sourceUnitType)){
+        if (!localBoard.TryGetValue(source, out sourceUnit)){
             Debug.LogError("No unit with this source");
             return;
         }
-        if (!localBoard.TryGetValue(target, out targetUnitType)){
-            Debug.LogError("No unit with this target");
-            return;
-        }
 
-        /* TODO: Find the damage that the source unit does */
-        int damage = 5;
-
-        /* Update the Dict to increase total damages */
-
-        UnitAnalyticsValue curUav;
-        if (!unitStats.TryGetValue(sourceUnitType, out curUav)) {
-            // UnitType is not yet in Dict
-            curUav.TotalDamage = damage;
-            curUav.DamagePerUnitType = new Dictionary<UnitType, int>();
-            curUav.DamagePerUnitType[targetUnitType] = damage;
-        } else {
-            /* UnitType is in the Dict already, don't erase values, increment them */
-            curUav.TotalDamage = curUav.TotalDamage + damage;
-            
-            /* Also increment the specific damage done to that UnitType */
-            int totalDamagePerUnitType;
-            if (!curUav.DamagePerUnitType.TryGetValue(targetUnitType, out totalDamagePerUnitType)) {
-                curUav.DamagePerUnitType[targetUnitType] = damage;
+        /* Get the array of simulated damages */
+        List<SimulatedDamage> damages = GetSimulatedDamage(sourceUnit, target, localBoard);
+        if (damages.Count > 0) {
+            /* They hit something(s) */
+            foreach(SimulatedDamage damage in damages) {
+                /* Update the Dict to increase total damages */
+            UnitAnalyticsValue curUav;
+            if (!unitStats.TryGetValue(sourceUnit.UnitType, out curUav)) {
+                // UnitType is not yet in Dict
+                curUav.TotalDamage = damage.damage;
+                curUav.DamagePerUnitType = new Dictionary<UnitType, int>();
+                curUav.DamagePerUnitType[damage.unitType] = damage.damage;
             } else {
-                curUav.DamagePerUnitType[targetUnitType] = totalDamagePerUnitType + damage;
+                /* UnitType is in the Dict already, don't erase values, increment them */
+                curUav.TotalDamage = curUav.TotalDamage + damage.damage;
+                
+                /* Also increment the specific damage done to that UnitType */
+                int totalDamagePerUnitType;
+                if (!curUav.DamagePerUnitType.TryGetValue(damage.unitType, out totalDamagePerUnitType)) {
+                    curUav.DamagePerUnitType[damage.unitType] = damage.damage;
+                } else {
+                    curUav.DamagePerUnitType[damage.unitType] = totalDamagePerUnitType + damage.damage;
+                }
             }
+            /* Put all changes */
+            unitStats[sourceUnit.UnitType] = curUav; // Note, using dict[key] = val will overwrite values. dict.Add() will not overwrite values
+            }
+
         }
-        /* Put all changes */
-        unitStats[sourceUnitType] = curUav; // Note, using dict[key] = val will overwrite values. dict.Add() will not overwrite values
 
         return;
+    }
+
+    // This is used for analytics. No, I don't like it, but it was the fastest version of doing this.
+    public struct SimulatedDamage {
+        public int damage;
+        public UnitType unitType;
+    }
+
+    private List<SimulatedDamage> GetSimulatedDamage(UnitStats sourceUnit, Vector2Int target, Dictionary<Vector2Int, UnitStats> fakeBoard) {
+        List<SimulatedDamage> damageList = new List<SimulatedDamage>();
+
+        List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
+        foreach (var damage in damages) {
+
+            bool containsUnit = fakeBoard.ContainsKey(damage.First);
+            UnitStats targetUnit = containsUnit ? fakeBoard[damage.First] : null;
+
+            if (targetUnit != null) {
+                int initHealth = targetUnit.CurrentHP;
+
+                int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
+                targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce);
+                int damageDiff = initHealth - targetUnit.CurrentHP;
+
+                // Add this damage too list of damages
+                if (damageDiff > 0) {
+                    SimulatedDamage sd;
+                    sd.damage = damageDiff;
+                    sd.unitType = targetUnit.UnitType;
+                    damageList.Add(sd);
+                }
+            }
+        }
+        return damageList;
     }
 }
 
