@@ -93,8 +93,12 @@ public class GameBuilder : MonoBehaviour {
 
     //Method responsible for making sure all of the units are created with the appropriate gameobjects
     private void InstantiateUnits() {
-        //this check shouldn't be required
-        foreach(var userUnitList in state.UserUnitsMap) {
+        foreach (var userGeneralList in state.UserGeneralsMap) {
+            foreach (var general in userGeneralList.Value) {
+                unitPositions.Add(general.Position, InstantiateUnit(general.Position, (int)general.UnitType, general.Owner));
+            }
+        }
+        foreach (var userUnitList in state.UserUnitsMap) {
             foreach(var unit in userUnitList.Value) {
                 unitPositions.Add(unit.Position, InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner));
             }

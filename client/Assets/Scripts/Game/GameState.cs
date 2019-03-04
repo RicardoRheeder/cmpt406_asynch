@@ -224,13 +224,13 @@ public class EndTurnState {
     [DataMember]
     private List<Action> actions;
 
-    public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> units) {
-        this.gameId = state.id;
-        this.actions = turnActions;
+    public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> allUnits) {
+        gameId = state.id;
+        actions = turnActions;
 
         units = new List<UnitStats>();
         generals = new List<UnitStats>();
-        foreach(var unit in units) {
+        foreach(var unit in allUnits) {
             if ((int)unit.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
                 generals.Add(unit);
             }

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using System.Linq;
 
 using cakeslice; //for Outline effect package
+using UnityEngine.EventSystems;
+
 public class PlayerController : MonoBehaviour {
 
    
@@ -99,24 +101,27 @@ public class PlayerController : MonoBehaviour {
         switch(controllerState) {
             case (PlayerState.playing):
                 if (Input.GetMouseButtonDown(0)) {
-                    boardController.HighlightTile(tilePos);
-
-                    if (isMoving) {
-                        if(highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                            Debug.Log("here");
-                            manager.MoveUnit(selectedUnit.Position, tilePos);
-                            isMoving = false;
+                    if (!EventSystem.current.IsPointerOverGameObject()) {
+                        if (isMoving) {
+                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                Debug.Log("here");
+                                manager.MoveUnit(selectedUnit.Position, tilePos);
+                                isMoving = false;
+                                boardController.ClearHighlighting();
+                            }
                         }
-                    }
-                    else if (isAttacking) {
-                        if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                            manager.AttackUnit(selectedUnit.Position, tilePos);
-                            isAttacking = false;
+                        else if (isAttacking) {
+                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                Debug.Log("here");
+                                manager.AttackUnit(selectedUnit.Position, tilePos);
+                                isAttacking = false;
+                                boardController.ClearHighlighting();
+                            }
                         }
-                    }
-                    else if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
-                        selectedUnit = unit;
-                        UpdateUnitDisplay(selectedUnit);
+                        else if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                            selectedUnit = unit;
+                            UpdateUnitDisplay(selectedUnit);
+                        }
                     }
                 }
                 break;
@@ -125,13 +130,15 @@ public class PlayerController : MonoBehaviour {
                     donePlacing = true;
                 }
                 if (Input.GetMouseButtonDown(0)) {
-                    if(boardController.CellIsSpawnTile(spawnPoint, tilePos) && !manager.TileContainsUnit(tilePos)) {
-                        int unit = armyPreset[armyPositionCount];
-                        armyPositionCount++;
-                        manager.CreateUnitAtPos(tilePos, unit);
-                        GameObject unitText = presetTexts[0];
-                        Destroy(unitText);
-                        presetTexts.RemoveAt(0);
+                    if (!EventSystem.current.IsPointerOverGameObject()) {
+                        if (boardController.CellIsSpawnTile(spawnPoint, tilePos) && !manager.TileContainsUnit(tilePos)) {
+                            int unit = armyPreset[armyPositionCount];
+                            armyPositionCount++;
+                            manager.CreateUnitAtPos(tilePos, unit);
+                            GameObject unitText = presetTexts[0];
+                            Destroy(unitText);
+                            presetTexts.RemoveAt(0);
+                        }
                     }
                 }
                 break;
@@ -143,17 +150,29 @@ public class PlayerController : MonoBehaviour {
 
     private void MovementButton() {
         if(selectedUnit != null) {
+            if(isMoving) {
+                boardController.ClearHighlighting();
+            }
+            else {
+                this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
+                boardController.HighlightTiles(this.highlightedTiles);
+            }
             isMoving = !isMoving;
             isAttacking = false;
-            this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
         }
     }
 
     private void AttackButton() {
         if(selectedUnit != null) {
+            if(isAttacking) {
+                boardController.ClearHighlighting();
+            }
+            else {
+                this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
+                boardController.HighlightTiles(this.highlightedTiles);
+            }
             isAttacking = !isAttacking;
             isMoving = false;
-            this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
         }
     }
 

@@ -18,9 +18,11 @@ public class BoardController {
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         if(tilemap == null) {
             Debug.Log("Tilemap is null. This will result in problems");
-        } else {
+        }
+        else {
             plane = new Plane(Vector3.up, Vector3.zero); // creates a flat horizontal plane at y = 0
         }
+        this.hightlightedTiles = new List<GameObject>();
     }
 
     // Getter for direct access to the tilemap. Use other board controller methods unless otherwise needed
@@ -99,63 +101,42 @@ public class BoardController {
     }
 
     public void HighlightSpawnZone(SpawnPoint player) {
+        List<Vector2Int> spawnTileList = new List<Vector2Int>();
         foreach (HexTile tile in tilemap.GetTilesBlock(tilemap.cellBounds)) {
             if (tile != null && tile.spawnPoint == player) {
-                //highlight said tile
+                if(tile.GetTileObject() != null) {
+                    spawnTileList.Add(WorldToCell(tile.GetTileObject().transform.position));
+                }
             }
         }
+        HighlightTiles(spawnTileList);
     }
 
     //Feel free to make changes as necessary -jp
     //This function highlights a list of tiles. And disables the previous highlighted ones
-    public void HighlightTile(List<Vector2Int> pos) {
+    public void HighlightTiles(List<Vector2Int> tilePositions) {
+        ClearHighlighting();
 
-        //this condition is false for the first time when this funtion is called
-        if (hightlightedTiles.Count > 0){ //when highlightedTiles list in not empty, that means there are tiles that are higlighted
-            foreach(var tile in hightlightedTiles)
-            {
-                DisableHighlight(tile); // disable the highlight
-            }
-            hightlightedTiles.Clear(); //reset list
-        }
-        
-        foreach (var p in pos)
-        {
+        foreach (var tilePosition in tilePositions) {
             GameObject tileObject;
-            if (this.HasHexTile(p))
-            {
-                HexTile tile = this.GetHexTile(p); //get the Hex tile using Vector2Int position
+            if (this.HasHexTile(tilePosition)) {
+                HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
                 tileObject = tile.GetTileObject(); //get the tile game object 
 
-                //check if tileObject has the Outline component attached -- using cakeslice.Outline because it was giving this error "'Outline' is an ambiguous reference between 'cakeslice.Outline' and 'UnityEngine.UI.Outline'"
-                if (tileObject.GetComponent<cakeslice.Outline>())
-                {
-                    hightlightedTiles.Add(tileObject);
-                    EnableHighlight(tileObject);
+                if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length <= 0) {
+                    tileObject.transform.GetChild(0).gameObject.AddComponent<cakeslice.Outline>();
                 }
-                //else
-                //{
-                //    tileObject = null;  //this is for tiles that do not have the Outline component from the prefab but are stored in tileObject. Might remove in future 
-                //}
+                hightlightedTiles.Add(tileObject);
+                tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
             }
-        }   
-        
-    }
-
-
-    
-    //enables the outline script component on the tile game object 
-    private void EnableHighlight(GameObject go) {
-        if (go.GetComponent<cakeslice.Outline>()) {
-            go.GetComponent<cakeslice.Outline>().enabled = true;
         }
     }
 
-    //disables the outline script component on the tile game object 
-    private void DisableHighlight(GameObject go) {
-        if (go.GetComponent<cakeslice.Outline>()) {
-            go.GetComponent<cakeslice.Outline>().enabled = false;
+    public void ClearHighlighting() {
+        foreach (var tile in hightlightedTiles) {
+            tile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = false;
         }
+        hightlightedTiles.Clear();
     }
 
     public bool CellIsSpawnTile(SpawnPoint player, Vector2Int pos) {
