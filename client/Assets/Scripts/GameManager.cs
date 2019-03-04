@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour {
 
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
+        client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values)));
         SceneManager.LoadScene("MainMenu");
     }
 

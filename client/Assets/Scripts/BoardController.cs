@@ -161,7 +161,7 @@ public class BoardController {
     }
 
     public List<Vector2Int> GetTilesWithinAttackRange(Vector2Int startingPos, int range) {
-        return HexUtility.HexReachable(startingPos, movementSpeed, tilemap, true);
+        return HexUtility.HexReachable(startingPos, range, tilemap, true);
     }
 
     public List<Vector2Int> GetTilesWithinMovementRange(Vector2Int startingPos, int movementSpeed) {

@@ -45,6 +45,10 @@ public class GameState {
     public Dictionary<string, List<UnitStats>> UserUnitsMap { get; private set; }
 
     [DataMember]
+    private List<UnitStats> generals;
+    public Dictionary<string, List<UnitStats>> UserGeneralsMap { get; private set; }
+
+    [DataMember]
     private List<CardController> cards;
     public Dictionary<string, CardController> UserCardsMap { get; private set; }
 
@@ -81,6 +85,15 @@ public class GameState {
                 UserUnitsMap[unit.Owner].Add(unit);
             else
                 UserUnitsMap.Add(unit.Owner, new List<UnitStats>() { unit });
+        }
+
+        if (generals == null) generals = new List<UnitStats>();
+        UserGeneralsMap = new Dictionary<string, List<UnitStats>>();
+        foreach(UnitStats general in generals) {
+            if (UserGeneralsMap.ContainsKey(general.Owner))
+                UserGeneralsMap[general.Owner].Add(general);
+            else
+                UserGeneralsMap.Add(general.Owner, new List<UnitStats>() { general });
         }
 
         UserCardsMap = new Dictionary<string, CardController>();
@@ -208,5 +221,22 @@ public class EndTurnState {
     [DataMember]
     private List<CardController> cards;
 
+    [DataMember]
     private List<Action> actions;
+
+    public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> units) {
+        this.gameId = state.id;
+        this.actions = turnActions;
+
+        units = new List<UnitStats>();
+        generals = new List<UnitStats>();
+        foreach(var unit in units) {
+            if ((int)unit.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
+                generals.Add(unit);
+            }
+            else {
+                units.Add(unit);
+            }
+        }
+    }
 }

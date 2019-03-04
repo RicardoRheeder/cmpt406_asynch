@@ -37,6 +37,16 @@ public class UnitStats {
     [DataMember]
     private int yPos;
 
+    //Variables for the generals TODO
+
+    public int Ability1 { get; private set; }
+    [DataMember(Name = "ability1CoolDown")]
+    private int Ability1Cooldown { get; set; } = 0;
+
+    public int Ability2 { get; private set; }
+    [DataMember(Name = "ability2CoolDown")]
+    private int Ability2Cooldown { get; set; } = 0;
+
     public Unit MyUnit { get; private set; }
 
     //Variables used to dictate how much movements/attacks can be done on each turn
