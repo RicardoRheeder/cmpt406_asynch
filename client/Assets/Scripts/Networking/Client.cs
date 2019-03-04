@@ -39,6 +39,7 @@ public class Client : MonoBehaviour {
     private const string BACKOUT_GAME = "/BackOutGame";
     private const string FORFEIT_GAME = "/ForfeitGame";
     private const string READY_UNITS = "/ReadyUnits";
+    private const string MAKE_MOVE = "/MakeMove";
 
     //Networking constants
     private const string JSON_TYPE = "application/json";
@@ -405,6 +406,24 @@ public class Client : MonoBehaviour {
         }
         catch (WebException e) {
             PrettyPrint(READY_UNITS, (HttpWebResponse)e.Response);
+            EndRequest();
+            return false;
+        }
+    }
+
+    public bool EndTurn(EndTurnState state) {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(MAKE_MOVE);
+        string requestJson = JsonConversion.ConvertObjectToJson<EndTurnState>(state);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            EndRequest();
+            return true;
+        }
+        catch (WebException e) {
+            PrettyPrint(MAKE_MOVE, (HttpWebResponse)e.Response);
             EndRequest();
             return false;
         }
