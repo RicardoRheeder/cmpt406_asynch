@@ -95,14 +95,24 @@ public class GameBuilder : MonoBehaviour {
     private void InstantiateUnits() {
         foreach (var userGeneralList in state.UserGeneralsMap) {
             foreach (var general in userGeneralList.Value) {
-                unitPositions.Add(general.Position, InstantiateUnit(general.Position, (int)general.UnitType, general.Owner));
+                unitPositions.Add(general.Position, InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general));
             }
         }
         foreach (var userUnitList in state.UserUnitsMap) {
             foreach(var unit in userUnitList.Value) {
-                unitPositions.Add(unit.Position, InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner));
+                unitPositions.Add(unit.Position, InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit));
             }
         }
+    }
+
+    public UnitStats InstantiateUnit(Vector2Int pos, int unitType, string username, UnitStats serverUnit) {
+        UnitStats unit = UnitFactory.GetBaseUnit((UnitType)unitType);
+        unit.CurrentHP = serverUnit.CurrentHP;
+        GameObject unitObject = Instantiate(typePrefabStorage[unit.UnitType]);
+        unit.SetUnit(unitObject.GetComponent<Unit>());
+        unit.Move(pos, ref board, true);
+        unit.Owner = username;
+        return unit;
     }
 
     public UnitStats InstantiateUnit(Vector2Int pos, int unitType, string username) {

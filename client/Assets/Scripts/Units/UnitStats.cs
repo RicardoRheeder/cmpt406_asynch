@@ -16,7 +16,7 @@ public class UnitStats {
 
     //defense stats
     [DataMember(Name = "health")]
-    public int CurrentHP { get; private set; }
+    public int CurrentHP { get; set; }
     public int MaxHP { get; private set; }
     public int Armour { get; private set; }
 

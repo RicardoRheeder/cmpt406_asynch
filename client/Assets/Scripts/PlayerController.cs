@@ -118,7 +118,7 @@ public class PlayerController : MonoBehaviour {
                                 boardController.ClearHighlighting();
                             }
                         }
-                        else if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                        else if (manager.GetUnitOnTileUserOwns(tilePos, out UnitStats unit)) {
                             selectedUnit = unit;
                             UpdateUnitDisplay(selectedUnit);
                         }

@@ -166,6 +166,16 @@ public class GameManager : MonoBehaviour {
         return containsUnit;
     }
 
+    public bool GetUnitOnTileUserOwns(Vector2Int tile, out UnitStats unit) {
+        bool myUnit = false;
+        unit = null;
+        if (unitPositions.ContainsKey(tile)) {
+            unit = unitPositions[tile];
+            myUnit = unit.Owner == user.Username;
+        }
+        return myUnit;
+    }
+
     public bool TileContainsUnit(Vector2Int tile) {
         return unitPositions.ContainsKey(tile);
     }
