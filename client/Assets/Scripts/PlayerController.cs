@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using System.Linq;
 
 using cakeslice; //for Outline effect package
 public class PlayerController : MonoBehaviour {
@@ -44,6 +45,8 @@ public class PlayerController : MonoBehaviour {
     private int armyPositionCount = 0;
     private SpawnPoint spawnPoint;
     private bool donePlacing = false;
+
+    private List<Vector2Int> highlightedTiles;
 
     public void Initialize(GameManager manager, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
         this.deck = deck;
@@ -99,19 +102,20 @@ public class PlayerController : MonoBehaviour {
                     boardController.HighlightTile(tilePos);
 
                     if (isMoving) {
-                        manager.MoveUnit(selectedUnit.Position, tilePos);
-                        isMoving = false;
+                        if(highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                            Debug.Log("here");
+                            manager.MoveUnit(selectedUnit.Position, tilePos);
+                            isMoving = false;
+                        }
                     }
                     else if (isAttacking) {
-                        manager.AttackUnit(selectedUnit.Position, tilePos);
-                        isAttacking = false;
+                        if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                            manager.AttackUnit(selectedUnit.Position, tilePos);
+                            isAttacking = false;
+                        }
                     }
                     else if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
                         selectedUnit = unit;
-                        UpdateUnitDisplay(selectedUnit);
-                    }
-                    else { //Remove this in the future
-                        selectedUnit = UnitFactory.GetBaseUnit(UnitType.claymore);
                         UpdateUnitDisplay(selectedUnit);
                     }
                 }
@@ -138,13 +142,19 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void MovementButton() {
-        isMoving = !isMoving;
-        isAttacking = false;
+        if(selectedUnit != null) {
+            isMoving = !isMoving;
+            isAttacking = false;
+            this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
+        }
     }
 
     private void AttackButton() {
-        isAttacking = !isAttacking;
-        isMoving = false;
+        if(selectedUnit != null) {
+            isAttacking = !isAttacking;
+            isMoving = false;
+            this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
+        }
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {

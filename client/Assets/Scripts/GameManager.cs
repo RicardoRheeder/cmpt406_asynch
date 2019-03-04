@@ -152,8 +152,7 @@ public class GameManager : MonoBehaviour {
 
     //Used for unit placement
     public void CreateUnitAtPos(Vector2Int position, int unit) {
-        UnitStats createdUnit = gameBuilder.InstantiateUnit(position, unit);
-        createdUnit.Owner = user.Username;
+        UnitStats createdUnit = gameBuilder.InstantiateUnit(position, unit, user.Username);
         placedUnits.Add(createdUnit);
         unitPositions.Add(position, createdUnit);
     }
@@ -173,12 +172,14 @@ public class GameManager : MonoBehaviour {
     //If the following conditions are true:
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
-        turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint));
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                unitPositions.Remove(targetUnit);
-                unitPositions[endpoint] = unit;
-                unit.Move(endpoint, ref boardController);
+                if(unit.MovementActions > 0 && unit.Owner == user.Username) {
+                    unitPositions.Remove(targetUnit);
+                    unitPositions[endpoint] = unit;
+                    unit.Move(endpoint, ref boardController);
+                    turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint));
+                }
             }
         }
     }
@@ -186,13 +187,15 @@ public class GameManager : MonoBehaviour {
     public void AttackUnit(Vector2Int source, Vector2Int target) {
         turnActions.Add(new Action(user.Username, ActionType.Attack, source, target));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
-            List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
-            foreach (var damage in damages) {
-                if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
-                    int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
-                    if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
-                        unitPositions.Remove(damage.First);
-                        Destroy(targetUnit.MyUnit);
+            if(sourceUnit.AttackActions > 0 && sourceUnit.Owner == user.Username) {
+                List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
+                foreach (var damage in damages) {
+                    if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
+                        int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
+                        if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
+                            unitPositions.Remove(damage.First);
+                            targetUnit.Kill();
+                        }
                     }
                 }
             }

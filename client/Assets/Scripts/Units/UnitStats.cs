@@ -39,6 +39,10 @@ public class UnitStats {
 
     public Unit MyUnit { get; private set; }
 
+    //Variables used to dictate how much movements/attacks can be done on each turn
+    public int AttackActions { get; set; } = 1;
+    public int MovementActions { get; set; } = 1;
+
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
     public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost, IAttackStrategy attackStrategy) {
         this.UnitType = type;
@@ -64,17 +68,12 @@ public class UnitStats {
         this.MyUnit = unit;
     }
 
-    //TODO: see if HexDistance() works for range finding
-    //checks to make sure the target is in range
-    public bool InRange(Vector2Int targetPoint) {
-//        if (HexUtility.HexDistance(this.geoPoint, targetPoint) < range)
-//            return true;
-//        else
-            return true;
-    }
-
     //Returns a value based on the target
-    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target) {
+    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, bool specialMove = false) {
+        if (!specialMove) {
+            this.MovementActions = 0;
+            this.AttackActions--;
+        }
         return attackStrategy.Attack(this, target);
     }
 
@@ -85,16 +84,22 @@ public class UnitStats {
         damage -= resistance;
         damage = damage <= 0 ? 1 : damage;
         CurrentHP -= damage;
-        return CurrentHP >= 0;
+        return CurrentHP <= 0;
     }
 
     public void Heal(int amount) {
         this.CurrentHP += amount;
         CurrentHP = CurrentHP > MaxHP ? MaxHP : CurrentHP;
     }
+    
+    public void Kill() {
+        MyUnit.Kill();
+    }
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
-    public void Move(Vector2Int position, ref BoardController board) {
+    public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
+        if(!specialMove)
+            this.MovementActions--;
         this.Position = position;
         MyUnit.transform.position = board.CellToWorld(position);
     }

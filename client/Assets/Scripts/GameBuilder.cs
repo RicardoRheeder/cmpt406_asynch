@@ -94,18 +94,19 @@ public class GameBuilder : MonoBehaviour {
     //Method responsible for making sure all of the units are created with the appropriate gameobjects
     private void InstantiateUnits() {
         //this check shouldn't be required
-        List<UnitStats> units = state.UserUnitsMap.ContainsKey(username) ? state.UserUnitsMap[username] : new List<UnitStats>();
-        for (int i = 0; i < units.Count; i++) {
-            UnitStats unitStats = units[i];
-            unitPositions.Add(unitStats.Position, InstantiateUnit(unitStats.Position, (int)unitStats.UnitType));
+        foreach(var userUnitList in state.UserUnitsMap) {
+            foreach(var unit in userUnitList.Value) {
+                unitPositions.Add(unit.Position, InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner));
+            }
         }
     }
 
-    public UnitStats InstantiateUnit(Vector2Int position, int type) {
-        UnitStats unit = UnitFactory.GetBaseUnit((UnitType)type);
+    public UnitStats InstantiateUnit(Vector2Int pos, int unitType, string username) {
+        UnitStats unit = UnitFactory.GetBaseUnit((UnitType)unitType);
         GameObject unitObject = Instantiate(typePrefabStorage[unit.UnitType]);
         unit.SetUnit(unitObject.GetComponent<Unit>());
-        unit.Move(position, ref board);
+        unit.Move(pos, ref board, true);
+        unit.Owner = username;
         return unit;
     }
 }

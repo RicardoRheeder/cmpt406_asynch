@@ -25,4 +25,8 @@ public class Unit : MonoBehaviour {
     public void MoveTo(List<Vector2Int> path) {
 
     }
+
+    public void Kill() {
+        Destroy(this.gameObject);
+    }
 }
