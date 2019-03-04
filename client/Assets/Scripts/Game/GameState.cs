@@ -191,3 +191,22 @@ public class ReadyUnitsGameState {
         this.cards = cards;
     }
 }
+
+//Special objected used to make a move
+[DataContract]
+public class EndTurnState {
+
+    [DataMember]
+    private string gameId;
+
+    [DataMember]
+    private List<UnitStats> units;
+
+    [DataMember]
+    private List<UnitStats> generals;
+
+    [DataMember]
+    private List<CardController> cards;
+
+    private List<Action> actions;
+}

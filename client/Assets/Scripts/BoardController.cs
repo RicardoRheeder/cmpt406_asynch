@@ -161,10 +161,10 @@ public class BoardController {
     }
 
     public List<Vector2Int> GetTilesWithinAttackRange(Vector2Int startingPos, int range) {
-        return HexUtility.GetTilePositionsInRange(tilemap, startingPos, range);
+        return HexUtility.HexReachable(startingPos, movementSpeed, tilemap, true);
     }
 
     public List<Vector2Int> GetTilesWithinMovementRange(Vector2Int startingPos, int movementSpeed) {
-        return HexUtility.GetTilePositionsInRange(tilemap, startingPos, movementSpeed);
+        return HexUtility.HexReachable(startingPos, movementSpeed, tilemap, false);
     }
 }
