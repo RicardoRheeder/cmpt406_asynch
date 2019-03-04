@@ -40,6 +40,7 @@ public class Client : MonoBehaviour {
     private const string FORFEIT_GAME = "/ForfeitGame";
     private const string READY_UNITS = "/ReadyUnits";
     private const string MAKE_MOVE = "/MakeMove";
+    private const string GET_ALL_COMPLETED_GAMES = "/GetCompletedGames";
 
     //Networking constants
     private const string JSON_TYPE = "application/json";
@@ -58,11 +59,19 @@ public class Client : MonoBehaviour {
     }
 
     private void BeginRequest() {
-        eventSystem.SetActive(false);
+        if (eventSystem != null) {
+            eventSystem.SetActive(false);
+            return;
+        }
+        Debug.LogError("Event System is null");
     }
 
     private void EndRequest() {
-        eventSystem.SetActive(true);
+        if (eventSystem != null) {
+            eventSystem.SetActive(true);
+            return;
+        }
+        Debug.LogError("Event System is null");
     }
 
     //Requests
@@ -191,6 +200,29 @@ public class Client : MonoBehaviour {
         }
         catch (WebException e) {
             PrettyPrint(GET_PUBLIC_GAMES, (HttpWebResponse)e.Response);
+            EndRequest();
+            return new Tuple<bool, GameStateCollection>(false, null);
+        }
+    }
+
+    public Tuple<bool, GameStateCollection> GetAllCompletedGames() {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(GET_ALL_COMPLETED_GAMES);
+        string requestJson = JsonConversion.GetJsonForSingleInt("limit", 1000);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            string responseJson;
+            using (var reader = new StreamReader(response.GetResponseStream())) {
+                responseJson = reader.ReadToEnd();
+            }
+            GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
+            EndRequest();
+            return new Tuple<bool, GameStateCollection>(true, states);
+        }
+        catch (WebException e) {
+            PrettyPrint(GET_ALL_COMPLETED_GAMES, (HttpWebResponse)e.Response);
             EndRequest();
             return new Tuple<bool, GameStateCollection>(false, null);
         }
