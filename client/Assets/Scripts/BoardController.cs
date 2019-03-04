@@ -11,6 +11,8 @@ public class BoardController {
     Tilemap tilemap; // the tilemap instance
     Plane plane;
 
+    private List<GameObject> hightlightedTiles;
+
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
@@ -105,22 +107,42 @@ public class BoardController {
     }
 
     //Feel free to make changes as necessary -jp
-    //This function highlights a single tile. And disables the previous highlighted when another tile is selected
-    public void HighlightTile(Vector2Int pos) {
-        GameObject tileObject;
-        if (this.HasHexTile(pos)) {
-            HexTile tile = this.GetHexTile(pos); //get the Hex tile using Vector3Int position
-            tileObject = tile.GetTileObject(); //get the tile game object 
+    //This function highlights a list of tiles. And disables the previous highlighted ones
+    public void HighlightTile(List<Vector2Int> pos) {
 
-            //check if tileObject has the Outline component attached -- using cakeslice.Outline because it was giving this error "'Outline' is an ambiguous reference between 'cakeslice.Outline' and 'UnityEngine.UI.Outline'"
-            if (tileObject.GetComponent<cakeslice.Outline>()) {
-                EnableHighlight(tileObject);
+        //this condition is false for the first time when this funtion is called
+        if (hightlightedTiles.Count > 0){ //when highlightedTiles list in not empty, that means there are tiles that are higlighted
+            foreach(var tile in hightlightedTiles)
+            {
+                DisableHighlight(tile); // disable the highlight
             }
-            else {
-                tileObject = null;  //this is for tiles that do not have the Outline component from the prefab but are stored in tileObject. Might remove in future 
-            }
+            hightlightedTiles.Clear(); //reset list
         }
+        
+        foreach (var p in pos)
+        {
+            GameObject tileObject;
+            if (this.HasHexTile(p))
+            {
+                HexTile tile = this.GetHexTile(p); //get the Hex tile using Vector2Int position
+                tileObject = tile.GetTileObject(); //get the tile game object 
+
+                //check if tileObject has the Outline component attached -- using cakeslice.Outline because it was giving this error "'Outline' is an ambiguous reference between 'cakeslice.Outline' and 'UnityEngine.UI.Outline'"
+                if (tileObject.GetComponent<cakeslice.Outline>())
+                {
+                    hightlightedTiles.Add(tileObject);
+                    EnableHighlight(tileObject);
+                }
+                //else
+                //{
+                //    tileObject = null;  //this is for tiles that do not have the Outline component from the prefab but are stored in tileObject. Might remove in future 
+                //}
+            }
+        }   
+        
     }
+
+
     
     //enables the outline script component on the tile game object 
     private void EnableHighlight(GameObject go) {
