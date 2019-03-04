@@ -18,6 +18,7 @@ public class FogOfWarController : MonoBehaviour {
             newTilemap.AddComponent(typeof(Tilemap));
             fogTilemap = newTilemap.GetComponent<Tilemap>();
         }
+        fogTilemap.ClearAllTiles();
         fogTilemap.transform.SetParent(tilemap.transform.parent);
         fogTilemap.transform.position = tilemap.transform.position;
 
@@ -37,6 +38,24 @@ public class FogOfWarController : MonoBehaviour {
         }
 
         fogTilemap.SetTile((Vector3Int)position, null);
+    }
+
+    public void ClearFogInArea(List<Vector2Int> positions) {
+        if(fogTilemap == null) {
+            return;
+        }
+
+        for(int i=0; i<positions.Count; i++) {
+            fogTilemap.SetTile((Vector3Int)positions[i], null);
+        }
+    }
+
+    public void ClearAllFog() {
+        if(fogTilemap == null) {
+            return;
+        }
+
+        fogTilemap.ClearAllTiles();
     }
 
 }
