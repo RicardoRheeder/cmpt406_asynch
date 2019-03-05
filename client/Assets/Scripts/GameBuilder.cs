@@ -28,11 +28,12 @@ public class GameBuilder : MonoBehaviour {
     public GameObject lightAdrenPrefab;
     public GameObject supportSandmanPrefab;
     public Dictionary<UnitType, GameObject> typePrefabStorage;
-
+	
     private GameState state;
     private string username;
     private BoardController board;
     private bool isPlacing;
+	private int colorPick = 0;
     private ArmyPreset armyPreset;
 
     public void Awake() {
@@ -52,6 +53,7 @@ public class GameBuilder : MonoBehaviour {
             {UnitType.light_adren, lightAdrenPrefab },
             {UnitType.support_sandman, supportSandmanPrefab }
         };
+
     }
 
     //Method that takes in a game state, instantiates all of the objects and makes sure the scene is setup how it should be.
@@ -62,7 +64,6 @@ public class GameBuilder : MonoBehaviour {
         this.board = board;
         this.isPlacing = isPlacing;
         this.armyPreset = armyPreset;
-
         SetupScene();
 
         if(!isPlacing) {
@@ -92,13 +93,31 @@ public class GameBuilder : MonoBehaviour {
     //Method responsible for making sure all of the units are created with the appropriate gameobjects
     private void InstantiateUnits() {
         foreach (var userGeneralList in state.UserGeneralsMap) {
+			colorPick += 1;
             foreach (var general in userGeneralList.Value) {
-                unitPositions.Add(general.Position, InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general));
+				UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
+				Renderer rend = newUnit.MyUnit.GetComponent<Renderer>();
+				if(colorPick % 2 == 0){
+					rend.material.color = Color.red;
+				}
+				else{
+					rend.material.color = Color.blue;
+				}
+                unitPositions.Add(general.Position, newUnit);
             }
         }
         foreach (var userUnitList in state.UserUnitsMap) {
+			colorPick += 1;
             foreach(var unit in userUnitList.Value) {
-                unitPositions.Add(unit.Position, InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit));
+				UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
+				Renderer rend = newUnit.MyUnit.GetComponent<Renderer>();
+				if(colorPick % 2 == 0){
+					rend.material.color = Color.red;
+				}
+				else{
+					rend.material.color = Color.blue;
+				}
+                unitPositions.Add(unit.Position, newUnit);
             }
         }
     }
