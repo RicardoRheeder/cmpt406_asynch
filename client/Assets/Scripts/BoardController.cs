@@ -20,7 +20,7 @@ public class BoardController {
             Debug.Log("Tilemap is null. This will result in problems");
         }
         else {
-            plane = new Plane(Vector3.up, Vector3.zero); // creates a flat horizontal plane at y = 0
+            plane = new Plane(Vector3.forward, Vector3.zero); // creates a flat horizontal plane at y = 0
         }
         this.hightlightedTiles = new List<GameObject>();
     }
@@ -53,10 +53,10 @@ public class BoardController {
 
         // if a raycast hits a tile, use that position
         if(Physics.Raycast(ray,out hit)) {
-            worldPoint = new Vector3(hit.point.x,0,hit.point.z);
+            worldPoint = new Vector3(hit.point.x,hit.point.y,0);
         } else if(plane.Raycast(ray, out float enter)) {    // otherwise cast a ray at the flat plane to get position
             Vector3 hitPoint = ray.GetPoint(enter);
-            worldPoint = new Vector3(hitPoint.x,0,hitPoint.z);
+            worldPoint = new Vector3(hitPoint.x,hitPoint.y,0);
         }
 
         return (Vector2Int)tilemap.WorldToCell(worldPoint);
@@ -71,7 +71,7 @@ public class BoardController {
         Vector3 worldPosition = tilemap.CellToWorld((Vector3Int)position);
         HexTile tile = tilemap.GetTile((Vector3Int)position) as HexTile;
         if(tile != null) { // if tile exists, add elevation to world position
-            return new Vector3(worldPosition.x,worldPosition.y+tileHeight+((int)tile.elevation*elevationHeight),worldPosition.z);
+            return new Vector3(worldPosition.x,worldPosition.y,worldPosition.z-(tileHeight+((int)tile.elevation*elevationHeight)));
         }
         return worldPosition;
     }

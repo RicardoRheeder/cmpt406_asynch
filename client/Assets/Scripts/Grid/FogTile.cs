@@ -17,7 +17,7 @@ public class FogTile : TileBase {
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go != null) {
-            go.transform.rotation = Quaternion.Euler(0,0,0);
+            go.transform.rotation = Quaternion.Euler(-90,0,0);
             tileObject = go;
             go.transform.localScale = new Vector3(1.01f,5,1.01f);
             RefreshColor();

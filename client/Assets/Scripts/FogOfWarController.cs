@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 public class FogOfWarController : MonoBehaviour {
 
     public GameObject fogObject;
+    public bool generateFog = true;
     Tilemap fogTilemap;
     Tilemap baseTilemap;
 
@@ -13,8 +14,9 @@ public class FogOfWarController : MonoBehaviour {
 
     void Start() {
         Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
-        InitializeFogOfWar(tilemap);
-        
+        if(generateFog) {
+            InitializeFogOfWar(tilemap);
+        }
         
         boardController = new BoardController();
         boardController.Initialize();
