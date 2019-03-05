@@ -93,30 +93,30 @@ public class GameBuilder : MonoBehaviour {
     //Method responsible for making sure all of the units are created with the appropriate gameobjects
     private void InstantiateUnits() {
         foreach (var userGeneralList in state.UserGeneralsMap) {
-			colorPick += 1;
+            SpawnPoint spawnPoint = SpawnPoint.none;
+            for(int i = 0; i < state.ReadyUsers.Count; i++) {
+                if (state.ReadyUsers[i] == username) {
+                    spawnPoint = (SpawnPoint)i;
+                    break;
+                }
+            }
             foreach (var general in userGeneralList.Value) {
 				UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
-				Renderer rend = newUnit.MyUnit.GetComponent<Renderer>();
-				if(colorPick % 2 == 0){
-					rend.material.color = Color.red;
-				}
-				else{
-					rend.material.color = Color.blue;
-				}
+                newUnit.MyUnit.renderer.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(general.Position, newUnit);
             }
         }
         foreach (var userUnitList in state.UserUnitsMap) {
-			colorPick += 1;
-            foreach(var unit in userUnitList.Value) {
+            SpawnPoint spawnPoint = SpawnPoint.none;
+            for (int i = 0; i < state.ReadyUsers.Count; i++) {
+                if (state.ReadyUsers[i] == username) {
+                    spawnPoint = (SpawnPoint)i;
+                    break;
+                }
+            }
+            foreach (var unit in userUnitList.Value) {
 				UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
-				Renderer rend = newUnit.MyUnit.GetComponent<Renderer>();
-				if(colorPick % 2 == 0){
-					rend.material.color = Color.red;
-				}
-				else{
-					rend.material.color = Color.blue;
-				}
+				newUnit.MyUnit.renderer.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(unit.Position, newUnit);
             }
         }
