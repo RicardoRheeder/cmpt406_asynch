@@ -58,6 +58,14 @@ public class FogOfWarController : MonoBehaviour {
         }
         Debug.Log("clear fog at " + position.ToString());
         fogTilemap.SetTile((Vector3Int)position, null);
+        List<Vector2Int> neighbors = HexUtility.GetNeighborPositions(position);
+        foreach(Vector3Int neighbor in neighbors) {
+            FogTile tile = fogTilemap.GetTile(neighbor) as FogTile;
+            if(tile != null) {
+                tile.transparency = 0.5f;
+                fogTilemap.RefreshTile(neighbor);
+            }
+        }
     }
 
     public void ClearFogInArea(List<Vector2Int> positions) {

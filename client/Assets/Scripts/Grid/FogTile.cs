@@ -20,11 +20,7 @@ public class FogTile : TileBase {
             go.transform.rotation = Quaternion.Euler(0,0,0);
             tileObject = go;
             go.transform.localScale = new Vector3(1.01f,5,1.01f);
-            MeshRenderer rend = go.GetComponent<MeshRenderer>();
-            if(rend != null) {
-                Color color = rend.material.color;
-                rend.material.color = new Color(color.r, color.g, color.b, transparency);
-            }
+            RefreshColor();
         }
 
         #if UNITY_EDITOR
@@ -39,23 +35,40 @@ public class FogTile : TileBase {
         return true;
     }
 
+    void RefreshColor() {
+        if(tileObject == null) {
+            return;
+        }
+
+        MeshRenderer rend = tileObject.GetComponent<MeshRenderer>();
+            if(rend != null) {
+                Color color = rend.material.color;
+                rend.material.color = new Color(color.r, color.g, color.b, transparency);
+            }
+    }
+
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
         List<Vector2Int> neighbours = HexUtility.GetNeighborPositions((Vector2Int)location);
-        float lowestTransparency = 1f;
+        // float lowestTransparency = 1f;
+        int count = 0;
         foreach(Vector3Int neighbour in neighbours) {
-            FogTile fogNeighbour = tilemap.GetTile(neighbour) as FogTile;
+            TileBase fogNeighbour = tilemap.GetTile(neighbour);
             if(fogNeighbour == null) {
-                Debug.Log(neighbour.ToString() + " is null");
-                //lowestTransparency = 0;
-            } else if(fogNeighbour.transparency < lowestTransparency){
-                Debug.Log("lower transparency");
-                lowestTransparency = fogNeighbour.transparency;
+                count++;
             }
+            // if(fogNeighbour == null) {
+            //     Debug.Log(neighbour.ToString() + " is null");
+            //     // lowestTransparency = 0;
+            // } else if((fogNeighbour as FogTile).transparency < lowestTransparency){
+            //     Debug.Log("lower transparency");
+            //     lowestTransparency = (fogNeighbour as FogTile).transparency;
+            // }
         }
-        transparency = lowestTransparency + fogChangeAmount;
+        transparency = (count >= 4) ? fogChangeAmount : 1f;
         if(transparency > 1f) {
             transparency = 1f;
         }
+        RefreshColor();
         base.RefreshTile(location,tilemap);
     }
 
