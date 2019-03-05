@@ -49,8 +49,8 @@ public static class ArmyBuilder {
             (int)UnitType.steamer,
 			(int)UnitType.steamer,
             (int)UnitType.steamer,
-            (int)UnitType.powersurge,
-			(int)UnitType.powersurge,
+            (int)UnitType.powerSurge,
+			(int)UnitType.powerSurge,
 			(int)UnitType.trooper,
 			(int)UnitType.trooper,
 			
@@ -87,8 +87,8 @@ public static class ArmyBuilder {
             (int)UnitType.recon,
 			(int)UnitType.compensator,
 			(int)UnitType.compensator,
-			(int)UnitType.powersurge,
-			(int)UnitType.powersurge,
+			(int)UnitType.powerSurge,
+			(int)UnitType.powerSurge,
         },
         (int)UnitType.light_adren
     );

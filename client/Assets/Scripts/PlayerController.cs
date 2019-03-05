@@ -93,10 +93,11 @@ public class PlayerController : MonoBehaviour {
 
             movementButton = GameObject.Find("MovementButton").GetComponent<Button>();
             movementButton.onClick.AddListener(MovementButton);
+			
+			turnText.text = "Turn " + gamestate.TurnNumber;
+			userTurnText.text = gamestate.UsersTurn + "'s Turn";
         }
 		
-		userTurnText.text = gamestate.UsersTurn + "'s Turn";
-		turnText.text = "Turn " + gamestate.TurnNumber;
         initialized = true;
     }
 
