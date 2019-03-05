@@ -9,9 +9,21 @@ public class FogOfWarController : MonoBehaviour {
     Tilemap fogTilemap;
     Tilemap baseTilemap;
 
+    BoardController boardController;
+
     void Start() {
         Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         InitializeFogOfWar(tilemap);
+        
+        
+        boardController = new BoardController();
+        boardController.Initialize();
+    }
+
+    void Update() {
+        if(Input.GetMouseButton(0)) {
+            ClearFogAtPosition(boardController.MousePosToCell());
+        }
     }
 
     public void InitializeFogOfWar(Tilemap tilemap) {
@@ -30,24 +42,20 @@ public class FogOfWarController : MonoBehaviour {
         fogTilemap.transform.SetParent(tilemap.transform.parent);
         fogTilemap.transform.SetPositionAndRotation(tilemap.transform.position,tilemap.transform.rotation);
 
-        TileBase[] tiles = tilemap.GetTilesBlock(tilemap.cellBounds);
-        for(int x = 0; x < tilemap.cellBounds.size.x; x++) {
-            for(int y = 0; y < tilemap.cellBounds.size.y; y++) {
-                if(tiles[x + y * tilemap.cellBounds.size.x] != null) {
-                    FogTile fogTile = ScriptableObject.CreateInstance<FogTile>();
-                    fogTile.tileModel = fogObject;
-                    fogTilemap.SetTile(new Vector3Int(x,y,0), fogTile);
-                }
+        foreach(Vector3Int pos in tilemap.cellBounds.allPositionsWithin) {
+            if(tilemap.HasTile(pos)) {
+                FogTile fogTile = ScriptableObject.CreateInstance<FogTile>();
+                fogTile.tileModel = fogObject;
+                fogTilemap.SetTile(pos, fogTile);
             }
         }
-        fogTilemap.RefreshAllTiles();
     }
 
     public void ClearFogAtPosition(Vector2Int position) {
         if(fogTilemap == null) {
             return;
         }
-
+        Debug.Log("clear fog at " + position.ToString());
         fogTilemap.SetTile((Vector3Int)position, null);
     }
 

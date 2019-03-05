@@ -12,13 +12,19 @@ public class FogTile : TileBase {
     public Sprite spritePreview;
 
     GameObject tileObject;
+    public float transparency = 1f;
+    float fogChangeAmount = 0.3f;
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
-        if(go) {
-            Debug.Log("go");
+        if(go != null) {
             go.transform.rotation = Quaternion.Euler(0,0,0);
             tileObject = go;
-            go.transform.localScale = new Vector3(1,5,1);
+            go.transform.localScale = new Vector3(1.01f,5,1.01f);
+            MeshRenderer rend = go.GetComponent<MeshRenderer>();
+            if(rend != null) {
+                Color color = rend.material.color;
+                rend.material.color = new Color(color.r, color.g, color.b, transparency);
+            }
         }
 
         #if UNITY_EDITOR
@@ -34,6 +40,20 @@ public class FogTile : TileBase {
     }
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
+        List<Vector2Int> neighbours = HexUtility.GetTilePositionsInRangeWithoutMap((Vector2Int)location,1);
+        float lowestTransparency = 1f;
+        foreach(Vector3Int neighbour in neighbours) {
+            FogTile fogNeighbour = tilemap.GetTile(neighbour) as FogTile;
+            if(fogNeighbour != null) {
+                lowestTransparency = fogNeighbour.transparency;
+            }else {
+                lowestTransparency = 0;
+            }
+        }
+        transparency = lowestTransparency + fogChangeAmount;
+        if(transparency > 1f) {
+            transparency = 1f;
+        }
         base.RefreshTile(location,tilemap);
     }
 
