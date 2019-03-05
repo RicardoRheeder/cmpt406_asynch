@@ -31,6 +31,17 @@ public static class GeneralMetadata {
         {UnitType.support_sandman, new List<GeneralAbility>{ GeneralAbility.SAHARA_MINE, GeneralAbility.SANDSTORM } }
     };
 
+    public static readonly Dictionary<GeneralAbility, String> ReadableAbilityNameDict = new Dictionary<GeneralAbility, string>() {
+        {GeneralAbility.TROJAN_SHOT, "Trojan Shot" },
+        {GeneralAbility.ARMOUR_PIERCING_AMMO, "Armour Piercing Ammo" },
+        {GeneralAbility.STEAM_OVERLOAD, "Steam Overload" },
+        {GeneralAbility.THE_BEST_OFFENSE, "The Best Offense" },
+        {GeneralAbility.STICK_AND_POKE, "Stick and Poke" },
+        {GeneralAbility.DEEP_PENETRATION, "Deep Penetration" },
+        {GeneralAbility.SAHARA_MINE, "Sahara Mine" },
+        {GeneralAbility.SANDSTORM, "Sandstorm" }
+    };
+
     public static readonly Dictionary<GeneralAbility, int> AbilityCooldownDictionary = new Dictionary<GeneralAbility, int>() {
         { GeneralAbility.TROJAN_SHOT, 6 },
         { GeneralAbility.ARMOUR_PIERCING_AMMO, 6 },

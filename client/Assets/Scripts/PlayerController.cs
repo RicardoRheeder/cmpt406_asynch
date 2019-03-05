@@ -28,13 +28,25 @@ public class PlayerController : MonoBehaviour {
     private TMP_Text unitDisplayMovementSpeed;
     private TMP_Text unitDisplayName;
 
+    //The action buttons
     private Button attackButton;
     private Button movementButton;
+
+    //General info panel
+    private GameObject generalName;
+    private TMP_Text generalNameText;
+    private GameObject Ability1Object;
+    private Button Ability1Button;
+    private GameObject Ability2Object;
+    private Button Ability2Button;
 
 	//Stuff for top right information on hud
 	private TMP_Text userTurnText;
 	private TMP_Text turnText;
-	
+
+    //menu buttons
+    private Button concedeButton;
+    private Button closeGameButton;
 	
     private UnitStats selectedUnit;
 
@@ -96,6 +108,18 @@ public class PlayerController : MonoBehaviour {
 			
 			turnText.text = "Turn " + gamestate.TurnNumber;
 			userTurnText.text = gamestate.UsersTurn + "'s Turn";
+
+            generalName = GameObject.Find("GeneralName");
+            generalNameText = generalName.GetComponent<TMP_Text>();
+            Ability1Object = GameObject.Find("AbilityOneButton");
+            Ability1Button = Ability1Object.GetComponent<Button>();
+            Ability2Object = GameObject.Find("AbilityTwoButton");
+            Ability2Button = Ability2Object.GetComponent<Button>();
+
+            concedeButton = GameObject.Find("ConcedeButton").GetComponent<Button>();
+            concedeButton.onClick.AddListener(Forfeit);
+            closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
+            closeGameButton.onClick.AddListener(ExitGame);
         }
 		
         initialized = true;
@@ -234,5 +258,27 @@ public class PlayerController : MonoBehaviour {
         unitDisplayMovementSpeed.text = movementSpeed;
         unitDisplayPierce.text = pierce;
         unitDisplayName.text = unit.GetDisplayName();
+
+        if(unit.UnitClass == UnitClass.general) {
+            generalNameText.SetText(UnitMetadata.ReadableNames[unit.UnitType]);
+            Ability1Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability1]);
+            Ability2Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability2]);
+            generalName.SetActive(true);
+            Ability1Object.SetActive(true);
+            Ability2Object.SetActive(true);
+        }
+        else {
+            generalName.SetActive(false);
+            Ability1Object.SetActive(false);
+            Ability2Object.SetActive(false);
+        }
+    }
+
+    public void Forfeit() {
+        manager.Forfeit();
+    }
+
+    public void ExitGame() {
+        manager.ExitGame();
     }
 }

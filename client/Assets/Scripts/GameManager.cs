@@ -76,8 +76,6 @@ public class GameManager : MonoBehaviour {
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
 
-        inGameMenu.SetupPanels(isPlacing: false);
-
         boardController = new BoardController();
         boardController.Initialize();
 
@@ -91,7 +89,9 @@ public class GameManager : MonoBehaviour {
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, state, null, gameBuilder, boardController, isPlacing);
-  
+
+        inGameMenu.SetupPanels(isPlacing: false);
+
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
@@ -142,6 +142,12 @@ public class GameManager : MonoBehaviour {
 
     public void Forfeit() {
         client.ForfeitGame(state.id);
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    //For now just load the main menu and don't do anything else
+    public void ExitGame() {
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void EndUnitPlacement() {
