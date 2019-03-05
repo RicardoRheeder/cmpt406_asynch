@@ -44,10 +44,10 @@ public class FogTile : TileBase {
         float lowestTransparency = 1f;
         foreach(Vector3Int neighbour in neighbours) {
             FogTile fogNeighbour = tilemap.GetTile(neighbour) as FogTile;
-            if(fogNeighbour != null) {
-                lowestTransparency = fogNeighbour.transparency;
-            }else {
+            if(fogNeighbour == null) {
                 lowestTransparency = 0;
+            } else if(fogNeighbour.transparency < lowestTransparency){
+                lowestTransparency = fogNeighbour.transparency;
             }
         }
         transparency = lowestTransparency + fogChangeAmount;
