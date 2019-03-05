@@ -40,13 +40,15 @@ public class FogTile : TileBase {
     }
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
-        List<Vector2Int> neighbours = HexUtility.GetTilePositionsInRangeWithoutMap((Vector2Int)location,1);
+        List<Vector2Int> neighbours = HexUtility.GetNeighborPositions((Vector2Int)location);
         float lowestTransparency = 1f;
         foreach(Vector3Int neighbour in neighbours) {
             FogTile fogNeighbour = tilemap.GetTile(neighbour) as FogTile;
             if(fogNeighbour == null) {
-                lowestTransparency = 0;
+                Debug.Log(neighbour.ToString() + " is null");
+                //lowestTransparency = 0;
             } else if(fogNeighbour.transparency < lowestTransparency){
+                Debug.Log("lower transparency");
                 lowestTransparency = fogNeighbour.transparency;
             }
         }

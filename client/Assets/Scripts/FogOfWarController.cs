@@ -49,6 +49,7 @@ public class FogOfWarController : MonoBehaviour {
                 fogTilemap.SetTile(pos, fogTile);
             }
         }
+        fogTilemap.RefreshAllTiles();
     }
 
     public void ClearFogAtPosition(Vector2Int position) {
