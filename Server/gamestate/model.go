@@ -40,6 +40,8 @@ type Unit struct {
 	YPos             int     `json:"yPos,omitempty" datastore:",omitempty"`
 	Ability1CoolDown int     `json:"ability1CoolDown,omitempty" datastore:",omitempty"`
 	Ability2CoolDown int     `json:"ability2CoolDown,omitempty" datastore:",omitempty"`
+	Ability1Duration int     `json:"ability1Duration,omitempty" datastore:",omitempty"`
+	Ability2Duration int     `json:"ability2Duration,omitempty" datastore:",omitempty"`
 }
 
 // Cards contains all the card information on a per user bases
@@ -54,7 +56,7 @@ type Cards struct {
 // Action contains the info for a single action in the game
 type Action struct {
 	Username   string     `json:"username,omitempty" datastore:",omitempty"`
-	ActionType ActionType `json:"actionType,omitempty" datastore:",omitempty"`
+	ActionType ActionType `json:"actionType" datastore:",omitempty"`
 	OriginXPos int        `json:"originXPos,omitempty" datastore:",omitempty"`
 	OriginYPos int        `json:"originYPos,omitempty" datastore:",omitempty"`
 	TargetXPos int        `json:"targetXPos,omitempty" datastore:",omitempty"`
