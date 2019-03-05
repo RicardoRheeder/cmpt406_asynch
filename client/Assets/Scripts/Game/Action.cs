@@ -37,7 +37,7 @@ public class Action {
 
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
-        Type = (ActionType)actionType;
+        this.Type = (ActionType)actionType;
     }
 
     [OnSerializing]

@@ -218,6 +218,7 @@ public class Client : MonoBehaviour {
                 responseJson = reader.ReadToEnd();
             }
             GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
+
             EndRequest();
             return new Tuple<bool, GameStateCollection>(true, states);
         }

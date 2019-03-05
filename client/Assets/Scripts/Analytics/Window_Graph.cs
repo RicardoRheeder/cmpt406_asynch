@@ -75,7 +75,7 @@ public class Window_Graph : MonoBehaviour {
             /* on click, give a breakdown of totals */
             if (breakDown != null && breakDown.ContainsKey(valueList[i].unitType)) {
                 UnitType ut = valueList[i].unitType;
-                Dictionary<UnitType, int> DamagePerUnitType = breakDown[ut].DamagePerUnitType;
+                Dictionary<UnitType, int> DamagePerUnitType = breakDown[ut].TotalPerUnitType;
                 barGameObject.AddComponent<Button>().onClick.AddListener(delegate {breakDownDamages(ut, DamagePerUnitType);});
             }
 
