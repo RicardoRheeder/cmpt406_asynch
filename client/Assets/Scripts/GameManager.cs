@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, gameBuilder, boardController, isPlacing);
+        playerController.Initialize(this, state, null, gameBuilder, boardController, isPlacing);
   
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
+        playerController.Initialize(this, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
         SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;
