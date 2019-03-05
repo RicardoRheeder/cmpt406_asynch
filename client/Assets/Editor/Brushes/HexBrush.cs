@@ -58,8 +58,7 @@ namespace UnityEditor {
     }
 
     [CustomEditor(typeof(HexBrush))]
-    public class HexBrushEditor : GridBrushEditor
-    {
+    public class HexBrushEditor : GridBrushEditor {
         private HexBrush hexBrush { get { return target as HexBrush; } }
 
         private SerializedObject serializedBrush;
@@ -73,7 +72,7 @@ namespace UnityEditor {
         public override void OnPaintInspectorGUI() {
             // get the latest representation of the brush
             serializedBrush.UpdateIfRequiredOrScript();
-            hexBrush.model = EditorGUILayout.ObjectField(hexBrush.model, typeof(GameObject), true) as GameObject;
+            hexBrush.model = EditorGUILayout.ObjectField(hexBrush.model, typeof(HexTileObject), true) as GameObject;
             hexBrush.currentElevation = (Elevation)EditorGUILayout.EnumPopup("Elevation: ", hexBrush.currentElevation);
             hexBrush.spawnPoint = (SpawnPoint)EditorGUILayout.EnumPopup("Spawn Point: ", hexBrush.spawnPoint);
             for (int i = 0; i < hexBrush.attributes.Count; i++) {
