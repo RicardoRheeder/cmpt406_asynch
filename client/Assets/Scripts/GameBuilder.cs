@@ -95,7 +95,7 @@ public class GameBuilder : MonoBehaviour {
         foreach (var userGeneralList in state.UserGeneralsMap) {
             SpawnPoint spawnPoint = SpawnPoint.none;
             for(int i = 0; i < state.ReadyUsers.Count; i++) {
-                if (state.ReadyUsers[i] == username) {
+                if (state.ReadyUsers[i] == userGeneralList.Key) {
                     spawnPoint = (SpawnPoint)i;
                     break;
                 }
@@ -109,7 +109,7 @@ public class GameBuilder : MonoBehaviour {
         foreach (var userUnitList in state.UserUnitsMap) {
             SpawnPoint spawnPoint = SpawnPoint.none;
             for (int i = 0; i < state.ReadyUsers.Count; i++) {
-                if (state.ReadyUsers[i] == username) {
+                if (state.ReadyUsers[i] == userUnitList.Key) {
                     spawnPoint = (SpawnPoint)i;
                     break;
                 }
