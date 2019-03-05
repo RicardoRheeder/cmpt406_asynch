@@ -110,11 +110,12 @@ public class GameBuilder : MonoBehaviour {
 			colorPick += 1;
             foreach(var unit in userUnitList.Value) {
 				UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
+				Renderer rend = newUnit.MyUnit.GetComponent<Renderer>();
 				if(colorPick % 2 == 0){
-					newUnit.MyUnit.renderer.material.color = Color.red;
+					rend.material.color = Color.red;
 				}
 				else{
-					newUnit.MyUnit.renderer.material.color = Color.blue;
+					rend.material.color = Color.blue;
 				}
                 unitPositions.Add(unit.Position, newUnit);
             }
@@ -130,7 +131,7 @@ public class GameBuilder : MonoBehaviour {
         unit.Owner = username;
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit);
-            unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType], serverUnit);
+            unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
         }
         return unit;
     }
