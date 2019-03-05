@@ -10,44 +10,61 @@ using System.Runtime.Serialization;
 [DataContract]
 public class PlayerMetadata {
 
-    [DataMember]
-    public List<string> friends = new List<string>();
+    //Set is public because the player metadata is serialized without that information, so it has
+    //to be set from the client
+    public string Username { get; set; }
 
-    [DataMember]
-    public List<string> activeGames = new List<string>();
+    [DataMember(Name = "friends")]
+    public List<string> Friends { get; private set; } = new List<string>();
 
-    [DataMember]
-    public List<string> pendingPrivateGames = new List<string>();
+    [DataMember(Name = "activeGames")]
+    public List<string> ActiveGames { get; private set; } = new List<string>();
 
-    [DataMember]
-    public List<string> pendingPublicGames = new List<string>();
+    [DataMember(Name = "pendingPrivateGames")]
+    public List<string> PendingPrivateGames { get; private set; } = new List<string>();
 
-    [DataMember]
-    public List<string> completedGames = new List<string>();
+    [DataMember(Name = "pendingPublicGames")]
+    public List<string> PendingPublicGames { get; private set; } = new List<string>();
+
+    [DataMember(Name = "completedGames")]
+    public List<string> CompletedGames { get; private set; } = new List<string>();
+
+    [DataMember(Name = "armyPresets")]
+    public List<ArmyPreset> ArmyPresets { get; private set; } = new List<ArmyPreset>();
 
     public override string ToString() {
-        return JsonConversion.ConvertObjectToJson(typeof(PlayerMetadata), this);
+        return JsonConversion.ConvertObjectToJson(this);
     }
 
     //This function will be run after the class is serialized from the JSON string
     //you can use this to set default values, or ensure values are within some valid context
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
-        if( friends == null) {
-            friends = new List<string>();
+        if(Friends == null) {
+            Friends = new List<string>();
         }
-        if( activeGames == null) {
-            activeGames = new List<string>();
+        if(ActiveGames == null) {
+            ActiveGames = new List<string>();
         }
-        if(pendingPrivateGames == null) {
-            pendingPrivateGames = new List<string>();
+        if(PendingPrivateGames == null) {
+            PendingPrivateGames = new List<string>();
         }
-        if(pendingPublicGames == null) {
-            pendingPublicGames = new List<string>();
+        if(PendingPublicGames == null) {
+            PendingPublicGames = new List<string>();
         }
-        if(completedGames == null) {
-            completedGames = new List<string>();
+        if(CompletedGames == null) {
+            CompletedGames = new List<string>();
         }
+        if (ArmyPresets == null) {
+            ArmyPresets = new List<ArmyPreset>();
+        }
+        else {
+            //This is where the army builder cache is made.
+            for(int i = 0; i < ArmyPresets.Count; i++) {
+                ArmyBuilder.AddPreset(ArmyPresets[i].Name, ArmyPresets[i]);
+            }
+        }
+        ArmyBuilder.InsertDefaultPresets();
     }
 }
 

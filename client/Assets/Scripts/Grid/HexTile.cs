@@ -19,13 +19,19 @@ public class HexTile: TileBase {
     [SerializeField]
     [HideInInspector]
     public List<TileAttribute> attributes = new List<TileAttribute>();
+    [SerializeField]
+    [HideInInspector]
+    public SpawnPoint spawnPoint = SpawnPoint.none;
+
+    GameObject tileObject;
 
     const float ELEVATION_MULTIPLIER = 2.5f;
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
-            go.transform.rotation = Quaternion.Euler(90,0,0);
-            go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y, (go.transform.position.z - (ELEVATION_MULTIPLIER) * (int)elevation));
+            go.transform.rotation = Quaternion.Euler(0,0,0);
+            go.transform.position = new Vector3(go.transform.position.x,(go.transform.position.y + (ELEVATION_MULTIPLIER) * (int)elevation),go.transform.position.z);
+            tileObject = go;
         }
 
         #if UNITY_EDITOR
@@ -49,6 +55,10 @@ public class HexTile: TileBase {
         tileData.colliderType = Tile.ColliderType.Grid;
         tileData.flags = TileFlags.None;
         tileData.gameObject = tileModel;
+    }
+
+    public GameObject GetTileObject() {
+        return tileObject;
     }
 
     #if UNITY_EDITOR

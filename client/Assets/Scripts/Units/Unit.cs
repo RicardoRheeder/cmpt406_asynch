@@ -1,21 +1,39 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[DataContract]
-public class Unit {
+//The actual script on the unit that handles animations
+public class Unit : MonoBehaviour {
+	
+	public Renderer renderer;
 
-    [DataMember]
-    private UnitType unitType;
+    
+	void Awake() {
+		renderer = this.GetComponent<Renderer>();
+	}
+	
+	// Start is called before the first frame update
+    void Start() {
+		
+    }
 
-    [DataMember]
-    private int health;
+    // Update is called once per frame
+    void Update() {
+        
+    }
 
-    [DataMember]
-    private Vector2Int geoPoint;
 
-    public Unit(int unitType, int health, Vector2Int geoPoint) {
-        this.unitType = (UnitType)unitType;
-        this.health = health;
-        this.geoPoint = geoPoint;
+    //Method used to handle the attack animation
+    public void Attack() {
+
+    }
+
+    //Method used to handle the movement animation
+    public void MoveTo(List<Vector2Int> path) {
+
+    }
+
+    public void Kill() {
+        Destroy(this.gameObject);
     }
 }

@@ -5,7 +5,8 @@ using UnityEngine.Tilemaps;
 
 public enum GridTestType { 
     HasTile, 
-    Pathfinding 
+    Pathfinding,
+    GetTile 
 }
 
 /*
@@ -13,18 +14,16 @@ public enum GridTestType {
  */
 public class GridTester : MonoBehaviour {
 
-    public Tilemap tilemap;
     public GridTestType currentTestType = GridTestType.HasTile;
 
-    Vector3Int currTilePosition;
+    Vector2Int currTilePosition;
+    BoardController boardController;
 
     void Start() {
-        if(tilemap == null) {
-            return;
-        }
-
-        currTilePosition = tilemap.WorldToCell(transform.position);
-        transform.position = tilemap.CellToWorld(currTilePosition);
+        boardController = new BoardController();
+        boardController.Initialize();
+        currTilePosition = boardController.WorldToCell(transform.position);
+        transform.position = boardController.CellToWorld(currTilePosition);
         Debug.Log("Starting tile position: " + currTilePosition);
     }
 
@@ -37,6 +36,9 @@ public class GridTester : MonoBehaviour {
                 case GridTestType.Pathfinding:
                     TestPathfinding();
                     break;
+                case GridTestType.GetTile:
+                    TestGetTile();
+                    break;
                 default:
                     break;
             }
@@ -44,35 +46,32 @@ public class GridTester : MonoBehaviour {
     }
 
     void CheckHasTile() {
-        if(!tilemap) {
-            return;
+        Vector2Int cellPosition = boardController.MousePosToCell();
+        Debug.Log("hasHexTile: " + boardController.HasHexTile(cellPosition) + " " + cellPosition.ToString());
+    }
+
+    void TestGetTile() {
+        Vector2Int cellPosition = boardController.MousePosToCell();
+        HexTile tile = boardController.GetHexTile(cellPosition);
+        if(tile != null) {
+            Debug.Log(tile.GetTileObject());
         }
-
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int cellPosition = tilemap.WorldToCell(mousePosition);
-
-        Debug.Log("cellPosition: " + cellPosition.ToString() + " hasTile: " + tilemap.HasTile(cellPosition));
     }
 
     void TestPathfinding() {
-        if(!tilemap) {
-            return;
-        }
-
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int endPosition = tilemap.WorldToCell(mousePosition);
-
-        List<Vector3Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,tilemap,false);
+        Vector2Int endPosition = boardController.MousePosToCell();
+        Debug.Log("mouse: " + Input.mousePosition.ToString() + " cell: " + endPosition.ToString());
+        List<Vector2Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,boardController.GetTilemap(),false);
         StartCoroutine(PathMovement(path, 5f));
     }
 
-    IEnumerator PathMovement(List<Vector3Int> path, float speed) {
+    IEnumerator PathMovement(List<Vector2Int> path, float speed) {
          float step = speed * Time.fixedDeltaTime;
          float t = 0;
          Vector3 prevPos = transform.position;
          for(int i = 0; i < path.Count; i++) {
             currTilePosition = path[i];
-            Vector3 worldPos = tilemap.CellToWorld(currTilePosition);
+            Vector3 worldPos = boardController.CellToWorld(currTilePosition);
             t = 0;
             while (t <= 1.0f) {
                 t += step;

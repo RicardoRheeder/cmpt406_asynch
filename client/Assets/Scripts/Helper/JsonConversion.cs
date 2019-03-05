@@ -17,7 +17,8 @@ public static class JsonConversion {
 
     //Takes in a type and an object and serializes it into JSON
     //Used for server communication
-    public static string ConvertObjectToJson<T>(System.Type type, T thingToConvert) {
+    public static string ConvertObjectToJson<T>(T thingToConvert) {
+        System.Type type = typeof(T);
         if (thingToConvert != null) {
             MemoryStream stream = new MemoryStream();
             DataContractJsonSerializer ser = new DataContractJsonSerializer(type);
@@ -34,5 +35,9 @@ public static class JsonConversion {
     //Used when we need to send a single field to the server, easier than creating data contracts for each field
     public static string GetJsonForSingleField(string key, string value) {
         return "{\"" + key + "\":\"" + value + "\"}";
+    }
+
+    public static string GetJsonForSingleInt(string key, int value) {
+        return "{\"" + key + "\":" + value + "}";
     }
 }

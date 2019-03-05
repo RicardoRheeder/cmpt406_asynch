@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 4708432245807826559}
   - component: {fileID: 8094890890120876466}
   - component: {fileID: 4407187284644216216}
+  - component: {fileID: 3871540908630709496}
   m_Layer: 5
   m_Name: Standard Dropdown
   m_TagString: Untagged
@@ -361,6 +362,21 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Dropdown+DropdownEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &3871540908630709496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175702918663056431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.7830189, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1277073103506574020
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,7 +992,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Dropdown
+  m_Text: Option A
 --- !u!1 &8242417500102142316
 GameObject:
   m_ObjectHideFlags: 0
