@@ -6,16 +6,18 @@ public class AnalyticsManager : MonoBehaviour
 {
     public Client client;
     public GameManager gm;
+    public Window_Graph wg;
 
     /* We're gonna sum up the total damage each UnitType did */
     /* As well as the total damage it did to each individual other UnitType */
     private Dictionary<UnitType, UnitAnalyticsValue> unitStats;
-    private struct UnitAnalyticsValue {
+    public struct UnitAnalyticsValue {
         public int TotalDamage;
         public Dictionary<UnitType, int> DamagePerUnitType;
     }
 
     private Dictionary<Vector2Int, UnitStats> localBoard;
+    private List<SimulatedDamage> inputToShowGraph;
 
     void Start()
     {
@@ -65,19 +67,22 @@ public class AnalyticsManager : MonoBehaviour
                         attackAction(action.OriginXPos, action.OriginXPos, action.TargetXPos, action.TargetYPos);
                         break;
                     default:
-                        Debug.Log("Unhandled Action");
+                        Debug.Log("Unhandled Action: " + action.Type);
                         break;
                 }
             }
         }
 
-        /* TODO: Now show this data somehow */
+        /* Now give the data to make a graph */
+        inputToShowGraph = new List<SimulatedDamage>();
         foreach(KeyValuePair<UnitType, UnitAnalyticsValue> pair in unitStats) {
-            Debug.Log("UnitType: " + pair.Key + " Has a total damage of: " + pair.Value.TotalDamage);
-            foreach(KeyValuePair<UnitType, int> innerPair in pair.Value.DamagePerUnitType ) {
-                Debug.Log("UnitType: " + pair.Key + " Has a total damage of: " + innerPair.Value + " to UnitType: " + innerPair.Key);
-            }
+            SimulatedDamage sd = new SimulatedDamage();
+            sd.damage = pair.Value.TotalDamage;
+            sd.unitType = pair.Key;
+            inputToShowGraph.Add(sd);
         }
+
+        wg.ShowGraph(inputToShowGraph, unitStats, null);
     }
 
     private void movementAction(int sourceXPos, int sourceYPos, int targetXPos, int targetYPos) {
@@ -178,6 +183,10 @@ public class AnalyticsManager : MonoBehaviour
             }
         }
         return damageList;
+    }
+
+    public void resetGraph() {
+        wg.ShowGraph(inputToShowGraph, unitStats, null);
     }
 }
 
