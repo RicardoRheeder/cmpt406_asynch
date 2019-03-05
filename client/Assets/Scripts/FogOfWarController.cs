@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class FogOfWarController : MonoBehaviour {
 
+    public GameObject fogObject;
     Tilemap fogTilemap;
     Tilemap baseTilemap;
 
@@ -27,17 +28,19 @@ public class FogOfWarController : MonoBehaviour {
         }
         fogTilemap.ClearAllTiles();
         fogTilemap.transform.SetParent(tilemap.transform.parent);
-        fogTilemap.transform.position = tilemap.transform.position;
+        fogTilemap.transform.SetPositionAndRotation(tilemap.transform.position,tilemap.transform.rotation);
 
         TileBase[] tiles = tilemap.GetTilesBlock(tilemap.cellBounds);
         for(int x = 0; x < tilemap.cellBounds.size.x; x++) {
             for(int y = 0; y < tilemap.cellBounds.size.y; y++) {
                 if(tiles[x + y * tilemap.cellBounds.size.x] != null) {
-                    FogTile fogTile = ScriptableObject.CreateInstance(typeof(FogTile)) as FogTile;
+                    FogTile fogTile = ScriptableObject.CreateInstance<FogTile>();
+                    fogTile.tileModel = fogObject;
                     fogTilemap.SetTile(new Vector3Int(x,y,0), fogTile);
                 }
             }
         }
+        fogTilemap.RefreshAllTiles();
     }
 
     public void ClearFogAtPosition(Vector2Int position) {

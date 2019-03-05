@@ -15,9 +15,10 @@ public class FogTile : TileBase {
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go) {
+            Debug.Log("go");
             go.transform.rotation = Quaternion.Euler(0,0,0);
-            go.transform.lossyScale.Set(1,5,1);
             tileObject = go;
+            go.transform.localScale = new Vector3(1,5,1);
         }
 
         #if UNITY_EDITOR
@@ -46,4 +47,15 @@ public class FogTile : TileBase {
     public GameObject GetTileObject() {
         return tileObject;
     }
+
+    #if UNITY_EDITOR
+    // The following is a helper that adds a menu item to create a HexTile Asset
+    [MenuItem("Assets/Create/HexTile")]
+    public static void CreateFogTile(){
+        string path = EditorUtility.SaveFilePanelInProject("Save Fog Tile", "New Fog Tile", "Asset", "Save Fog Tile", "Assets");
+        if (path == "")
+            return;
+        AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<FogTile>(), path);
+    }
+    #endif
 }
