@@ -82,7 +82,7 @@ public class AnalyticsManager : MonoBehaviour
             inputToShowGraph.Add(sd);
         }
 
-        wg.ShowGraph(inputToShowGraph, unitStats, null);
+        wg.ShowGraph(inputToShowGraph, unitStats, null, "Total Damages Per Unit");
     }
 
     private void movementAction(int sourceXPos, int sourceYPos, int targetXPos, int targetYPos) {
@@ -185,8 +185,8 @@ public class AnalyticsManager : MonoBehaviour
         return damageList;
     }
 
-    public void resetGraph() {
-        wg.ShowGraph(inputToShowGraph, unitStats, null);
+    public void setToDamageTotals() {
+        wg.ShowGraph(inputToShowGraph, unitStats, null, "Total Damages Per Unit");
     }
 }
 

@@ -11,18 +11,19 @@ public class Window_Graph : MonoBehaviour {
     private RectTransform labelTemplateX;
     private RectTransform labelTemplateY;
     private List<GameObject> gameObjectList;
-    private GameObject tooltipGameObject;
+    private GameObject GraphTitle;
 
     private void Awake() {
         graphContainer = transform.Find("graphContainer").GetComponent<RectTransform>();
         labelTemplateX = graphContainer.Find("labelTemplateX").GetComponent<RectTransform>();
         labelTemplateY = graphContainer.Find("labelTemplateY").GetComponent<RectTransform>();
+        GraphTitle = graphContainer.Find("graphTitle").gameObject;
 
         gameObjectList = new List<GameObject>();
     }
 
     public void ShowGraph(List<AnalyticsManager.SimulatedDamage> valueList, 
-                          Dictionary<UnitType, AnalyticsManager.UnitAnalyticsValue> breakDown, Func<float, string> getAxisLabelY = null) {
+                          Dictionary<UnitType, AnalyticsManager.UnitAnalyticsValue> breakDown, Func<float, string> getAxisLabelY = null, string graphTitle = "") {
 
         if (getAxisLabelY == null) {
             getAxisLabelY = delegate (float _f) { return Mathf.RoundToInt(_f).ToString(); };
@@ -75,7 +76,7 @@ public class Window_Graph : MonoBehaviour {
             if (breakDown != null && breakDown.ContainsKey(valueList[i].unitType)) {
                 UnitType ut = valueList[i].unitType;
                 Dictionary<UnitType, int> DamagePerUnitType = breakDown[ut].DamagePerUnitType;
-                barGameObject.AddComponent<Button>().onClick.AddListener(delegate {breakDownDamages(DamagePerUnitType);});
+                barGameObject.AddComponent<Button>().onClick.AddListener(delegate {breakDownDamages(ut, DamagePerUnitType);});
             }
 
             RectTransform labelX = Instantiate(labelTemplateX);
@@ -98,6 +99,8 @@ public class Window_Graph : MonoBehaviour {
             labelY.GetComponent<Text>().text = getAxisLabelY(yMinimum + (normalizedValue * (yMaximum - yMinimum)));
             gameObjectList.Add(labelY.gameObject);
         }
+
+        GraphTitle.GetComponent<Text>().text = graphTitle;
     }
 
     private GameObject CreateBar(Vector2 graphPosition, float barWidth) {
@@ -112,7 +115,7 @@ public class Window_Graph : MonoBehaviour {
         return gameObject;
     }
 
-    private void breakDownDamages(Dictionary<UnitType, int> DamagePerUnitType) {
+    private void breakDownDamages(UnitType unit, Dictionary<UnitType, int> DamagePerUnitType) {
         List<AnalyticsManager.SimulatedDamage> inputToShowGraph = new List<AnalyticsManager.SimulatedDamage>();
 
         foreach(KeyValuePair<UnitType, int> pair in DamagePerUnitType) {
@@ -122,7 +125,8 @@ public class Window_Graph : MonoBehaviour {
             inputToShowGraph.Add(sd);
         }
 
-        ShowGraph(inputToShowGraph, null, null);
+        string title = unit + " Damage per Unit";
+        ShowGraph(inputToShowGraph, null, null, title);
     }
 
 }
