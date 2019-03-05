@@ -101,12 +101,13 @@ public class BoardController {
     }
 
     public void HighlightSpawnZone(SpawnPoint player) {
+        if (tilemap == null) {   // throw exception if tilemap is null
+            throw new MissingComponentException("Tilemap is missing");
+        }
         List<Vector2Int> spawnTileList = new List<Vector2Int>();
         foreach (HexTile tile in tilemap.GetTilesBlock(tilemap.cellBounds)) {
             if (tile != null && tile.spawnPoint == player) {
-                if(tile.GetTileObject() != null) {
-                    spawnTileList.Add(WorldToCell(tile.GetTileObject().transform.position));
-                }
+                spawnTileList.Add(WorldToCell(tile.GetTileObject().transform.position));
             }
         }
         HighlightTiles(spawnTileList);
@@ -115,6 +116,9 @@ public class BoardController {
     //Feel free to make changes as necessary -jp
     //This function highlights a list of tiles. And disables the previous highlighted ones
     public void HighlightTiles(List<Vector2Int> tilePositions) {
+        if (tilemap == null) {   // throw exception if tilemap is null
+            throw new MissingComponentException("Tilemap is missing");
+        }
         ClearHighlighting();
 
         foreach (var tilePosition in tilePositions) {
@@ -140,7 +144,10 @@ public class BoardController {
     }
 
     public bool CellIsSpawnTile(SpawnPoint player, Vector2Int pos) {
-        if(HasHexTile(pos)) {
+        if (tilemap == null) {   // throw exception if tilemap is null
+            throw new MissingComponentException("Tilemap is missing");
+        }
+        if (HasHexTile(pos)) {
             return GetHexTile(pos).spawnPoint == player;
         }
         return false;
