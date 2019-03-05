@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour {
     private int armyPositionCount = 0;
     private SpawnPoint spawnPoint;
     private bool donePlacing = false;
+    private bool spawnZoneHighlighted = false;
 
     private List<Vector2Int> highlightedTiles;
 
@@ -64,7 +65,6 @@ public class PlayerController : MonoBehaviour {
             };
             this.armyPreset.AddRange(armyPreset.Units);
             this.presetTexts = presetTexts;
-            boardController.HighlightSpawnZone(spawnPoint);
         }
         else {
             controllerState = PlayerState.playing;
@@ -89,6 +89,10 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if (initialized && !donePlacing) {
+            if(!spawnZoneHighlighted) {
+                boardController.HighlightSpawnZone(spawnPoint);
+                spawnZoneHighlighted = true;
+            }
             InputController();
         }
         if (donePlacing) {
