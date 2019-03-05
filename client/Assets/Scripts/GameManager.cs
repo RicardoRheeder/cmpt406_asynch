@@ -140,6 +140,10 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadScene("MainMenu");
     }
 
+    public void Forfeit() {
+        client.ForfeitGame(state.id);
+    }
+
     public void EndUnitPlacement() {
         //This function will have to figure out how to send the unit data to the server, and confirm that we are going
         //to be playing in this game

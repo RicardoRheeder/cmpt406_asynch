@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour {
     private SpawnPoint spawnPoint;
     private bool donePlacing = false;
     private bool spawnZoneHighlighted = false;
+    private bool isPlacing;
 
     private List<Vector2Int> highlightedTiles;
 
@@ -57,6 +58,7 @@ public class PlayerController : MonoBehaviour {
         this.boardController = board;
         this.builder = builder;
         this.spawnPoint = spawnPoint;
+        this.isPlacing = isPlacing;
 
         if(isPlacing) {
             controllerState = PlayerState.placing;
@@ -89,7 +91,7 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if (initialized && !donePlacing) {
-            if(!spawnZoneHighlighted) {
+            if(!spawnZoneHighlighted && isPlacing) {
                 boardController.HighlightSpawnZone(spawnPoint);
                 spawnZoneHighlighted = true;
             }
@@ -108,7 +110,6 @@ public class PlayerController : MonoBehaviour {
                     if (!EventSystem.current.IsPointerOverGameObject()) {
                         if (isMoving) {
                             if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                Debug.Log("here");
                                 manager.MoveUnit(selectedUnit.Position, tilePos);
                                 isMoving = false;
                                 boardController.ClearHighlighting();
@@ -116,7 +117,6 @@ public class PlayerController : MonoBehaviour {
                         }
                         else if (isAttacking) {
                             if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                Debug.Log("here");
                                 manager.AttackUnit(selectedUnit.Position, tilePos);
                                 isAttacking = false;
                                 boardController.ClearHighlighting();
@@ -124,8 +124,8 @@ public class PlayerController : MonoBehaviour {
                         }
                         else if (manager.GetUnitOnTileUserOwns(tilePos, out UnitStats unit)) {
                             selectedUnit = unit;
-                            UpdateUnitDisplay(selectedUnit);
                         }
+                        UpdateUnitDisplay(selectedUnit);
                     }
                 }
                 break;

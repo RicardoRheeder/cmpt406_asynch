@@ -180,6 +180,13 @@ public static class HexUtility {
         return BuildCacheAndGetTiles(startingPos, range);
     }
 
+    //This function will get all hex coordinates in range, despite the map having them or not
+    public static List<Vector2Int> GetTilePositionsInRangeWithoutMapWithoutStarting(Vector2Int startingPos, int range) {
+        List<Vector2Int> tileList = GetTilePositionsInRangeWithoutMap(startingPos, range);
+        tileList.Remove(startingPos);
+        return new List<Vector2Int>(tileList);
+    }
+
     //This function will remove any tiles from the list of tiles that the board does not actually contain
     public static List<Vector2Int> GetTilePositionsInRangeWithoutStarting( Tilemap tilemap, Vector2Int startingPos, int range ) {
         List<Vector2Int> tileList = GetTilePositionsInRange(tilemap, startingPos, range);
