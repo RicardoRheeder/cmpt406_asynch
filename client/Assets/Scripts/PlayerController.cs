@@ -87,9 +87,6 @@ public class PlayerController : MonoBehaviour {
             unitDisplayName = GameObject.Find("unitName").GetComponent<TMP_Text>();
 			userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
 			turnText = GameObject.Find("GameTurnsText").GetComponent<TMP_Text>();
-			
-			userTurnText.text = gamestate.UsersTurn + "'s Turn";
-			turnText.text = "Turn " + gamestate.TurnNumber;
 
             attackButton = GameObject.Find("AttackButton").GetComponent<Button>();
             attackButton.onClick.AddListener(AttackButton);
@@ -97,7 +94,9 @@ public class PlayerController : MonoBehaviour {
             movementButton = GameObject.Find("MovementButton").GetComponent<Button>();
             movementButton.onClick.AddListener(MovementButton);
         }
-
+		
+		userTurnText.text = gamestate.UsersTurn + "'s Turn";
+		turnText.text = "Turn " + gamestate.TurnNumber;
         initialized = true;
     }
 
