@@ -64,10 +64,11 @@ public class FogTile : TileBase {
             //     lowestTransparency = (fogNeighbour as FogTile).transparency;
             // }
         }
-        transparency = (count >= 4) ? fogChangeAmount : 1f;
-        if(transparency > 1f) {
-            transparency = 1f;
-        }
+        // transparency = (count >= 4) ? fogChangeAmount : 1f;
+        // if(transparency > 1f) {
+        //     transparency = 1f;
+        // }
+        transparency = 1f;
         RefreshColor();
         base.RefreshTile(location,tilemap);
     }
