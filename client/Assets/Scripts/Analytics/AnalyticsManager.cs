@@ -152,7 +152,7 @@ public class AnalyticsManager : MonoBehaviour
             return;
         }
         /* Get the Distance between the two locations */
-        int distance = 3;
+        int distance = (int) HexUtility.HexDistance(source, target);
 
         /* Add the distance to the graph data */
         if (unitTotalMovementStats.ContainsKey(unitThatMoved.UnitType)) {
