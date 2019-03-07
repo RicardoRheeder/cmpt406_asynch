@@ -19,6 +19,10 @@ namespace UnityEditor {
             if(tilemap == null || brushTarget.layer == 31) {
                 return;
             }
+
+            if(model.GetComponent<HexTileObject>() == null) {
+                throw new MissingComponentException("Tile must have HexTileObject attached");
+            }
             
             //create a new instance of a HexTile
             HexTile tile = ScriptableObject.CreateInstance<HexTile>();
@@ -58,8 +62,8 @@ namespace UnityEditor {
     }
 
     [CustomEditor(typeof(HexBrush))]
-    public class HexBrushEditor : GridBrushEditor
-    {
+    public class HexBrushEditor : GridBrushEditor {
+        
         private HexBrush hexBrush { get { return target as HexBrush; } }
 
         private SerializedObject serializedBrush;
@@ -73,7 +77,13 @@ namespace UnityEditor {
         public override void OnPaintInspectorGUI() {
             // get the latest representation of the brush
             serializedBrush.UpdateIfRequiredOrScript();
-            hexBrush.model = EditorGUILayout.ObjectField(hexBrush.model, typeof(GameObject), true) as GameObject;
+            GameObject model = EditorGUILayout.ObjectField(hexBrush.model, typeof(GameObject), true) as GameObject;
+            if(model.GetComponent<HexTileObject>() == null || PrefabUtility.GetPrefabAssetType(model) == PrefabAssetType.NotAPrefab) {
+                model = null;
+                throw new UnityException("MAP EDITOR: tile must be a prefab with HexTileObject");
+            } else {
+                hexBrush.model = model;
+            }
             hexBrush.currentElevation = (Elevation)EditorGUILayout.EnumPopup("Elevation: ", hexBrush.currentElevation);
             hexBrush.spawnPoint = (SpawnPoint)EditorGUILayout.EnumPopup("Spawn Point: ", hexBrush.spawnPoint);
             for (int i = 0; i < hexBrush.attributes.Count; i++) {

@@ -160,6 +160,14 @@ public static class HexUtility {
         return neighbors;
     }
 
+    public static List<Vector2Int> GetNeighborPositions(Vector2Int hex) {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+        for(int i = 0; i<=5; i++){
+            neighbors.Add(NeighborTile(hex, i));
+        }
+        return neighbors;
+    }
+
     //This function will remove any tiles from the list of tiles that the board does not actually contain
     public static List<Vector2Int> GetTilePositionsInRange( Tilemap tilemap, Vector2Int startingPos, int range ) {
         List<Vector2Int> tileList = BuildCacheAndGetTiles( startingPos, range );
