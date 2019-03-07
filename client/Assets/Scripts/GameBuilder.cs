@@ -102,7 +102,7 @@ public class GameBuilder : MonoBehaviour {
             }
             foreach (var general in userGeneralList.Value) {
 				UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
-                newUnit.MyUnit.renderer.material.color = SpawnMetadata.SpawnColours[spawnPoint];
+                newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(general.Position, newUnit);
             }
         }
@@ -116,7 +116,7 @@ public class GameBuilder : MonoBehaviour {
             }
             foreach (var unit in userUnitList.Value) {
 				UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
-				newUnit.MyUnit.renderer.material.color = SpawnMetadata.SpawnColours[spawnPoint];
+				newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(unit.Position, newUnit);
             }
         }
