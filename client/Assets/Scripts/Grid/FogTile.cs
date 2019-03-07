@@ -6,19 +6,28 @@ using UnityEngine.Tilemaps;
 using UnityEditor;
 #endif
 
+public enum FogState { Visible, Transparent, Cleared }
+
 public class FogTile : TileBase {
     [HideInInspector]
     public GameObject tileModel;
     public Sprite spritePreview;
 
     GameObject tileObject;
+    ParticleSystem particleSystem;
     public float transparency = 1f;
     float fogChangeAmount = 0.3f;
+
+    FogState fogState = FogState.Visible;
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         if(go != null) {
             go.transform.rotation = Quaternion.Euler(-90,0,0);
             tileObject = go;
+            particleSystem = tileObject.GetComponent<ParticleSystem>();
+            if(fogState == FogState.Cleared) {
+                particleSystem.Stop();
+            }
             go.transform.localScale = new Vector3(1.01f,5,1.01f);
             RefreshColor();
         }
@@ -47,6 +56,22 @@ public class FogTile : TileBase {
             }
     }
 
+    public void ClearFog() {
+        transparency = 0f;
+        fogState = FogState.Cleared;
+        particleSystem.Stop();
+    }
+
+    public void ShowFog() {
+        transparency = 1f;
+        fogState = FogState.Visible;
+        particleSystem.Play();
+    }
+
+    public FogState GetFogState() {
+        return fogState;
+    }
+
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
         // TODO: transparency changes
         transparency = 1f;
@@ -64,15 +89,4 @@ public class FogTile : TileBase {
     public GameObject GetTileObject() {
         return tileObject;
     }
-
-    #if UNITY_EDITOR
-    // The following is a helper that adds a menu item to create a HexTile Asset
-    [MenuItem("Assets/Create/HexTile")]
-    public static void CreateFogTile(){
-        string path = EditorUtility.SaveFilePanelInProject("Save Fog Tile", "New Fog Tile", "Asset", "Save Fog Tile", "Assets");
-        if (path == "")
-            return;
-        AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<FogTile>(), path);
-    }
-    #endif
 }

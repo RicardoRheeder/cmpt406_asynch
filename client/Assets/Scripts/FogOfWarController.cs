@@ -5,12 +5,17 @@ using UnityEngine.Tilemaps;
 
 public class FogOfWarController : MonoBehaviour {
 
-    public GameObject fogObject;
+    GameObject fogObject;
     public bool generateFog = true;
     Tilemap fogTilemap;
-    Tilemap baseTilemap;
 
     BoardController boardController;
+
+    Dictionary<string,FogViewer> fogViewers;
+
+    void Awake() {
+        fogObject = Resources.Load<GameObject>("Fog/FogTile");
+    }
 
     void Start() {
         Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
@@ -59,18 +64,23 @@ public class FogOfWarController : MonoBehaviour {
             return;
         }
         Debug.Log("clear fog at " + position.ToString());
-        fogTilemap.SetTile((Vector3Int)position, null);
-        List<Vector2Int> neighbors = HexUtility.GetNeighborPositions(position);
-        foreach(Vector3Int neighbor in neighbors) {
-            FogTile tile = fogTilemap.GetTile(neighbor) as FogTile;
-            if(tile != null) {
-                tile.transparency = 0.5f;
-                fogTilemap.RefreshTile(neighbor);
-            }
+        FogTile fog = fogTilemap.GetTile((Vector3Int)position) as FogTile;
+        if(fog != null) {
+            fog.ClearFog();
+            fogTilemap.RefreshTile((Vector3Int)position);
         }
+        // fogTilemap.SetTile((Vector3Int)position, null);
+        // List<Vector2Int> neighbors = HexUtility.GetNeighborPositions(position);
+        // foreach(Vector3Int neighbor in neighbors) {
+        //     FogTile tile = fogTilemap.GetTile(neighbor) as FogTile;
+        //     if(tile != null) {
+        //         tile.transparency = 0.5f;
+        //         fogTilemap.RefreshTile(neighbor);
+        //     }
+        // }
     }
 
-    public void ClearFogInArea(List<Vector2Int> positions) {
+    public void DeleteFogInArea(List<Vector2Int> positions) {
         if(fogTilemap == null) {
             return;
         }
@@ -80,7 +90,7 @@ public class FogOfWarController : MonoBehaviour {
         }
     }
 
-    public void ClearAllFog() {
+    public void DeleteAllFog() {
         if(fogTilemap == null) {
             return;
         }
