@@ -137,10 +137,10 @@ public class PlayerController : MonoBehaviour {
             manager.EndUnitPlacement();
         }
 		if(selectedUnit != null){
-			if(selectedUnit.MyUnit.renderer.material.color != Color.white){
-				tempColor = selectedUnit.MyUnit.renderer.material.color;
+			if(selectedUnit.MyUnit.rend.material.color != Color.white){
+				tempColor = selectedUnit.MyUnit.rend.material.color;
 			}
-			selectedUnit.MyUnit.renderer.material.color = Color.white;
+			selectedUnit.MyUnit.rend.material.color = Color.white;
 		}
     }
 
@@ -166,7 +166,7 @@ public class PlayerController : MonoBehaviour {
                         }
                         else if (manager.GetUnitOnTileUserOwns(tilePos, out UnitStats unit)) {
 							if(selectedUnit != null){
-								selectedUnit.MyUnit.renderer.material.color = tempColor;
+								selectedUnit.MyUnit.rend.material.color = tempColor;
 							}
                             selectedUnit = unit;
                         }
