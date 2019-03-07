@@ -35,9 +35,14 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the movement animation
-    public void MoveTo(Vector2Int endPosition, BoardController board) {
+    public void MoveTo(Vector2Int endPosition, ref BoardController board) {
         List<Vector2Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,board.GetTilemap(),false);
         StartCoroutine(PathMovement(path, board, moveSpeed));
+    }
+
+    public void PlaceAt(Vector2Int position, ref BoardController board) {
+        currTilePosition = position;
+        transform.position = board.CellToWorld(position);
     }
 
     IEnumerator PathMovement(List<Vector2Int> path, BoardController board, float speed) {
