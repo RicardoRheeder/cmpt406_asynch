@@ -121,7 +121,7 @@ public class UnitStats {
         if(!specialMove)
             this.MovementActions--;
         this.Position = position;
-        MyUnit.transform.position = board.CellToWorld(position);
+        MyUnit.MoveTo(position,board);
     }
 
     //We need to convert the xPos and yPos variables to be Position
