@@ -40,6 +40,10 @@ public class MainMenu : MonoBehaviour {
     private Button pendingJoinButton;
 
     //Variables for the active games  display
+	private TMP_Text activeMapName;
+    private TMP_Text activeCurrentPlayers;
+    private TMP_Text activeMaxPlayers;
+    private TMP_Text activeTurnNumber;
     private Button activeJoinButton;
 
     //Variables for the army selector display
@@ -72,6 +76,10 @@ public class MainMenu : MonoBehaviour {
         pendingTurnNumber = GameObject.Find("PendingTurnNumber").GetComponent<TMP_Text>();
         pendingJoinButton = GameObject.Find("PendingJoinButton").GetComponent<Button>();
 
+		activeMapName = GameObject.Find("ActiveGameMap").GetComponent<TMP_Text>();
+        activeCurrentPlayers = GameObject.Find("ActiveNumberPlayers").GetComponent<TMP_Text>();
+        activeMaxPlayers = GameObject.Find("ActiveMaxPlayers").GetComponent<TMP_Text>();
+        activeTurnNumber = GameObject.Find("ActiveTurnNumber").GetComponent<TMP_Text>();
         activeJoinButton = GameObject.Find("ActiveJoinButton").GetComponent<Button>();
 
         armyChooserViewport = GameObject.Find("ArmyChooserViewport");
@@ -117,13 +125,11 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void ActiveGameCellDetailsButton(GameState state) {
-        //Set up the display information
-        /*
-        pendingMapName.SetText(state.boardId.ToString());
-        pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
-        pendingMaxPlayers.SetText("" + state.maxUsers);
-        pendingTurnNumber.SetText("" + state.TurnNumber);
-        */
+		//Set up the display information
+        activeMapName.SetText(state.boardId.ToString());
+        activeCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
+        activeMaxPlayers.SetText("" + state.maxUsers);
+        activeTurnNumber.SetText("" + state.TurnNumber);
 
         //Set up the join button to call the join function with the current state
         activeJoinButton.onClick.RemoveAllListeners();

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
+  m_Name: ItsATrap
+  m_EditorClassIdentifier: 
+  name: It's a trap!
+  effects:
+  - +5 Movement
+  - +1 Additional Bomb
+  description: Bush did 911
+  artwork: {fileID: 21300000, guid: 9919d56b3f2492f47a957dffc9ede76b, type: 3}
+  cardCost: 3

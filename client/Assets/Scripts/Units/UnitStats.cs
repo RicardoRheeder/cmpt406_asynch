@@ -17,19 +17,19 @@ public class UnitStats {
     //defense stats
     [DataMember(Name = "health")]
     public int CurrentHP { get; set; }
-    public int MaxHP { get; private set; }
-    public int Armour { get; private set; }
+    public int MaxHP { get; set; }
+    public int Armour { get; set; }
 
     //offense stats
-    public int Damage { get; private set; }
-    public int Pierce { get; private set; }
-    public int Range { get; private set; }
+    public int Damage { get; set; }
+    public int Pierce { get; set; }
+    public int Range { get; set; }
     //Note: the aoe works as follows: 0 means "just hit the hex you're targeting"
     public int Aoe { get; private set; }
-    private IAttackStrategy attackStrategy;
+    public IAttackStrategy attackStrategy;
 
     //mobility
-    public int MovementSpeed { get; private set; }
+    public int MovementSpeed { get; set; }
     public Vector2Int Position { get; private set; }
     //xPos and yPos are the variables sent by the server, so we have to convert them to position
     [DataMember]
@@ -37,24 +37,33 @@ public class UnitStats {
     [DataMember]
     private int yPos;
 
-    //Variables for the generals TODO
-
-    public int Ability1 { get; private set; }
+    //Variables for the generals
+    public GeneralMetadata.GeneralAbility Ability1 { get; private set; }
     [DataMember(Name = "ability1CoolDown")]
-    private int Ability1Cooldown { get; set; } = 0;
+    public int Ability1Cooldown { get; set; } = 0;
+    [DataMember(Name = "ability1Duration")]
+    public int Ability1Duration { get; set; } = 0;
 
-    public int Ability2 { get; private set; }
+    public GeneralMetadata.GeneralAbility Ability2 { get; private set; }
     [DataMember(Name = "ability2CoolDown")]
-    private int Ability2Cooldown { get; set; } = 0;
+    public int Ability2Cooldown { get; set; } = 0;
+    [DataMember(Name = "ability2Duration")]
+    public int Ability2Duration { get; set; } = 0;
 
+    public GeneralMetadata.GeneralPassive Passive { get; private set; }
+
+    //A reference to the script attached to the gameobject
     public Unit MyUnit { get; private set; }
+
+    //Vision variables
+    public int Vision { get; private set; }
 
     //Variables used to dictate how much movements/attacks can be done on each turn
     public int AttackActions { get; set; } = 1;
     public int MovementActions { get; set; } = 1;
 
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
-    public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int cost, IAttackStrategy attackStrategy) {
+    public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int vision, int cost, IAttackStrategy attackStrategy) {
         this.UnitType = type;
         this.serverUnitType = (int)type;
         this.CurrentHP = maxHP;
@@ -68,6 +77,7 @@ public class UnitStats {
         this.Cost = cost;
         this.attackStrategy = attackStrategy;
         this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
+        this.Vision = vision;
     }
 
     public string GetDisplayName() {
@@ -136,5 +146,24 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
+    }
+
+    //Note: this list must have two abilities
+    public void SetAbilities( List<GeneralMetadata.GeneralAbility> abilityList) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+    }
+
+    public void SetAbilities(List<GeneralMetadata.GeneralAbility> abilityList, UnitStats serverUnit) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+        this.Ability1Cooldown = serverUnit.Ability1Cooldown == 0 ? 0 : serverUnit.Ability1Cooldown - 1;
+        this.Ability2Cooldown = serverUnit.Ability2Cooldown == 0 ? 0 : serverUnit.Ability2Cooldown - 1;
+        this.Ability2Duration = serverUnit.Ability2Duration == 0 ? 0 : serverUnit.Ability2Duration - 1;
+        this.Ability2Duration = serverUnit.Ability2Duration == 0 ? 0 : serverUnit.Ability2Duration - 1;
+    }
+
+    public void SetPassive(GeneralMetadata.GeneralPassive passive) {
+        this.Passive = passive;
     }
 }

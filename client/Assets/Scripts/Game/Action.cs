@@ -11,37 +11,37 @@ public class Action {
 
     [DataMember]
     private int actionType;
-    private ActionType type;
+    public ActionType Type;
 
-    [DataMember]
-    private int originXPos;
-    [DataMember]
-    private int originYPos;
+    [DataMember(Name="originXPos")]
+    public int OriginXPos{get; private set;}
+    [DataMember(Name="originYPos")]
+    public int OriginYPos{get; private set;}
 
-    [DataMember]
-    private int targetXPos;
-    [DataMember]
-    private int targetYPos;
+    [DataMember(Name="targetXPos")]
+    public int TargetXPos{get; private set;}
+    [DataMember(Name="targetYPos")]
+    public int TargetYPos{get; private set;}
 
     [DataMember]
     private int cardId;
 
     public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile) {
         this.owner = owner;
-        this.type = type;
-        this.originXPos = sourceTile.x;
-        this.originYPos = sourceTile.y;
-        this.targetXPos = targetTile.x;
-        this.targetYPos = targetTile.y;
+        this.Type = type;
+        this.OriginXPos = sourceTile.x;
+        this.OriginYPos = sourceTile.y;
+        this.TargetXPos = targetTile.x;
+        this.TargetYPos = targetTile.y;
     }
 
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
-        type = (ActionType)actionType;
+        this.Type = (ActionType)actionType;
     }
 
     [OnSerializing]
     public void OnSerializing(StreamingContext c) {
-        actionType = (int)type;
+        actionType = (int)Type;
     }
 }

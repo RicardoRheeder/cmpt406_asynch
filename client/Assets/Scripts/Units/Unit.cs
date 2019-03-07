@@ -4,8 +4,15 @@ using UnityEngine;
 
 //The actual script on the unit that handles animations
 public class Unit : MonoBehaviour {
+	
+	public Renderer renderer;
 
-    // Start is called before the first frame update
+    
+	void Awake() {
+		renderer = this.GetComponent<Renderer>();
+	}
+	
+	// Start is called before the first frame update
     void Start() {
        transform.rotation = Quaternion.Euler(-90,0,0); 
     }

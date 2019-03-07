@@ -39,17 +39,26 @@ public static class ArmyBuilder {
     }
 
 
-    private static readonly string presetOneName = "Preset One";
+    private static readonly string presetOneName = "Steamer Ray Vaughn";
     private static readonly ArmyPreset presetOne = new ArmyPreset(
         presetOneName,
         new List<int>() {
             (int)UnitType.steamer,
             (int)UnitType.steamer,
-            (int)UnitType.pewpew
+			(int)UnitType.steamer,
+            (int)UnitType.steamer,
+			(int)UnitType.steamer,
+            (int)UnitType.steamer,
+            (int)UnitType.powerSurge,
+			(int)UnitType.powerSurge,
+			(int)UnitType.trooper,
+			(int)UnitType.trooper,
+			
+			
         },
         (int)UnitType.heavy_albarn
     );
-    private static readonly string presetTwoName = "Preset Two";
+    private static readonly string presetTwoName = "\"Big\" Donny";
     private static readonly ArmyPreset presetTwo = new ArmyPreset(
         presetTwoName,
         new List<int>() {
@@ -58,23 +67,28 @@ public static class ArmyBuilder {
             (int)UnitType.compensator,
             (int)UnitType.compensator,
             (int)UnitType.compensator,
-            (int)UnitType.compensator,
-            (int)UnitType.compensator,
-            (int)UnitType.compensator,
-            (int)UnitType.compensator,
-            (int)UnitType.compensator,
+            (int)UnitType.foundation,
+            (int)UnitType.foundation,
+            (int)UnitType.foundation,
+            (int)UnitType.midas,
+            (int)UnitType.midas,
         },
         (int)UnitType.piercing_tungsten
     );
-    private static readonly string presetThreeName = "Preset Three";
+    private static readonly string presetThreeName = "Super Friendship Force";
     private static readonly ArmyPreset presetThree = new ArmyPreset(
         presetThreeName,
         new List<int>() {
             (int)UnitType.trooper,
             (int)UnitType.trooper,
+			(int)UnitType.foundation,
+			(int)UnitType.foundation,
             (int)UnitType.recon,
             (int)UnitType.recon,
-            (int)UnitType.recon,
+			(int)UnitType.compensator,
+			(int)UnitType.compensator,
+			(int)UnitType.powerSurge,
+			(int)UnitType.powerSurge,
         },
         (int)UnitType.light_adren
     );

@@ -44,6 +44,9 @@ public class GameState {
     private List<UnitStats> units;
     public Dictionary<string, List<UnitStats>> UserUnitsMap { get; private set; }
 
+    [DataMember(Name="initUnits")]
+    public List<UnitStats> InitUnits { get; private set; }
+
     [DataMember]
     private List<UnitStats> generals;
     public Dictionary<string, List<UnitStats>> UserGeneralsMap { get; private set; }
