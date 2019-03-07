@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Window_Graph : MonoBehaviour {
+public class WindowGraph : MonoBehaviour {
 
     [SerializeField] private Sprite dotSprite;
     private RectTransform graphContainer;
@@ -22,12 +22,10 @@ public class Window_Graph : MonoBehaviour {
         gameObjectList = new List<GameObject>();
     }
 
-    public void ShowGraph(List<AnalyticsManager.SimulatedDamage> valueList, 
-                          Dictionary<UnitType, AnalyticsManager.UnitAnalyticsValue> breakDown, Func<float, string> getAxisLabelY = null, string graphTitle = "") {
+    /* Given primary and secondary data to display, display the graph */
+    public void ShowGraph(List<AnalyticsManager.UnitValuePair> valueList, Dictionary<UnitType, AnalyticsManager.UnitAnalyticsValue> breakDown, string graphTitle) {
 
-        if (getAxisLabelY == null) {
-            getAxisLabelY = delegate (float _f) { return Mathf.RoundToInt(_f).ToString(); };
-        }
+        Func<float, string> getAxisLabelY = delegate (float _f) { return Mathf.RoundToInt(_f).ToString(); };
 
         int maxVisibleValueAmount = valueList.Count;
 
@@ -39,11 +37,11 @@ public class Window_Graph : MonoBehaviour {
         float graphWidth = graphContainer.sizeDelta.x;
         float graphHeight = graphContainer.sizeDelta.y;
 
-        float yMaximum = valueList[0].damage;
-        float yMinimum = valueList[0].damage;
+        float yMaximum = valueList[0].value;
+        float yMinimum = valueList[0].value;
         
         for (int i = Mathf.Max(valueList.Count - maxVisibleValueAmount, 0); i < valueList.Count; i++) {
-            int value = valueList[i].damage;
+            int value = valueList[i].value;
             if (value > yMaximum) {
                 yMaximum = value;
             }
@@ -65,14 +63,13 @@ public class Window_Graph : MonoBehaviour {
 
         int xIndex = 0;
 
-        //GameObject lastDotGameObject = null;
         for (int i = Mathf.Max(valueList.Count - maxVisibleValueAmount, 0); i < valueList.Count; i++) {
             float xPosition = xSize + xIndex * xSize;
-            float yPosition = ((valueList[i].damage - yMinimum) / (yMaximum - yMinimum)) * graphHeight;
+            float yPosition = ((valueList[i].value - yMinimum) / (yMaximum - yMinimum)) * graphHeight;
             GameObject barGameObject = CreateBar(new Vector2(xPosition, yPosition), xSize * .9f);
             gameObjectList.Add(barGameObject);
 
-            /* on click, give a breakdown of totals */
+            /* on click, give a breakdown of totals (if provided) */
             if (breakDown != null && breakDown.ContainsKey(valueList[i].unitType)) {
                 UnitType ut = valueList[i].unitType;
                 Dictionary<UnitType, int> DamagePerUnitType = breakDown[ut].TotalPerUnitType;
@@ -83,7 +80,7 @@ public class Window_Graph : MonoBehaviour {
             labelX.SetParent(graphContainer, false);
             labelX.gameObject.SetActive(true);
             labelX.anchoredPosition = new Vector2(xPosition, -55f);
-            labelX.GetComponent<Text>().text = valueList[i].unitType.ToString() + "\n" + valueList[i].damage;
+            labelX.GetComponent<Text>().text = valueList[i].unitType.ToString() + "\n" + valueList[i].value;
             gameObjectList.Add(labelX.gameObject);
 
             xIndex++;
@@ -116,17 +113,17 @@ public class Window_Graph : MonoBehaviour {
     }
 
     private void breakDownDamages(UnitType unit, Dictionary<UnitType, int> DamagePerUnitType) {
-        List<AnalyticsManager.SimulatedDamage> inputToShowGraph = new List<AnalyticsManager.SimulatedDamage>();
+        List<AnalyticsManager.UnitValuePair> inputToShowGraph = new List<AnalyticsManager.UnitValuePair>();
 
         foreach(KeyValuePair<UnitType, int> pair in DamagePerUnitType) {
-            AnalyticsManager.SimulatedDamage sd = new AnalyticsManager.SimulatedDamage();
-            sd.damage = pair.Value;
+            AnalyticsManager.UnitValuePair sd = new AnalyticsManager.UnitValuePair();
+            sd.value = pair.Value;
             sd.unitType = pair.Key;
             inputToShowGraph.Add(sd);
         }
 
         string title = unit + " Damage per Unit";
-        ShowGraph(inputToShowGraph, null, null, title);
+        ShowGraph(inputToShowGraph, null, title);
     }
 
 }
