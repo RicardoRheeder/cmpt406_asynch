@@ -138,23 +138,38 @@ public class Client : MonoBehaviour {
 
     //This method is used to get the summary of the games that are considered pending for the logged in user
     public Tuple<bool, GameStateCollection> GetPendingGamesInformation() {
-        if ((UserInformation.PendingPrivateGames != null && UserInformation.PendingPrivateGames.Count > 0) ||
-            (UserInformation.PendingPublicGames != null && UserInformation.PendingPublicGames.Count > 0)) {
-            return GetGameStateCollectionHelper(new GameIds(UserInformation.PendingPublicGames, UserInformation.PendingPrivateGames));
+        if(this.LoginUser(user.username, user.password)) {
+            if ((UserInformation.PendingPrivateGames != null && UserInformation.PendingPrivateGames.Count > 0) ||
+                (UserInformation.PendingPublicGames != null && UserInformation.PendingPublicGames.Count > 0)) {
+                return GetGameStateCollectionHelper(new GameIds(UserInformation.PendingPublicGames, UserInformation.PendingPrivateGames));
+            }
+        }
+        else {
+            //shit went bad
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }
 
     public Tuple<bool, GameStateCollection> GetActiveGamesInformation() {
-        if (UserInformation.ActiveGames.Count > 0) {
-            return GetGameStateCollectionHelper(new GameIds(UserInformation.ActiveGames));
+        if(LoginUser(user.username, user.password)) {
+            if (UserInformation.ActiveGames.Count > 0) {
+                return GetGameStateCollectionHelper(new GameIds(UserInformation.ActiveGames));
+            }
+        }
+        else {
+            //shit went bad
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }
 
     public Tuple<bool, GameStateCollection> GetCompletedGamesInformation() {
-        if (UserInformation.CompletedGames.Count > 0) {
-            return GetGameStateCollectionHelper(new GameIds(UserInformation.CompletedGames));
+        if (LoginUser(user.username, user.password)) {
+            if (UserInformation.CompletedGames.Count > 0) {
+                return GetGameStateCollectionHelper(new GameIds(UserInformation.CompletedGames));
+            }
+        }
+        else {
+            // bad shit happened
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }

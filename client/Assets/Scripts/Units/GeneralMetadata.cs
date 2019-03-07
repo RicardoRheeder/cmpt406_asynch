@@ -126,7 +126,6 @@ public static class GeneralMetadata {
         //TODO
     }
 
-
     public delegate void RefAction<T1, T2>(ref T1 arg1, T2 arg2); //required to make the delegate functions work with a reference parameter
     public static readonly Dictionary<GeneralAbility, RefAction<UnitStats, Dictionary<Vector2Int, UnitStats>>> ActiveAbilityFunctionDictionary = new Dictionary<GeneralAbility, RefAction<UnitStats, Dictionary<Vector2Int, UnitStats>>>() {
         {GeneralAbility.TROJAN_SHOT, TrojanShot },

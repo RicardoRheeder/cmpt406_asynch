@@ -199,6 +199,10 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuPendingGamesButton() {
         SetMenuState(true, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
+        int childrenCount = pendingGamesViewContent.transform.childCount;
+        for(int i = 1; i < childrenCount; i++) {
+            Destroy(pendingGamesViewContent.transform.GetChild(i).gameObject);
+        }
         if (response.First) {
             foreach(var state in response.Second.states) {
                 if (!state.isPublic && !state.ReadyUsers.Contains(networkApi.UserInformation.Username)) {
