@@ -25,6 +25,9 @@ public class AnalyticsManager : MonoBehaviour
     private Dictionary<UnitType, int> gamesPlayed;
     private List<SimulatedDamage> avgDamagesInput;
 
+    private Dictionary<UnitType, int> timesPurchased;
+    private List<SimulatedDamage> timesPurchasedInput;
+
     void Start()
     {
         if (!client.LoginUser("ParkerReese1", "password")) {
@@ -45,6 +48,7 @@ public class AnalyticsManager : MonoBehaviour
 
         unitDamageStats = new Dictionary<UnitType, UnitAnalyticsValue>();
         gamesPlayed = new Dictionary<UnitType, int>();
+        timesPurchased = new Dictionary<UnitType, int>();
         unitTotalMovementStats = new Dictionary<UnitType, int>();
         
         /* We now have a list of GameStates to loop over and build data with */
@@ -75,6 +79,12 @@ public class AnalyticsManager : MonoBehaviour
                     else {
                         gamesPlayed[unit.UnitType] = 1;
                     }
+                }
+                /* Increment unit in Times Purchased Dict */
+                if (!timesPurchased.ContainsKey(unit.UnitType)) {
+                    timesPurchased.Add(unit.UnitType, 1);
+                } else {
+                    timesPurchased[unit.UnitType] = (timesPurchased[unit.UnitType] + 1);
                 }
             }
 
@@ -135,6 +145,14 @@ public class AnalyticsManager : MonoBehaviour
             avgMovementInput.Add(sd);
         }
 
+        /* Data for Total Purchased times */
+        timesPurchasedInput = new List<SimulatedDamage>();
+        foreach(KeyValuePair<UnitType, int> pair in timesPurchased) {
+            SimulatedDamage sd = new SimulatedDamage();
+            sd.damage = pair.Value;
+            sd.unitType = pair.Key;
+            avgMovementInput.Add(sd);
+        }
     }
 
     private void movementAction(int sourceXPos, int sourceYPos, int targetXPos, int targetYPos) {
@@ -262,6 +280,10 @@ public class AnalyticsManager : MonoBehaviour
 
     public void setToMovementAvgs() {
         wg.ShowGraph(avgMovementInput, null, null, "Average Movement Per Unit Per Game");
+    }
+
+    public void setToTimesPurchased() {
+        wg.ShowGraph(timesPurchasedInput, null, null, "Times Purchased");
     }
 }
 
