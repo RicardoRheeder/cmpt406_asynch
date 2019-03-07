@@ -88,7 +88,7 @@ public class CameraMovement : MonoBehaviour {
         }
 
         if(tilemap != null) {
-            transform.position = new Vector3(Mathf.Clamp(transform.position.x,minBound.x,maxBound.x),transform.position.y,Mathf.Clamp(transform.position.z,minBound.z,maxBound.z));
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x,minBound.x,maxBound.x),Mathf.Clamp(transform.position.y,minBound.y,maxBound.y),transform.position.z);
         }
     }
 

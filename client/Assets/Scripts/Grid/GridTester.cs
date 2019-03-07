@@ -24,6 +24,7 @@ public class GridTester : MonoBehaviour {
         boardController.Initialize();
         currTilePosition = boardController.WorldToCell(transform.position);
         transform.position = boardController.CellToWorld(currTilePosition);
+        transform.rotation = Quaternion.Euler(-90,0,0);
         Debug.Log("Starting tile position: " + currTilePosition);
     }
 

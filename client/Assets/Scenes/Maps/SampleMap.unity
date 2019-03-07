@@ -129,6 +129,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &113623385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,6 +147,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &141620207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,6 +164,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &171144907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,6 +182,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &240320568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,6 +200,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &267708210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,6 +218,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!1 &316003741
 GameObject:
   m_ObjectHideFlags: 0
@@ -1210,6 +1216,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &359732917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1226,6 +1233,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &417770758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1243,6 +1251,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &455255561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1260,6 +1269,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &646350600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1276,6 +1286,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!114 &654583764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1293,6 +1304,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &693761517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1310,6 +1322,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &697247034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1327,6 +1340,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &710178310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1343,6 +1357,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &720441499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1360,6 +1375,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &743989469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1377,6 +1393,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &777160260
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1394,6 +1411,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &781070378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1411,6 +1429,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &836073574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,6 +1446,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &847250031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1444,6 +1464,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &877706127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1461,6 +1482,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!114 &917327053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1478,6 +1500,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &966916296
 GameObject:
   m_ObjectHideFlags: 0
@@ -1514,14 +1537,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 966916296}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 316003742}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1025909700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1539,6 +1562,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1026761538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1556,6 +1580,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1027776655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1573,6 +1598,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1042937053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1590,6 +1616,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1072841482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1607,6 +1634,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1110651999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1624,6 +1652,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1173587173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1641,6 +1670,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1205639143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1658,6 +1688,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1219528395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1675,6 +1706,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1223682726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1692,6 +1724,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1278221206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1709,6 +1742,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1305849380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1726,6 +1760,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1351810261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1743,6 +1778,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1352863710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1760,6 +1796,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1359722429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1777,6 +1814,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1373944059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1794,6 +1832,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1399326833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1811,6 +1850,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1428083653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1827,6 +1867,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1480988053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1844,6 +1885,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1498107653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1860,6 +1902,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1513505191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1877,6 +1920,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1533076197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1893,6 +1937,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1547604372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1910,6 +1955,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1593808075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1927,6 +1973,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1652780601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1944,6 +1991,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1670670250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1961,6 +2009,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1671172139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1978,6 +2027,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1743940480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1995,6 +2045,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1749011352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2012,6 +2063,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1755082657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2029,6 +2081,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1758748671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2046,6 +2099,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1797144331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2063,6 +2117,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1879759447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2080,6 +2135,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1889569007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2097,6 +2153,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1915633136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2114,6 +2171,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1946346353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2131,6 +2189,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1970432631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2148,6 +2207,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1975013432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2165,6 +2225,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1980681345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2182,6 +2243,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2032939947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2199,6 +2261,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2047723165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2216,6 +2279,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2070660439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2233,6 +2297,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2084917875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2250,6 +2315,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2096317657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2266,3 +2332,4 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1

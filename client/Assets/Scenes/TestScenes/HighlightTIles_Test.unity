@@ -129,6 +129,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &113623385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,6 +147,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &141620207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,6 +164,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &171144907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,6 +182,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &183915594
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,6 +347,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 183915594}
   m_CullTransparentMesh: 0
+--- !u!84 &216227323
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_Width: 674
+  m_Height: 710
+  m_AntiAliasing: 1
+  m_DepthFormat: 1
+  m_ColorFormat: 7
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!114 &240320568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,6 +396,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &267708210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,6 +414,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!1 &316003741
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,6 +1429,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &359732917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1407,6 +1446,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &417056078
 GameObject:
   m_ObjectHideFlags: 0
@@ -1502,6 +1542,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &424849275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1526,8 +1567,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 424849275}
-  m_LocalRotation: {x: 0.000000059604638, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0000025433728, z: -0.000034024764}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 774369287}
@@ -1565,7 +1606,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 0
   m_RenderingPath: 1
-  m_TargetTexture: {fileID: 1071191170}
+  m_TargetTexture: {fileID: 2105750401}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -1592,6 +1633,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!1001 &486951797
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1935,6 +1977,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!114 &654583764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1952,6 +1995,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &693761517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1969,6 +2013,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &697247034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1986,6 +2031,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &710178310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2002,6 +2048,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &720441499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2019,6 +2066,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &743989469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2036,6 +2084,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &774369283
 GameObject:
   m_ObjectHideFlags: 0
@@ -2083,8 +2132,8 @@ MonoBehaviour:
   sourceCamera: {fileID: 774369286}
   outlineCamera: {fileID: 424849277}
   outlineShaderMaterial: {fileID: 0}
-  renderTexture: {fileID: 1071191170}
-  extraRenderTexture: {fileID: 1921099600}
+  renderTexture: {fileID: 2105750401}
+  extraRenderTexture: {fileID: 216227323}
 --- !u!81 &774369285
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2167,6 +2216,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &781070378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2184,6 +2234,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!1 &826309055
 GameObject:
   m_ObjectHideFlags: 0
@@ -2278,6 +2329,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &844422115
 GameObject:
   m_ObjectHideFlags: 0
@@ -2386,7 +2438,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -2461,6 +2513,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &877706127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2478,6 +2531,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!1 &882887366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2603,6 +2657,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &966916296
 GameObject:
   m_ObjectHideFlags: 0
@@ -2639,14 +2694,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 966916296}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 316003742}
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1010126204
 GameObject:
   m_ObjectHideFlags: 0
@@ -2683,7 +2738,6 @@ MonoBehaviour:
   zoomLimits: {x: 10, y: 100}
   useCursor: 1
   maxRotationSpeed: 100
-  tilemap: {fileID: 316003744}
 --- !u!4 &1010126206
 Transform:
   m_ObjectHideFlags: 0
@@ -2691,14 +2745,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010126204}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 774369287}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1025909700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2716,6 +2770,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1026761538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2733,6 +2788,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1027776655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2750,6 +2806,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1042937053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2767,38 +2824,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
---- !u!84 &1071191170
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_Width: 620
-  m_Height: 324
-  m_AntiAliasing: 1
-  m_DepthFormat: 1
-  m_ColorFormat: 7
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
+  spawnPoint: -1
 --- !u!114 &1072841482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2816,6 +2842,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1110651999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2833,6 +2860,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1173587173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2850,6 +2878,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1205639143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2867,6 +2896,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1219528395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2884,6 +2914,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1223682726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2901,6 +2932,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!1 &1231520991
 GameObject:
   m_ObjectHideFlags: 0
@@ -3081,6 +3113,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1305849380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3098,6 +3131,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1001 &1308082142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3425,7 +3459,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -3500,6 +3534,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1352863710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3517,6 +3552,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1359722429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3534,6 +3570,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1373944059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3551,6 +3588,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1001 &1389442859
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3644,6 +3682,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1428083653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3660,6 +3699,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1480988053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3677,6 +3717,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1498107653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3693,6 +3734,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &1508741017
 GameObject:
   m_ObjectHideFlags: 0
@@ -3874,6 +3916,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1533076197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3890,6 +3933,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1547604372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3907,6 +3951,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &1551964519
 GameObject:
   m_ObjectHideFlags: 0
@@ -4067,6 +4112,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1652780601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4084,6 +4130,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1670670250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4101,6 +4148,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1671172139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4118,6 +4166,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1743940480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4135,6 +4184,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &1746313226
 GameObject:
   m_ObjectHideFlags: 0
@@ -4243,7 +4293,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -4318,6 +4368,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1755082657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4335,6 +4386,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1758748671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4352,6 +4404,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1797144331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4369,6 +4422,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1879759447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4386,6 +4440,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1889569007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4403,6 +4458,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1915633136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4420,38 +4476,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
---- !u!84 &1921099600
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_Width: 620
-  m_Height: 324
-  m_AntiAliasing: 1
-  m_DepthFormat: 1
-  m_ColorFormat: 7
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
+  spawnPoint: -1
 --- !u!114 &1946346353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4469,6 +4494,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1970432631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4486,6 +4512,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1975013432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4503,6 +4530,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 2
   attributes: 
+  spawnPoint: -1
 --- !u!114 &1980681345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4520,6 +4548,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2032939947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4537,6 +4566,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2047723165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4554,6 +4584,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!1 &2064675615
 GameObject:
   m_ObjectHideFlags: 0
@@ -4660,7 +4691,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -4735,6 +4766,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2084917875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4752,6 +4784,7 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 0
   attributes: 
+  spawnPoint: -1
 --- !u!114 &2096317657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4768,3 +4801,36 @@ MonoBehaviour:
   spritePreview: {fileID: 0}
   elevation: 1
   attributes: 
+  spawnPoint: -1
+--- !u!84 &2105750401
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_Width: 674
+  m_Height: 710
+  m_AntiAliasing: 1
+  m_DepthFormat: 1
+  m_ColorFormat: 7
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
