@@ -5,28 +5,34 @@ using UnityEngine;
 public class AnalyticsManager : MonoBehaviour
 {
     public Client client;
-    public Window_Graph wg;
+    public WindowGraph wg;
 
     /* We're gonna sum up the total damage each UnitType did */
     /* As well as the total damage it did to each individual other UnitType */
-    private Dictionary<Vector2Int, UnitStats> localBoard;
     public struct UnitAnalyticsValue {
         public int Total;
         public Dictionary<UnitType, int> TotalPerUnitType;
     }
 
+    private Dictionary<Vector2Int, UnitStats> localBoard;
+    
+    public struct UnitValuePair {
+        public int value;
+        public UnitType unitType;
+    }
+
     private Dictionary<UnitType, UnitAnalyticsValue> unitDamageStats;
-    private List<SimulatedDamage> totalDamagesInput;
+    private List<UnitValuePair> totalDamagesInput;
 
     private Dictionary<UnitType, int> unitTotalMovementStats;
-    private List<SimulatedDamage> totalMovementInput;
-    private List<SimulatedDamage> avgMovementInput;
+    private List<UnitValuePair> totalMovementInput;
+    private List<UnitValuePair> avgMovementInput;
 
     private Dictionary<UnitType, int> gamesPlayed;
-    private List<SimulatedDamage> avgDamagesInput;
+    private List<UnitValuePair> avgDamagesInput;
 
     private Dictionary<UnitType, int> timesPurchased;
-    private List<SimulatedDamage> timesPurchasedInput;
+    private List<UnitValuePair> timesPurchasedInput;
 
     void Start()
     {
@@ -64,9 +70,9 @@ public class AnalyticsManager : MonoBehaviour
             }
             
             Dictionary<UnitType, bool> gamesPlayedChecker = new Dictionary<UnitType, bool>();
+            
             /* Initialize the local board given the initUnits */
             localBoard = new Dictionary<Vector2Int, UnitStats>();
-
             foreach(UnitStats unit in gameState.InitUnits) {
                 localBoard[unit.Position] = UnitFactory.GetBaseUnit(unit.UnitType);
 
@@ -105,53 +111,46 @@ public class AnalyticsManager : MonoBehaviour
             }
         }
 
-        /* Now give the data to make a graph */
-
-        /* Data for TotalDamages Graph */
-        totalDamagesInput = new List<SimulatedDamage>();
+        /* compile data for Total and Avg Damages Graph */
+        totalDamagesInput = new List<UnitValuePair>();
+        avgDamagesInput = new List<UnitValuePair>();
         foreach(KeyValuePair<UnitType, UnitAnalyticsValue> pair in unitDamageStats) {
-            SimulatedDamage sd = new SimulatedDamage();
-            sd.damage = pair.Value.Total;
-            sd.unitType = pair.Key;
-            totalDamagesInput.Add(sd);
+            UnitValuePair totalSD = new UnitValuePair();
+            totalSD.value = pair.Value.Total;
+            totalSD.unitType = pair.Key;
+            totalDamagesInput.Add(totalSD);
+
+            UnitValuePair avgSD = new UnitValuePair();
+            avgSD.value = pair.Value.Total/gamesPlayed[pair.Key];
+            avgSD.unitType = pair.Key;
+            avgDamagesInput.Add(avgSD);
         }
 
-        wg.ShowGraph(totalDamagesInput, unitDamageStats, null, "Total Damages Per Unit");
+        /* show the first graph while we quickly build up the other graphs */
+        wg.ShowGraph(totalDamagesInput, unitDamageStats, "Total Damages Per Unit");
 
-        /* Data for Avg Damage graph */
-        avgDamagesInput = new List<SimulatedDamage>();
-        foreach(KeyValuePair<UnitType, UnitAnalyticsValue> pair in unitDamageStats) {
-            SimulatedDamage sd = new SimulatedDamage();
-            sd.damage = pair.Value.Total/gamesPlayed[pair.Key];
-            sd.unitType = pair.Key;
-            avgDamagesInput.Add(sd);
-        }
-
-        /* Compile data for Total Movement */
-        totalMovementInput = new List<SimulatedDamage>();
+        /* Compile data for Total and Avg Movement */
+        totalMovementInput = new List<UnitValuePair>();
+        avgMovementInput = new List<UnitValuePair>();
         foreach(KeyValuePair<UnitType, int> pair in unitTotalMovementStats) {
-            SimulatedDamage sd = new SimulatedDamage();
-            sd.damage = pair.Value;
-            sd.unitType = pair.Key;
-            totalMovementInput.Add(sd);
+            UnitValuePair totalSD = new UnitValuePair();
+            totalSD.value = pair.Value;
+            totalSD.unitType = pair.Key;
+            totalMovementInput.Add(totalSD);
+
+            UnitValuePair avgSD = new UnitValuePair();
+            avgSD.value = pair.Value / gamesPlayed[pair.Key];
+            avgSD.unitType = pair.Key;
+            avgMovementInput.Add(avgSD);
         }
 
-        /* Compile data for Avg Movement */
-        avgMovementInput = new List<SimulatedDamage>();
-        foreach(KeyValuePair<UnitType, int> pair in unitTotalMovementStats) {
-            SimulatedDamage sd = new SimulatedDamage();
-            sd.damage = pair.Value / gamesPlayed[pair.Key];
-            sd.unitType = pair.Key;
-            avgMovementInput.Add(sd);
-        }
-
-        /* Data for Total Purchased times */
-        timesPurchasedInput = new List<SimulatedDamage>();
+        /* compile data for Total Purchased times */
+        timesPurchasedInput = new List<UnitValuePair>();
         foreach(KeyValuePair<UnitType, int> pair in timesPurchased) {
-            SimulatedDamage sd = new SimulatedDamage();
-            sd.damage = pair.Value;
+            UnitValuePair sd = new UnitValuePair();
+            sd.value = pair.Value;
             sd.unitType = pair.Key;
-            avgMovementInput.Add(sd);
+            timesPurchasedInput.Add(sd);
         }
     }
 
@@ -159,7 +158,7 @@ public class AnalyticsManager : MonoBehaviour
         UnitStats unitThatMoved;
         Vector2Int source = new Vector2Int(sourceXPos, sourceYPos);
         Vector2Int target = new Vector2Int(targetXPos, targetYPos);
-        Debug.Log("We have a movement");
+
         /* Error checks */
         if (!localBoard.TryGetValue(source, out unitThatMoved)){
             Debug.LogError("No unit with this source");
@@ -200,46 +199,40 @@ public class AnalyticsManager : MonoBehaviour
         }
 
         /* Get the array of simulated damages */
-        List<SimulatedDamage> damages = GetSimulatedDamage(sourceUnit, target, localBoard);
+        List<UnitValuePair> damages = GetSimulatedDamage(sourceUnit, target, localBoard);
         if (damages.Count > 0) {
             /* They hit something(s) */
-            foreach(SimulatedDamage damage in damages) {
-                /* Update the Dict to increase total damages */
+            foreach(UnitValuePair damage in damages) {
+            /* Update the Dict to increase total damages */
             UnitAnalyticsValue curUav;
             if (!unitDamageStats.TryGetValue(sourceUnit.UnitType, out curUav)) {
                 // UnitType is not yet in Dict
-                curUav.Total = damage.damage;
+                curUav.Total = damage.value;
                 curUav.TotalPerUnitType = new Dictionary<UnitType, int>();
-                curUav.TotalPerUnitType[damage.unitType] = damage.damage;
+                curUav.TotalPerUnitType[damage.unitType] = damage.value;
             } else {
                 /* UnitType is in the Dict already, don't erase values, increment them */
-                curUav.Total = curUav.Total + damage.damage;
+                curUav.Total = curUav.Total + damage.value;
                 
                 /* Also increment the specific damage done to that UnitType */
                 int totalDamagePerUnitType;
                 if (!curUav.TotalPerUnitType.TryGetValue(damage.unitType, out totalDamagePerUnitType)) {
-                    curUav.TotalPerUnitType[damage.unitType] = damage.damage;
+                    curUav.TotalPerUnitType[damage.unitType] = damage.value;
                 } else {
-                    curUav.TotalPerUnitType[damage.unitType] = totalDamagePerUnitType + damage.damage;
+                    curUav.TotalPerUnitType[damage.unitType] = totalDamagePerUnitType + damage.value;
                 }
             }
             /* Put all changes */
-            unitDamageStats[sourceUnit.UnitType] = curUav; // Note, using dict[key] = val will overwrite values. dict.Add() will not overwrite values
+            unitDamageStats[sourceUnit.UnitType] = curUav;
             }
 
         }
-
         return;
     }
 
-    // This is used for analytics. No, I don't like it, but it was the fastest version of doing this.
-    public struct SimulatedDamage {
-        public int damage;
-        public UnitType unitType;
-    }
-
-    private List<SimulatedDamage> GetSimulatedDamage(UnitStats sourceUnit, Vector2Int target, Dictionary<Vector2Int, UnitStats> fakeBoard) {
-        List<SimulatedDamage> damageList = new List<SimulatedDamage>();
+    /* Function to get the list of damages on each unit that an attack inflicts */
+    private List<UnitValuePair> GetSimulatedDamage(UnitStats sourceUnit, Vector2Int target, Dictionary<Vector2Int, UnitStats> fakeBoard) {
+        List<UnitValuePair> damageList = new List<UnitValuePair>();
 
         List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
         foreach (var damage in damages) {
@@ -256,8 +249,8 @@ public class AnalyticsManager : MonoBehaviour
 
                 // Add this damage too list of damages
                 if (damageDiff > 0) {
-                    SimulatedDamage sd;
-                    sd.damage = damageDiff;
+                    UnitValuePair sd;
+                    sd.value = damageDiff;
                     sd.unitType = targetUnit.UnitType;
                     damageList.Add(sd);
                 }
@@ -267,23 +260,23 @@ public class AnalyticsManager : MonoBehaviour
     }
 
     public void setToDamageTotals() {
-        wg.ShowGraph(totalDamagesInput, unitDamageStats, null, "Total Damages Per Unit");
+        wg.ShowGraph(totalDamagesInput, unitDamageStats, "Total Damages Per Unit");
     }
 
     public void setToDamageAverages() {
-        wg.ShowGraph(avgDamagesInput, null, null, "Average Damages Per Unit Per Game");
+        wg.ShowGraph(avgDamagesInput, null, "Average Damages Per Unit Per Game");
     }
 
     public void setToMovementTotals() {
-        wg.ShowGraph(totalMovementInput, null, null, "Total Movement Per Unit");
+        wg.ShowGraph(totalMovementInput, null, "Total Movement Per Unit");
     }
 
     public void setToMovementAvgs() {
-        wg.ShowGraph(avgMovementInput, null, null, "Average Movement Per Unit Per Game");
+        wg.ShowGraph(avgMovementInput, null, "Average Movement Per Unit Per Game");
     }
 
     public void setToTimesPurchased() {
-        wg.ShowGraph(timesPurchasedInput, null, null, "Times Purchased");
+        wg.ShowGraph(timesPurchasedInput, null, "Times Purchased");
     }
 }
 
