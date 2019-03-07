@@ -64,7 +64,7 @@ public class FogOfWarController : MonoBehaviour {
         foreach(Vector3Int neighbor in neighbors) {
             FogTile tile = fogTilemap.GetTile(neighbor) as FogTile;
             if(tile != null) {
-                // tile.transparency = 0.5f;
+                tile.transparency = 0.5f;
                 fogTilemap.RefreshTile(neighbor);
             }
         }

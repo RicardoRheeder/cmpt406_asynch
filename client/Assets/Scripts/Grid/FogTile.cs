@@ -48,26 +48,7 @@ public class FogTile : TileBase {
     }
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
-        List<Vector2Int> neighbours = HexUtility.GetNeighborPositions((Vector2Int)location);
-        // float lowestTransparency = 1f;
-        int count = 0;
-        foreach(Vector3Int neighbour in neighbours) {
-            TileBase fogNeighbour = tilemap.GetTile(neighbour);
-            if(fogNeighbour == null) {
-                count++;
-            }
-            // if(fogNeighbour == null) {
-            //     Debug.Log(neighbour.ToString() + " is null");
-            //     // lowestTransparency = 0;
-            // } else if((fogNeighbour as FogTile).transparency < lowestTransparency){
-            //     Debug.Log("lower transparency");
-            //     lowestTransparency = (fogNeighbour as FogTile).transparency;
-            // }
-        }
-        // transparency = (count >= 4) ? fogChangeAmount : 1f;
-        // if(transparency > 1f) {
-        //     transparency = 1f;
-        // }
+        // TODO: transparency changes
         transparency = 1f;
         RefreshColor();
         base.RefreshTile(location,tilemap);
