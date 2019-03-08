@@ -65,7 +65,8 @@ public class FogOfWarController {
         List<Vector2Int> oldTiles = viewer.GetAffectedTiles();
         for(int i=0; i < oldTiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
-            tile.ShowFog(false);
+            mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile madEdgeTile);
+            tile.ShowFog(madEdgeTile != null);
             fogTilemap.RefreshTile((Vector3Int)oldTiles[i]); // might need to refresh this at a later point
         }
     }
@@ -79,7 +80,8 @@ public class FogOfWarController {
         List<Vector2Int> oldTiles = viewer.GetAffectedTiles();
         for(int i=0; i < oldTiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
-            tile.ShowFog(false);
+            mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile madEdgeTile);
+            tile.ShowFog(madEdgeTile != null);
             fogTilemap.RefreshTile((Vector3Int)oldTiles[i]); // might need to refresh this at a later point
             clearedTiles.Remove(oldTiles[i]);
         }
