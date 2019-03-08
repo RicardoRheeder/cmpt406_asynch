@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour {
 
     private BoardController boardController;
 
+    private FogOfWarController fogOfWarController;
+
     private InGameMenu inGameMenu;
 
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
@@ -79,9 +81,12 @@ public class GameManager : MonoBehaviour {
         boardController = new BoardController();
         boardController.Initialize();
 
+        fogOfWarController = new FogOfWarController();
+        fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
+
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, user.Username, ref boardController, false);
+        gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
 
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
@@ -104,9 +109,12 @@ public class GameManager : MonoBehaviour {
         boardController = new BoardController();
         boardController.Initialize();
 
+        fogOfWarController = new FogOfWarController();
+        fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
+
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, user.Username, ref boardController, isPlacing, selectedPreset);
+        gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, isPlacing, selectedPreset);
 
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();

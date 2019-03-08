@@ -2,39 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System;
 
-public class FogOfWarController : MonoBehaviour {
+public class FogOfWarController {
 
     GameObject fogObject;
     Tilemap fogTilemap;
     BoardController boardController;
 
     Dictionary<Vector2Int,FogTile> clearedTiles;
-    Dictionary<Vector2Int,FogTile> mapEdgeTiles;
+    Dictionary<Vector2Int,FogTile> mapEdgeTiles; // TODO: fill this in during init
     List<FogViewer> viewers;
-
-    void Awake() {
-        fogObject = Resources.Load<GameObject>("Fog/FogTile");
-    }
-
-    void Start() {
-        Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
-        InitializeFogOfWar(tilemap);
-        
-        boardController = new BoardController();
-        boardController.Initialize();
-    }
-
-    void Update() {
-        if(Input.GetMouseButton(0)) {
-            ClearFogAtPosition(boardController.MousePosToCell());
-        }
-    }
 
     public void InitializeFogOfWar(Tilemap tilemap) {
         if(tilemap == null) {
+            Debug.Log("tilemap was null. Fog of war not initialized");
             return;
         }
+
+        fogObject = Resources.Load<GameObject>("Fog/FogTile");
 
         if(fogTilemap == null) {
             GameObject newTilemap = new GameObject();

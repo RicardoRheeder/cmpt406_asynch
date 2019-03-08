@@ -32,6 +32,7 @@ public class GameBuilder : MonoBehaviour {
     private GameState state;
     private string username;
     private BoardController board;
+    private FogOfWarController fogController;
     private bool isPlacing;
 	private int colorPick = 0;
     private ArmyPreset armyPreset;
@@ -58,10 +59,11 @@ public class GameBuilder : MonoBehaviour {
 
     //Method that takes in a game state, instantiates all of the objects and makes sure the scene is setup how it should be.
     //Note: the game manager is responsible for creating the other managers, the game builder is just responsible for creating the playable objects.
-    public void Build(ref GameState state, string username, ref BoardController board, bool isPlacing, ArmyPreset armyPreset = null) {
+    public void Build(ref GameState state, string username, ref BoardController board, ref FogOfWarController fogController, bool isPlacing, ArmyPreset armyPreset = null) {
         this.state = state;
         this.username = username;
         this.board = board;
+        this.fogController = fogController;
         this.isPlacing = isPlacing;
         this.armyPreset = armyPreset;
         SetupScene();

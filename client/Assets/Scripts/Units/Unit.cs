@@ -28,26 +28,24 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the movement animation
-    public void MoveTo(Vector2Int endPosition, ref BoardController board, ref FogOfWarController fogController) {
+    public void MoveTo(Vector2Int endPosition, ref BoardController board) {
         List<Vector2Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,board.GetTilemap(),false);
-        StartCoroutine(PathMovement(path, board, fogController));
+        StartCoroutine(PathMovement(path, board));
     }
 
-    public void PlaceAt(Vector2Int position, ref BoardController board, ref FogOfWarController fogController) {
+    public void PlaceAt(Vector2Int position, ref BoardController board) {
         currTilePosition = position;
         transform.position = board.CellToWorld(position);
         fogViewer.SetPosition(position);
-        fogController.UpdateFogAtViewer(fogViewer);
     }
 
-    IEnumerator PathMovement(List<Vector2Int> path, BoardController board, FogOfWarController fogController) {
+    IEnumerator PathMovement(List<Vector2Int> path, BoardController board) {
          float step = moveSpeed * Time.fixedDeltaTime;
          float t = 0;
          Vector3 prevPos = transform.position;
          for(int i = 0; i < path.Count; i++) {
             currTilePosition = path[i];
             fogViewer.SetPosition(currTilePosition);
-            fogController.UpdateFogAtViewer(fogViewer);
             Vector3 worldPos = board.CellToWorld(currTilePosition);
             t = 0;
             while (t <= 1.0f) {
