@@ -310,6 +310,28 @@ public static class HexUtility {
         return Math.Abs(endTile.elevation - startTile.elevation) < ELEVATION_REACHABLE_DISTANCE;
     }
 
+    public static List<Vector2Int> FindRing(Vector2Int center, int distance, int thickness) {
+        // TODO
+        // var results = []
+        // # this code doesn't work for radius == 0; can you see why?
+        // var cube = cube_add(center, 
+        //                     cube_scale(cube_direction(4), radius))
+        // for each 0 ≤ i < 6:
+        //     for each 0 ≤ j < radius:
+        //         results.append(cube)
+        //         cube = cube_neighbor(cube, i)
+        // return results
+        List<Vector2Int> results = new List<Vector2Int>();
+        // var cube = cube_add(center, cube_scale(cube_direction(4), radius))
+        Vector3Int cube;
+        for(int i = 0; i < 6; i++) {
+            for(int j = 0; j < distance; j++) {
+
+            }
+        }
+        return results;
+    }
+
     //Helper class to say that direction(0) = curPos + cubeDirections[0]
     //DO NOT CHANGE THE ORDER OF THE LIST
     private static readonly List<Vector2Int> oddYOffsetDirections = new List<Vector2Int> {
