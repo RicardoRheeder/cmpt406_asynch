@@ -6,9 +6,7 @@ using UnityEngine.Tilemaps;
 public class FogOfWarController : MonoBehaviour {
 
     GameObject fogObject;
-    public bool generateFog = true;
     Tilemap fogTilemap;
-
     BoardController boardController;
 
     Dictionary<Vector2Int,FogTile> clearedTiles;
@@ -21,9 +19,7 @@ public class FogOfWarController : MonoBehaviour {
 
     void Start() {
         Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
-        if(generateFog) {
-            InitializeFogOfWar(tilemap);
-        }
+        InitializeFogOfWar(tilemap);
         
         boardController = new BoardController();
         boardController.Initialize();
@@ -62,26 +58,34 @@ public class FogOfWarController : MonoBehaviour {
         fogTilemap.RefreshAllTiles();
     }
 
-    public void UpdateFog() {
-
+    public void UpdateAllFog() {
+        for(int i = 0; i<viewers.Count; i++) {
+            UpdateFogAtViewer(viewers[i]);
+        }
     }
 
     public void AddFogViewer(FogViewer viewer) {
         viewers.Add(viewer);
-        //TODO: update fog
+        viewer.SetFogUpdateMethod(UpdateFogAtViewer);
+        UpdateFogAtViewer(viewer);
     }
 
     public void RemoveFogViewer(FogViewer viewer) {
         viewers.Remove(viewer);
-        //TODO: update fog
+        List<Vector2Int> oldTiles = viewer.GetAffectedTiles();
+        for(int i=0; i < oldTiles.Count; i++) {
+            FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
+            tile.ShowFog();
+            fogTilemap.RefreshTile((Vector3Int)oldTiles[i]); // might need to refresh this at a later point
+        }
     }
 
-    public void ClearFogAtViewer(FogViewer viewer) {
+    public void UpdateFogAtViewer(FogViewer viewer) {
         if(viewer == null || fogTilemap == null) {
             return;
         }
 
-        //TODO: fill in any old cleared tiles
+        //fill in any old cleared tiles
         List<Vector2Int> oldTiles = viewer.GetAffectedTiles();
         for(int i=0; i < oldTiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
