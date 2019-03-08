@@ -8,11 +8,12 @@ public class FogTester : MonoBehaviour {
     FogOfWarController fogOfWarController;
 
     void Awake(){
-        fogOfWarController = GetComponent<FogOfWarController>();
+        fogOfWarController = new FogOfWarController();
         boardController = new BoardController();
     }
 
     void Start() {
+        boardController.Initialize();
         fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
     }
 
