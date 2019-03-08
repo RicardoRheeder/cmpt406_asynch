@@ -14,6 +14,7 @@ public class BoardController {
     private List<GameObject> hightlightedTiles;
     private GameObject hoverHighlightedTile;
     private GameObject alreadyHighlightedTile;
+    private int alreadyHighlightedTileColor; 
     private Vector2Int previousHoverTilePos;
     
     // Initializes the board controller. Must be called before other methods can function
@@ -208,7 +209,7 @@ public class BoardController {
    
 
     
-    //This function highligts tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
+    //This function highlights tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
     //should should the mouse over effect on already highligted tiles
     public void HoverHighlight(Vector2Int tilePosition)
     {
@@ -218,11 +219,12 @@ public class BoardController {
             if (hoverHighlightedTile != null)//the first time this is false
             {
                 hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+                hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 0;
             }
 
             if (alreadyHighlightedTile != null)
             {
-                alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 0;
+                alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = alreadyHighlightedTileColor;
             }
 
             //previousHoverTile = tilePosition;
@@ -242,6 +244,7 @@ public class BoardController {
                     {
 
                         alreadyHighlightedTile = tileObject;
+                        alreadyHighlightedTileColor = alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color;
                         alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1;
                         return; //if they are highlighted than return
                     }
