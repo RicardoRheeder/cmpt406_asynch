@@ -25,6 +25,7 @@ public class FogTile : TileBase {
             go.transform.rotation = Quaternion.Euler(-90,0,0);
             go.transform.localScale = new Vector3(1.01f,5,1.01f);
             tileObject = go;
+            tileObject.layer = 8;
             particleSystem = tileObject.GetComponent<ParticleSystem>();
             if(fogState == FogState.Cleared) {
                 particleSystem.Stop();
