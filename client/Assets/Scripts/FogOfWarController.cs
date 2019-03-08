@@ -101,6 +101,7 @@ public class FogOfWarController {
             FogTile tile = fogTilemap.GetTile((Vector3Int)edgePositions[i]) as FogTile;
             if(edgeTile == null && tile != null) {
                 tile.SetAsEdge();
+                fogTilemap.RefreshTile((Vector3Int)edgePositions[i]);
             }
         }
     }
