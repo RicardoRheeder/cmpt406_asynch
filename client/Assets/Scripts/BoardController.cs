@@ -12,7 +12,8 @@ public class BoardController {
     Plane plane;
 
     private List<GameObject> hightlightedTiles;
-
+    private GameObject hoverHighlightedTile;
+    private Vector2Int previousHoverTile;
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
@@ -113,7 +114,7 @@ public class BoardController {
         HighlightTiles(spawnTileList);
     }
 
-    //Feel free to make changes as necessary -jp
+    
     //This function highlights a list of tiles. And disables the previous highlighted ones
     public void HighlightTiles(List<Vector2Int> tilePositions) {
         if (tilemap == null) {   // throw exception if tilemap is null
@@ -132,9 +133,61 @@ public class BoardController {
                 }
                 hightlightedTiles.Add(tileObject);
                 tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+               
             }
         }
     }
+
+    
+    
+    //This function highligts tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
+    //should should the mouse over effect on already highligted tiles 
+    public void HoverHighlight(Vector2Int tilePosition)
+    {
+        if (!tilePosition.Equals(previousHoverTile)){ //this is to check if cursor is moved, we dont want to keep checking if its in the same position
+            if (hoverHighlightedTile != null){ //the first time this is false
+                hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+            }
+
+            previousHoverTile = tilePosition;
+            GameObject tileObject;
+
+            if (this.HasHexTile(tilePosition)){
+                HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
+                tileObject = tile.GetTileObject(); //get the tile game object 
+                
+                //this checks for tiles that are already highlited 
+                if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length > 0){ 
+                    if (tileObject.GetComponentsInChildren<cakeslice.Outline>()[0].enabled == true){ 
+                        return; //if they are highlighted than return
+                    }
+
+                    //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
+                    hoverHighlightedTile = tileObject;
+                    hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+                    tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1; //change the color to yellow
+                }
+                //this is for if its a tile that is not already higlighted and does not have the outline component
+                else{
+                    hoverHighlightedTile = tileObject;
+                    if (hoverHighlightedTile.GetComponentsInChildren<cakeslice.Outline>().Length <= 0){
+                            hoverHighlightedTile.transform.GetChild(0).gameObject.AddComponent<cakeslice.Outline>();
+                    }
+                 
+                    hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+                    tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1;
+                }
+            }
+                
+                    
+                
+
+               
+
+            
+        }
+    }
+
 
     public void ClearHighlighting() {
         foreach (var tile in hightlightedTiles) {

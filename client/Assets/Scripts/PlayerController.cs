@@ -146,6 +146,9 @@ public class PlayerController : MonoBehaviour {
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
+
+        boardController.HoverHighlight(tilePos);
+
         switch(controllerState) {
             case (PlayerState.playing):
                 if (Input.GetMouseButtonDown(0)) {
