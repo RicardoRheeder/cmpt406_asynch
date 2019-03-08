@@ -10,9 +10,9 @@ public class FogOfWarController {
     Tilemap fogTilemap;
     BoardController boardController;
 
-    Dictionary<Vector2Int,FogTile> clearedTiles;
-    Dictionary<Vector2Int,FogTile> mapEdgeTiles; // TODO: fill this in during init
-    List<FogViewer> viewers;
+    Dictionary<Vector2Int,FogTile> clearedTiles = new Dictionary<Vector2Int, FogTile>();
+    Dictionary<Vector2Int,FogTile> mapEdgeTiles = new Dictionary<Vector2Int, FogTile>(); // TODO: fill this in during init
+    List<FogViewer> viewers = new List<FogViewer>();
 
     public void InitializeFogOfWar(Tilemap tilemap) {
         if(tilemap == null) {

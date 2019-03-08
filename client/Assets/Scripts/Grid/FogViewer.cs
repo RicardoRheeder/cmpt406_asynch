@@ -8,7 +8,7 @@ public class FogViewer {
     string id;
     Vector2Int position;
     int radius;
-    List<Vector2Int> affectedTiles;
+    List<Vector2Int> affectedTiles = new List<Vector2Int>();
     FogUpdateDelegate fogUpdateMethod;
 
     public void SetFogUpdateMethod(FogUpdateDelegate method) {
@@ -21,7 +21,9 @@ public class FogViewer {
 
     public void SetPosition(Vector2Int pos) {
         position = pos;
-        fogUpdateMethod(this);
+        if(fogUpdateMethod != null) {
+            fogUpdateMethod(this);
+        }
     }
 
     public int GetRadius() {
@@ -30,7 +32,9 @@ public class FogViewer {
 
     public void SetRadius(int r) {
         radius = r;
-        fogUpdateMethod(this);
+        if(fogUpdateMethod != null) {
+            fogUpdateMethod(this);
+        }
     }
 
     public List<Vector2Int> GetAffectedTiles() {
