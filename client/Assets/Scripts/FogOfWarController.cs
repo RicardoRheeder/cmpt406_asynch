@@ -77,7 +77,9 @@ public class FogOfWarController {
         }
 
         //fill in any old cleared tiles
-        List<Vector2Int> oldTiles = viewer.GetAffectedTiles();
+        List<Vector2Int> oldTiles = new List<Vector2Int>();
+        oldTiles.AddRange(viewer.GetAffectedTiles());
+        oldTiles.AddRange(viewer.GetEdgeTiles());
         for(int i=0; i < oldTiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
             mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile madEdgeTile);
@@ -102,14 +104,17 @@ public class FogOfWarController {
         viewer.SetAffectedTiles(newTiles);
 
         List<Vector2Int> edgePositions = HexUtility.FindRing(viewer.GetPosition(),viewer.GetRadius()+1,1);
+        List<Vector2Int> edgeTiles = new List<Vector2Int>();
         for(int i=0; i < edgePositions.Count; i++) {
             clearedTiles.TryGetValue(edgePositions[i],out FogTile edgeTile);
             FogTile tile = fogTilemap.GetTile((Vector3Int)edgePositions[i]) as FogTile;
             if(edgeTile == null && tile != null) {
                 tile.SetAsEdge();
                 fogTilemap.RefreshTile((Vector3Int)edgePositions[i]);
+                edgeTiles.Add(edgePositions[i]);
             }
         }
+        viewer.SetEdgeTiles(edgeTiles);
     }
 
     public void ClearFogAtPosition(Vector2Int position) {

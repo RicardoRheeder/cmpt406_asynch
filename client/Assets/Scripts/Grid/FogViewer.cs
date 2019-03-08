@@ -9,6 +9,7 @@ public class FogViewer {
     Vector2Int position;
     int radius;
     List<Vector2Int> affectedTiles = new List<Vector2Int>();
+    List<Vector2Int> edgeTiles = new List<Vector2Int>();
     FogUpdateDelegate fogUpdateMethod;
 
     public void SetFogUpdateMethod(FogUpdateDelegate method) {
@@ -43,6 +44,14 @@ public class FogViewer {
 
     public void SetAffectedTiles(List<Vector2Int> tiles) {
         affectedTiles = tiles;
+    }
+
+    public List<Vector2Int> GetEdgeTiles() {
+        return edgeTiles;
+    }
+
+    public void SetEdgeTiles(List<Vector2Int> tiles) {
+        edgeTiles = tiles;
     }
 
 }
