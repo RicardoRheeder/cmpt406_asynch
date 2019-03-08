@@ -233,7 +233,7 @@ public class BoardController {
                 HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
                 tileObject = tile.GetTileObject(); //get the tile game object 
 
-                tileObject = GetTileObjectFromTilePosition(tilePosition);
+               // tileObject = GetTileObjectFromTilePosition(tilePosition);
 
                 //this checks for tiles that are already highlited 
                 if (IsOutlineComponentAttached(tileObject))
