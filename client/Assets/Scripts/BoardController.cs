@@ -13,7 +13,9 @@ public class BoardController {
 
     private List<GameObject> hightlightedTiles;
     private GameObject hoverHighlightedTile;
-    private Vector2Int previousHoverTile;
+    private GameObject alreadyHighlightedTile;
+    private Vector2Int previousHoverTilePos;
+    
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
@@ -138,55 +140,185 @@ public class BoardController {
         }
     }
 
+
+
+
+    //Checks if mouse position is changed to a new tile
+    private bool IsMousePositionChanged(Vector2Int tilePosition)
+    {
+        if (tilePosition.Equals(previousHoverTilePos))
+        {
+            return false;
+        }
+        else {
+            previousHoverTilePos = tilePosition;
+            return true;
+        }
+    }
+
+    //public bool IsTileObjectHighlighted(GameObject tileObject)
+    //{
+
+    //}
+
+
+   //Checks if the Outline script component is attached to the tile object
+    private bool IsOutlineComponentAttached(GameObject tileObject)
+    {
+        if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length > 0)
+        {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+    //Checks if the Outline script component is enabled on the tile object
+    private bool IsOutlineComponentEnabled(GameObject tileObject)
+    {
+        if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length <= 0)
+        {
+            throw new MissingComponentException("Outline Component is missing");
+        }
+        
+        return tileObject.GetComponentsInChildren<cakeslice.Outline>()[0].enabled;
+    } 
+
+
     
+    private GameObject GetTileObjectFromTilePosition(Vector2Int tilePosition)
+    {
+
+        if (this.HasHexTile(tilePosition))
+        {
+            HexTile tile; tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
+            return tile.GetTileObject(); //get the tile game object 
+
+        }
+        else {
+            return null;
+        }
+
+    }
+
+    //Attache the Outline script component to the tile object if it is not
+    private void AttachOutlineComponent(GameObject tileObject)
+    {
+        if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length <= 0)
+        {
+            tileObject.transform.GetChild(0).gameObject.AddComponent<cakeslice.Outline>();
+        }
+    }
+
+    //Enables the Outline script component on the object and changes the color
+    private void EnableOutlineComponentAndChangeColor(GameObject tileObject)
+    {
+        tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+        tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1; //change the color to yellow, 1 is index number for yellow color in
+                                                                                                // the Outline Effect script attached to the Main Camera
+    }
+
+   
+
     
     //This function highligts tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
-    //should should the mouse over effect on already highligted tiles 
+    //should should the mouse over effect on already highligted tiles
     public void HoverHighlight(Vector2Int tilePosition)
     {
-        if (!tilePosition.Equals(previousHoverTile)){ //this is to check if cursor is moved, we dont want to keep checking if its in the same position
-            if (hoverHighlightedTile != null){ //the first time this is false
+        //this is to check if cursor is moved, we dont want to keep checking if its in the same position
+        if (IsMousePositionChanged(tilePosition))
+        {
+            if (hoverHighlightedTile != null)//the first time this is false
+            { 
                 hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = false;
             }
 
-            previousHoverTile = tilePosition;
+            if (alreadyHighlightedTile != null)
+            {
+                alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 0;
+            }
+
+            //previousHoverTile = tilePosition;
             GameObject tileObject;
 
-            if (this.HasHexTile(tilePosition)){
-                HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
-                tileObject = tile.GetTileObject(); //get the tile game object 
-                
-                //this checks for tiles that are already highlited 
-                if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length > 0){ 
-                    if (tileObject.GetComponentsInChildren<cakeslice.Outline>()[0].enabled == true){ 
-                        return; //if they are highlighted than return
-                    }
+            tileObject = GetTileObjectFromTilePosition(tilePosition);
 
-                    //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
-                    hoverHighlightedTile = tileObject;
-                    hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
-                    tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1; //change the color to yellow
+            //this checks for tiles that are already highlited 
+            if (IsOutlineComponentAttached(tileObject))
+            {
+                if (IsOutlineComponentEnabled(tileObject))
+                {
+
+                    alreadyHighlightedTile = tileObject;
+                    alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1;
+                    return; //if they are highlighted than return
                 }
-                //this is for if its a tile that is not already higlighted and does not have the outline component
-                else{
-                    hoverHighlightedTile = tileObject;
-                    if (hoverHighlightedTile.GetComponentsInChildren<cakeslice.Outline>().Length <= 0){
-                            hoverHighlightedTile.transform.GetChild(0).gameObject.AddComponent<cakeslice.Outline>();
-                    }
-                 
-                    hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
-                    tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1;
-                }
+
+                //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
+                hoverHighlightedTile = tileObject;
+                EnableOutlineComponentAndChangeColor(hoverHighlightedTile);
             }
-                
-                    
-                
+            //this is for if its a tile that is not already higlighted and does not have the outline component
+            else
+            {
+                hoverHighlightedTile = tileObject;
+                if (!IsOutlineComponentAttached(hoverHighlightedTile)) //outline component not attached then attach it
+                {
+                    AttachOutlineComponent(hoverHighlightedTile);
+                }
+                EnableOutlineComponentAndChangeColor(hoverHighlightedTile);
+            }
 
-               
-
-            
         }
     }
+   
+
+    //leave this here for now
+
+    //This function highligts tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
+    //should should the mouse over effect on already highligted tiles
+    //public void HoverHighlight(Vector2Int tilePosition)
+    //{
+    //    if (!tilePosition.Equals(previousHoverTile)){ //this is to check if cursor is moved, we dont want to keep checking if its in the same position
+    //        if (hoverHighlightedTile != null){ //the first time this is false
+    //            hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+    //        }
+
+    //        previousHoverTile = tilePosition;
+    //        GameObject tileObject;
+
+    //        if (this.HasHexTile(tilePosition)){
+    //            HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
+    //            tileObject = tile.GetTileObject(); //get the tile game object 
+                
+    //            //this checks for tiles that are already highlited 
+    //            if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length > 0){ 
+    //                if (tileObject.GetComponentsInChildren<cakeslice.Outline>()[0].enabled == true){ 
+
+    //                    return; //if they are highlighted than return
+    //                }
+
+    //                //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
+    //                hoverHighlightedTile = tileObject;
+    //                hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+    //                tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1; //change the color to yellow
+    //            }
+    //            //this is for if its a tile that is not already higlighted and does not have the outline component
+    //            else{
+    //                hoverHighlightedTile = tileObject;
+    //                if (hoverHighlightedTile.GetComponentsInChildren<cakeslice.Outline>().Length <= 0){
+    //                        hoverHighlightedTile.transform.GetChild(0).gameObject.AddComponent<cakeslice.Outline>();
+    //                }
+                 
+    //                hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+    //                tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1;
+    //            }
+    //        }
+       
+    //    }
+    //}
 
 
     public void ClearHighlighting() {
