@@ -82,7 +82,7 @@ public class FogTile : TileBase {
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
         // TODO: transparency changes
-        transparency = 1f;
+        // transparency = 1f;
         RefreshColor();
         base.RefreshTile(location,tilemap);
     }

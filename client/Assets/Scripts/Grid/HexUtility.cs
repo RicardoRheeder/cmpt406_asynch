@@ -311,22 +311,15 @@ public static class HexUtility {
     }
 
     public static List<Vector2Int> FindRing(Vector2Int center, int distance, int thickness) {
-        // TODO
-        // var results = []
-        // # this code doesn't work for radius == 0; can you see why?
-        // var cube = cube_add(center, 
-        //                     cube_scale(cube_direction(4), radius))
-        // for each 0 ≤ i < 6:
-        //     for each 0 ≤ j < radius:
-        //         results.append(cube)
-        //         cube = cube_neighbor(cube, i)
-        // return results
+        // TODO: get it working with cache
         List<Vector2Int> results = new List<Vector2Int>();
-        // var cube = cube_add(center, cube_scale(cube_direction(4), radius))
-        Vector3Int cube;
+        Vector3Int cubeCenter = OddrToCube(center);
+        Vector3Int cube = cubeAdd(cubeCenter, cubeScale(cubeDirections[4], distance));
         for(int i = 0; i < 6; i++) {
             for(int j = 0; j < distance; j++) {
-
+                Vector2Int position = CubeToOddr(cube);
+                results.Add(position);
+                cube = OddrToCube(NeighborTile(position,i));
             }
         }
         return results;
@@ -359,6 +352,14 @@ public static class HexUtility {
         new Vector3Int(0, 1, -1),
         new Vector3Int(1, 0, -1),
     };
+
+    private static Vector3Int cubeAdd(Vector3Int a, Vector3Int b) {
+        return new Vector3Int(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+
+    public static Vector3Int cubeScale(Vector3Int a, int k) {
+        return new Vector3Int(a.x * k, a.y * k, a.z * k);
+    }
 
     // This dictionary is in the format of tile coordinates to a list of lists of tile coordinates
     // the list will be of size n, where n is the highest range we calculated
