@@ -77,6 +77,7 @@ public class FogOfWarController {
             FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
             tile.ShowFog();
             fogTilemap.RefreshTile((Vector3Int)oldTiles[i]); // might need to refresh this at a later point
+            clearedTiles.Remove(oldTiles[i]);
         }
 
         // clear new tiles
@@ -84,10 +85,12 @@ public class FogOfWarController {
         List<Vector2Int> newTiles = new List<Vector2Int>();
         for(int i=0; i < tiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)tiles[i]) as FogTile;
-            if(tile != null) {
+            clearedTiles.TryGetValue(tiles[i],out FogTile clearedTile);
+            if(tile != null && clearedTile == null) {
                 tile.ClearFog();
                 fogTilemap.RefreshTile((Vector3Int)tiles[i]);
                 newTiles.Add(tiles[i]);
+                clearedTiles.Add(tiles[i],tile);
             }
         }
         viewer.SetAffectedTiles(newTiles);
