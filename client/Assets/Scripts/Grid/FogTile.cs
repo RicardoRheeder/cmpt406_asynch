@@ -12,11 +12,11 @@ public class FogTile : TileBase {
     [HideInInspector]
     public GameObject tileModel;
     public Sprite spritePreview;
+    public LayerMask fogLayer = 8;
 
     GameObject tileObject;
     ParticleSystem particleSystem;
     public float transparency = 1f;
-    float fogChangeAmount = 0.3f;
 
     FogState fogState = FogState.Visible;
 
@@ -25,7 +25,7 @@ public class FogTile : TileBase {
             go.transform.rotation = Quaternion.Euler(-90,0,0);
             go.transform.localScale = new Vector3(1.01f,5,1.01f);
             tileObject = go;
-            tileObject.layer = 8;
+            tileObject.layer = fogLayer;
             particleSystem = tileObject.GetComponent<ParticleSystem>();
             if(fogState == FogState.Cleared) {
                 particleSystem.Stop();
@@ -81,8 +81,6 @@ public class FogTile : TileBase {
     }
 
     public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
-        // TODO: transparency changes
-        // transparency = 1f;
         RefreshColor();
         base.RefreshTile(location,tilemap);
     }

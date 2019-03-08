@@ -5,7 +5,6 @@ using UnityEngine;
 public delegate void FogUpdateDelegate(FogViewer viewer);
 
 public class FogViewer {
-    string id;
     Vector2Int position;
     int radius;
     List<Vector2Int> affectedTiles = new List<Vector2Int>();
