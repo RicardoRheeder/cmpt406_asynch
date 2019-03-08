@@ -187,21 +187,6 @@ public class BoardController {
     } 
 
 
-    
-    private GameObject GetTileObjectFromTilePosition(Vector2Int tilePosition)
-    {
-
-        if (this.HasHexTile(tilePosition))
-        {
-            HexTile tile; tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
-            return tile.GetTileObject(); //get the tile game object 
-
-        }
-        else {
-            return null;
-        }
-
-    }
 
     //Attache the Outline script component to the tile object if it is not
     private void AttachOutlineComponent(GameObject tileObject)
@@ -231,7 +216,7 @@ public class BoardController {
         if (IsMousePositionChanged(tilePosition))
         {
             if (hoverHighlightedTile != null)//the first time this is false
-            { 
+            {
                 hoverHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = false;
             }
 
@@ -243,34 +228,40 @@ public class BoardController {
             //previousHoverTile = tilePosition;
             GameObject tileObject;
 
-            tileObject = GetTileObjectFromTilePosition(tilePosition);
-
-            //this checks for tiles that are already highlited 
-            if (IsOutlineComponentAttached(tileObject))
+            if (this.HasHexTile(tilePosition))
             {
-                if (IsOutlineComponentEnabled(tileObject))
-                {
+                HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
+                tileObject = tile.GetTileObject(); //get the tile game object 
 
-                    alreadyHighlightedTile = tileObject;
-                    alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1;
-                    return; //if they are highlighted than return
+                tileObject = GetTileObjectFromTilePosition(tilePosition);
+
+                //this checks for tiles that are already highlited 
+                if (IsOutlineComponentAttached(tileObject))
+                {
+                    if (IsOutlineComponentEnabled(tileObject))
+                    {
+
+                        alreadyHighlightedTile = tileObject;
+                        alreadyHighlightedTile.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().color = 1;
+                        return; //if they are highlighted than return
+                    }
+
+                    //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
+                    hoverHighlightedTile = tileObject;
+                    EnableOutlineComponentAndChangeColor(hoverHighlightedTile);
+                }
+                //this is for if its a tile that is not already higlighted and does not have the outline component
+                else
+                {
+                    hoverHighlightedTile = tileObject;
+                    if (!IsOutlineComponentAttached(hoverHighlightedTile)) //outline component not attached then attach it
+                    {
+                        AttachOutlineComponent(hoverHighlightedTile);
+                    }
+                    EnableOutlineComponentAndChangeColor(hoverHighlightedTile);
                 }
 
-                //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
-                hoverHighlightedTile = tileObject;
-                EnableOutlineComponentAndChangeColor(hoverHighlightedTile);
             }
-            //this is for if its a tile that is not already higlighted and does not have the outline component
-            else
-            {
-                hoverHighlightedTile = tileObject;
-                if (!IsOutlineComponentAttached(hoverHighlightedTile)) //outline component not attached then attach it
-                {
-                    AttachOutlineComponent(hoverHighlightedTile);
-                }
-                EnableOutlineComponentAndChangeColor(hoverHighlightedTile);
-            }
-
         }
     }
    
