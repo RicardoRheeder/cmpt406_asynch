@@ -39,6 +39,10 @@ public class FogOfWarController {
                 FogTile fogTile = ScriptableObject.CreateInstance<FogTile>();
                 fogTile.tileModel = fogObject;
                 fogTilemap.SetTile(pos, fogTile);
+                if(HexUtility.IsEdgeTile((Vector2Int)pos,tilemap)) {
+                    mapEdgeTiles.Add((Vector2Int)pos,fogTile);
+                    fogTile.ShowFog(true);
+                }
             }
         }
         fogTilemap.RefreshAllTiles();
@@ -61,7 +65,7 @@ public class FogOfWarController {
         List<Vector2Int> oldTiles = viewer.GetAffectedTiles();
         for(int i=0; i < oldTiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
-            tile.ShowFog();
+            tile.ShowFog(false);
             fogTilemap.RefreshTile((Vector3Int)oldTiles[i]); // might need to refresh this at a later point
         }
     }
@@ -75,7 +79,7 @@ public class FogOfWarController {
         List<Vector2Int> oldTiles = viewer.GetAffectedTiles();
         for(int i=0; i < oldTiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
-            tile.ShowFog();
+            tile.ShowFog(false);
             fogTilemap.RefreshTile((Vector3Int)oldTiles[i]); // might need to refresh this at a later point
             clearedTiles.Remove(oldTiles[i]);
         }

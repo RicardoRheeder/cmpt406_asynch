@@ -325,6 +325,11 @@ public static class HexUtility {
         return results;
     }
 
+    public static bool IsEdgeTile(Vector2Int position, Tilemap tilemap) {
+        List<Vector2Int> neighbors = GetNeighbors(position,tilemap,true);
+        return neighbors.Count < 6;
+    }
+
     //Helper class to say that direction(0) = curPos + cubeDirections[0]
     //DO NOT CHANGE THE ORDER OF THE LIST
     private static readonly List<Vector2Int> oddYOffsetDirections = new List<Vector2Int> {

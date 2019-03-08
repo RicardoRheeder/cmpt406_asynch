@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 using UnityEditor;
 #endif
 
-public enum FogState { Visible, Edge, Cleared }
+public enum FogState { Visible, Edge, Cleared, MapEdgeVisible }
 
 public class FogTile : TileBase {
     [HideInInspector]
@@ -28,7 +28,7 @@ public class FogTile : TileBase {
             particleSystem = tileObject.GetComponent<ParticleSystem>();
             if(fogState == FogState.Cleared) {
                 particleSystem.Stop();
-            } else if(fogState == FogState.Edge) {
+            } else if(fogState == FogState.Edge || fogState == FogState.MapEdgeVisible) {
                 particleSystem.Play();
             }
             RefreshColor();
@@ -64,10 +64,9 @@ public class FogTile : TileBase {
         particleSystem.Stop();
     }
 
-    public void ShowFog() {
+    public void ShowFog(bool isMapEdge) {
         transparency = 1f;
-        fogState = FogState.Visible;
-        particleSystem.Play(); //TODO: remove
+        fogState = isMapEdge ? FogState.MapEdgeVisible : FogState.Visible;
     }
 
     public void SetAsEdge() {
