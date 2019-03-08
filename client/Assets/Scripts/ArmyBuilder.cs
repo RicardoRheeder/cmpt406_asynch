@@ -95,12 +95,15 @@ public static class ArmyBuilder {
     //Method used to create the default presets and add them to the dictionary
     public static void InsertDefaultPresets() {
         if (!ARMY_PRESETS.ContainsKey(presetOneName)) {
+            presetOne.Cost = UnitFactory.CalculateCost(presetOne.Units);
             AddPreset(presetOneName, presetOne);
         }
         if (!ARMY_PRESETS.ContainsKey(presetTwoName)) {
+            presetTwo.Cost = UnitFactory.CalculateCost(presetTwo.Units);
             AddPreset(presetTwoName, presetTwo);
         }
         if (!ARMY_PRESETS.ContainsKey(presetThreeName)) {
+            presetThree.Cost = UnitFactory.CalculateCost(presetThree.Units);
             AddPreset(presetThreeName, presetThree);
         }
     }
@@ -116,7 +119,7 @@ public class ArmyPreset {
     [DataMember(Name = "name")]
     public string Name;
 
-    public int Cost { get; private set; }
+    public int Cost { get; set; }
 
     [DataMember(Name = "units")]
     public List<int> Units { get; private set; }
@@ -133,7 +136,7 @@ public class ArmyPreset {
 
     [OnDeserialized]
     public void OnDeserialized() {
-        Cost = UnitFactory.GetCost(Units);
+        Cost = UnitFactory.CalculateCost(Units);
     }
 
     public string GetDescription() {

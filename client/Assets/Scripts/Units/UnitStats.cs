@@ -38,25 +38,25 @@ public class UnitStats {
     private int yPos;
 
     //Variables for the generals
-    public GeneralMetadata.GeneralAbility Ability1 { get; private set; }
-    [DataMember(Name = "ability1CoolDown")]
-    public int Ability1Cooldown { get; set; } = 0;
-    [DataMember(Name = "ability1Duration")]
-    public int Ability1Duration { get; set; } = 0;
+    public GeneralAbility Ability1 { get; private set; }
+    [DataMember(Name = "ability1CoolDown", EmitDefaultValue = false)]
+    public int Ability1Cooldown { get; set; }
+    [DataMember(Name = "ability1Duration", EmitDefaultValue = false)]
+    public int Ability1Duration { get; set; }
 
-    public GeneralMetadata.GeneralAbility Ability2 { get; private set; }
-    [DataMember(Name = "ability2CoolDown")]
-    public int Ability2Cooldown { get; set; } = 0;
-    [DataMember(Name = "ability2Duration")]
-    public int Ability2Duration { get; set; } = 0;
+    public GeneralAbility Ability2 { get; private set; }
+    [DataMember(Name = "ability2CoolDown", EmitDefaultValue = false)]
+    public int Ability2Cooldown { get; set; }
+    [DataMember(Name = "ability2Duration", EmitDefaultValue = false)]
+    public int Ability2Duration { get; set; }
 
-    public GeneralMetadata.GeneralPassive Passive { get; private set; }
+    public GeneralPassive Passive { get; private set; }
 
     //A reference to the script attached to the gameobject
     public Unit MyUnit { get; private set; }
 
     //Vision variables
-    public int Vision { get; private set; }
+    public int Vision { get; set; }
 
     //Variables used to dictate how much movements/attacks can be done on each turn
     public int AttackActions { get; set; } = 1;
@@ -146,15 +146,15 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
-    }
+}
 
     //Note: this list must have two abilities
-    public void SetAbilities( List<GeneralMetadata.GeneralAbility> abilityList) {
+    public void SetAbilities( List<GeneralAbility> abilityList) {
         this.Ability1 = abilityList[0];
         this.Ability2 = abilityList[1];
     }
 
-    public void SetAbilities(List<GeneralMetadata.GeneralAbility> abilityList, UnitStats serverUnit) {
+    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit) {
         this.Ability1 = abilityList[0];
         this.Ability2 = abilityList[1];
         this.Ability1Cooldown = serverUnit.Ability1Cooldown == 0 ? 0 : serverUnit.Ability1Cooldown - 1;
@@ -163,7 +163,7 @@ public class UnitStats {
         this.Ability2Duration = serverUnit.Ability2Duration == 0 ? 0 : serverUnit.Ability2Duration - 1;
     }
 
-    public void SetPassive(GeneralMetadata.GeneralPassive passive) {
+    public void SetPassive(GeneralPassive passive) {
         this.Passive = passive;
     }
 }

@@ -8,8 +8,13 @@ using System.Linq;
 
 using cakeslice; //for Outline effect package
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour {
+
+    //Constants
+    private Color BUTTON_ACTIVE = Color.yellow;
+    private Color BUTTON_INACTIVE = Color.gray;
 
    
     private CardController deck;
@@ -40,6 +45,10 @@ public class PlayerController : MonoBehaviour {
     private GameObject Ability2Object;
     private Button Ability2Button;
 
+    //Stored ability functions
+    private UnityAction ability1Function;
+    private UnityAction ability2Function;
+
 	//Stuff for top right information on hud
 	private TMP_Text userTurnText;
 	private TMP_Text turnText;
@@ -52,14 +61,20 @@ public class PlayerController : MonoBehaviour {
 
     private bool initialized = false;
 
-    private bool isMoving = false;
-    private bool isAttacking = false;
 	private Color tempColor;
     private enum PlayerState {
         playing,
         placing
     };
     private PlayerState controllerState;
+    private enum InteractionState {
+        none,
+        ability1,
+        ability2,
+        moving,
+        attacking
+    };
+    private InteractionState interactionState;
     private List<int> armyPreset;
     private List<GameObject> presetTexts;
     private List<UnitStats> placedUnits;
@@ -89,6 +104,7 @@ public class PlayerController : MonoBehaviour {
         }
         else {
             controllerState = PlayerState.playing;
+            interactionState = InteractionState.none;
             unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
             unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
             unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
@@ -150,25 +166,46 @@ public class PlayerController : MonoBehaviour {
             case (PlayerState.playing):
                 if (Input.GetMouseButtonDown(0)) {
                     if (!EventSystem.current.IsPointerOverGameObject()) {
-                        if (isMoving) {
-                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                manager.MoveUnit(selectedUnit.Position, tilePos);
-                                isMoving = false;
-                                boardController.ClearHighlighting();
-                            }
-                        }
-                        else if (isAttacking) {
-                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                manager.AttackUnit(selectedUnit.Position, tilePos);
-                                isAttacking = false;
-                                boardController.ClearHighlighting();
-                            }
-                        }
-                        else if (manager.GetUnitOnTileUserOwns(tilePos, out UnitStats unit)) {
-							if(selectedUnit != null){
-								selectedUnit.MyUnit.rend.material.color = tempColor;
-							}
-                            selectedUnit = unit;
+                        switch (interactionState) {
+                            case (InteractionState.moving):
+                                if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                    manager.MoveUnit(selectedUnit.Position, tilePos);
+                                    boardController.ClearHighlighting();
+                                    interactionState = InteractionState.none;
+                                }
+                                break;
+                            case (InteractionState.attacking):
+                                if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                    manager.AttackUnit(selectedUnit.Position, tilePos);
+                                    boardController.ClearHighlighting();
+                                    interactionState = InteractionState.none;
+                                }
+                                break;
+                            case (InteractionState.ability1):
+                                interactionState = InteractionState.none;
+                                if(manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability1)) {
+                                    Ability1Button.onClick.RemoveAllListeners();
+                                    Ability1Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+                                }
+                                break;
+                            case (InteractionState.ability2):
+                                interactionState = InteractionState.none;
+                                if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability2)) {
+                                    Ability2Button.onClick.RemoveAllListeners();
+                                    Ability2Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+                                }
+                                break;
+                            case (InteractionState.none):
+                                if (manager.GetUnitOnTileUserOwns(tilePos, out UnitStats unit)) {
+                                    if (selectedUnit != null) {
+                                        selectedUnit.MyUnit.rend.material.color = tempColor;
+                                    }
+                                    selectedUnit = unit;
+                                }
+                                break;
+                            default:
+                                Debug.Log("Interaction state is in a weird place");
+                                break;
                         }
 						if(selectedUnit != null){
 							UpdateUnitDisplay(selectedUnit);
@@ -201,29 +238,53 @@ public class PlayerController : MonoBehaviour {
 
     private void MovementButton() {
         if(selectedUnit != null) {
-            if(isMoving) {
+            if(interactionState == InteractionState.moving) {
+                interactionState = InteractionState.none;
                 boardController.ClearHighlighting();
             }
             else {
+                interactionState = InteractionState.moving;
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
             }
-            isMoving = !isMoving;
-            isAttacking = false;
         }
     }
 
     private void AttackButton() {
         if(selectedUnit != null) {
-            if(isAttacking) {
+            if(interactionState == InteractionState.attacking) {
+                interactionState = InteractionState.none;
                 boardController.ClearHighlighting();
             }
             else {
+                interactionState = InteractionState.attacking;
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
             }
-            isAttacking = !isAttacking;
-            isMoving = false;
+        }
+    }
+
+    public void Ability1ButtonClicked() {
+        if(interactionState == InteractionState.ability1) {
+            interactionState = InteractionState.none;
+            boardController.ClearHighlighting();
+        }
+        else {
+            interactionState = InteractionState.ability1;
+            this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability1]);
+            boardController.HighlightTiles(this.highlightedTiles);
+        }
+    }
+
+    public void Ability2ButtonClicked() {
+        if (interactionState == InteractionState.ability2) {
+            interactionState = InteractionState.none;
+            boardController.ClearHighlighting();
+        }
+        else {
+            interactionState = InteractionState.ability2;
+            this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
+            boardController.HighlightTiles(this.highlightedTiles);
         }
     }
 
@@ -239,16 +300,16 @@ public class PlayerController : MonoBehaviour {
 
         //Finders to find which text to change for what attribute
 		if(unit.AttackActions != 0 && unit.Damage != 0){
-			attackButton.GetComponent<Image>().color = Color.yellow;
+            attackButton.GetComponent<Image>().color = BUTTON_ACTIVE;
 		}
 		else{
-			attackButton.GetComponent<Image>().color = Color.gray;
+			attackButton.GetComponent<Image>().color = BUTTON_INACTIVE;
 		}
 		if(unit.MovementActions != 0 && unit.MovementSpeed != 0){
-			movementButton.GetComponent<Image>().color = Color.yellow;
+			movementButton.GetComponent<Image>().color = BUTTON_ACTIVE;
 		}
 		else{
-			movementButton.GetComponent<Image>().color = Color.gray;
+			movementButton.GetComponent<Image>().color = BUTTON_INACTIVE;
 		}
         unitDisplayHealth.text = hp;
         unitDisplayArmour.text = armour;
@@ -261,8 +322,24 @@ public class PlayerController : MonoBehaviour {
 
         if(unit.UnitClass == UnitClass.general) {
             generalNameText.SetText(UnitMetadata.ReadableNames[unit.UnitType]);
-            Ability1Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability1]);
-            Ability2Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability2]);
+            if(unit.Ability1Cooldown == 0) {
+                Ability1Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability1]);
+                Ability1Button.onClick.RemoveAllListeners();
+                Ability1Button.onClick.AddListener(Ability1ButtonClicked);
+                Ability1Button.GetComponent<Image>().color = BUTTON_ACTIVE;
+            }
+            else {
+                Ability1Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+            }
+            if(unit.Ability2Cooldown == 0) {
+                Ability2Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability2]);
+                Ability2Button.onClick.RemoveAllListeners();
+                Ability2Button.onClick.AddListener(Ability2ButtonClicked);
+                Ability2Button.GetComponent<Image>().color = BUTTON_ACTIVE;
+            }
+            else {
+                Ability2Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+            }
             generalName.SetActive(true);
             Ability1Object.SetActive(true);
             Ability2Object.SetActive(true);

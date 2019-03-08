@@ -27,7 +27,7 @@ public static class BoardMetadata {
 
     public static Dictionary<BoardType, int> CostDict = new Dictionary<BoardType, int>() {
         { BoardType.Hawkpoint, 15 },
-		{ BoardType.Ravine, 15 },
+		{ BoardType.Ravine, 1 },
         { BoardType.Pinnacle, 25 },
         { BoardType.Valley, 25 },
         { BoardType.SampleMap, 40 }

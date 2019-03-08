@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+using CardsAndCarnage;
+
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
 public class GameManager : MonoBehaviour {
 
@@ -45,6 +47,8 @@ public class GameManager : MonoBehaviour {
         client = GameObject.Find("Networking").GetComponent<Client>();
     }
 
+
+    //===================== Setup functions ===================
     //The method called when the load game button is pressed
     //Since we are loading the correct scene, we have to setup the onsceneloaded function
     public void LoadGame(GameState state) {
@@ -92,14 +96,14 @@ public class GameManager : MonoBehaviour {
 
         inGameMenu.SetupPanels(isPlacing: false);
 
+        PreprocessGenerals();
+
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
 
     private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
-
-        inGameMenu.SetupPanels(isPlacing: true);
 
         boardController = new BoardController();
         boardController.Initialize();
@@ -123,6 +127,8 @@ public class GameManager : MonoBehaviour {
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
+        inGameMenu.SetupPanels(isPlacing: true);
+
         SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
@@ -134,6 +140,37 @@ public class GameManager : MonoBehaviour {
         //Anything else that the game manager has to reset needs to be done here
     }
 
+    //===================== Preprocessing functions ===================
+    public void PreprocessGenerals() {
+        foreach(var position in unitPositions.Keys) {
+            UnitStats general = unitPositions[position];
+            if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
+                GeneralMetadata.PassiveEffectsDictionary[general.Passive](unitPositions, user.Username);
+                if (general.Ability1Duration > 0) {
+                    if (general.Owner == user.Username) {
+                        general.Ability1Duration--;
+                    }
+                    GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability1](
+                        ref general,
+                        unitPositions,
+                        user.Username
+                    );
+                }
+                if (general.Ability2Duration > 0) {
+                    if (general.Owner == user.Username) {
+                        general.Ability2Duration--;
+                    }
+                    GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability2](
+                        ref general,
+                        unitPositions,
+                        user.Username
+                    );
+                }
+            }
+        }
+    }
+
+    //===================== In game button functionality ===================
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values)));
@@ -221,5 +258,48 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
+    }
+
+    //Takes in a position and an ability and does the ability
+    public bool UseAbility(Vector2Int source, Vector2Int target, GeneralAbility ability) {
+        UnitStats general = unitPositions[source];
+        if (general.Ability1 == ability) {
+            if (general.Ability1Cooldown == 0) {
+                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
+                if (target != source) {
+                    if(GetUnitOnTile(target, out UnitStats targetUnit)) {
+                        general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
+                        abilityFunction(ref targetUnit, unitPositions, user.Username);
+                    }
+                    else {
+                        return false; //don't put the ability on cooldown
+                    }
+                }
+                else {
+                    general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
+                    abilityFunction(ref general, unitPositions, user.Username);
+                }
+            }
+        }
+        else if(general.Ability2 == ability) {
+            if (general.Ability2Cooldown == 0) {
+                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
+                if (target != source) {
+                    if (GetUnitOnTile(target, out UnitStats targetUnit)) {
+                        general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
+                        abilityFunction(ref targetUnit, unitPositions, user.Username);
+                    }
+                    else {
+                        return false; //don't put the ability on cooldown
+                    }
+                }
+                else {
+                    general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
+                    abilityFunction(ref general, unitPositions, user.Username);
+                }
+            }
+        }
+        turnActions.Add(new Action(user.Username, ActionType.Ability, source, target, ability));
+        return true;
     }
 }
