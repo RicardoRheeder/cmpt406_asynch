@@ -123,7 +123,8 @@ public static class GeneralMetadata {
     }
 
     private static void StickAndPoke(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
-        foreach(var unit in allUnits.Values) {
+        foreach(var key in allUnits.Keys) {
+            UnitStats unit = allUnits[key];
             if(unit.UnitClass == UnitClass.light && unit.Owner == username) {
                 unit.MovementActions += 1;
                 unit.MovementSpeed += 3;
@@ -170,19 +171,22 @@ public static class GeneralMetadata {
     };
 
     private static void AlbarnPassive(Dictionary<Vector2Int, UnitStats> unitPositions, string username) {
-        foreach (UnitStats unit in unitPositions.Values) {
+        foreach (var key in unitPositions.Keys) {
+            UnitStats unit = unitPositions[key];
             unit.Armour += 5;
         }
     }
 
     private static void TungstenPassive(Dictionary<Vector2Int, UnitStats> unitPositions, string username) {
-        foreach (UnitStats unit in unitPositions.Values) {
+        foreach (var key in unitPositions.Keys) {
+            UnitStats unit = unitPositions[key];
             unit.Vision += 2;
         }
     }
 
     private static void AdrenPassive(Dictionary<Vector2Int, UnitStats> unitPositions, string username) {
-        foreach (UnitStats unit in unitPositions.Values) {
+        foreach (var key in unitPositions.Keys) {
+            UnitStats unit = unitPositions[key];
             unit.MovementSpeed += 2;
         }
     }
