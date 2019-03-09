@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Maps/SampleMap.unity
     guid: 49e4792b837854980a370bfb7523d5f8
+  - enabled: 1
+    path: Assets/Scenes/Maps/Sandbox.unity
+    guid: 354cbad997a82ff439ea6e601f15ee1a
   m_configObjects: {}
