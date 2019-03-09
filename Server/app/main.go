@@ -1,13 +1,12 @@
 package main
 
 import (
+	"Projects/cmpt406_asynch/Server/gamestate"
 	"Projects/cmpt406_asynch/Server/request"
 	"encoding/json"
 	"net/http"
 
 	"google.golang.org/appengine"
-
-	"Projects/cmpt406_asynch/Server/enforceforfeittime"
 )
 
 func main() {
@@ -345,7 +344,7 @@ func handleForfeitGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ForfeitGame(ctx, username, req.GameID)
+	err = ForfeitGame(ctx, username, req.GameID, gamestate.PlayerForfeit)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -532,7 +531,7 @@ func handleMakeMove(w http.ResponseWriter, r *http.Request) {
 func handleEnforceForfeitTime(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	err := enforceforfeittime.EnforceTask(ctx, r.Body)
+	err := EnforceTask(ctx, r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

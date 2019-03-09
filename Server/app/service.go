@@ -2,7 +2,6 @@ package main
 
 import (
 	"Projects/cmpt406_asynch/Server/common"
-	"Projects/cmpt406_asynch/Server/enforceforfeittime"
 	"Projects/cmpt406_asynch/Server/gamestate"
 	"Projects/cmpt406_asynch/Server/user"
 	"context"
@@ -507,7 +506,7 @@ func declineGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			/* If all the users are now considered ready */
 			gs.UsersTurn = gs.AliveUsers[0]
 
-			err = enforceforfeittime.CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
+			err = CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
 			if err != nil {
 				log.Errorf(ctx, "Failed to create task: %v", err)
 				// not a huge deal so just continue on
@@ -592,7 +591,7 @@ func backOutGame(ctx context.Context, username, gameStateID string) gamestate.Up
 }
 
 // ForfeitGame will remove the user from the game counting as a loss
-func ForfeitGame(ctx context.Context, username string, gameStateID string) error {
+func ForfeitGame(ctx context.Context, username string, gameStateID string, reason gamestate.LoseReason) error {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
@@ -605,7 +604,7 @@ func ForfeitGame(ctx context.Context, username string, gameStateID string) error
 		return errors.New("gameStateID is required")
 	}
 
-	err = gamestate.UpdateGameState(ctx, gameStateID, forfeitGame(ctx, username, gameStateID))
+	err = gamestate.UpdateGameState(ctx, gameStateID, forfeitGame(ctx, username, gameStateID, reason))
 	if err != nil {
 		return err
 	}
@@ -613,7 +612,7 @@ func ForfeitGame(ctx context.Context, username string, gameStateID string) error
 	return nil
 }
 
-func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.UpdateGameStateFunc {
+func forfeitGame(ctx context.Context, username, gameStateID string, reason gamestate.LoseReason) gamestate.UpdateGameStateFunc {
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 		if !common.Contains(gs.ReadyUsers, username) {
@@ -633,7 +632,7 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 
 		/* Add the action that says they forfeited */
 		gs.Actions = append(gs.Actions, gamestate.Action{Username: username, ActionType: gamestate.Forfeit})
-		gs.LoseReasons = append(gs.LoseReasons, gamestate.Lose{Username: username, Reason: gamestate.PlayerForfeit})
+		gs.LoseReasons = append(gs.LoseReasons, gamestate.Lose{Username: username, Reason: reason})
 
 		err := user.UpdateUser(ctx, username, updateActiveGameToComplete(ctx, gameStateID))
 		if err != nil {
@@ -857,7 +856,7 @@ func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit,
 		if gs.MaxUsers == len(gs.ReadyUsers) {
 			gs.UsersTurn = gs.AliveUsers[0]
 
-			err := enforceforfeittime.CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
+			err := CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
 			if err != nil {
 				log.Errorf(ctx, "Failed to create task: %v", err)
 				// not a huge deal so just continue on
@@ -950,7 +949,7 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 			gs.IsComplete = true
 			gs.UsersTurn = ""
 		} else {
-			err := enforceforfeittime.CreateTask(ctx, gs.ID, gs.UsersTurn, len(gs.Actions), gs.ForfeitTime)
+			err := CreateTask(ctx, gs.ID, gs.UsersTurn, len(gs.Actions), gs.ForfeitTime)
 			if err != nil {
 				log.Errorf(ctx, "Failed to create task: %v", err)
 				// not a huge deal so just continue on

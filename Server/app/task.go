@@ -1,7 +1,6 @@
-package enforceforfeittime
+package main
 
 import (
-	"Projects/cmpt406_asynch/Server/common"
 	"Projects/cmpt406_asynch/Server/gamestate"
 	"context"
 	"encoding/json"
@@ -87,13 +86,10 @@ func enforceTask(usernamesTurn string, actionListLength int) gamestate.UpdateGam
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 		if usernamesTurn == gs.UsersTurn && actionListLength == len(gs.Actions) {
-			// player has failed to do their turn and will now forfeit
-			common.Remove(&gs.AliveUsers, usernamesTurn)
-			common.RemoveAllUnits(&gs.Units, usernamesTurn)
-			common.RemoveAllUnits(&gs.Generals, usernamesTurn)
-			common.RemoveCards(&gs.Cards, usernamesTurn)
-
-			gs.LoseReasons = append(gs.LoseReasons, gamestate.Lose{Username: usernamesTurn, Reason: gamestate.ForcedForfeit})
+			err := ForfeitGame(ctx, usernamesTurn, gs.ID, gamestate.ForcedForfeit)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
