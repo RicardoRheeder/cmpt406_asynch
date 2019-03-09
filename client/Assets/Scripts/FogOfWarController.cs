@@ -10,7 +10,7 @@ public class FogOfWarController {
     Tilemap fogTilemap;
 
     Dictionary<Vector2Int,FogTile> clearedTiles = new Dictionary<Vector2Int, FogTile>();
-    Dictionary<Vector2Int,FogTile> mapEdgeTiles = new Dictionary<Vector2Int, FogTile>(); // TODO: fill this in during init
+    Dictionary<Vector2Int,FogTile> mapEdgeTiles = new Dictionary<Vector2Int, FogTile>();
     List<FogViewer> viewers = new List<FogViewer>();
 
     public void InitializeFogOfWar(Tilemap tilemap) {
