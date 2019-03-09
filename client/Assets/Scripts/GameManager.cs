@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour {
         foreach(var position in unitPositions.Keys) {
             UnitStats general = unitPositions[position];
             if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
-                GeneralMetadata.PassiveEffectsDictionary[general.Passive](unitPositions, user.Username);
+                GeneralMetadata.PassiveEffectsDictionary[general.Passive](unitPositions, general.Owner);
                 if (general.Ability1Duration > 0) {
                     if (general.Owner == user.Username) {
                         general.Ability1Duration--;
@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour {
                     GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability1](
                         ref general,
                         unitPositions,
-                        user.Username
+                        general.Owner
                     );
                 }
                 if (general.Ability2Duration > 0) {
@@ -163,7 +163,7 @@ public class GameManager : MonoBehaviour {
                     GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability2](
                         ref general,
                         unitPositions,
-                        user.Username
+                        general.Owner
                     );
                 }
             }
