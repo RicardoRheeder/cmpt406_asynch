@@ -8,7 +8,7 @@ using CardsAndCarnage;
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
 public class GameManager : MonoBehaviour {
 
-    private Client client;
+    private INetwork client;
 
     [SerializeField]
     private GameObject gameBuilderPrefab;
@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour {
     //Since we are loading the correct scene, we have to setup the onsceneloaded function
     public void LoadGame(GameState state) {
         this.state = state;
-        this.user = client.UserInformation;
+        this.user = client.GetUserInformation();
         this.isPlacing = false;
 
         SceneManager.sceneLoaded -= OnMenuLoaded;
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour {
     //This method is called when we need to place units
     public void PlaceUnits(GameState state, ArmyPreset selectedPreset) {
         this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
-        this.user = client.UserInformation;
+        this.user = client.GetUserInformation();
         this.selectedPreset = selectedPreset;
         this.isPlacing = true;
         this.placedUnits = new List<UnitStats>();
@@ -75,6 +75,19 @@ public class GameManager : MonoBehaviour {
 
         SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
     }
+	
+	public void StartSandbox(GameState state){
+		this.state = state;
+		this.isPlacing = false;
+		this.client = new Sandbox();
+		this.user = client.GetUserInformation();
+		
+		SceneManager.sceneLoaded -= OnMenuLoaded;
+        SceneManager.sceneLoaded += OnGameLoaded;
+		SceneManager.sceneLoaded += OnSandboxLoaded;
+	
+		SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+	}
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
@@ -101,6 +114,10 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
+	
+	private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
+		SceneManager.sceneLoaded += OnMenuSandbox;
+	}
 
     private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
@@ -139,6 +156,11 @@ public class GameManager : MonoBehaviour {
         turnActions.Clear();
         //Anything else that the game manager has to reset needs to be done here
     }
+	
+	private void OnMenuSandbox(Scene scene, LoadSceneMode mode){
+		client = GameObject.Find("Networking").GetComponent<Client>();
+		this.user = client.GetUserInformation();
+	}
 
     //===================== Preprocessing functions ===================
     public void PreprocessGenerals() {
