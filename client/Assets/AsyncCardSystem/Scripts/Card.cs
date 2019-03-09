@@ -18,18 +18,18 @@ public class Card : ScriptableObject {
     public new string name;
 
     public string[] effects;
-	public string description;
+    public string description;
 
-	public Sprite artwork;
+    public Sprite artwork;
 
-	public int cardCost;
-//	public int attack;
-//	public int health;
+    public int cardCost;
+//    public int attack;
+//    public int health;
 
-	public void Print ()
-	{
-		Debug.Log(name + ": " + description + " The card costs: " + cardCost);
-	}
+    public void Print ()
+    {
+        Debug.Log(name + ": " + description + " The card costs: " + cardCost);
+    }
 
 }
 

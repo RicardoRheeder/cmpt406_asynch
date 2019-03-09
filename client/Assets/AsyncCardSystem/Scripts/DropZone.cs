@@ -10,32 +10,32 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public GameObject go;
 
-	public void OnPointerEnter(PointerEventData eventData) {
-		//Debug.Log("OnPointerEnter");
-		if(eventData.pointerDrag == null)
-			return;
+    public void OnPointerEnter(PointerEventData eventData) {
+        //Debug.Log("OnPointerEnter");
+        if(eventData.pointerDrag == null)
+            return;
 
-		Draggable d = eventData.pointerDrag.GetComponent<Draggable>();
+        Draggable d = eventData.pointerDrag.GetComponent<Draggable>();
 
-		if(d != null) {
-			d.placeholderParent = this.transform;
-		}
-	}
-	
-	public void OnPointerExit(PointerEventData eventData) {
-		//Debug.Log("OnPointerExit");
-		if(eventData.pointerDrag == null)
-			return;
+        if(d != null) {
+            d.placeholderParent = this.transform;
+        }
+    }
+    
+    public void OnPointerExit(PointerEventData eventData) {
+        //Debug.Log("OnPointerExit");
+        if(eventData.pointerDrag == null)
+            return;
 
-		Draggable d = eventData.pointerDrag.GetComponent<Draggable>();
-		if(d != null && d.placeholderParent==this.transform) {
-			d.placeholderParent = d.parentToReturnTo;
-		}
-	}
+        Draggable d = eventData.pointerDrag.GetComponent<Draggable>();
+        if(d != null && d.placeholderParent==this.transform) {
+            d.placeholderParent = d.parentToReturnTo;
+        }
+    }
 
-	
-	public void OnDrop(PointerEventData eventData) {
-	    GameObject droppedCard = eventData.pointerDrag.gameObject;
+    
+    public void OnDrop(PointerEventData eventData) {
+        GameObject droppedCard = eventData.pointerDrag.gameObject;
 
         if (droppedCard.GetComponent<Draggable>().allowDrag == true)
         {

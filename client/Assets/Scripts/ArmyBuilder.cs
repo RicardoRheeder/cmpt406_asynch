@@ -45,16 +45,16 @@ public static class ArmyBuilder {
         new List<int>() {
             (int)UnitType.steamer,
             (int)UnitType.steamer,
-			(int)UnitType.steamer,
             (int)UnitType.steamer,
-			(int)UnitType.steamer,
+            (int)UnitType.steamer,
+            (int)UnitType.steamer,
             (int)UnitType.steamer,
             (int)UnitType.powerSurge,
-			(int)UnitType.powerSurge,
-			(int)UnitType.trooper,
-			(int)UnitType.trooper,
-			
-			
+            (int)UnitType.powerSurge,
+            (int)UnitType.trooper,
+            (int)UnitType.trooper,
+            
+            
         },
         (int)UnitType.heavy_albarn
     );
@@ -81,14 +81,14 @@ public static class ArmyBuilder {
         new List<int>() {
             (int)UnitType.trooper,
             (int)UnitType.trooper,
-			(int)UnitType.foundation,
-			(int)UnitType.foundation,
+            (int)UnitType.foundation,
+            (int)UnitType.foundation,
             (int)UnitType.recon,
             (int)UnitType.recon,
-			(int)UnitType.compensator,
-			(int)UnitType.compensator,
-			(int)UnitType.powerSurge,
-			(int)UnitType.powerSurge,
+            (int)UnitType.compensator,
+            (int)UnitType.compensator,
+            (int)UnitType.powerSurge,
+            (int)UnitType.powerSurge,
         },
         (int)UnitType.light_adren
     );
