@@ -2,7 +2,7 @@
 
 //Must be > 0
 public enum BoardType {
-    //small maps from 0 to 99
+    //small maps from 1 to 99
     Hawkpoint = 1,
 	Ravine = 2,
 
@@ -12,25 +12,26 @@ public enum BoardType {
 
     //large maps from 200 to 299
 
-    //Random test map
-    SampleMap = 102
+    //Random test maps
+    SampleMap = 300
 }
 
 public static class BoardMetadata {
+
+    public static readonly int TEST_BOARD_LIMIT = 300;
+
     public static Dictionary<BoardType, int> MaxPlayersDict = new Dictionary<BoardType, int>() {
         { BoardType.Ravine, 2},
 		{ BoardType.Hawkpoint, 3 },
         { BoardType.Pinnacle, 4 },
-        { BoardType.Valley, 4 },
-        { BoardType.SampleMap, 6 }
+        { BoardType.Valley, 4 }
     };
 
     public static Dictionary<BoardType, int> CostDict = new Dictionary<BoardType, int>() {
         { BoardType.Hawkpoint, 15 },
 		{ BoardType.Ravine, 1 },
         { BoardType.Pinnacle, 25 },
-        { BoardType.Valley, 25 },
-        { BoardType.SampleMap, 40 }
+        { BoardType.Valley, 25 }
     };
 
     public static Dictionary<BoardType, string> BoardNames = new Dictionary<BoardType, string>() {
