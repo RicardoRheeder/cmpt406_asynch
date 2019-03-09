@@ -147,7 +147,6 @@ public class GameBuilder : MonoBehaviour {
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType]);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
-
         }
         return unit;
     }
