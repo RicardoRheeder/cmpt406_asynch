@@ -13,7 +13,8 @@ public enum BoardType {
     //large maps from 200 to 299
 
     //Random test map
-    SampleMap = 102
+    SampleMap = 300,
+	Sandbox = 420
 }
 
 public static class BoardMetadata {
@@ -22,7 +23,8 @@ public static class BoardMetadata {
 		{ BoardType.Hawkpoint, 3 },
         { BoardType.Pinnacle, 4 },
         { BoardType.Valley, 4 },
-        { BoardType.SampleMap, 6 }
+        { BoardType.SampleMap, 6 },
+		{ BoardType.Sandbox, 1}
     };
 
     public static Dictionary<BoardType, int> CostDict = new Dictionary<BoardType, int>() {
@@ -30,7 +32,8 @@ public static class BoardMetadata {
 		{ BoardType.Ravine, 15 },
         { BoardType.Pinnacle, 25 },
         { BoardType.Valley, 25 },
-        { BoardType.SampleMap, 40 }
+        { BoardType.SampleMap, 40 },
+		{ BoardType.Sandbox, 40 }
     };
 
     public static Dictionary<BoardType, string> BoardNames = new Dictionary<BoardType, string>() {
@@ -38,6 +41,7 @@ public static class BoardMetadata {
 		{ BoardType.Ravine, "Map_Small_Ravine" },
         { BoardType.Pinnacle, "Map_Med_Pinnacle" },
         { BoardType.Valley, "Map_Med_Valley" },
-        { BoardType.SampleMap, "SampleMap" }
+        { BoardType.SampleMap, "SampleMap" },
+		{ BoardType.Sandbox, "Sandbox" },
     };
 }
