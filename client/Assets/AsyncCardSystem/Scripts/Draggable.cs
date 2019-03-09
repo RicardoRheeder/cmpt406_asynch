@@ -4,17 +4,17 @@ using System.Collections;
 using UnityEngine.EventSystems;
 
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
-	
-	public Transform parentToReturnTo = null;
-	public Transform placeholderParent = null;
+    
+    public Transform parentToReturnTo = null;
+    public Transform placeholderParent = null;
 
-	GameObject placeholder = null;
+    GameObject placeholder = null;
 
     public bool allowDrag = false;
-	
+    
 
 
-	public void OnBeginDrag(PointerEventData eventData) {
+    public void OnBeginDrag(PointerEventData eventData) {
 
         if (eventData.pointerDrag.transform.parent.name == "Hand" ||
             eventData.pointerDrag.transform.parent.name == "Tabletop")
@@ -43,9 +43,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
 
-	}
-	
-	public void OnDrag(PointerEventData eventData) {
+    }
+    
+    public void OnDrag(PointerEventData eventData) {
         if (allowDrag == true)
         {
             //Debug.Log ("OnDrag");
@@ -87,11 +87,11 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             placeholder.transform.SetSiblingIndex(newSiblingIndex);
         }
     }
-	
-	public void OnEndDrag(PointerEventData eventData) {
+    
+    public void OnEndDrag(PointerEventData eventData) {
         if (allowDrag == true)
         {
-            //		Debug.Log ("OnEndDrag");
+            //        Debug.Log ("OnEndDrag");
             this.transform.SetParent(parentToReturnTo);
             this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
             GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -99,8 +99,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             Destroy(placeholder);
         }
 
-	}
-	
-	
-	
+    }
+    
+    
+    
 }

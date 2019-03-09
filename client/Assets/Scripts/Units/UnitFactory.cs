@@ -116,14 +116,14 @@ public static class UnitFactory {
 
     private readonly static int PIERCING_TUNGSTEN_HP = 200;
     private readonly static int PIERCING_TUNGSTEN_ARMOUR = 30;
-    private readonly static int PIERCING_TUNGSTEN_RANGE = 10;
+    public readonly static int PIERCING_TUNGSTEN_RANGE = 10;
     private readonly static int PIERCING_TUNGSTEN_DAMAGE = 25;
     private readonly static int PIERCING_TUNGSTEN_PIERCE = 0;
     private readonly static int PIERCING_TUNGSTEN_AOE = 0;
     private readonly static int PIERCING_TUNGSTEN_SPEED = 0;
     private readonly static int PIERCING_TUNGSTEN_VISION = 5;
     private readonly static int PIERCING_TUNGSTEN_COST = 0;
-    private readonly static IAttackStrategy PIERCING_TUNGSTEN_ATTACK_STRATEGY = new AreaStrategy();
+    public readonly static IAttackStrategy PIERCING_TUNGSTEN_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int LIGHT_ADREN_HP = 200;
     private readonly static int LIGHT_ADREN_ARMOUR = 30;
@@ -377,7 +377,7 @@ public static class UnitFactory {
         return UnitCreationMethods[type]();
     }
     
-    public static int GetCost(List<int> units) {
+    public static int CalculateCost(List<int> units) {
         int cost = 0;
         foreach (int i in units) {
             cost += GetBaseUnit((UnitType)i).Cost;
