@@ -136,11 +136,13 @@ public class PlayerController : MonoBehaviour {
         if (donePlacing) {
             manager.EndUnitPlacement();
         }
+        
 		if(selectedUnit != null){
 			if(selectedUnit.MyUnit.rend.material.color != Color.white){
 				tempColor = selectedUnit.MyUnit.rend.material.color;
 			}
 			selectedUnit.MyUnit.rend.material.color = Color.white;
+            
 		}
     }
 
@@ -148,6 +150,9 @@ public class PlayerController : MonoBehaviour {
         Vector2Int tilePos = boardController.MousePosToCell();
 
         boardController.HoverHighlight(tilePos);
+
+        
+
 
         switch(controllerState) {
             case (PlayerState.playing):
@@ -170,8 +175,11 @@ public class PlayerController : MonoBehaviour {
                         else if (manager.GetUnitOnTileUserOwns(tilePos, out UnitStats unit)) {
 							if(selectedUnit != null){
 								selectedUnit.MyUnit.rend.material.color = tempColor;
+                               
 							}
+                            
                             selectedUnit = unit;
+                            boardController.HighlightSingleTile(tilePos);
                         }
 						if(selectedUnit != null){
 							UpdateUnitDisplay(selectedUnit);
