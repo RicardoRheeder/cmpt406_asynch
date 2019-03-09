@@ -28,7 +28,7 @@ public static class GeneralMetadata {
     public static readonly Dictionary<UnitType, List<GeneralAbility>> GeneralAbilityDictionary = new Dictionary<UnitType, List<GeneralAbility>>() {
         {UnitType.heavy_albarn, new List<GeneralAbility>{ GeneralAbility.STEAM_OVERLOAD, GeneralAbility.THE_BEST_OFFENSE } },
         {UnitType.piercing_tungsten, new List<GeneralAbility>{ GeneralAbility.TROJAN_SHOT, GeneralAbility.ARMOUR_PIERCING_AMMO } },
-        {UnitType.light_adren, new List<GeneralAbility>{ GeneralAbility.STEAM_OVERLOAD, GeneralAbility.DEEP_PENETRATION } },
+        {UnitType.light_adren, new List<GeneralAbility>{ GeneralAbility.STICK_AND_POKE, GeneralAbility.DEEP_PENETRATION } },
         {UnitType.support_sandman, new List<GeneralAbility>{ GeneralAbility.SAHARA_MINE, GeneralAbility.SANDSTORM } }
     };
 
