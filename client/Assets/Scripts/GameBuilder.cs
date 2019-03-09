@@ -134,7 +134,7 @@ public class GameBuilder : MonoBehaviour {
         unit.Owner = username;
         if(this.username == username) {
             FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
-            unitFogViewer.SetRadius(unit.Range);
+            unitFogViewer.SetRadius(unit.Vision);
             fogController.AddFogViewer(unitFogViewer);
         }
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
@@ -153,7 +153,7 @@ public class GameBuilder : MonoBehaviour {
         unit.Owner = username;
         if(username == this.username) {
             FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
-            unitFogViewer.SetRadius(unit.Range);
+            unitFogViewer.SetRadius(unit.Vision);
             fogController.AddFogViewer(unitFogViewer);
         }
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
