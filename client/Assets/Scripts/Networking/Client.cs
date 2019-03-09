@@ -12,7 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 //This class has a monobehaviour attached so that the "DebugMode" can be easily toggled on and off without going into the code
-public class Client : MonoBehaviour {
+public class Client : MonoBehaviour, INetwork {
 
     //Event System to enable/disable event system
     GameObject eventSystem;
@@ -53,7 +53,11 @@ public class Client : MonoBehaviour {
         eventSystem = GameObject.Find("EventSystem");
         SceneManager.sceneLoaded += FindEventSystem;
     }
-
+    
+    public PlayerMetadata GetUserInformation(){
+        return this.UserInformation;
+    }
+    
     private void FindEventSystem(Scene scene, LoadSceneMode mode) {
         eventSystem = GameObject.Find("EventSystem");
     }

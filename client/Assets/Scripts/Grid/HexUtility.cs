@@ -11,11 +11,11 @@ public static class HexUtility {
     // Converts a vector3Int position from oddr (coordinate system used for tilemap in the game)
     // to a cube coordinate. This is done to make algorithms easier and more efficient
     public static Vector3Int OddrToCube(Vector2Int hex) {
-		int x = hex.x - (hex.y - (hex.y&1)) / 2;
-		int z = hex.y;
-		int y = -x-z;
-		return new Vector3Int(x, y, z);
-	}
+        int x = hex.x - (hex.y - (hex.y&1)) / 2;
+        int z = hex.y;
+        int y = -x-z;
+        return new Vector3Int(x, y, z);
+    }
 
     // Converts a Vector3Int position from the cube coordinate system to the oddr coordinate system
     // this method should be used before the return statement of hex algorithms
@@ -23,16 +23,16 @@ public static class HexUtility {
         int x = hex.x + (hex.z - (hex.z&1))/2;
         int y = hex.z;
         return new Vector2Int(x, y);
-	}
+    }
 
     // returns the distance (number of tiles) between two hex positions
     public static float HexDistance(Vector2Int startPos, Vector2Int endPos) {
-		Vector3Int dA = OddrToCube(startPos);
-		Vector3Int dB = OddrToCube(endPos);
-		return (Math.Abs(dA.x - dB.x) 
+        Vector3Int dA = OddrToCube(startPos);
+        Vector3Int dB = OddrToCube(endPos);
+        return (Math.Abs(dA.x - dB.x) 
           + Math.Abs(dA.x + dA.y - dB.x - dB.y)
           + Math.Abs(dA.y - dB.y)) / 2;
-	}
+    }
 
     // Returns a list of tiles that form a straight line between two tile positions
     public static List<Vector2Int> FindLine(Vector2Int startPos, Vector2Int endPos) {
@@ -240,21 +240,21 @@ public static class HexUtility {
 
         return visited;
     }
-	
-	//Takes in a list of tiles, returns the list of tiles with all tiles outside of the tilemap removed
-	public static List<Vector2Int> RemoveInvalidTiles(Tilemap tilemap, List<Vector2Int> tileList ){
-		List<Vector2Int> targetListToRemove = new List<Vector2Int>();
-		
-		foreach(Vector2Int tileTarget in tileList){
-			if (!tilemap.GetTile((Vector3Int)tileTarget)){
-				targetListToRemove.Add(tileTarget);
-			}
-		}
-		foreach(Vector2Int tileTarget in targetListToRemove){
-			tileList.Remove(tileTarget);
-		}
-		return tileList;
-	}
+    
+    //Takes in a list of tiles, returns the list of tiles with all tiles outside of the tilemap removed
+    public static List<Vector2Int> RemoveInvalidTiles(Tilemap tilemap, List<Vector2Int> tileList ){
+        List<Vector2Int> targetListToRemove = new List<Vector2Int>();
+        
+        foreach(Vector2Int tileTarget in tileList){
+            if (!tilemap.GetTile((Vector3Int)tileTarget)){
+                targetListToRemove.Add(tileTarget);
+            }
+        }
+        foreach(Vector2Int tileTarget in targetListToRemove){
+            tileList.Remove(tileTarget);
+        }
+        return tileList;
+    }
 
     // Finds a path between starting and ending position
     // only paths to non-null tiles on the argument tilemap
@@ -310,6 +310,26 @@ public static class HexUtility {
         return Math.Abs(endTile.elevation - startTile.elevation) < ELEVATION_REACHABLE_DISTANCE;
     }
 
+    public static List<Vector2Int> FindRing(Vector2Int center, int distance, int thickness) {
+        // TODO: get it working with cache
+        List<Vector2Int> results = new List<Vector2Int>();
+        Vector3Int cubeCenter = OddrToCube(center);
+        Vector3Int cube = cubeAdd(cubeCenter, cubeScale(cubeDirections[4], distance));
+        for(int i = 0; i < 6; i++) {
+            for(int j = 0; j < distance; j++) {
+                Vector2Int position = CubeToOddr(cube);
+                results.Add(position);
+                cube = OddrToCube(NeighborTile(position,i));
+            }
+        }
+        return results;
+    }
+
+    public static bool IsEdgeTile(Vector2Int position, Tilemap tilemap) {
+        List<Vector2Int> neighbors = GetNeighbors(position,tilemap,true);
+        return neighbors.Count < 6;
+    }
+
     //Helper class to say that direction(0) = curPos + cubeDirections[0]
     //DO NOT CHANGE THE ORDER OF THE LIST
     private static readonly List<Vector2Int> oddYOffsetDirections = new List<Vector2Int> {
@@ -337,6 +357,14 @@ public static class HexUtility {
         new Vector3Int(0, 1, -1),
         new Vector3Int(1, 0, -1),
     };
+
+    private static Vector3Int cubeAdd(Vector3Int a, Vector3Int b) {
+        return new Vector3Int(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+
+    public static Vector3Int cubeScale(Vector3Int a, int k) {
+        return new Vector3Int(a.x * k, a.y * k, a.z * k);
+    }
 
     // This dictionary is in the format of tile coordinates to a list of lists of tile coordinates
     // the list will be of size n, where n is the highest range we calculated
@@ -375,11 +403,11 @@ public static class HexUtility {
         int startingRing = tileCache.Count;
         //This loop effectively does a "walk" around the ring and adds the tile to the map if the tile is on the board
         for (int ring = startingRing; ring < offsetRange; ring++) {
-			curPos = startingPos;
+            curPos = startingPos;
             //This will walk us from the starting positing to the position we need to start the calculation from
-			for(int counter = 0; counter < ring; counter++) {
-				curPos = NeighborTile( curPos, 4 );
-			}
+            for(int counter = 0; counter < ring; counter++) {
+                curPos = NeighborTile( curPos, 4 );
+            }
             List<Vector2Int> targetRing = new List<Vector2Int>();
             //Since a hexagon has side length == radius, we have to calculate edges equal to the current ring
             for(int dir = 0; dir < 6; dir++) {

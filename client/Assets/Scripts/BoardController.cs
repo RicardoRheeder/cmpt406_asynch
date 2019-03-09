@@ -25,7 +25,7 @@ public class BoardController {
             Debug.Log("Tilemap is null. This will result in problems");
         }
         else {
-            plane = new Plane(Vector3.forward, Vector3.zero); // creates a flat horizontal plane at y = 0
+            plane = new Plane(tilemap.transform.forward, tilemap.transform.position); // creates a flat horizontal plane at y = 0
         }
         this.hightlightedTiles = new List<GameObject>();
     }
@@ -61,6 +61,7 @@ public class BoardController {
             worldPoint = new Vector3(hit.point.x,hit.point.y,0);
         } else if(plane.Raycast(ray, out float enter)) {    // otherwise cast a ray at the flat plane to get position
             Vector3 hitPoint = ray.GetPoint(enter);
+            Debug.DrawRay(ray.origin,ray.direction * enter,Color.green);
             worldPoint = new Vector3(hitPoint.x,hitPoint.y,0);
         }
 

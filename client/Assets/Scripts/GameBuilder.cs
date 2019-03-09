@@ -28,12 +28,13 @@ public class GameBuilder : MonoBehaviour {
     public GameObject lightAdrenPrefab;
     public GameObject supportSandmanPrefab;
     public Dictionary<UnitType, GameObject> typePrefabStorage;
-	
+    
     private GameState state;
     private string username;
     private BoardController board;
+    private FogOfWarController fogController;
     private bool isPlacing;
-	private int colorPick = 0;
+    private int colorPick = 0;
     private ArmyPreset armyPreset;
 
     public void Awake() {
@@ -58,10 +59,11 @@ public class GameBuilder : MonoBehaviour {
 
     //Method that takes in a game state, instantiates all of the objects and makes sure the scene is setup how it should be.
     //Note: the game manager is responsible for creating the other managers, the game builder is just responsible for creating the playable objects.
-    public void Build(ref GameState state, string username, ref BoardController board, bool isPlacing, ArmyPreset armyPreset = null) {
+    public void Build(ref GameState state, string username, ref BoardController board, ref FogOfWarController fogController, bool isPlacing, ArmyPreset armyPreset = null) {
         this.state = state;
         this.username = username;
         this.board = board;
+        this.fogController = fogController;
         this.isPlacing = isPlacing;
         this.armyPreset = armyPreset;
         SetupScene();
@@ -101,7 +103,7 @@ public class GameBuilder : MonoBehaviour {
                 }
             }
             foreach (var general in userGeneralList.Value) {
-				UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
+                UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
                 newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(general.Position, newUnit);
             }
@@ -115,8 +117,8 @@ public class GameBuilder : MonoBehaviour {
                 }
             }
             foreach (var unit in userUnitList.Value) {
-				UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
-				newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
+                UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
+                newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(unit.Position, newUnit);
             }
         }
@@ -130,6 +132,11 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Move(pos, ref board, true);
         unit.Owner = username;
+        if(this.username == username) {
+            FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
+            unitFogViewer.SetRadius(unit.Vision + 1);
+            fogController.AddFogViewer(unitFogViewer);
+        }
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
@@ -144,10 +151,14 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Move(pos, ref board, true);
         unit.Owner = username;
+        if(username == this.username) {
+            FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
+            unitFogViewer.SetRadius(unit.Vision + 1);
+            fogController.AddFogViewer(unitFogViewer);
+        }
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType]);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
-
         }
         return unit;
     }
