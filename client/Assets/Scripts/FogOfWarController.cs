@@ -8,7 +8,6 @@ public class FogOfWarController {
 
     GameObject fogObject;
     Tilemap fogTilemap;
-    BoardController boardController;
 
     Dictionary<Vector2Int,FogTile> clearedTiles = new Dictionary<Vector2Int, FogTile>();
     Dictionary<Vector2Int,FogTile> mapEdgeTiles = new Dictionary<Vector2Int, FogTile>(); // TODO: fill this in during init
@@ -121,10 +120,25 @@ public class FogOfWarController {
         if(fogTilemap == null) {
             return;
         }
-        FogTile fog = fogTilemap.GetTile((Vector3Int)position) as FogTile;
-        if(fog != null) {
-            fog.ClearFog();
+        
+        if(fogTilemap.HasTile((Vector3Int)position)) {
+            FogViewer newViewer = new FogViewer();
+            newViewer.SetPosition(position);
+            newViewer.SetRadius(0);
+            viewers.Add(newViewer);
             fogTilemap.RefreshTile((Vector3Int)position);
+        }
+        
+    }
+
+    public void ClearFogAtSpawnPoint(SpawnPoint spawnPoint, ref BoardController board) {
+        List<Vector2Int> spawnTileList = new List<Vector2Int>();
+        Tilemap tilemap = board.GetTilemap();
+        foreach(Vector2Int pos in tilemap.cellBounds.allPositionsWithin) {
+            HexTile tile = tilemap.GetTile((Vector3Int)pos) as HexTile;
+            if(tile != null && tile.spawnPoint == spawnPoint) {
+                ClearFogAtPosition(pos);
+            }
         }
     }
 
@@ -134,7 +148,7 @@ public class FogOfWarController {
         }
 
         for(int i=0; i<positions.Count; i++) {
-            fogTilemap.SetTile((Vector3Int)positions[i], null);
+            ClearFogAtPosition(positions[i]);
         }
     }
 

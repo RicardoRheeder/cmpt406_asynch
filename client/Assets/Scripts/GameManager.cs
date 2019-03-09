@@ -131,6 +131,8 @@ public class GameManager : MonoBehaviour {
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
+        fogOfWarController.ClearFogAtSpawnPoint(spawnPoint, ref boardController);
+
         SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
