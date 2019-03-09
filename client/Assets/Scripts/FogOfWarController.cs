@@ -131,13 +131,35 @@ public class FogOfWarController {
         
     }
 
-    public void ClearFogAtSpawnPoint(SpawnPoint spawnPoint, ref BoardController board) {
+    public void DeleteFogAtPosition(Vector2Int position) {
+        if(fogTilemap == null) {
+            return;
+        }
+
+        if(fogTilemap.HasTile((Vector3Int)position)) {
+            fogTilemap.SetTile((Vector3Int)position,null);
+            fogTilemap.RefreshTile((Vector3Int)position);
+            List<Vector2Int> neighbors = HexUtility.GetNeighborPositions(position);
+            for(int i=0; i<neighbors.Count; i++) {
+                FogTile neighbor = fogTilemap.GetTile((Vector3Int)neighbors[i]) as FogTile;
+                if(neighbor != null && !mapEdgeTiles.ContainsKey(neighbors[i])) {
+                    mapEdgeTiles.Add(neighbors[i],neighbor);
+                    if(neighbor.GetFogState() != FogState.Cleared) {
+                        neighbor.SetAsMapEdge();
+                    }
+                    fogTilemap.RefreshTile((Vector3Int)neighbors[i]);
+                }
+            }
+        }
+    }
+
+    public void DeleteFogAtSpawnPoint(SpawnPoint spawnPoint, ref BoardController board) {
         List<Vector2Int> spawnTileList = new List<Vector2Int>();
         Tilemap tilemap = board.GetTilemap();
         foreach(Vector2Int pos in tilemap.cellBounds.allPositionsWithin) {
             HexTile tile = tilemap.GetTile((Vector3Int)pos) as HexTile;
             if(tile != null && tile.spawnPoint == spawnPoint) {
-                ClearFogAtPosition(pos);
+                DeleteFogAtPosition(pos);
             }
         }
     }

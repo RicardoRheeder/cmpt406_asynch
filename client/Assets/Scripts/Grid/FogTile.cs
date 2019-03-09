@@ -78,7 +78,14 @@ public class FogTile : TileBase {
         if(particleSystem) {
             particleSystem.Play();
         }
-       
+    }
+
+    public void SetAsMapEdge() {
+        transparency = 1f;
+        fogState = FogState.MapEdgeVisible;
+        if(particleSystem) {
+            particleSystem.Play();
+        }
     }
 
     public FogState GetFogState() {

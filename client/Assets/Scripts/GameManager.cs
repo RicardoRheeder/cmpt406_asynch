@@ -154,7 +154,7 @@ public class GameManager : MonoBehaviour {
 
         inGameMenu.SetupPanels(isPlacing: true);
 
-        fogOfWarController.ClearFogAtSpawnPoint(spawnPoint, ref boardController);
+        fogOfWarController.DeleteFogAtSpawnPoint(spawnPoint, ref boardController);
 
         SceneManager.sceneLoaded -= OnPlaceUnits;
         SceneManager.sceneLoaded += OnMenuLoaded;
