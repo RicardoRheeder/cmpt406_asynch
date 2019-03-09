@@ -73,25 +73,17 @@ func EnforceTask(ctx context.Context, body io.ReadCloser) error {
 		return err
 	}
 
-	err = gamestate.UpdateGameState(ctx, ettp.GameID, enforceTask(ettp.UsernamesTurn, ettp.ActionListLength))
+	gs, err := gamestate.GetGameState(ctx, ettp.GameID)
 	if err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// Helper function to editing the gamestate
-func enforceTask(usernamesTurn string, actionListLength int) gamestate.UpdateGameStateFunc {
-
-	return func(ctx context.Context, gs *gamestate.GameState) error {
-		if usernamesTurn == gs.UsersTurn && actionListLength == len(gs.Actions) {
-			err := ForfeitGame(ctx, usernamesTurn, gs.ID, gamestate.ForcedForfeit)
-			if err != nil {
-				return err
-			}
+	if ettp.UsernamesTurn == gs.UsersTurn && ettp.ActionListLength == len(gs.Actions) {
+		err := ForfeitGame(ctx, ettp.UsernamesTurn, gs.ID, gamestate.ForcedForfeit)
+		if err != nil {
+			return err
 		}
-
-		return nil
 	}
+
+	return nil
 }
