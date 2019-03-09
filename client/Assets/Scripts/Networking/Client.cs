@@ -12,7 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 //This class has a monobehaviour attached so that the "DebugMode" can be easily toggled on and off without going into the code
-public class Client : MonoBehaviour {
+public class Client : MonoBehaviour, INetwork {
 
     //Event System to enable/disable event system
     GameObject eventSystem;
@@ -53,7 +53,11 @@ public class Client : MonoBehaviour {
         eventSystem = GameObject.Find("EventSystem");
         SceneManager.sceneLoaded += FindEventSystem;
     }
-
+    
+    public PlayerMetadata GetUserInformation(){
+        return this.UserInformation;
+    }
+    
     private void FindEventSystem(Scene scene, LoadSceneMode mode) {
         eventSystem = GameObject.Find("EventSystem");
     }
@@ -138,23 +142,38 @@ public class Client : MonoBehaviour {
 
     //This method is used to get the summary of the games that are considered pending for the logged in user
     public Tuple<bool, GameStateCollection> GetPendingGamesInformation() {
-        if ((UserInformation.PendingPrivateGames != null && UserInformation.PendingPrivateGames.Count > 0) ||
-            (UserInformation.PendingPublicGames != null && UserInformation.PendingPublicGames.Count > 0)) {
-            return GetGameStateCollectionHelper(new GameIds(UserInformation.PendingPublicGames, UserInformation.PendingPrivateGames));
+        if(this.LoginUser(user.username, user.password)) {
+            if ((UserInformation.PendingPrivateGames != null && UserInformation.PendingPrivateGames.Count > 0) ||
+                (UserInformation.PendingPublicGames != null && UserInformation.PendingPublicGames.Count > 0)) {
+                return GetGameStateCollectionHelper(new GameIds(UserInformation.PendingPublicGames, UserInformation.PendingPrivateGames));
+            }
+        }
+        else {
+            //shit went bad
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }
 
     public Tuple<bool, GameStateCollection> GetActiveGamesInformation() {
-        if (UserInformation.ActiveGames.Count > 0) {
-            return GetGameStateCollectionHelper(new GameIds(UserInformation.ActiveGames));
+        if(LoginUser(user.username, user.password)) {
+            if (UserInformation.ActiveGames.Count > 0) {
+                return GetGameStateCollectionHelper(new GameIds(UserInformation.ActiveGames));
+            }
+        }
+        else {
+            //shit went bad
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }
 
     public Tuple<bool, GameStateCollection> GetCompletedGamesInformation() {
-        if (UserInformation.CompletedGames.Count > 0) {
-            return GetGameStateCollectionHelper(new GameIds(UserInformation.CompletedGames));
+        if (LoginUser(user.username, user.password)) {
+            if (UserInformation.CompletedGames.Count > 0) {
+                return GetGameStateCollectionHelper(new GameIds(UserInformation.CompletedGames));
+            }
+        }
+        else {
+            // bad shit happened
         }
         return new Tuple<bool, GameStateCollection>(false, null);
     }

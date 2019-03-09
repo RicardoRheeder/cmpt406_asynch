@@ -4,8 +4,8 @@ using UnityEngine;
 
 //The actual script on the unit that handles animations
 public class Unit : MonoBehaviour {
-	
-	public Renderer rend;
+    
+    public Renderer rend;
     public float moveSpeed = 5f;
 
     Vector2Int currTilePosition;

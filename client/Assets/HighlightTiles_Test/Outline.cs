@@ -49,11 +49,11 @@ namespace cakeslice
 
         void OnEnable()
         {
-			IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
-				.Select(c => c.GetComponent<OutlineEffect>())
-				.Where(e => e != null);
+            IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
+                .Select(c => c.GetComponent<OutlineEffect>())
+                .Where(e => e != null);
 
-			foreach (OutlineEffect effect in effects)
+            foreach (OutlineEffect effect in effects)
             {
                 effect.AddOutline(this);
             }
@@ -61,11 +61,11 @@ namespace cakeslice
 
         void OnDisable()
         {
-			IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
-				.Select(c => c.GetComponent<OutlineEffect>())
-				.Where(e => e != null);
+            IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
+                .Select(c => c.GetComponent<OutlineEffect>())
+                .Where(e => e != null);
 
-			foreach (OutlineEffect effect in effects)
+            foreach (OutlineEffect effect in effects)
             {
                 effect.RemoveOutline(this);
             }

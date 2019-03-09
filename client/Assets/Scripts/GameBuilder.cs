@@ -28,13 +28,13 @@ public class GameBuilder : MonoBehaviour {
     public GameObject lightAdrenPrefab;
     public GameObject supportSandmanPrefab;
     public Dictionary<UnitType, GameObject> typePrefabStorage;
-	
+    
     private GameState state;
     private string username;
     private BoardController board;
     private FogOfWarController fogController;
     private bool isPlacing;
-	private int colorPick = 0;
+    private int colorPick = 0;
     private ArmyPreset armyPreset;
 
     public void Awake() {
@@ -103,7 +103,7 @@ public class GameBuilder : MonoBehaviour {
                 }
             }
             foreach (var general in userGeneralList.Value) {
-				UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
+                UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
                 newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(general.Position, newUnit);
             }
@@ -117,8 +117,8 @@ public class GameBuilder : MonoBehaviour {
                 }
             }
             foreach (var unit in userUnitList.Value) {
-				UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
-				newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
+                UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
+                newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
                 unitPositions.Add(unit.Position, newUnit);
             }
         }
@@ -159,7 +159,6 @@ public class GameBuilder : MonoBehaviour {
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType]);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
-
         }
         return unit;
     }
