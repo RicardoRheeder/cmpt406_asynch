@@ -53,11 +53,11 @@ public class Client : MonoBehaviour, INetwork {
         eventSystem = GameObject.Find("EventSystem");
         SceneManager.sceneLoaded += FindEventSystem;
     }
-	
-	public PlayerMetadata GetUserInformation(){
-		return this.UserInformation;
-	}
-	
+    
+    public PlayerMetadata GetUserInformation(){
+        return this.UserInformation;
+    }
+    
     private void FindEventSystem(Scene scene, LoadSceneMode mode) {
         eventSystem = GameObject.Find("EventSystem");
     }

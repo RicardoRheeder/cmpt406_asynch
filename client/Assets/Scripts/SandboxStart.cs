@@ -50,7 +50,7 @@ public class SandboxStart : MonoBehaviour {
                                 "\"unitType\":7,\"xPos\":-10,\"yPos\":6},{\"ability1CoolDown\":0,\"ability1Duration\":0," +
                                 "\"ability2CoolDown\":0,\"ability2Duration\":0,\"health\":80,\"owner\":\"katlin\"," +
                                 "\"unitType\":7,\"xPos\":-11,\"yPos\":6}],\"users\":[\"katlin\"],\"usersTurn\":\"katlin\"}";
-	
+    
     public void StartSandbox() {
         state = JsonConversion.CreateFromJson<GameState>(stateString, typeof(GameState));
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();

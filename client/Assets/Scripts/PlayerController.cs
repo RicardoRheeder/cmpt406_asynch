@@ -21,9 +21,9 @@ public class PlayerController : MonoBehaviour {
     private GameManager manager;
     private BoardController boardController;
     private GameBuilder builder;
-	private GameState gamestate;
+    private GameState gamestate;
 
-	//Stuff for unit stat display pane
+    //Stuff for unit stat display pane
     private TMP_Text unitDisplayHealth;
     private TMP_Text unitDisplayArmour;
     private TMP_Text unitDisplayRange;
@@ -52,19 +52,19 @@ public class PlayerController : MonoBehaviour {
     private UnityAction ability1Function;
     private UnityAction ability2Function;
 
-	//Stuff for top right information on hud
-	private TMP_Text userTurnText;
-	private TMP_Text turnText;
+    //Stuff for top right information on hud
+    private TMP_Text userTurnText;
+    private TMP_Text turnText;
 
     //menu buttons
     private Button concedeButton;
     private Button closeGameButton;
-	
+    
     private UnitStats selectedUnit;
 
     private bool initialized = false;
 
-	private Color tempColor;
+    private Color tempColor;
     private enum PlayerState {
         playing,
         placing
@@ -118,8 +118,8 @@ public class PlayerController : MonoBehaviour {
             unitDisplayMovementSpeed = GameObject.Find("unitDisplayMove").GetComponent<TMP_Text>();
             unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
             unitDisplayName = GameObject.Find("unitName").GetComponent<TMP_Text>();
-			userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
-			turnText = GameObject.Find("GameTurnsText").GetComponent<TMP_Text>();
+            userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
+            turnText = GameObject.Find("GameTurnsText").GetComponent<TMP_Text>();
 
             actionsName = GameObject.Find("ActionName");
             attackButtonObject = GameObject.Find("AttackButton");
@@ -128,9 +128,9 @@ public class PlayerController : MonoBehaviour {
             movementButtonObject = GameObject.Find("MovementButton");
             movementButton = movementButtonObject.GetComponent<Button>();
             movementButton.onClick.AddListener(MovementButton);
-			
-			turnText.text = "Turn " + gamestate.TurnNumber;
-			userTurnText.text = gamestate.UsersTurn + "'s Turn";
+            
+            turnText.text = "Turn " + gamestate.TurnNumber;
+            userTurnText.text = gamestate.UsersTurn + "'s Turn";
 
             generalName = GameObject.Find("GeneralName");
             generalNameText = generalName.GetComponent<TMP_Text>();
@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour {
             closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
             closeGameButton.onClick.AddListener(ExitGame);
         }
-		
+        
         initialized = true;
     }
 
@@ -159,12 +159,12 @@ public class PlayerController : MonoBehaviour {
         if (donePlacing) {
             manager.EndUnitPlacement();
         }
-		if(selectedUnit != null){
-			if(selectedUnit.MyUnit.rend.material.color != Color.white){
-				tempColor = selectedUnit.MyUnit.rend.material.color;
-			}
-			selectedUnit.MyUnit.rend.material.color = Color.white;
-		}
+        if(selectedUnit != null){
+            if(selectedUnit.MyUnit.rend.material.color != Color.white){
+                tempColor = selectedUnit.MyUnit.rend.material.color;
+            }
+            selectedUnit.MyUnit.rend.material.color = Color.white;
+        }
     }
 
     private void InputController() {
@@ -214,9 +214,9 @@ public class PlayerController : MonoBehaviour {
                                 Debug.Log("Interaction state is in a weird place");
                                 break;
                         }
-						if(selectedUnit != null){
-							UpdateUnitDisplay(selectedUnit);
-						}						
+                        if(selectedUnit != null){
+                            UpdateUnitDisplay(selectedUnit);
+                        }                        
                     }
                 }
                 break;
