@@ -620,6 +620,9 @@ func forfeitGame(ctx context.Context, username, gameStateID string, reason games
 			return errors.New("Cannot Forfeit a game you are not 'Ready' in")
 		}
 
+		if gs.UsersTurn == username {
+			gs.UsersTurn = getNextUsersTurn(gs.UsersTurn, gs.AliveUsers, []string{})
+		}
 		if !common.Remove(&gs.AliveUsers, username) {
 			log.Errorf(ctx, "user: %s, tried to Forfeit a game they are not alive in", username)
 			return errors.New("Cannot Forfeit a game you are not alive in")
@@ -918,30 +921,14 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 		if actions != nil {
 			gs.Actions = append(gs.Actions, actions...)
 		}
+
+		gs.UsersTurn = getNextUsersTurn(gs.UsersTurn, gs.AliveUsers, killedUsers)
+
 		/* remove killed users from list of alive users */
 		if killedUsers != nil {
 			for _, v := range killedUsers {
 				common.Remove(&gs.AliveUsers, v)
 			}
-		}
-
-		/* Choose the next user that should go */
-		var found = false
-		for i, v := range gs.AliveUsers {
-			if v == gs.UsersTurn {
-				if i+1 >= len(gs.AliveUsers) {
-					gs.UsersTurn = gs.AliveUsers[0]
-				} else {
-					gs.UsersTurn = gs.AliveUsers[i+1]
-				}
-				found = true
-				break
-			}
-		}
-		/* Will happen if the current user died in his turn */
-		if !found {
-			/* TODO: I'm not sure if this is possible so I'll fix it later if it is */
-			log.Criticalf(ctx, "The user %s died in his turn and now no next user has been selected", username)
 		}
 
 		if len(gs.AliveUsers) == 1 {
@@ -963,4 +950,28 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 
 		return nil
 	}
+}
+
+func getNextUsersTurn(usersTurn string, aliveUsers []string, killedUsers []string) string {
+	/* Choose the next user that should go */
+	if killedUsers != nil {
+		for _, v := range killedUsers {
+			if usersTurn != v {
+				common.Remove(&aliveUsers, v)
+			}
+		}
+	}
+	if len(aliveUsers) <= 1 {
+		return ""
+	}
+
+	for i, v := range aliveUsers {
+		if v == usersTurn {
+			if i+1 >= len(aliveUsers) {
+				return aliveUsers[0]
+			}
+			return aliveUsers[i+1]
+		}
+	}
+	return ""
 }
