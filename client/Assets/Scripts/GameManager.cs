@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, state, null, gameBuilder, boardController, isPlacing);
+        playerController.Initialize(this, user.Username, state, null, gameBuilder, boardController, isPlacing);
 
         inGameMenu.SetupPanels(isPlacing: false);
 
@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
+        playerController.Initialize(this, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
         inGameMenu.SetupPanels(isPlacing: true);
 
@@ -211,16 +211,6 @@ public class GameManager : MonoBehaviour {
         bool containsUnit = unitPositions.ContainsKey(tile);
         unit = containsUnit ? unitPositions[tile] : null;
         return containsUnit;
-    }
-
-    public bool GetUnitOnTileUserOwns(Vector2Int tile, out UnitStats unit) {
-        bool myUnit = false;
-        unit = null;
-        if (unitPositions.ContainsKey(tile)) {
-            unit = unitPositions[tile];
-            myUnit = unit.Owner == user.Username;
-        }
-        return myUnit;
     }
 
     public bool TileContainsUnit(Vector2Int tile) {
