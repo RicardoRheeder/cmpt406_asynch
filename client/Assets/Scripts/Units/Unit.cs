@@ -61,4 +61,8 @@ public class Unit : MonoBehaviour {
     public void Kill() {
         Destroy(this.gameObject);
     }
+
+    public FogViewer GetFogViewer() {
+        return fogViewer;
+    }
 }

@@ -62,7 +62,9 @@ public class FogTile : TileBase {
     public void ClearFog() {
         transparency = 0f;
         fogState = FogState.Cleared;
-        particleSystem.Stop();
+        if(particleSystem) {
+            particleSystem.Stop();
+        }
     }
 
     public void ShowFog(bool isMapEdge) {
@@ -73,7 +75,10 @@ public class FogTile : TileBase {
     public void SetAsEdge() {
         transparency = 0.5f;
         fogState = FogState.Edge;
-        particleSystem.Play();
+        if(particleSystem) {
+            particleSystem.Play();
+        }
+       
     }
 
     public FogState GetFogState() {

@@ -132,6 +132,9 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Move(pos, ref board, true);
         unit.Owner = username;
+        FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
+        unitFogViewer.SetRadius(unit.Range);
+        fogController.AddFogViewer(unitFogViewer);
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
@@ -146,6 +149,9 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Move(pos, ref board, true);
         unit.Owner = username;
+        FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
+        unitFogViewer.SetRadius(unit.Range);
+        fogController.AddFogViewer(unitFogViewer);
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType]);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
