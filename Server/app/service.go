@@ -2,6 +2,7 @@ package main
 
 import (
 	"Projects/cmpt406_asynch/Server/common"
+	"Projects/cmpt406_asynch/Server/enforceforfeittime"
 	"Projects/cmpt406_asynch/Server/gamestate"
 	"Projects/cmpt406_asynch/Server/user"
 	"context"
@@ -258,7 +259,7 @@ func removeArmyPreset(ctx context.Context, armyPresetID string) user.UpdateUserF
 /************************************/
 
 // CreatePrivateGame will create a private game with the requested users
-func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, forfeitTime int) error {
+func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, forfeitTime int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -280,10 +281,6 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 		log.Errorf(ctx, "Create Private Game failed: invalid boardID number")
 		return errors.New("boardId number required")
 	}
-	if turnTime == 0 || turnTime < -1 {
-		log.Errorf(ctx, "Create Private Game failed: invalid turnTime number")
-		return errors.New("turnTime number invalid")
-	}
 	if forfeitTime == 0 || forfeitTime < -1 {
 		log.Errorf(ctx, "Create Private Game failed: forfeitTime turnTime number")
 		return errors.New("forfeitTime number invalid")
@@ -300,20 +297,20 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 	}
 
 	/* Update the user, all other invite and create a shell game state*/
-	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID, gameName, turnTime, forfeitTime))
+	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID, gameName, forfeitTime))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func createPrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, forfeitTime int) user.UpdateUserFunc {
+func createPrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, forfeitTime int) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 		/* Create shell private gamestate */
 		allUsers := append(opponentUsernames, username)
 		gameStateID := common.GetRandomID()
-		err := gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false, gameName, turnTime, forfeitTime)
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false, gameName, forfeitTime)
 		if err != nil {
 			return err
 		}
@@ -332,7 +329,7 @@ func createPrivateGame(ctx context.Context, username string, opponentUsernames [
 }
 
 // CreatePublicGame will create a public game open to all users
-func CreatePublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, turnTime, forfeitTime int) error {
+func CreatePublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, forfeitTime int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -353,17 +350,13 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 		log.Errorf(ctx, "Create Public Game failed: invalid max users")
 		return errors.New("Must have more than 1 maxUsers")
 	}
-	if turnTime == 0 || turnTime < -1 {
-		log.Errorf(ctx, "Create Private Game failed: invalid turnTime number")
-		return errors.New("turnTime number invalid")
-	}
 	if forfeitTime == 0 || forfeitTime < -1 {
 		log.Errorf(ctx, "Create Private Game failed: forfeitTime turnTime number")
 		return errors.New("forfeitTime number invalid")
 	}
 
 	/* Update the user that created the public game to have a PendingPublicGame */
-	err = user.UpdateUserWithT(ctx, username, createPublicGame(ctx, username, boardID, maxUsers, gameName, turnTime, forfeitTime))
+	err = user.UpdateUserWithT(ctx, username, createPublicGame(ctx, username, boardID, maxUsers, gameName, forfeitTime))
 	if err != nil {
 		return err
 	}
@@ -371,13 +364,13 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 	return nil
 }
 
-func createPublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, turnTime, forfeitTime int) user.UpdateUserFunc {
+func createPublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, forfeitTime int) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 		/* Create shell public gamestate */
 		gameStateID := common.GetRandomID()
 		usersSoFar := []string{username}
-		err := gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true, gameName, turnTime, forfeitTime)
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true, gameName, forfeitTime)
 		if err != nil {
 			return err
 		}
@@ -514,6 +507,12 @@ func declineGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			/* If all the users are now considered ready */
 			gs.UsersTurn = gs.AliveUsers[0]
 
+			err = enforceforfeittime.CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
+			if err != nil {
+				log.Errorf(ctx, "Failed to create task: %v", err)
+				// not a huge deal so just continue on
+			}
+
 			if gs.IsPublic {
 				for i := 0; i < len(gs.ReadyUsers); i++ {
 					err := user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gs.ID))
@@ -629,10 +628,12 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 
 		/* remove all cards and units that belonged to that user */
 		common.RemoveAllUnits(&gs.Units, username)
+		common.RemoveAllUnits(&gs.Generals, username)
 		common.RemoveCards(&gs.Cards, username)
 
 		/* Add the action that says they forfeited */
 		gs.Actions = append(gs.Actions, gamestate.Action{Username: username, ActionType: gamestate.Forfeit})
+		gs.LoseReasons = append(gs.LoseReasons, gamestate.Lose{Username: username, Reason: gamestate.PlayerForfeit})
 
 		err := user.UpdateUser(ctx, username, updateActiveGameToComplete(ctx, gameStateID))
 		if err != nil {
@@ -856,6 +857,12 @@ func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit,
 		if gs.MaxUsers == len(gs.ReadyUsers) {
 			gs.UsersTurn = gs.AliveUsers[0]
 
+			err := enforceforfeittime.CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
+			if err != nil {
+				log.Errorf(ctx, "Failed to create task: %v", err)
+				// not a huge deal so just continue on
+			}
+
 			if gs.IsPublic {
 				for i := 0; i < len(gs.ReadyUsers); i++ {
 					err := user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gs.ID))
@@ -939,9 +946,15 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 		}
 
 		if len(gs.AliveUsers) == 1 {
-			// TODO: a user has won!
+			// A user has won!
 			gs.IsComplete = true
 			gs.UsersTurn = ""
+		} else {
+			err := enforceforfeittime.CreateTask(ctx, gs.ID, gs.UsersTurn, len(gs.Actions), gs.ForfeitTime)
+			if err != nil {
+				log.Errorf(ctx, "Failed to create task: %v", err)
+				// not a huge deal so just continue on
+			}
 		}
 
 		/* assign the new units, generals, and cards of the gamestate*/

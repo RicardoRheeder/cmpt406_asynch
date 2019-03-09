@@ -28,7 +28,6 @@ type RemoveArmyPreset struct {
 // CreatePrivateGame is a struct to handle the request of inviting users to a private game
 type CreatePrivateGame struct {
 	GameName          string   `json:"gameName"`
-	TurnTime          int      `json:"turnTime"`
 	ForfeitTime       int      `json:"forfeitTime"`
 	OpponentUsernames []string `json:"opponentUsernames"`
 	BoardID           int      `json:"boardId"`
@@ -37,7 +36,6 @@ type CreatePrivateGame struct {
 // CreatePublicGame is a struct to handle the request of creating a public game
 type CreatePublicGame struct {
 	GameName    string `json:"gameName"`
-	TurnTime    int    `json:"turnTime"`
 	ForfeitTime int    `json:"forfeitTime"`
 	MaxUsers    int    `json:"maxUsers"`
 	BoardID     int    `json:"boardId"`
