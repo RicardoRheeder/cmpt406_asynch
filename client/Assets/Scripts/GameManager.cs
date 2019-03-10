@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
 
-        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
 
     //This method is called when we need to place units
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnPlaceUnits;
 
-        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
     
     public void StartSandbox(GameState state){
@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded += OnGameLoaded;
         SceneManager.sceneLoaded += OnSandboxLoaded;
     
-        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {

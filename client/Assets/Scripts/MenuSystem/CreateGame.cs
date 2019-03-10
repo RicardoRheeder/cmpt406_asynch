@@ -64,7 +64,7 @@ public class CreateGame : MonoBehaviour {
         List<string> mapNames = new List<string>();
         foreach(BoardType name in Enum.GetValues(typeof(BoardType))) {
             if((int)name < BoardMetadata.TEST_BOARD_LIMIT)
-                mapNames.Add(name.ToString());
+                mapNames.Add(BoardMetadata.BoardDisplayNames[name]);
         }
         mapSelection.AddOptions(mapNames);
 
