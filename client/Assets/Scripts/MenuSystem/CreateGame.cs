@@ -127,7 +127,7 @@ public class CreateGame : MonoBehaviour {
         Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum);
         int boardId = (int)boardEnum;
 
-        if (networkApi.CreatePrivateGame(gameName, turnTime, forfeitTime, opponents, boardId)) {
+        if (networkApi.CreatePrivateGame(gameName, forfeitTime, opponents, boardId)) {
             opponents.Clear();
             foreach (var item in invitedPlayers) {
                 Destroy(item.Value);

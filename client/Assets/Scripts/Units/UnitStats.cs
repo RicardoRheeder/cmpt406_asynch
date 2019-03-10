@@ -146,7 +146,7 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
-}
+    }
 
     //Note: this list must have two abilities
     public void SetAbilities( List<GeneralAbility> abilityList) {
@@ -157,10 +157,10 @@ public class UnitStats {
     public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit) {
         this.Ability1 = abilityList[0];
         this.Ability2 = abilityList[1];
-        this.Ability1Cooldown = serverUnit.Ability1Cooldown == 0 ? 0 : serverUnit.Ability1Cooldown - 1;
-        this.Ability2Cooldown = serverUnit.Ability2Cooldown == 0 ? 0 : serverUnit.Ability2Cooldown - 1;
-        this.Ability2Duration = serverUnit.Ability2Duration == 0 ? 0 : serverUnit.Ability2Duration - 1;
-        this.Ability2Duration = serverUnit.Ability2Duration == 0 ? 0 : serverUnit.Ability2Duration - 1;
+        this.Ability1Cooldown = serverUnit.Ability1Cooldown <= 0 ? 0 : serverUnit.Ability1Cooldown - 1;
+        this.Ability2Cooldown = serverUnit.Ability2Cooldown <= 0 ? 0 : serverUnit.Ability2Cooldown - 1;
+        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - 1;
+        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - 1;
     }
 
     public void SetPassive(GeneralPassive passive) {
