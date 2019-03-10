@@ -58,9 +58,6 @@ public class GameState {
     [DataMember(Name = "actions")]
     public List<Action> Actions { get; private set; }
 
-    [DataMember(Name = "turnTime")]
-    public int TurnTime { get; private set; }
-
     [DataMember(Name="forfeitTime")]
     public int ForfeitTime { get; private set; }
 
@@ -137,9 +134,6 @@ public class CreatePrivateGameState {
     private string gameName;
 
     [DataMember]
-    private int turnTime;
-
-    [DataMember]
     private int forfeitTime;
 
     [DataMember]
@@ -148,9 +142,8 @@ public class CreatePrivateGameState {
     [DataMember]
     private int boardId;
 
-    public CreatePrivateGameState(string name, int turnTime, int forfeitTime, List<string> opponents, int boardId) {
+    public CreatePrivateGameState(string name, int forfeitTime, List<string> opponents, int boardId) {
         this.gameName = name;
-        this.turnTime = turnTime;
         this.forfeitTime = forfeitTime;
         this.opponentUsernames = opponents;
         this.boardId = boardId;
@@ -164,9 +157,6 @@ public class CreatePublicGameState {
     private string gameName;
 
     [DataMember]
-    private int turnTime;
-
-    [DataMember]
     private int forfeitTime;
 
     [DataMember]
@@ -175,9 +165,8 @@ public class CreatePublicGameState {
     [DataMember]
     private int boardId;
 
-    public CreatePublicGameState(string name, int turnTime, int forfeitTime, int maxPlayers, int boardId) {
+    public CreatePublicGameState(string name, int forfeitTime, int maxPlayers, int boardId) {
         this.gameName = name;
-        this.turnTime = turnTime;
         this.forfeitTime = forfeitTime;
         this.maxUsers = maxPlayers;
         this.boardId = boardId;

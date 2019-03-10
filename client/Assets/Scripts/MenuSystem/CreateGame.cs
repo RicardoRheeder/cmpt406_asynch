@@ -64,7 +64,7 @@ public class CreateGame : MonoBehaviour {
         List<string> mapNames = new List<string>();
         foreach(BoardType name in Enum.GetValues(typeof(BoardType))) {
             if((int)name < BoardMetadata.TEST_BOARD_LIMIT)
-                mapNames.Add(name.ToString());
+                mapNames.Add(BoardMetadata.BoardDisplayNames[name]);
         }
         mapSelection.AddOptions(mapNames);
 
@@ -121,13 +121,10 @@ public class CreateGame : MonoBehaviour {
             return;
         }
 
-        int turnTime = (int)turnSlider.value;
         int forfeitTime = (int)forfeitSlider.value;
+        int boardId = (int)BoardMetadata.BoardDisplayNamesReverse[mapSelection.options[mapSelection.value].text];
 
-        Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum);
-        int boardId = (int)boardEnum;
-
-        if (networkApi.CreatePrivateGame(gameName, turnTime, forfeitTime, opponents, boardId)) {
+        if (networkApi.CreatePrivateGame(gameName, forfeitTime, opponents, boardId)) {
             opponents.Clear();
             foreach (var item in invitedPlayers) {
                 Destroy(item.Value);
@@ -163,15 +160,11 @@ public class CreateGame : MonoBehaviour {
             return;
         }
 
-        int turnTime = (int)turnSlider.value < MINIMUM_TURN_TIME ? MINIMUM_TURN_TIME : (int)turnSlider.value;
         int forfeitTime = (int)forfeitSlider.value < MINIMUM_FORFEIT_TIME ? MINIMUM_FORFEIT_TIME : (int)forfeitSlider.value;
-
-        Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum);
-        int boardId = (int)boardEnum;
-
+        int boardId = (int)BoardMetadata.BoardDisplayNamesReverse[mapSelection.options[mapSelection.value].text];
         int maxPlayers = Int32.Parse(maxPlayersDropdown.options[maxPlayersDropdown.value].text);
 
-        if (networkApi.CreatePublicGame(gameName, turnTime, forfeitTime, maxPlayers, boardId)) {
+        if (networkApi.CreatePublicGame(gameName, forfeitTime, maxPlayers, boardId)) {
             GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
             foreach (var item in invitedPlayers) {
                 Destroy(item.Value);

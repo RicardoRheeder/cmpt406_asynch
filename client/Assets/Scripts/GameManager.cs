@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
 
-        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
 
     //This method is called when we need to place units
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnPlaceUnits;
 
-        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
     
     public void StartSandbox(GameState state){
@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded += OnGameLoaded;
         SceneManager.sceneLoaded += OnSandboxLoaded;
     
-        SceneManager.LoadScene(BoardMetadata.BoardNames[state.boardId]);
+        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
@@ -256,8 +256,13 @@ public class GameManager : MonoBehaviour {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
                 if(unit.MovementActions > 0 && unit.Owner == user.Username) {
                     unitPositions.Remove(targetUnit);
+					if(state.boardId == BoardType.Sandbox){
+						unit.SandboxMove(endpoint, ref boardController);
+					}
+					else{
+						unit.Move(endpoint, ref boardController);
+					}
                     unitPositions[endpoint] = unit;
-                    unit.Move(endpoint, ref boardController);
                     turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint));
                 }
             }
