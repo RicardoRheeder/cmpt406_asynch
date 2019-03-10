@@ -154,13 +154,14 @@ public class UnitStats {
         this.Ability2 = abilityList[1];
     }
 
-    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit) {
+    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
         this.Ability1 = abilityList[0];
         this.Ability2 = abilityList[1];
-        this.Ability1Cooldown = serverUnit.Ability1Cooldown <= 0 ? 0 : serverUnit.Ability1Cooldown - 1;
-        this.Ability2Cooldown = serverUnit.Ability2Cooldown <= 0 ? 0 : serverUnit.Ability2Cooldown - 1;
-        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - 1;
-        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - 1;
+        int decrement = username == this.Owner ? 1 : 0;
+        this.Ability1Cooldown = serverUnit.Ability1Cooldown <= 0 ? 0 : serverUnit.Ability1Cooldown - decrement;
+        this.Ability2Cooldown = serverUnit.Ability2Cooldown <= 0 ? 0 : serverUnit.Ability2Cooldown - decrement;
+        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - decrement;
+        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - decrement;
     }
 
     public void SetPassive(GeneralPassive passive) {

@@ -138,7 +138,7 @@ public class GameBuilder : MonoBehaviour {
             fogController.AddFogViewer(unitFogViewer);
         }
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
-            unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit);
+            unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit, username);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
         }
         return unit;
