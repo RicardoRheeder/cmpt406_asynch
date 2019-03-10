@@ -318,7 +318,7 @@ public class Client : MonoBehaviour, INetwork {
         }
     }
 
-    public bool CreatePublicGame(string name, int turnTime, int forfeitTime, int maxPlayers, int boardId) {
+    public bool CreatePublicGame(string name, int forfeitTime, int maxPlayers, int boardId) {
         BeginRequest();
         CreatePublicGameState state = new CreatePublicGameState(name, forfeitTime, maxPlayers, boardId);
         //Setting up the request object

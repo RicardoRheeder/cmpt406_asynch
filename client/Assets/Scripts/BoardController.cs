@@ -165,7 +165,7 @@ public class BoardController {
         return tileObject.GetComponentsInChildren<cakeslice.Outline>()[0].enabled;
     }
 
-    //Attache the Outline script component to the tile object if it is not
+    //Attatch the Outline script component to the tile object if it is not
     private void AttachOutlineComponent(GameObject tileObject) {
         if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length <= 0) {
             tileObject.transform.GetChild(0).gameObject.AddComponent<cakeslice.Outline>();

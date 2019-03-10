@@ -121,11 +121,8 @@ public class CreateGame : MonoBehaviour {
             return;
         }
 
-        int turnTime = (int)turnSlider.value;
         int forfeitTime = (int)forfeitSlider.value;
-
-        Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum);
-        int boardId = (int)boardEnum;
+        int boardId = (int)BoardMetadata.BoardDisplayNamesReverse[mapSelection.options[mapSelection.value].text];
 
         if (networkApi.CreatePrivateGame(gameName, forfeitTime, opponents, boardId)) {
             opponents.Clear();
@@ -163,15 +160,11 @@ public class CreateGame : MonoBehaviour {
             return;
         }
 
-        int turnTime = (int)turnSlider.value < MINIMUM_TURN_TIME ? MINIMUM_TURN_TIME : (int)turnSlider.value;
         int forfeitTime = (int)forfeitSlider.value < MINIMUM_FORFEIT_TIME ? MINIMUM_FORFEIT_TIME : (int)forfeitSlider.value;
-
-        Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum);
-        int boardId = (int)boardEnum;
-
+        int boardId = (int)BoardMetadata.BoardDisplayNamesReverse[mapSelection.options[mapSelection.value].text];
         int maxPlayers = Int32.Parse(maxPlayersDropdown.options[maxPlayersDropdown.value].text);
 
-        if (networkApi.CreatePublicGame(gameName, turnTime, forfeitTime, maxPlayers, boardId)) {
+        if (networkApi.CreatePublicGame(gameName, forfeitTime, maxPlayers, boardId)) {
             GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
             foreach (var item in invitedPlayers) {
                 Destroy(item.Value);

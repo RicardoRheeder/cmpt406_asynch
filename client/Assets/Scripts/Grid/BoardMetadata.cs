@@ -33,8 +33,8 @@ public static class BoardMetadata {
     };
 
     public static Dictionary<BoardType, int> CostDict = new Dictionary<BoardType, int>() {
-        { BoardType.Hawkpoint, 15 },
-        { BoardType.AlphaChannel, 15 },
+        { BoardType.Hawkpoint, 25 },
+        { BoardType.AlphaChannel, 25 },
         { BoardType.Ravine, 25 },
         { BoardType.Pinnacle, 25 },
         { BoardType.Valley, 25 },
@@ -61,5 +61,14 @@ public static class BoardMetadata {
         { BoardType.Pinnacle, "Pinnacle" },
         { BoardType.Valley, "Valley" },
         { BoardType.Lowlands, "Lowlands" },
+    };
+
+    public static Dictionary<string, BoardType> BoardDisplayNamesReverse = new Dictionary<string, BoardType>() {
+        { "Hawkpoint", BoardType.Hawkpoint },
+        { "Alpha Channel", BoardType.AlphaChannel },
+        { "Ravine", BoardType.Ravine },
+        { "Pinnacle", BoardType.Pinnacle },
+        { "Valley", BoardType.Valley },
+        { "Lowlands", BoardType.Lowlands },
     };
 }
