@@ -18,11 +18,8 @@ public class UnitRotationTester : MonoBehaviour {
     void Update(){
         if(Input.GetMouseButtonDown(0)) {
             int oldDirection = direction;
-            if(direction >= 5) {
-                direction = 0;
-            } else {
-                direction += 1;
-            }
+            direction += 1;
+            direction = (int)Mathf.Repeat(direction,6);
 
             Debug.Log("oldDirection: " + oldDirection.ToString() + " direction: " + direction.ToString());
 

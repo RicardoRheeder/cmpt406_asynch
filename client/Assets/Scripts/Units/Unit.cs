@@ -49,12 +49,15 @@ public class Unit : MonoBehaviour {
          float step = moveSpeed * Time.fixedDeltaTime;
          float t = 0;
          Vector3 prevPos = transform.position;
+         Vector2Int prevTilePos = currTilePosition;
+         int prevDir = direction;
          Quaternion prevRotation = transform.rotation;
          for(int i = 0; i < path.Count; i++) {
             currTilePosition = path[i];
             fogViewer.SetPosition(currTilePosition);
             Vector3 worldPos = board.CellToWorld(currTilePosition);
-            Quaternion rot = Quaternion.LookRotation(worldPos,-Vector3.forward);
+            direction = HexUtility.FindDirection(prevTilePos,currTilePosition);
+            Quaternion rot = Quaternion.AngleAxis(60*(prevDir - direction),transform.up)*transform.rotation;
             t = 0;
             while (t <= 1.0f) {
                 t += step;
@@ -63,6 +66,9 @@ public class Unit : MonoBehaviour {
                 yield return new WaitForFixedUpdate();
             }
             prevPos = worldPos;
+            prevTilePos = currTilePosition;
+            prevDir = direction;
+            prevRotation = transform.rotation;
             transform.position = worldPos;
         }
     }
