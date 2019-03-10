@@ -137,7 +137,6 @@ public class BoardController {
                 }
                 hightlightedTiles.Add(tileObject);
                 tileObject.transform.GetChild(0).gameObject.GetComponent<cakeslice.Outline>().enabled = true;
-               
             }
         }
     }
