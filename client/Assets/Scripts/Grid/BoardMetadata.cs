@@ -6,6 +6,7 @@ public enum BoardType {
     Hawkpoint = 1,
     Ravine = 2,
     AlphaChannel = 3,
+    SnakeValley = 4,
 
     //medium maps from 100 to 199
     Pinnacle = 100,
@@ -26,6 +27,7 @@ public static class BoardMetadata {
     public static Dictionary<BoardType, int> MaxPlayersDict = new Dictionary<BoardType, int>() {
         { BoardType.Ravine, 2},
         { BoardType.AlphaChannel, 2 },
+        { BoardType.SnakeValley, 2 },
         { BoardType.Hawkpoint, 3 },
         { BoardType.Pinnacle, 4 },
         { BoardType.Valley, 4 },
@@ -35,6 +37,7 @@ public static class BoardMetadata {
     public static Dictionary<BoardType, int> CostDict = new Dictionary<BoardType, int>() {
         { BoardType.Hawkpoint, 25 },
         { BoardType.AlphaChannel, 25 },
+        { BoardType.SnakeValley, 25 },
         { BoardType.Ravine, 25 },
         { BoardType.Pinnacle, 25 },
         { BoardType.Valley, 25 },
@@ -45,6 +48,7 @@ public static class BoardMetadata {
         { BoardType.Hawkpoint, "Map_Small_Hawkpoint" },
         { BoardType.AlphaChannel, "Map_Small_AlphaChannel" },
         { BoardType.Ravine, "Map_Small_Ravine" },
+        { BoardType.SnakeValley, "Map_Small_SnakeValley" },
         { BoardType.Pinnacle, "Map_Med_Pinnacle" },
         { BoardType.Valley, "Map_Med_Valley" },
         { BoardType.Lowlands, "Map_Med_Lowlands" },
@@ -61,6 +65,7 @@ public static class BoardMetadata {
         { BoardType.Pinnacle, "Pinnacle" },
         { BoardType.Valley, "Valley" },
         { BoardType.Lowlands, "Lowlands" },
+        { BoardType.SnakeValley, "Snake Valley" },
     };
 
     public static Dictionary<string, BoardType> BoardDisplayNamesReverse = new Dictionary<string, BoardType>() {
@@ -70,5 +75,6 @@ public static class BoardMetadata {
         { "Pinnacle", BoardType.Pinnacle },
         { "Valley", BoardType.Valley },
         { "Lowlands", BoardType.Lowlands },
+        { "Snake Valley", BoardType.SnakeValley },
     };
 }
