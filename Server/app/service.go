@@ -258,7 +258,7 @@ func removeArmyPreset(ctx context.Context, armyPresetID string) user.UpdateUserF
 /************************************/
 
 // CreatePrivateGame will create a private game with the requested users
-func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, forfeitTime int) error {
+func CreatePrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, forfeitTime int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -280,10 +280,6 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 		log.Errorf(ctx, "Create Private Game failed: invalid boardID number")
 		return errors.New("boardId number required")
 	}
-	if turnTime == 0 || turnTime < -1 {
-		log.Errorf(ctx, "Create Private Game failed: invalid turnTime number")
-		return errors.New("turnTime number invalid")
-	}
 	if forfeitTime == 0 || forfeitTime < -1 {
 		log.Errorf(ctx, "Create Private Game failed: forfeitTime turnTime number")
 		return errors.New("forfeitTime number invalid")
@@ -300,20 +296,20 @@ func CreatePrivateGame(ctx context.Context, username string, opponentUsernames [
 	}
 
 	/* Update the user, all other invite and create a shell game state*/
-	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID, gameName, turnTime, forfeitTime))
+	err = user.UpdateUserWithT(ctx, username, createPrivateGame(ctx, username, opponentUsernames, boardID, gameName, forfeitTime))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func createPrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, turnTime, forfeitTime int) user.UpdateUserFunc {
+func createPrivateGame(ctx context.Context, username string, opponentUsernames []string, boardID int, gameName string, forfeitTime int) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 		/* Create shell private gamestate */
 		allUsers := append(opponentUsernames, username)
 		gameStateID := common.GetRandomID()
-		err := gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false, gameName, turnTime, forfeitTime)
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, allUsers, []string{username}, len(allUsers), false, gameName, forfeitTime)
 		if err != nil {
 			return err
 		}
@@ -332,7 +328,7 @@ func createPrivateGame(ctx context.Context, username string, opponentUsernames [
 }
 
 // CreatePublicGame will create a public game open to all users
-func CreatePublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, turnTime, forfeitTime int) error {
+func CreatePublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, forfeitTime int) error {
 	var err error
 
 	err = common.StringNotEmpty(username)
@@ -353,17 +349,13 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 		log.Errorf(ctx, "Create Public Game failed: invalid max users")
 		return errors.New("Must have more than 1 maxUsers")
 	}
-	if turnTime == 0 || turnTime < -1 {
-		log.Errorf(ctx, "Create Private Game failed: invalid turnTime number")
-		return errors.New("turnTime number invalid")
-	}
 	if forfeitTime == 0 || forfeitTime < -1 {
 		log.Errorf(ctx, "Create Private Game failed: forfeitTime turnTime number")
 		return errors.New("forfeitTime number invalid")
 	}
 
 	/* Update the user that created the public game to have a PendingPublicGame */
-	err = user.UpdateUserWithT(ctx, username, createPublicGame(ctx, username, boardID, maxUsers, gameName, turnTime, forfeitTime))
+	err = user.UpdateUserWithT(ctx, username, createPublicGame(ctx, username, boardID, maxUsers, gameName, forfeitTime))
 	if err != nil {
 		return err
 	}
@@ -371,13 +363,13 @@ func CreatePublicGame(ctx context.Context, username string, boardID int, maxUser
 	return nil
 }
 
-func createPublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, turnTime, forfeitTime int) user.UpdateUserFunc {
+func createPublicGame(ctx context.Context, username string, boardID int, maxUsers int, gameName string, forfeitTime int) user.UpdateUserFunc {
 
 	return func(ctx context.Context, u *user.User) error {
 		/* Create shell public gamestate */
 		gameStateID := common.GetRandomID()
 		usersSoFar := []string{username}
-		err := gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true, gameName, turnTime, forfeitTime)
+		err := gamestate.CreateGameState(ctx, gameStateID, boardID, usersSoFar, usersSoFar, maxUsers, true, gameName, forfeitTime)
 		if err != nil {
 			return err
 		}
@@ -514,6 +506,12 @@ func declineGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			/* If all the users are now considered ready */
 			gs.UsersTurn = gs.AliveUsers[0]
 
+			err = CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
+			if err != nil {
+				log.Errorf(ctx, "Failed to create task: %v", err)
+				// not a huge deal so just continue on
+			}
+
 			if gs.IsPublic {
 				for i := 0; i < len(gs.ReadyUsers); i++ {
 					err := user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gs.ID))
@@ -593,7 +591,7 @@ func backOutGame(ctx context.Context, username, gameStateID string) gamestate.Up
 }
 
 // ForfeitGame will remove the user from the game counting as a loss
-func ForfeitGame(ctx context.Context, username string, gameStateID string) error {
+func ForfeitGame(ctx context.Context, username string, gameStateID string, reason gamestate.LoseReason) error {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
@@ -606,7 +604,7 @@ func ForfeitGame(ctx context.Context, username string, gameStateID string) error
 		return errors.New("gameStateID is required")
 	}
 
-	err = gamestate.UpdateGameState(ctx, gameStateID, forfeitGame(ctx, username, gameStateID))
+	err = gamestate.UpdateGameState(ctx, gameStateID, forfeitGame(ctx, username, gameStateID, reason))
 	if err != nil {
 		return err
 	}
@@ -614,7 +612,7 @@ func ForfeitGame(ctx context.Context, username string, gameStateID string) error
 	return nil
 }
 
-func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.UpdateGameStateFunc {
+func forfeitGame(ctx context.Context, username, gameStateID string, reason gamestate.LoseReason) gamestate.UpdateGameStateFunc {
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 		if !common.Contains(gs.ReadyUsers, username) {
@@ -622,6 +620,9 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 			return errors.New("Cannot Forfeit a game you are not 'Ready' in")
 		}
 
+		if gs.UsersTurn == username {
+			gs.UsersTurn = getNextUsersTurn(gs.UsersTurn, gs.AliveUsers, []string{})
+		}
 		if !common.Remove(&gs.AliveUsers, username) {
 			log.Errorf(ctx, "user: %s, tried to Forfeit a game they are not alive in", username)
 			return errors.New("Cannot Forfeit a game you are not alive in")
@@ -629,10 +630,12 @@ func forfeitGame(ctx context.Context, username, gameStateID string) gamestate.Up
 
 		/* remove all cards and units that belonged to that user */
 		common.RemoveAllUnits(&gs.Units, username)
+		common.RemoveAllUnits(&gs.Generals, username)
 		common.RemoveCards(&gs.Cards, username)
 
 		/* Add the action that says they forfeited */
 		gs.Actions = append(gs.Actions, gamestate.Action{Username: username, ActionType: gamestate.Forfeit})
+		gs.LoseReasons = append(gs.LoseReasons, gamestate.Lose{Username: username, Reason: reason})
 
 		err := user.UpdateUser(ctx, username, updateActiveGameToComplete(ctx, gameStateID))
 		if err != nil {
@@ -856,6 +859,12 @@ func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit,
 		if gs.MaxUsers == len(gs.ReadyUsers) {
 			gs.UsersTurn = gs.AliveUsers[0]
 
+			err := CreateTask(ctx, gs.ID, gs.UsersTurn, 0, gs.ForfeitTime)
+			if err != nil {
+				log.Errorf(ctx, "Failed to create task: %v", err)
+				// not a huge deal so just continue on
+			}
+
 			if gs.IsPublic {
 				for i := 0; i < len(gs.ReadyUsers); i++ {
 					err := user.UpdateUser(ctx, gs.Users[i], updatePublicGameToActive(ctx, gs.ID))
@@ -912,6 +921,9 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 		if actions != nil {
 			gs.Actions = append(gs.Actions, actions...)
 		}
+
+		gs.UsersTurn = getNextUsersTurn(gs.UsersTurn, gs.AliveUsers, killedUsers)
+
 		/* remove killed users from list of alive users */
 		if killedUsers != nil {
 			for _, v := range killedUsers {
@@ -919,29 +931,16 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 			}
 		}
 
-		/* Choose the next user that should go */
-		var found = false
-		for i, v := range gs.AliveUsers {
-			if v == gs.UsersTurn {
-				if i+1 >= len(gs.AliveUsers) {
-					gs.UsersTurn = gs.AliveUsers[0]
-				} else {
-					gs.UsersTurn = gs.AliveUsers[i+1]
-				}
-				found = true
-				break
-			}
-		}
-		/* Will happen if the current user died in his turn */
-		if !found {
-			/* TODO: I'm not sure if this is possible so I'll fix it later if it is */
-			log.Criticalf(ctx, "The user %s died in his turn and now no next user has been selected", username)
-		}
-
 		if len(gs.AliveUsers) == 1 {
-			// TODO: a user has won!
+			// A user has won!
 			gs.IsComplete = true
 			gs.UsersTurn = ""
+		} else {
+			err := CreateTask(ctx, gs.ID, gs.UsersTurn, len(gs.Actions), gs.ForfeitTime)
+			if err != nil {
+				log.Errorf(ctx, "Failed to create task: %v", err)
+				// not a huge deal so just continue on
+			}
 		}
 
 		/* assign the new units, generals, and cards of the gamestate*/
@@ -951,4 +950,28 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 
 		return nil
 	}
+}
+
+func getNextUsersTurn(usersTurn string, aliveUsers []string, killedUsers []string) string {
+	/* Choose the next user that should go */
+	if killedUsers != nil {
+		for _, v := range killedUsers {
+			if usersTurn != v {
+				common.Remove(&aliveUsers, v)
+			}
+		}
+	}
+	if len(aliveUsers) <= 1 {
+		return ""
+	}
+
+	for i, v := range aliveUsers {
+		if v == usersTurn {
+			if i+1 >= len(aliveUsers) {
+				return aliveUsers[0]
+			}
+			return aliveUsers[i+1]
+		}
+	}
+	return ""
 }

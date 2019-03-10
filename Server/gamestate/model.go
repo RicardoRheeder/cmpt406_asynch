@@ -26,8 +26,8 @@ type GameState struct {
 	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
 	CardIDs        []string  `json:"-"`
 	Actions        []Action  `json:"actions,omitempty"`
-	TurnTime       int       `json:"turnTime,omitempty"`
 	ForfeitTime    int       `json:"forfeitTime,omitempty"`
+	LoseReasons    []Lose    `json:"loseReasons,omitempty"`
 	Created        time.Time `json:"created,omitempty"`
 }
 
@@ -36,12 +36,12 @@ type Unit struct {
 	Owner            string  `json:"owner,omitempty" datastore:",omitempty"`
 	UnitType         int     `json:"unitType,omitempty" datastore:",omitempty"`
 	Health           float32 `json:"health,omitempty" datastore:",omitempty"`
-	XPos             int     `json:"xPos,omitempty" datastore:",omitempty"`
-	YPos             int     `json:"yPos,omitempty" datastore:",omitempty"`
-	Ability1CoolDown int     `json:"ability1CoolDown,omitempty" datastore:",omitempty"`
-	Ability2CoolDown int     `json:"ability2CoolDown,omitempty" datastore:",omitempty"`
-	Ability1Duration int     `json:"ability1Duration,omitempty" datastore:",omitempty"`
-	Ability2Duration int     `json:"ability2Duration,omitempty" datastore:",omitempty"`
+	XPos             int     `json:"xPos" datastore:""`
+	YPos             int     `json:"yPos" datastore:""`
+	Ability1CoolDown int     `json:"ability1CoolDown" datastore:""`
+	Ability2CoolDown int     `json:"ability2CoolDown" datastore:""`
+	Ability1Duration int     `json:"ability1Duration" datastore:""`
+	Ability2Duration int     `json:"ability2Duration" datastore:""`
 }
 
 // Cards contains all the card information on a per user bases
@@ -55,13 +55,14 @@ type Cards struct {
 
 // Action contains the info for a single action in the game
 type Action struct {
-	Username   string     `json:"username,omitempty" datastore:",omitempty"`
-	ActionType ActionType `json:"actionType" datastore:",omitempty"`
-	OriginXPos int        `json:"originXPos,omitempty" datastore:",omitempty"`
-	OriginYPos int        `json:"originYPos,omitempty" datastore:",omitempty"`
-	TargetXPos int        `json:"targetXPos,omitempty" datastore:",omitempty"`
-	TargetYPos int        `json:"targetYPos,omitempty" datastore:",omitempty"`
-	CardID     int        `json:"cardId,omitempty" datastore:",omitempty"`
+	Username      string     `json:"username,omitempty" datastore:",omitempty"`
+	ActionType    ActionType `json:"actionType" datastore:""`
+	OriginXPos    int        `json:"originXPos" datastore:""`
+	OriginYPos    int        `json:"originYPos" datastore:""`
+	TargetXPos    int        `json:"targetXPos" datastore:""`
+	TargetYPos    int        `json:"targetYPos" datastore:""`
+	AbilityNumber int        `json:"abilityNumber" datastore:""`
+	CardID        int        `json:"cardId,omitempty" datastore:",omitempty"`
 }
 
 // ActionType Enum for use in the Action struct
@@ -76,6 +77,24 @@ const (
 	Card
 	// Forfeit : user has quit the game, counting as a loss
 	Forfeit
+)
+
+// Lose is a struct to say who lost and why
+type Lose struct {
+	Username string     `json:"username,omitempty" datastore:",omitempty"`
+	Reason   LoseReason `json:"reason" datastore:""`
+}
+
+// LoseReason Enum to say why a person lost
+type LoseReason int
+
+const (
+	// Died : all players units are dead
+	Died LoseReason = iota
+	// PlayerForfeit : player forfeited
+	PlayerForfeit
+	// ForcedForfeit : player was forced to forfeit by the server
+	ForcedForfeit
 )
 
 // UpdateGameStateFunc is a mutator function that edits the game state in the desired way

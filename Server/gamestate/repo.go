@@ -9,7 +9,7 @@ import (
 )
 
 // CreateGameState will create a game state in DataStore
-func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, turnTime, forfeitTime int) error {
+func CreateGameState(ctx context.Context, ID string, boardID int, users, acceptedUsers []string, maxUsers int, isPublic bool, gameName string, forfeitTime int) error {
 
 	var spotsAvailable int
 	if isPublic {
@@ -37,8 +37,8 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		Generals:       []Unit{},
 		CardIDs:        []string{},
 		Actions:        []Action{},
-		TurnTime:       turnTime,
 		ForfeitTime:    forfeitTime,
+		LoseReasons:    []Lose{},
 		Created:        time.Now().UTC(),
 	}
 
