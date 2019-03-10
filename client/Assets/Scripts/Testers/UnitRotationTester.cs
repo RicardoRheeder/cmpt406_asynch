@@ -5,23 +5,28 @@ using UnityEngine;
 public class UnitRotationTester : MonoBehaviour {
 
     Unit unit;
+    BoardController board;
 
     int direction = 0;
 
     void Awake(){
         unit = GetComponent<Unit>();
+        board = new BoardController();
+        board.Initialize();
     }
 
     void Update(){
         if(Input.GetMouseButtonDown(0)) {
-            if(direction == 5) {
+            int oldDirection = direction;
+            if(direction >= 5) {
                 direction = 0;
             } else {
                 direction += 1;
             }
 
-            transform.rotation = Quaternion.Euler(-90,0,0);
-            transform.Rotate(new Vector3(0,60*direction,0), Space.Self);
+            Debug.Log("oldDirection: " + oldDirection.ToString() + " direction: " + direction.ToString());
+
+            transform.rotation = Quaternion.AngleAxis(60*(oldDirection - direction),transform.up)*transform.rotation;
         }
     }
 }
