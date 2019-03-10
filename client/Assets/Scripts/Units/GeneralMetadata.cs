@@ -117,9 +117,6 @@ public static class GeneralMetadata {
 
     private static void TheBestOffense(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
         source.Damage += source.Armour;
-        if(source.AttackActions < 1) {
-            source.AttackActions = 1;
-        }
     }
 
     private static void StickAndPoke(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
