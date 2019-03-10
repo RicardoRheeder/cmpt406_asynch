@@ -11,6 +11,8 @@ public class Unit : MonoBehaviour {
     Vector2Int currTilePosition;
     FogViewer fogViewer;
 
+    public int direction = 0;
+
     
 	void Awake() {
 		rend = this.GetComponent<Renderer>();
