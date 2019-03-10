@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Projects/cmpt406_asynch/Server/gamestate"
 	"Projects/cmpt406_asynch/Server/request"
 	"encoding/json"
 	"net/http"
@@ -32,6 +33,8 @@ func main() {
 
 	http.HandleFunc("/ReadyUnits", handleReadyUnits)
 	http.HandleFunc("/MakeMove", handleMakeMove)
+
+	http.HandleFunc("/EnforceForfeitTime", handleEnforceForfeitTime)
 
 	appengine.Main()
 }
@@ -206,7 +209,7 @@ func handleCreatePrivateGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID, pg.GameName, pg.TurnTime, pg.ForfeitTime)
+	err = CreatePrivateGame(ctx, username, pg.OpponentUsernames, pg.BoardID, pg.GameName, pg.ForfeitTime)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -233,7 +236,7 @@ func handleCreatePublicGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers, pg.GameName, pg.TurnTime, pg.ForfeitTime)
+	err = CreatePublicGame(ctx, username, pg.BoardID, pg.MaxUsers, pg.GameName, pg.ForfeitTime)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -341,7 +344,7 @@ func handleForfeitGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ForfeitGame(ctx, username, req.GameID)
+	err = ForfeitGame(ctx, username, req.GameID, gamestate.PlayerForfeit)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -516,6 +519,19 @@ func handleMakeMove(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Generals, mm.Cards, mm.Actions, mm.KilledUsers)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func handleEnforceForfeitTime(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	err := EnforceTask(ctx, r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

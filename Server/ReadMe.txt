@@ -170,8 +170,7 @@ Only the provided usernames will be able to join the game
  - Request Body Example:
     {   
         "gameName": "FightMeYouLilBitch",
-        "turnTime": 3600,
-        "timeToStartTurn": 172800,
+        "forfeitTime": 172800,
         "opponentUsernames": ["username1", "username2"],
         "boardId": 6
     }
@@ -190,8 +189,7 @@ Once the total spots fill up and are "Ready", the game begins.
  - Request Body Example:
     {   
         "gameName": "WhoWantsToPlay",
-        "turnTime": 3600,
-        "timeToStartTurn": 172800,
+        "forfeitTime": 172800,
         "maxUsers": 3,
         "boardId": 6
     }
@@ -529,7 +527,6 @@ type GameState struct {
 	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
 	CardIDs        []string  `json:"-"`
 	Actions        []Action  `json:"actions,omitempty"`
-	TurnTime       int       `json:"turnTime,omitempty"`
 	ForfeitTime    int       `json:"forfeitTime,omitempty"`
 	Created        time.Time `json:"created,omitempty"`
 }
