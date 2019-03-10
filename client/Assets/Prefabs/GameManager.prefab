@@ -47,3 +47,5 @@ MonoBehaviour:
     type: 3}
   playerControllerPrefab: {fileID: 3326893116668844763, guid: 443cbb95b10635943aecad91b556b19a,
     type: 3}
+  cardSystemPrefab: {fileID: 5363877012354416885, guid: fad17f51d4203aa428d38a8c6474fe50,
+    type: 3}

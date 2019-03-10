@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour {
     private GameObject playerControllerObject;
     private PlayerController playerController;
 
+    private CardSystemManager cardSystem;
+
     private BoardController boardController;
 
     private FogOfWarController fogOfWarController;
@@ -45,10 +47,8 @@ public class GameManager : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         DontDestroyOnLoad(this.gameObject);
-
         client = GameObject.Find("Networking").GetComponent<Client>();
     }
-
 
     //===================== Setup functions ===================
     //The method called when the load game button is pressed
@@ -105,6 +105,13 @@ public class GameManager : MonoBehaviour {
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
 
+        cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
+        List<CardFunction> hand = new List<CardFunction>();
+        if (state.UserCardsMap.ContainsKey(user.Username)) {
+            hand = state.UserCardsMap[user.Username].Hand;
+        }
+        cardSystem.Initialize(hand, state.UserUnitsMap[user.Username]);
+
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
 
@@ -115,6 +122,7 @@ public class GameManager : MonoBehaviour {
         inGameMenu.SetupPanels(isPlacing: false);
 
         PreprocessGenerals();
+        PreprocessCards();
 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -173,7 +181,7 @@ public class GameManager : MonoBehaviour {
     }
 
     //===================== Preprocessing functions ===================
-    public void PreprocessGenerals() {
+    private void PreprocessGenerals() {
         foreach(var position in unitPositions.Keys) {
             UnitStats general = unitPositions[position];
             if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
@@ -202,10 +210,14 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    //Deal with persistant cards
+    private void PreprocessCards() {
+    }
+
     //===================== In game button functionality ===================
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
-        client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values)));
+        client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -327,6 +339,14 @@ public class GameManager : MonoBehaviour {
             }
         }
         turnActions.Add(new Action(user.Username, ActionType.Ability, source, target, ability));
+        return true;
+    }
+
+    public bool UseCard(Vector2Int source, Vector2Int target, int cardId) {
+        CardFunction convertedId = (CardFunction)cardId;
+
+
+        turnActions.Add(new Action(user.Username, ActionType.Card, source, target, convertedId));
         return true;
     }
 }

@@ -1,5 +1,6 @@
 ﻿//Enum to keep track of unit types, used for server communication
 public enum UnitType {
+    none = -2,
     tile = -1,
     trooper = 1,
     recon = 2,

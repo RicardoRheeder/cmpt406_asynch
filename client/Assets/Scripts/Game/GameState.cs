@@ -216,9 +216,18 @@ public class EndTurnState {
     [DataMember]
     private List<Action> actions;
 
-    public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> allUnits) {
+    public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> allUnits, List<CardFunction> cards) {
         gameId = state.id;
         actions = turnActions;
+
+        this.cards = new List<CardController>() {
+            new CardController(currentUser, cards)
+        };
+        foreach(CardController controller in state.UserCardsMap.Values) {
+            if(controller.owner != currentUser) {
+                this.cards.Add(controller);
+            }
+        }
 
         units = new List<UnitStats>();
         generals = new List<UnitStats>();

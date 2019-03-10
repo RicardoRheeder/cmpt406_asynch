@@ -23,10 +23,12 @@ public class Action {
     [DataMember(Name = "targetYPos")]
     public int TargetYPos{get; private set;}
 
-    [DataMember(Name = "cardId")]
-    public int CardId { get; private set; }
+    [DataMember]
+    private int cardId;
+    public CardFunction CardId { get; private set; }
 
-    [DataMember(Name = "ability")]
+    [DataMember]
+    private int ability;
     public GeneralAbility Ability { get; private set; }
 
     public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile) {
@@ -48,13 +50,27 @@ public class Action {
         this.Ability = ability;
     }
 
+    public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile, CardFunction function) {
+        this.owner = owner;
+        this.Type = type;
+        this.OriginXPos = sourceTile.x;
+        this.OriginYPos = sourceTile.y;
+        this.TargetXPos = targetTile.x;
+        this.TargetYPos = targetTile.y;
+        this.CardId = function;
+    }
+
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
         this.Type = (ActionType)actionType;
+        Ability = (GeneralAbility)ability; ;
+        CardId = (CardFunction)cardId;
     }
 
     [OnSerializing]
     public void OnSerializing(StreamingContext c) {
         actionType = (int)Type;
+        ability = (int)Ability;
+        cardId = (int)CardId;
     }
 }
