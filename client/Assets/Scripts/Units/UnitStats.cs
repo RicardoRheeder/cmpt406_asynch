@@ -118,11 +118,18 @@ public class UnitStats {
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
-        if(!specialMove)
+	   if(!specialMove)
             this.MovementActions--;
+		
+		
         this.Position = position;
         MyUnit.MoveTo(position,ref board);
     }
+	
+	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
+	    this.Position = position;
+		MyUnit.MoveTo(position, ref board);
+	}
 
     //We need to convert the xPos and yPos variables to be Position
     //We also need to get a base unit and copy over the stats that weren't stored on the server.
