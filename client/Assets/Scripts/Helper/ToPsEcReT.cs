@@ -39,7 +39,6 @@ public class ToPsEcReT : MonoBehaviour
 			code++;
 		}
 		if(code == 10){
-			Debug.Log("YOU WIN");
 			title.SetText("Cards & Chungus");
 			code = 0;
 			i.transform.SetSiblingIndex(2);
