@@ -41,8 +41,9 @@ public class Unit : MonoBehaviour {
         fogViewer.SetPosition(position);
     }
 
-    public void RotateToDirection(int dir) {
+    public void TurnToDirection(int dir) {
         int clampedDir = Mathf.Clamp(dir,0,5);
+        StartCoroutine(RotateToDirection(dir));
     }
 
     IEnumerator PathMovement(List<Vector2Int> path, BoardController board) {
@@ -71,6 +72,21 @@ public class Unit : MonoBehaviour {
             prevDir = direction;
             prevRotation = transform.rotation;
             transform.position = worldPos;
+        }
+    }
+
+    IEnumerator RotateToDirection(int dir) {
+        float step = moveSpeed * Time.fixedDeltaTime;
+        float t = 0;
+        int prevDir = direction;
+        direction = dir;
+        Quaternion prevRotation = transform.rotation;
+        int angle = HexUtility.DirectionToAngle(direction) - HexUtility.DirectionToAngle(prevDir);
+        Quaternion rot = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
+        while (t <= 1.0f) {
+            t += step;
+            transform.rotation = Quaternion.Lerp(prevRotation, rot, t);
+            yield return new WaitForFixedUpdate();
         }
     }
 
