@@ -4,7 +4,7 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - unitDisplayPrefab: {fileID: 6445304330403168614, guid: 7c830741b3a2247748cad4e620b63fee,
+  - unitDisplayPrefab: {fileID: 5770583855136476587, guid: c7748a2e1ae1fea428ae95d65b699b50,
       type: 3}
   - claymorePrefab: {fileID: 3661546736627439543, guid: a42220ca7f4fa408aa458436455480f8,
       type: 3}
