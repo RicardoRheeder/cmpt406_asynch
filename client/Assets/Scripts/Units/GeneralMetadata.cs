@@ -79,7 +79,7 @@ public static class GeneralMetadata {
     //Note: to work with function pointers all of these functions have to take the same arguments, even if they don't require them all
     private static void TrojanShot(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
         source.attackStrategy = new LineStrategy();
-        source.Range = 100000;
+        source.Range = 20;
     }
 
     private static void ArmourPiercingAmmo(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
