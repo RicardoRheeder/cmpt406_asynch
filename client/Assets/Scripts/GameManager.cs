@@ -314,7 +314,7 @@ public class GameManager : MonoBehaviour {
                             }
                         }
                         else {
-                            targetUnit.Heal(modifiedDamage);
+                            targetUnit.Heal(-1 * modifiedDamage);
                         }
                     }
                 }

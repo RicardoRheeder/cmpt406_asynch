@@ -161,6 +161,9 @@ public class PlayerController : MonoBehaviour {
         if (donePlacing) {
             manager.EndUnitPlacement();
         }
+        if(selectedUnit.CurrentHP <= 0) {
+            selectedUnit = null;
+        }
         if(selectedUnit != null){
             if(selectedUnit.MyUnit.rend.material.color != Color.white){
                 tempColor = selectedUnit.MyUnit.rend.material.color;
