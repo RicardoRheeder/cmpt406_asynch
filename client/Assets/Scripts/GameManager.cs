@@ -214,6 +214,20 @@ public class GameManager : MonoBehaviour {
 
     //Deal with persistant cards
     private void PreprocessCards() {
+        List<Action> reverseActions = new List<Action>(state.Actions);
+        reverseActions.Reverse();
+        for(int i = 0; i < reverseActions.Count; i++) {
+            Action action = reverseActions[i];
+            if(action.Owner == user.Username) {
+                break;
+            }
+            else {
+                if (action.Type == ActionType.Card) {
+                    CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Owner);
+                }
+            }
+        }
+
     }
 
     //===================== In game button functionality ===================

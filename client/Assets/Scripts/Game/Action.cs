@@ -6,8 +6,8 @@ using UnityEngine;
 [DataContract]
 public class Action {
 
-    [DataMember]
-    private string owner;
+    [DataMember(Name = "owner")]
+    public string Owner { get; private set; }
 
     [DataMember]
     private int actionType;
@@ -32,7 +32,7 @@ public class Action {
     public GeneralAbility Ability { get; private set; }
 
     public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile) {
-        this.owner = owner;
+        this.Owner = owner;
         this.Type = type;
         this.OriginXPos = sourceTile.x;
         this.OriginYPos = sourceTile.y;
@@ -41,7 +41,7 @@ public class Action {
     }
 
     public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile, GeneralAbility ability) {
-        this.owner = owner;
+        this.Owner = owner;
         this.Type = type;
         this.OriginXPos = sourceTile.x;
         this.OriginYPos = sourceTile.y;
@@ -51,7 +51,7 @@ public class Action {
     }
 
     public Action(string owner, ActionType type, Vector2Int targetTile, CardFunction function) {
-        this.owner = owner;
+        this.Owner = owner;
         this.Type = type;
         this.TargetXPos = targetTile.x;
         this.TargetYPos = targetTile.y;
