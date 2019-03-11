@@ -10,6 +10,9 @@ public class MainMenu : MonoBehaviour {
     //Storage of the network api persistant object
     private Client networkApi;
 
+    //Store reference to the audio manager
+    private AudioManager audioManager;
+
     //Main Menu panels
     private GameObject mainMenuContainer;
     private GameObject pendingGamesPanel;
@@ -86,6 +89,7 @@ public class MainMenu : MonoBehaviour {
         armyChooserViewport = GameObject.Find("ArmyChooserViewport");
 
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Start is called before the first frame update
@@ -114,7 +118,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void PendingGameCellDetailsButton(GameState state, bool needToAccept) {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         //Set up the display information
         pendingMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -127,7 +131,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void ActiveGameCellDetailsButton(GameState state) {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         //Set up the display information
         activeMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         activeCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -140,34 +144,34 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void PublicGameCellDetailsButton(GameState state) {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
     }
 
     public void MainMenuCreateGameButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         SetMenuState(false, false, true, false, false, false);
     }
 
     public void MainMenuArmyBuilderButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(false);
         SetMenuState(false, false, false, false, true, false);
     }
 
     public void MainMenuArmyBuilderBack() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(true);
         SetMenuState(false, false, false, false, false, false);
     }
 
     public void MainMenuArmySelectorButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(false);
         SetMenuState(false, false, false, false, false, true);
     }
 
     public void MainMenuJoinGameButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         SetMenuState(false, false, false, true, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
@@ -187,7 +191,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuActiveGamesButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         SetMenuState(false, true, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
@@ -207,7 +211,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuPendingGamesButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         SetMenuState(true, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         int childrenCount = pendingGamesViewContent.transform.childCount;
@@ -234,13 +238,13 @@ public class MainMenu : MonoBehaviour {
         //Here we need to somehow get the string of the username we would like to add
         string userToAdd = friendsListInputField.text;
         if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
+            audioManager.Play("ButtonPress");
             AddFriendHelper(userToAdd);
             friendsListInputField.text = "";
         }
         else {
             //adding a user failed
-            FindObjectOfType<AudioManager>().Play("ButtonError");
+            audioManager.Play("ButtonError");
         }
     }
 
@@ -255,21 +259,21 @@ public class MainMenu : MonoBehaviour {
         //Here we need to somehow get the string of the username we would like to add
         string userToRemove = friendsListInputField.text;
         if (networkApi.RemoveFriend(userToRemove)) {
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
+            audioManager.Play("ButtonPress");
             Destroy(friendsListDict[userToRemove]);
             friendsListDict.Remove(userToRemove);
         }
     }
 
     public void MainMenuLogoutButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         networkApi.LogoutUser();
         SceneManager.LoadScene("LoginScreen");
     }
 
     public void MainMenuJoinPendingGame(GameState state, bool needToAccept) {
         if(needToAccept) {
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
+            audioManager.Play("ButtonPress");
             networkApi.AcceptGame(state.id);
         }
         MainMenuArmySelectorButton();
@@ -285,7 +289,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuArmySelectorBack() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(true);
         SetMenuState(true, false, false, false, false, false);
     }

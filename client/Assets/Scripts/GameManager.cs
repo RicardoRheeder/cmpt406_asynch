@@ -9,6 +9,7 @@ using CardsAndCarnage;
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
 public class GameManager : MonoBehaviour {
 
+    //References to in scene objects
     private INetwork client;
 
     [SerializeField]
@@ -20,14 +21,13 @@ public class GameManager : MonoBehaviour {
     private GameObject playerControllerPrefab;
     private GameObject playerControllerObject;
     private PlayerController playerController;
-
     private CardSystemManager cardSystem;
-
     private BoardController boardController;
-
     private FogOfWarController fogOfWarController;
 
     private InGameMenu inGameMenu;
+
+    private AudioManager audioManager;
 
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
     private List<Action> turnActions;
@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         DontDestroyOnLoad(this.gameObject);
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         client = GameObject.Find("Networking").GetComponent<Client>();
     }
 
@@ -111,7 +112,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, user.Username, state, null, gameBuilder, boardController, isPlacing);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, isPlacing);
 
         GameObject.Find("Tabletop").GetComponent<DropZone>().SetPlayerController(playerController);
 
@@ -161,7 +162,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
         inGameMenu.SetupPanels(isPlacing: true);
         GameObject.Find("Tabletop").SetActive(false);
@@ -236,19 +237,19 @@ public class GameManager : MonoBehaviour {
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         SceneManager.LoadScene("MainMenu");
     }
 
     public void Forfeit() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
     }
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
+        audioManager.Play("ButtonPress");
         SceneManager.LoadScene("MainMenu");
     }
 

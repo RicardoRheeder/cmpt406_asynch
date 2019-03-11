@@ -43,4 +43,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e97496936371f744854bf79bfc870a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sounds: []
+  sounds:
+  - name: ButtonPress
+    audioClip: {fileID: 8300000, guid: 52b096897d33b7c4a9325ad5c073e7c6, type: 3}
+    volume: 1
+    pitch: 0
+    loop: 0
+    audioSource: {fileID: 0}
+  - name: ButtonError
+    audioClip: {fileID: 8300000, guid: 2118b5e5eb34176439a93b8f7238193a, type: 3}
+    volume: 1
+    pitch: 0
+    loop: 0
+    audioSource: {fileID: 0}
+  - name: Theme
+    audioClip: {fileID: 8300000, guid: fac67bc51f4ec564094693a86cae697c, type: 3}
+    volume: 1
+    pitch: 0
+    loop: 0
+    audioSource: {fileID: 0}
+  - name: ButtonQuit
+    audioClip: {fileID: 8300000, guid: 985596a614aa2404cbe0811aa040ce78, type: 3}
+    volume: 1
+    pitch: 0
+    loop: 0
+    audioSource: {fileID: 0}

@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour {
     private BoardController boardController;
     private GameBuilder builder;
     private GameState gamestate;
+    private AudioManager audioManager;
 
     //Stuff for unit stat display pane
     private TMP_Text unitDisplayHealth;
@@ -92,7 +93,7 @@ public class PlayerController : MonoBehaviour {
 
     private List<Vector2Int> highlightedTiles;
 
-    public void Initialize(GameManager manager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
+    public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
@@ -100,8 +101,9 @@ public class PlayerController : MonoBehaviour {
         this.spawnPoint = spawnPoint;
         this.isPlacing = isPlacing;
         this.username = username;
+        this.audioManager = audioManager;
 
-        if(isPlacing) {
+        if (isPlacing) {
             controllerState = PlayerState.placing;
             this.armyPreset = new List<int>() {
                 armyPreset.General,
@@ -267,7 +269,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.moving;
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
-                FindObjectOfType<AudioManager>().Play("ButtonPress");
+                audioManager.Play("ButtonPress");
             }
         }
     }
@@ -282,7 +284,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.attacking;
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
-                FindObjectOfType<AudioManager>().Play("ButtonPress");
+                audioManager.Play("ButtonPress");
             }
         }
     }
@@ -296,7 +298,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.ability1;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability1]);
             boardController.HighlightTiles(this.highlightedTiles);
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
+            audioManager.Play("ButtonPress");
         }
     }
 
@@ -309,7 +311,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.ability2;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
             boardController.HighlightTiles(this.highlightedTiles);
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
+            audioManager.Play("ButtonPress");
         }
     }
 
