@@ -5,6 +5,6 @@ using UnityEngine;
 public static class CardFactory {
 
     public static CardController GetCardControllerFromUnits(List<UnitStats> units, string username) {
-        return new CardController(username, new List<Card>(), new List<Card>(), new List<Card>());
+        return new CardController(username, new List<CardFunction>());
     }
 }

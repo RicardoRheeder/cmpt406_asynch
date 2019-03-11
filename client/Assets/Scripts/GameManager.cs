@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 using CardsAndCarnage;
 
+#pragma warning disable 649
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
 public class GameManager : MonoBehaviour {
 
@@ -19,6 +20,8 @@ public class GameManager : MonoBehaviour {
     private GameObject playerControllerPrefab;
     private GameObject playerControllerObject;
     private PlayerController playerController;
+
+    private CardSystemManager cardSystem;
 
     private BoardController boardController;
 
@@ -45,10 +48,8 @@ public class GameManager : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         DontDestroyOnLoad(this.gameObject);
-
         client = GameObject.Find("Networking").GetComponent<Client>();
     }
-
 
     //===================== Setup functions ===================
     //The method called when the load game button is pressed
@@ -112,9 +113,19 @@ public class GameManager : MonoBehaviour {
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, user.Username, state, null, gameBuilder, boardController, isPlacing);
 
+        GameObject.Find("Tabletop").GetComponent<DropZone>().SetPlayerController(playerController);
+
+        cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
+        List<CardFunction> hand = new List<CardFunction>();
+        if (state.UserCardsMap.ContainsKey(user.Username)) {
+            hand = state.UserCardsMap[user.Username].Hand;
+        }
+        cardSystem.Initialize(hand, state.UserUnitsMap[user.Username]);
+
         inGameMenu.SetupPanels(isPlacing: false);
 
         PreprocessGenerals();
+        PreprocessCards();
 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -173,7 +184,7 @@ public class GameManager : MonoBehaviour {
     }
 
     //===================== Preprocessing functions ===================
-    public void PreprocessGenerals() {
+    private void PreprocessGenerals() {
         foreach(var position in unitPositions.Keys) {
             UnitStats general = unitPositions[position];
             if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
@@ -202,10 +213,28 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    //Deal with persistant cards
+    private void PreprocessCards() {
+        List<Action> reverseActions = new List<Action>(state.Actions);
+        reverseActions.Reverse();
+        for(int i = 0; i < reverseActions.Count; i++) {
+            Action action = reverseActions[i];
+            if(action.Owner == user.Username) {
+                break;
+            }
+            else {
+                if (action.Type == ActionType.Card) {
+                    CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Owner, true);
+                }
+            }
+        }
+
+    }
+
     //===================== In game button functionality ===================
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
-        client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values)));
+        client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -277,9 +306,14 @@ public class GameManager : MonoBehaviour {
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
                         int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
-                        if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
-                            unitPositions.Remove(damage.First);
-                            targetUnit.Kill();
+                        if (modifiedDamage > 0) {
+                            if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
+                                unitPositions.Remove(damage.First);
+                                targetUnit.Kill();
+                            }
+                        }
+                        else {
+                            targetUnit.Heal(modifiedDamage);
                         }
                     }
                 }
@@ -328,5 +362,16 @@ public class GameManager : MonoBehaviour {
         }
         turnActions.Add(new Action(user.Username, ActionType.Ability, source, target, ability));
         return true;
+    }
+
+    public bool UseCard(Vector2Int target, Card card) {
+        CardFunction cardId = card.func;
+        if (CardMetadata.CardEffectDictionary[cardId](target, unitPositions, user.Username, false)) {
+            turnActions.Add(new Action(user.Username, ActionType.Card, target, cardId));
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

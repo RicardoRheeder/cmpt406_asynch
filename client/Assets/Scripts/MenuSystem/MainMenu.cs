@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+#pragma warning disable 649
 public class MainMenu : MonoBehaviour {
 
     //Storage of the network api persistant object

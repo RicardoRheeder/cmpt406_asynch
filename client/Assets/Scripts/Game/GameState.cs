@@ -79,6 +79,7 @@ public class GameState {
         if (AcceptedUsers == null) AcceptedUsers = new List<string>();
         if (ReadyUsers == null) ReadyUsers = new List<string>();
         if (cards == null) cards = new List<CardController>();
+        if (Actions == null) Actions = new List<Action>();
         UserUnitsMap = new Dictionary<string, List<UnitStats>>();
         foreach(UnitStats unit in units) {
             if (UserUnitsMap.ContainsKey(unit.Owner))
@@ -216,9 +217,18 @@ public class EndTurnState {
     [DataMember]
     private List<Action> actions;
 
-    public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> allUnits) {
+    public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> allUnits, List<CardFunction> cards) {
         gameId = state.id;
         actions = turnActions;
+
+        this.cards = new List<CardController>() {
+            new CardController(currentUser, cards)
+        };
+        foreach(CardController controller in state.UserCardsMap.Values) {
+            if(controller.owner != currentUser) {
+                this.cards.Add(controller);
+            }
+        }
 
         units = new List<UnitStats>();
         generals = new List<UnitStats>();

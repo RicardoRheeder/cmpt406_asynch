@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2339de37d0427304b9243799aacc18ba, type: 3}
+  m_Name: PewPew
+  m_EditorClassIdentifier: 
+  deck:
+  - {fileID: 11400000, guid: 5ab7b9c52bebc5946825856d2e19c34e, type: 2}
+  - {fileID: 11400000, guid: 153cd23c9690da94ebf6a0bf3689f1d0, type: 2}

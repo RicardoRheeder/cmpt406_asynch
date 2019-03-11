@@ -22,11 +22,13 @@ public class UnitStats {
 
     //offense stats
     public int Damage { get; set; }
+    private int previousDamage;
     public int Pierce { get; set; }
     public int Range { get; set; }
     //Note: the aoe works as follows: 0 means "just hit the hex you're targeting"
-    public int Aoe { get; private set; }
+    public int Aoe { get; set; }
     public IAttackStrategy attackStrategy;
+    private bool moveAfterAttack = false;
 
     //mobility
     public int MovementSpeed { get; set; }
@@ -71,6 +73,7 @@ public class UnitStats {
         this.Armour = armour;
         this.Range = range;
         this.Damage = damage;
+        previousDamage = damage;
         this.Pierce = pierce;
         this.Aoe = aoe;
         this.MovementSpeed = movementSpeed;
@@ -91,7 +94,8 @@ public class UnitStats {
     //Returns a value based on the target
     public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, bool specialMove = false) {
         if (!specialMove) {
-            this.MovementActions = 0;
+            if(!moveAfterAttack)
+                this.MovementActions = 0;
             this.AttackActions--;
         }
         return attackStrategy.Attack(this, target);
@@ -107,6 +111,11 @@ public class UnitStats {
         return CurrentHP <= 0;
     }
 
+    public void TakeCardDamage(int damage) {
+        CurrentHP -= damage;
+        CurrentHP = CurrentHP <= 0 ? 1 : CurrentHP;
+    }
+
     public void Heal(int amount) {
         this.CurrentHP += amount;
         CurrentHP = CurrentHP > MaxHP ? MaxHP : CurrentHP;
@@ -114,6 +123,59 @@ public class UnitStats {
     
     public void Kill() {
         MyUnit.Kill();
+    }
+
+    //Methods to alter stats
+    public void AlterDamage(int change) {
+        if(this.Damage < 0 ) {
+            this.Damage -= change;
+            this.Damage = this.Damage > 0 ? 0 : this.Damage;
+        }
+        else if(this.Damage > 0 ) {
+            this.Damage += change;
+            this.Damage = this.Damage < 0 ? 0 : this.Damage;
+        }
+        else {
+            if((previousDamage > 0 && change > 0) || (previousDamage < 0 && change < 0)) {
+                this.Damage = change;
+            }
+        }
+    }
+
+    public void AlterSpeed(int change) {
+        this.MovementSpeed += change;
+        this.MovementSpeed = this.MovementSpeed < 0 ? 0 : this.MovementSpeed;
+    }
+
+    public void AlterPierce(int change) {
+        this.Pierce += change;
+        this.Pierce = this.Pierce < 0 ? 0 : this.Pierce;
+    }
+
+    public void AlterArmour(int change) {
+        this.Armour += change;
+        this.Armour = this.Armour < 0 ? 0 : this.Armour;
+    }
+
+    public void AlterRange(int change) {
+        this.Range += change;
+        this.Range = this.Range < 0 ? 0 : this.Range;
+    }
+
+    public void AlterMoveAfterAttack() {
+        this.moveAfterAttack = true;
+    }
+
+    public void AlterAttackType(IAttackStrategy strategy) {
+        this.attackStrategy = strategy;
+    }
+
+    public void DoublePierce() {
+        this.Pierce = this.Pierce * 2;
+    }
+
+    public void DoubleDamage() {
+        this.Damage = this.Damage * 2;
     }
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
@@ -142,6 +204,7 @@ public class UnitStats {
         this.MaxHP = baseUnit.MaxHP;
         this.Armour = baseUnit.Armour;
         this.Damage = baseUnit.Damage;
+        previousDamage = baseUnit.Damage;
         this.Pierce = baseUnit.Pierce;
         this.Range = baseUnit.Range;
         this.Aoe = baseUnit.Aoe;

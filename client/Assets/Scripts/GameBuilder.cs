@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class GameBuilder : MonoBehaviour {
 
+    //Variables for the game manager to access
     public Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
 
     //Reference to the menus
@@ -34,7 +35,6 @@ public class GameBuilder : MonoBehaviour {
     private BoardController board;
     private FogOfWarController fogController;
     private bool isPlacing;
-    private int colorPick = 0;
     private ArmyPreset armyPreset;
 
     public void Awake() {

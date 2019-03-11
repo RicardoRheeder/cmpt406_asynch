@@ -6,8 +6,8 @@ using UnityEngine;
 [DataContract]
 public class Action {
 
-    [DataMember]
-    private string owner;
+    [DataMember(Name = "owner")]
+    public string Owner { get; private set; }
 
     [DataMember]
     private int actionType;
@@ -23,14 +23,16 @@ public class Action {
     [DataMember(Name = "targetYPos")]
     public int TargetYPos{get; private set;}
 
-    [DataMember(Name = "cardId")]
-    public int CardId { get; private set; }
+    [DataMember]
+    private int cardId;
+    public CardFunction CardId { get; private set; }
 
-    [DataMember(Name = "ability")]
+    [DataMember]
+    private int ability;
     public GeneralAbility Ability { get; private set; }
 
     public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile) {
-        this.owner = owner;
+        this.Owner = owner;
         this.Type = type;
         this.OriginXPos = sourceTile.x;
         this.OriginYPos = sourceTile.y;
@@ -39,7 +41,7 @@ public class Action {
     }
 
     public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile, GeneralAbility ability) {
-        this.owner = owner;
+        this.Owner = owner;
         this.Type = type;
         this.OriginXPos = sourceTile.x;
         this.OriginYPos = sourceTile.y;
@@ -48,13 +50,25 @@ public class Action {
         this.Ability = ability;
     }
 
+    public Action(string owner, ActionType type, Vector2Int targetTile, CardFunction function) {
+        this.Owner = owner;
+        this.Type = type;
+        this.TargetXPos = targetTile.x;
+        this.TargetYPos = targetTile.y;
+        this.CardId = function;
+    }
+
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
         this.Type = (ActionType)actionType;
+        Ability = (GeneralAbility)ability; ;
+        CardId = (CardFunction)cardId;
     }
 
     [OnSerializing]
     public void OnSerializing(StreamingContext c) {
         actionType = (int)Type;
+        ability = (int)Ability;
+        cardId = (int)CardId;
     }
 }

@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: 99b7b34f8eedfda46b988f5c4f3b6100
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - CardTemplate: {fileID: 695489556233628863, guid: 1427e52f6bf8c2b498cf0322eac13289,
+      type: 3}
+  - genericDeck: {fileID: 11400000, guid: 8ecb017b3814d1c44b0dfad081818af2, type: 2}
+  - compensatorDeck: {fileID: 11400000, guid: 6480c1ee6ce21c44ab06e0e3012fb589, type: 2}
+  - foundationDeck: {fileID: 11400000, guid: cefdabe12918df04fad8646659d72e53, type: 2}
+  - reconDeck: {fileID: 11400000, guid: c201a6fbfd81f3849a7d52b144f44456, type: 2}
+  - trooperDeck: {fileID: 11400000, guid: e863ea453f0584d44b2df89733ad2a6b, type: 2}
+  - midasDeck: {fileID: 11400000, guid: e9f3711e0a9e23944b5ce66865f6299b, type: 2}
+  - powerSurgeDeck: {fileID: 11400000, guid: 2f04f7b7031f0e84892b8ac6d701c97e, type: 2}
+  - claymoreDeck: {fileID: 11400000, guid: 17af8a106ae2641458846416b8758e84, type: 2}
+  - pewpewDeck: {fileID: 11400000, guid: b4b3190edb84ce34cbc758687a241a5f, type: 2}
+  - steamerDeck: {fileID: 11400000, guid: 227fe0a58ee694243958d8b82bd3cbeb, type: 2}
+  - currentCard: {instanceID: 0}
+  - TableTop: {instanceID: 0}
+  - TableHand: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
