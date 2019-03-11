@@ -801,7 +801,7 @@ func GetCompletedGames(ctx context.Context, username string, limit int) ([]games
 }
 
 // ReadyUnits is used to place your units on the field and be provided cards
-func ReadyUnits(ctx context.Context, username, gameID string, units []gamestate.Unit, general gamestate.Unit, cards gamestate.Cards) error {
+func ReadyUnits(ctx context.Context, username, gameID string, units []gamestate.Unit, general gamestate.Unit) error {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
@@ -821,16 +821,12 @@ func ReadyUnits(ctx context.Context, username, gameID string, units []gamestate.
 		log.Errorf(ctx, "Ready Units failed: general is required")
 		return errors.New("general is required")
 	}
-	if cards.Owner == "" {
-		log.Errorf(ctx, "Ready Units failed: cards are required")
-		return errors.New("cards are required")
-	}
 
-	return gamestate.UpdateGameState(ctx, gameID, readyUnits(username, units, general, cards))
+	return gamestate.UpdateGameState(ctx, gameID, readyUnits(username, units, general))
 }
 
 // readyUnits is a helper function to assigning a player units and making them considered "Ready"
-func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit, cards gamestate.Cards) gamestate.UpdateGameStateFunc {
+func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit) gamestate.UpdateGameStateFunc {
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 		if !common.Contains(gs.AcceptedUsers, username) {
@@ -848,12 +844,6 @@ func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit,
 		gs.InitUnits = append(gs.InitUnits, units...)
 		/* add the provided general */
 		gs.Generals = append(gs.Generals, general)
-
-		/* Assign the Cards an ID */
-		cards.ID = common.GetRandomID()
-		gs.CardIDs = append(gs.CardIDs, cards.ID)
-		/* Add Provided Cards */
-		gs.Cards = append(gs.Cards, cards)
 
 		/* If it's the last person that needed to ready up */
 		if gs.MaxUsers == len(gs.ReadyUsers) {
@@ -943,9 +933,17 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 			}
 		}
 
-		/* assign the new units, generals, and cards of the gamestate*/
+		/* For the first move of every player the cards will not have an id, must assign that */
+		for _, c := range cards {
+			if c.ID == "" {
+				c.ID = common.GetRandomID()
+				gs.CardIDs = append(gs.CardIDs, c.ID)
+			}
+		}
+
+		/* assign the new units, generals, and cards of the gamestate */
 		gs.Units = units
-		gs.Cards = cards
+		gs.Cards = cards // The client will always give the server ALL of the cards on MakeMove
 		gs.Generals = generals
 
 		return nil
