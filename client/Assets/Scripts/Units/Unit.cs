@@ -57,7 +57,8 @@ public class Unit : MonoBehaviour {
             fogViewer.SetPosition(currTilePosition);
             Vector3 worldPos = board.CellToWorld(currTilePosition);
             direction = HexUtility.FindDirection(prevTilePos,currTilePosition);
-            Quaternion rot = Quaternion.AngleAxis(60*(prevDir - direction),transform.up)*transform.rotation;
+            int angle = HexUtility.DirectionToAngle(direction) - HexUtility.DirectionToAngle(prevDir);
+            Quaternion rot = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
             t = 0;
             while (t <= 1.0f) {
                 t += step;

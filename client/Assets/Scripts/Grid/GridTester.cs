@@ -19,6 +19,8 @@ public class GridTester : MonoBehaviour {
     Vector2Int currTilePosition;
     BoardController boardController;
 
+    int direction = 0;
+
     void Start() {
         boardController = new BoardController();
         boardController.Initialize();
@@ -67,19 +69,30 @@ public class GridTester : MonoBehaviour {
     }
 
     IEnumerator PathMovement(List<Vector2Int> path, float speed) {
-         float step = speed * Time.fixedDeltaTime;
+        float step = speed * Time.fixedDeltaTime;
          float t = 0;
          Vector3 prevPos = transform.position;
+         Vector2Int prevTilePos = currTilePosition;
+         int prevDir = direction;
+         Quaternion prevRotation = transform.rotation;
          for(int i = 0; i < path.Count; i++) {
             currTilePosition = path[i];
             Vector3 worldPos = boardController.CellToWorld(currTilePosition);
+            direction = HexUtility.FindDirection(prevTilePos,currTilePosition);
+            int angle = HexUtility.DirectionToAngle(direction) - HexUtility.DirectionToAngle(prevDir);
+            Debug.Log(angle);
+            Quaternion rot = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
             t = 0;
             while (t <= 1.0f) {
                 t += step;
                 transform.position = Vector3.Lerp(prevPos, worldPos, t);
+                transform.rotation = Quaternion.Lerp(prevRotation, rot, t);
                 yield return new WaitForFixedUpdate();
             }
             prevPos = worldPos;
+            prevTilePos = currTilePosition;
+            prevDir = direction;
+            prevRotation = transform.rotation;
             transform.position = worldPos;
         }
     }
