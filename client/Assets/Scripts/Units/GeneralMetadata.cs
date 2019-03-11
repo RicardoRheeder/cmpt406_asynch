@@ -86,7 +86,6 @@ public static class GeneralMetadata {
         source.Pierce += 10;
     }
 
-
     private static void SteamOverload(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
         if (source.TakeDamage(30, 10000)) {
             source.Kill();
