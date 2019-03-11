@@ -91,8 +91,9 @@ public class Client : MonoBehaviour, INetwork {
         //This will come in place later once more functionality is in place
         try {
             request.GetResponse();
-            UserInformation = new PlayerMetadata();
-            UserInformation.Username = username;
+            UserInformation = new PlayerMetadata {
+                Username = username
+            };
         }
         catch (WebException e) {
             user = null;
@@ -204,7 +205,7 @@ public class Client : MonoBehaviour, INetwork {
     public Tuple<bool, GameStateCollection> GetPublicGames() {
         BeginRequest();
         HttpWebRequest request = CreatePostRequest(GET_PUBLIC_GAMES);
-        string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100); //just get up to 100 states for now
+        string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100);
         AddJsonToRequest(requestJson, ref request);
 
         try {
@@ -297,9 +298,9 @@ public class Client : MonoBehaviour, INetwork {
         }
     }
 
-    public bool CreatePrivateGame(string name, int turnTime, int forfeitTime, List<string> opponents, int boardId) {
+    public bool CreatePrivateGame(string name, int forfeitTime, List<string> opponents, int boardId) {
         BeginRequest();
-        CreatePrivateGameState state = new CreatePrivateGameState(name, turnTime, forfeitTime, opponents, boardId);
+        CreatePrivateGameState state = new CreatePrivateGameState(name, forfeitTime, opponents, boardId);
         //Setting up the request object
         HttpWebRequest request = CreatePostRequest(CREATE_PRIVATE_GAME);
         string requestJson = JsonConversion.ConvertObjectToJson<CreatePrivateGameState>(state);
@@ -317,9 +318,9 @@ public class Client : MonoBehaviour, INetwork {
         }
     }
 
-    public bool CreatePublicGame(string name, int turnTime, int forfeitTime, int maxPlayers, int boardId) {
+    public bool CreatePublicGame(string name, int forfeitTime, int maxPlayers, int boardId) {
         BeginRequest();
-        CreatePublicGameState state = new CreatePublicGameState(name, turnTime, forfeitTime, maxPlayers, boardId);
+        CreatePublicGameState state = new CreatePublicGameState(name, forfeitTime, maxPlayers, boardId);
         //Setting up the request object
         HttpWebRequest request = CreatePostRequest(CREATE_PUBLIC_GAME);
         string requestJson = JsonConversion.ConvertObjectToJson<CreatePublicGameState>(state);

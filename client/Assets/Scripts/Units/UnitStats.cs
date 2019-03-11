@@ -118,11 +118,18 @@ public class UnitStats {
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
-        if(!specialMove)
+	   if(!specialMove)
             this.MovementActions--;
+		
+		
         this.Position = position;
         MyUnit.MoveTo(position,ref board);
     }
+	
+	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
+	    this.Position = position;
+		MyUnit.MoveTo(position, ref board);
+	}
 
     //We need to convert the xPos and yPos variables to be Position
     //We also need to get a base unit and copy over the stats that weren't stored on the server.
@@ -146,7 +153,7 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
-}
+    }
 
     //Note: this list must have two abilities
     public void SetAbilities( List<GeneralAbility> abilityList) {
@@ -154,13 +161,14 @@ public class UnitStats {
         this.Ability2 = abilityList[1];
     }
 
-    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit) {
+    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
         this.Ability1 = abilityList[0];
         this.Ability2 = abilityList[1];
-        this.Ability1Cooldown = serverUnit.Ability1Cooldown == 0 ? 0 : serverUnit.Ability1Cooldown - 1;
-        this.Ability2Cooldown = serverUnit.Ability2Cooldown == 0 ? 0 : serverUnit.Ability2Cooldown - 1;
-        this.Ability2Duration = serverUnit.Ability2Duration == 0 ? 0 : serverUnit.Ability2Duration - 1;
-        this.Ability2Duration = serverUnit.Ability2Duration == 0 ? 0 : serverUnit.Ability2Duration - 1;
+        int decrement = username == this.Owner ? 1 : 0;
+        this.Ability1Cooldown = serverUnit.Ability1Cooldown <= 0 ? 0 : serverUnit.Ability1Cooldown - decrement;
+        this.Ability2Cooldown = serverUnit.Ability2Cooldown <= 0 ? 0 : serverUnit.Ability2Cooldown - decrement;
+        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - decrement;
+        this.Ability2Duration = serverUnit.Ability2Duration <= 0 ? 0 : serverUnit.Ability2Duration - decrement;
     }
 
     public void SetPassive(GeneralPassive passive) {

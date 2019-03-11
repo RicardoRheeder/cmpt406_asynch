@@ -21,11 +21,20 @@ EditorBuildSettings:
     path: Assets/Scenes/Maps/InGameMaps/Map_Med_Valley.unity
     guid: 2d90ffdb0b31043aaa59a042359ed910
   - enabled: 1
-    path: Assets/Scenes/Maps/InGameMaps/Map_Small_Coloured_Hawkpoint.unity
+    path: Assets/Scenes/Maps/InGameMaps/Map_Med_Lowlands.unity
+    guid: d30c947c41e4aa147b77f8afcc5190fd
+  - enabled: 1
+    path: Assets/Scenes/Maps/InGameMaps/Map_Small_Hawkpoint.unity
     guid: 61f2e5ffd298e459484a746cbd6e8dfc
   - enabled: 1
     path: Assets/Scenes/Maps/InGameMaps/Map_Small_Ravine.unity
     guid: 823ff8a927a02cb4ebc10c85b2d4ef5b
+  - enabled: 1
+    path: Assets/Scenes/Maps/InGameMaps/Map_Small_AlphaChannel.unity
+    guid: 701e41dbdcd9a624aa4a17c320cf029d
+  - enabled: 1
+    path: Assets/Scenes/Maps/InGameMaps/Map_Small_SnakeValley.unity
+    guid: 87f896606685f5540ad821b98b9970dc
   - enabled: 1
     path: Assets/Scenes/Maps/SampleMap.unity
     guid: 49e4792b837854980a370bfb7523d5f8

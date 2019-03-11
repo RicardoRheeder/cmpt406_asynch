@@ -32,6 +32,7 @@ public class GameBuilder : MonoBehaviour {
     private GameState state;
     private string username;
     private BoardController board;
+    private FogOfWarController fogController;
     private bool isPlacing;
     private int colorPick = 0;
     private ArmyPreset armyPreset;
@@ -58,10 +59,11 @@ public class GameBuilder : MonoBehaviour {
 
     //Method that takes in a game state, instantiates all of the objects and makes sure the scene is setup how it should be.
     //Note: the game manager is responsible for creating the other managers, the game builder is just responsible for creating the playable objects.
-    public void Build(ref GameState state, string username, ref BoardController board, bool isPlacing, ArmyPreset armyPreset = null) {
+    public void Build(ref GameState state, string username, ref BoardController board, ref FogOfWarController fogController, bool isPlacing, ArmyPreset armyPreset = null) {
         this.state = state;
         this.username = username;
         this.board = board;
+        this.fogController = fogController;
         this.isPlacing = isPlacing;
         this.armyPreset = armyPreset;
         SetupScene();
@@ -130,8 +132,13 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Move(pos, ref board, true);
         unit.Owner = username;
+        if(this.username == username) {
+            FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
+            unitFogViewer.SetRadius(unit.Vision + 1);
+            fogController.AddFogViewer(unitFogViewer);
+        }
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
-            unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit);
+            unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit, username);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
         }
         return unit;
@@ -144,6 +151,11 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Move(pos, ref board, true);
         unit.Owner = username;
+        if(username == this.username) {
+            FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
+            unitFogViewer.SetRadius(unit.Vision + 1);
+            fogController.AddFogViewer(unitFogViewer);
+        }
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType]);
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);

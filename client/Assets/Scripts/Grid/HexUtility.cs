@@ -310,6 +310,26 @@ public static class HexUtility {
         return Math.Abs(endTile.elevation - startTile.elevation) < ELEVATION_REACHABLE_DISTANCE;
     }
 
+    public static List<Vector2Int> FindRing(Vector2Int center, int distance, int thickness) {
+        // TODO: get it working with cache
+        List<Vector2Int> results = new List<Vector2Int>();
+        Vector3Int cubeCenter = OddrToCube(center);
+        Vector3Int cube = cubeAdd(cubeCenter, cubeScale(cubeDirections[4], distance));
+        for(int i = 0; i < 6; i++) {
+            for(int j = 0; j < distance; j++) {
+                Vector2Int position = CubeToOddr(cube);
+                results.Add(position);
+                cube = OddrToCube(NeighborTile(position,i));
+            }
+        }
+        return results;
+    }
+
+    public static bool IsEdgeTile(Vector2Int position, Tilemap tilemap) {
+        List<Vector2Int> neighbors = GetNeighbors(position,tilemap,true);
+        return neighbors.Count < 6;
+    }
+
     //Helper class to say that direction(0) = curPos + cubeDirections[0]
     //DO NOT CHANGE THE ORDER OF THE LIST
     private static readonly List<Vector2Int> oddYOffsetDirections = new List<Vector2Int> {
@@ -337,6 +357,14 @@ public static class HexUtility {
         new Vector3Int(0, 1, -1),
         new Vector3Int(1, 0, -1),
     };
+
+    private static Vector3Int cubeAdd(Vector3Int a, Vector3Int b) {
+        return new Vector3Int(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+
+    public static Vector3Int cubeScale(Vector3Int a, int k) {
+        return new Vector3Int(a.x * k, a.y * k, a.z * k);
+    }
 
     // This dictionary is in the format of tile coordinates to a list of lists of tile coordinates
     // the list will be of size n, where n is the highest range we calculated

@@ -114,7 +114,7 @@ public class MainMenu : MonoBehaviour {
 
     public void PendingGameCellDetailsButton(GameState state, bool needToAccept) {
         //Set up the display information
-        pendingMapName.SetText(state.boardId.ToString());
+        pendingMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
         pendingMaxPlayers.SetText("" + state.maxUsers);
         pendingTurnNumber.SetText("" + state.TurnNumber);
@@ -126,7 +126,7 @@ public class MainMenu : MonoBehaviour {
 
     public void ActiveGameCellDetailsButton(GameState state) {
         //Set up the display information
-        activeMapName.SetText(state.boardId.ToString());
+        activeMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         activeCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
         activeMaxPlayers.SetText("" + state.maxUsers);
         activeTurnNumber.SetText("" + state.TurnNumber);
@@ -271,10 +271,5 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuArmySelectorBack() {
         mainMenuContainer.SetActive(true);
         SetMenuState(true, false, false, false, false, false);
-    }
-
-    //This method will have to refresh the ui, and redraw any existing panels
-    public void MainMenuRefreshButton() {
-
     }
 }
