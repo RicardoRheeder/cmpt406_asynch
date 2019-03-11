@@ -10,6 +10,9 @@ public class CardController {
     public string owner;
 
     [DataMember]
+    public string id;
+
+    [DataMember]
     private List<int> hand;
     public List<CardFunction> Hand { get; set; }
 

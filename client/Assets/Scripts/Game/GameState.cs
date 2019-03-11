@@ -217,6 +217,9 @@ public class EndTurnState {
     [DataMember]
     private List<Action> actions;
 
+    [DataMember]
+    private List<string> killedUsers;
+
     public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> allUnits, List<CardFunction> cards) {
         gameId = state.id;
         actions = turnActions;
@@ -230,6 +233,8 @@ public class EndTurnState {
             }
         }
 
+
+        List<string> aliveUsers = new List<string>(state.AliveUsers);
         units = new List<UnitStats>();
         generals = new List<UnitStats>();
         foreach(var unit in allUnits) {
@@ -239,6 +244,8 @@ public class EndTurnState {
             else {
                 units.Add(unit);
             }
+            aliveUsers.Remove(unit.Owner);
         }
+        killedUsers = new List<string>(aliveUsers);
     }
 }

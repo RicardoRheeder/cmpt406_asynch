@@ -4,175 +4,146 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ArmyBuilderUI : MonoBehaviour
-{
-    public ArmyPreset selectedArmy;
+public class ArmyBuilderUI : MonoBehaviour {
+
+    //References to the used APIs
+    private Client client;
+    private AudioManager audioManager;
 
     //the current unit being looked at
-    public int selectedUnit;
+    public UnitType selectedUnit;
 
-    private Canvas canvas;
+    //The army we are creating/editing
+    public ArmyPreset selectedArmy;
 
-    public GameObject stockNum;
-    public GameObject armyContent;
-    public GameObject friendsListCellPrefab;
+    //References to the in game panel we populate with unit names
+    private GameObject armyContent;
+    public GameObject friendsListCellPrefab; //Note: this can be a button where we apply a dynamic listener that removes it from the army
 
-    private Client client;
+    //References to texts we update
+    private TMP_Text stockNum;
+    private TMP_Text healthNum;
+    private TMP_Text attackNum;
+    private TMP_Text armourNum;
+    private TMP_Text rangeNum;
+    private TMP_Text pierceNum;
+    private TMP_Text aoeNum;
+    private TMP_Text movementNum;
+    private TMP_Text unitName;
 
-    public void Start()
-    {
-        GameObject canvas = GameObject.FindGameObjectWithTag("MainCanvas");
-
-
-    }
-
-    public void Update()
-    {
-        if (client == null)
-        {
-
-        }
-    }
-
-    public void Awake()
-    {
-        armyContent = GameObject.Find("ABListViewport");
+    public void Awake() {
         client = GameObject.Find("Networking").GetComponent<Client>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
+        armyContent = GameObject.Find("ABListViewport");
+        stockNum = GameObject.Find("CostNum").GetComponent<TMP_Text>();
+        healthNum = GameObject.Find("HealthNum").GetComponent<TMP_Text>();
+        attackNum = GameObject.Find("AttackNum").GetComponent<TMP_Text>();
+        armourNum = GameObject.Find("ArmorNum").GetComponent<TMP_Text>();
+        rangeNum = GameObject.Find("RangeNum").GetComponent<TMP_Text>();
+        pierceNum = GameObject.Find("PierceNum").GetComponent<TMP_Text>();
+        aoeNum = GameObject.Find("AOENum").GetComponent<TMP_Text>();
+        movementNum = GameObject.Find("MovementNum").GetComponent<TMP_Text>();
+        unitName = GameObject.Find("UnitName").GetComponent<TMP_Text>();
+
+        ConfigureOnClick(GameObject.Find("TrooperButton").GetComponent<Button>(), UnitType.trooper);
+        ConfigureOnClick(GameObject.Find("ReconButton").GetComponent<Button>(), UnitType.recon);
+        ConfigureOnClick(GameObject.Find("SteamerButton").GetComponent<Button>(), UnitType.steamer);
+        ConfigureOnClick(GameObject.Find("PewpewButton").GetComponent<Button>(), UnitType.pewpew);
+        ConfigureOnClick(GameObject.Find("CompensatorButton").GetComponent<Button>(), UnitType.compensator);
+        ConfigureOnClick(GameObject.Find("FoundationButton").GetComponent<Button>(), UnitType.foundation);
+        ConfigureOnClick(GameObject.Find("ClaymoreButton").GetComponent<Button>(), UnitType.claymore);
+        ConfigureOnClick(GameObject.Find("MidasButton").GetComponent<Button>(), UnitType.midas);
+        ConfigureOnClick(GameObject.Find("PowerSurgeButton").GetComponent<Button>(), UnitType.powerSurge);
+    }
+
+    private void ConfigureOnClick(Button button, UnitType type) {
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => {
+            selectedUnit = type;
+            UpdateDisplay();
+            audioManager.Play("ButtonPress");
+        });
     }
 
     //creates a new army
-    public void createArmy()
-    {
+    public void CreateArmy() {
         string newArmyName = "Name Army";
         ArmyPreset newPreset = new ArmyPreset(
             newArmyName,
             new List<int>(),
-            101
+            (int)UnitType.piercing_tungsten
         );
 
         selectedArmy = newPreset;
-        getCost();
+        GetCost();
     }
 
     //changes the name of an army
-    public void changeName(string newName)
-    {
+    public void ChangeName(string newName) {
         selectedArmy.Name = newName;
     }
 
-    //adds a unit to an army
-    public void addUnit()
-    {
-        //if it is a unit, add it to the army
-        if ((int)selectedUnit < 99)//generals are above 100
-            selectedArmy.Units.Add(selectedUnit);
+    public void UpdateDisplay() {
+        unitName.GetComponent<TextMeshProUGUI>().SetText(UnitMetadata.ReadableNames[selectedUnit]);
 
-        getCost();
+        UnitStats baseUnit = UnitFactory.GetBaseUnit(selectedUnit);
+        healthNum.SetText(baseUnit.MaxHP.ToString());
+        attackNum.SetText(baseUnit.Damage.ToString());
+        armourNum.SetText(baseUnit.Armour.ToString());
+        rangeNum.SetText(baseUnit.Range.ToString());
+        pierceNum.SetText(baseUnit.Pierce.ToString());
+        aoeNum.SetText(baseUnit.Aoe.ToString());
+        movementNum.SetText(baseUnit.MovementSpeed.ToString());
+    }
+
+    //adds a unit to an army
+    public void AddUnit() {
+        //if it is a unit, add it to the army
+        if ((int)selectedUnit < UnitMetadata.GENERAL_THRESHOLD)//generals are above 100
+            selectedArmy.AddUnit(selectedUnit);
+
+        GetCost();
         AddUnitHelper(selectedUnit);
     }
 
-    public void deleteUnit()
-    {
+    public void DeleteUnit() {
         //only remove the unit if it is not a general
         //a general must be in an army
-        if ((int)selectedUnit < 99)
-            selectedArmy.Units.Remove(selectedUnit);
+        if ((int)selectedUnit < UnitMetadata.GENERAL_THRESHOLD)
+            selectedArmy.RemoveUnit(selectedUnit);
 
-        getCost();
-        deleteUnitHelper(selectedUnit);
-
+        GetCost();
+        DeleteUnitHelper(selectedUnit);
     }
 
     //gets the cost of an army
-    public void getCost()
-    {
-        //the army cost
-        int cost = 0;
-
-        //for each unit in the army
-        for (int i = 0; i < selectedArmy.Units.Count; i++)
-        {
-            //add the units cost to the army cost
-            cost += UnitFactory.GetBaseUnit((UnitType)selectedArmy.Units[i]).Cost;
-        }
-
-        stockNum.GetComponent<TextMeshProUGUI>().text = cost.ToString();
-    }
-
-
-    public void changeSelectedUnit(int num)
-    {
-        selectedUnit = num;
+    public void GetCost() {
+        stockNum.SetText(UnitFactory.CalculateCost(selectedArmy.Units).ToString());
     }
 
     //TODO: add saving army to server
-    public void saveArmy()
-    {
+    public void SaveArmy() {
         client.RegisterArmyPreset(selectedArmy);
-
     }
 
-    public void deleteArmy(string presetID)
-    {
+    public void DeleteArmy() {
         client.RemoveArmyPreset(selectedArmy.Id);
     }
 
-    private void AddUnitHelper(int name)
-    {
+    private void AddUnitHelper(UnitType type) {
         GameObject unitText = Instantiate(friendsListCellPrefab);
-        if (name == 0)
-            unitText.GetComponent<TMP_Text>().text = "Trooper";
-        if (name == 1)
-            unitText.GetComponent<TMP_Text>().text = "Reacon";
-        if (name == 2)
-            unitText.GetComponent<TMP_Text>().text = "Steamer";
-        if (name == 3)
-            unitText.GetComponent<TMP_Text>().text = "Pewpew";
-        if (name == 4)
-            unitText.GetComponent<TMP_Text>().text = "Compensator";
-        if (name == 5)
-            unitText.GetComponent<TMP_Text>().text = "Foundation";
-        if (name == 6)
-            unitText.GetComponent<TMP_Text>().text = "Power Surge";
-        if (name == 7)
-            unitText.GetComponent<TMP_Text>().text = "Midas";
-        if (name == 8)
-            unitText.GetComponent<TMP_Text>().text = "Claymore";
+        unitText.GetComponent<TMP_Text>().SetText(UnitMetadata.ReadableNames[type]);
         unitText.transform.SetParent(armyContent.transform, false);
     }
 
-    public void deleteUnitHelper(int unit)
-    {
-        string name = null;
-        if (unit == 0)
-            name = "Trooper";
-        if (unit == 1)
-            name = "Reacon";
-        if (unit == 2)
-            name = "Steamer";
-        if (unit == 3)
-            name = "Pewpew";
-        if (unit == 4)
-            name = "Compensator";
-        if (unit == 5)
-            name = "Foundation";
-        if (unit == 6)
-            name = "Power Surge";
-        if (unit == 7)
-            name = "Midas";
-        if (unit == 8)
-            name = "Claymore";
-        foreach (Transform child in armyContent.transform)
-        {
-            if (child.transform.name != "Content" &&
-               child.GetComponent<TextMeshProUGUI>().text == name)
-            {
+    public void DeleteUnitHelper(UnitType unit) {
+        string name = UnitMetadata.ReadableNames[unit];
+        foreach (Transform child in armyContent.transform) {
+            if (child.transform.name != "Content" && child.GetComponent<TextMeshProUGUI>().text == name) {
                 Destroy(child.gameObject);
                 return;
             }
         }
-
     }
-
-
 }
