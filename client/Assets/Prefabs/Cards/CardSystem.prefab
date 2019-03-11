@@ -102,6 +102,27 @@ MonoBehaviour:
   EndlessRunner: {fileID: 11400000, guid: d9ed4be71dae80d43bb8405f2cb6ed54, type: 2}
   BigChungus: {fileID: 11400000, guid: e37e82d1c984ed844a00ae0f413832a0, type: 2}
   Foreground: {fileID: 11400000, guid: b57b0aa51b69e2440a34c175a2817df4, type: 2}
+  RunAndGun: {fileID: 11400000, guid: 59474f867dd3b004a92c98f9cd6611c9, type: 2}
+  OnTheJuice: {fileID: 11400000, guid: 16b8ad56208abdd4989ebf05071028c8, type: 2}
+  EagleAspect: {fileID: 11400000, guid: ce10d209c6d62ac42b89ca2057bcd965, type: 2}
+  NoobTube: {fileID: 11400000, guid: edd6a197d14b2c740a2294eb6ddf115e, type: 2}
+  WeGetItYouVape: {fileID: 11400000, guid: d4af9f0a43cca9d418a0335b54e1b9e2, type: 2}
+  RealSteel: {fileID: 11400000, guid: 56548e9820ef5a24fbf4280a540412e6, type: 2}
+  AntiballisticShieldMatrix: {fileID: 11400000, guid: 5ab7b9c52bebc5946825856d2e19c34e,
+    type: 2}
+  PewPewsRevenge: {fileID: 11400000, guid: 153cd23c9690da94ebf6a0bf3689f1d0, type: 2}
+  SizeMatters: {fileID: 11400000, guid: 22eb37015b2908e48b555442691ec06d, type: 2}
+  OverCompensation: {fileID: 11400000, guid: a2833724cf51c7545b8ac660e37207d5, type: 2}
+  BothBarrels: {fileID: 11400000, guid: 614f9236da3ca5249831d8340250ddbf, type: 2}
+  ToTheSkies: {fileID: 11400000, guid: c8f0149c8c6df6a4dadd3a61b12520be, type: 2}
+  DeathBall: {fileID: 11400000, guid: 3672bbb8538735241b02d3900f2b4d52, type: 2}
+  HighGroundSimulator: {fileID: 11400000, guid: 9aad1a8ebb262754193513c0f6617db8,
+    type: 2}
+  DeployWeldATron3000: {fileID: 11400000, guid: 9423cbc51b8666049af47d54dcdf7b73,
+    type: 2}
+  Overclocked: {fileID: 11400000, guid: 628f469761cb2b4428acb2780f457949, type: 2}
+  OilSlick: {fileID: 11400000, guid: 3a777a2f936d7d94aaf3e5f7c3a49552, type: 2}
+  PoppinSmoke: {fileID: 11400000, guid: 168859d422d0cba4fa13991dc055454b, type: 2}
 --- !u!1 &5363877012716917206
 GameObject:
   m_ObjectHideFlags: 0

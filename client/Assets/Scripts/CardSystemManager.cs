@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+#pragma warning disable 649
 public class CardSystemManager : MonoBehaviour {
 
     [SerializeField]
@@ -118,55 +119,107 @@ public class CardSystemManager : MonoBehaviour {
     private Card BigChungus;
     [SerializeField]
     private Card Foreground;
+    [SerializeField]
+    private Card RunAndGun;
+    [SerializeField]
+    private Card OnTheJuice;
+    [SerializeField]
+    private Card EagleAspect;
+    [SerializeField]
+    private Card NoobTube;
+    [SerializeField]
+    private Card WeGetItYouVape;
+    [SerializeField]
+    private Card RealSteel;
+    [SerializeField]
+    private Card AntiballisticShieldMatrix;
+    [SerializeField]
+    private Card PewPewsRevenge;
+    [SerializeField]
+    private Card SizeMatters;
+    [SerializeField]
+    private Card OverCompensation;
+    [SerializeField]
+    private Card BothBarrels;
+    [SerializeField]
+    private Card ToTheSkies;
+    [SerializeField]
+    private Card DeathBall;
+    [SerializeField]
+    private Card HighGroundSimulator;
+    [SerializeField]
+    private Card DeployWeldATron3000;
+    [SerializeField]
+    private Card Overclocked;
+    [SerializeField]
+    private Card OilSlick;
+    [SerializeField]
+    private Card PoppinSmoke;
 
     private static Dictionary<CardFunction, Card> library;
 
     void Awake() {
-
         library = new Dictionary<CardFunction, Card>() {
-            {CardFunction.Reposition, Reposition },
-            {CardFunction.Retreat, Retreat },
-            {CardFunction.StandYourGround, StandYourGround},
-            {CardFunction.DoubleDown, DoubleDown},
-            {CardFunction.Breakthrough, Breakthrough},
-            {CardFunction.MassEffect, MassEffect},
-            {CardFunction.ValiantEffort, ValiantEffort},
-            {CardFunction.ValianterEffort, ValianterEffort },
-            {CardFunction.ValiantestEffort, ValiantestEffort },
-            {CardFunction.Oopsie, Oopsie },
-            {CardFunction.AnArrowToTheKnee, AnArrowToTheKnee},
-            {CardFunction.WeShouldRun, WeShouldRun},
-            {CardFunction.LeftForDead, LeftForDead},
-            {CardFunction.Suicide, Suicide},
-            {CardFunction.ReallyBadLigma, ReallyBadLigma},
-            {CardFunction.AKneeToTheArrow, AKneeToTheArrow},
-            {CardFunction.WeShouldRunRightFuckingNow, WeShouldRunRightFuckingNow},
-            {CardFunction.SurvivalRuleNumber1, SurvivalRuleNumber1},
-            {CardFunction.BigPP, BigPP},
-            {CardFunction.Fallout, Fallout},
-            {CardFunction.OOPSIE, OOPSIE},
-            {CardFunction.Ligma, Ligma},
-            {CardFunction.QualifiedDoctor, QualifiedDoctor },
-            {CardFunction.ItAintMuch, ItAintMuch},
-            {CardFunction.PitifulAdvantage, PitifulAdvantage},
-            {CardFunction.OnePunch, OnePunch},
-            {CardFunction.TakingAdvantage, TakingAdvantage},
-            {CardFunction.Formidibility, Formidibility},
-            {CardFunction.Oof, Oof},
-            {CardFunction.Reinforcements, Reinforcements},
-            {CardFunction.DesperateAttempt, DesperateAttempt},
-            {CardFunction.Ehttack, Ehttack},
-            {CardFunction.EHTTACK, EHTTACK},
-            {CardFunction.Multistrike, Multistrike},
-            {CardFunction.Snipershot, Snipershot},
-            {CardFunction.SecondAttempt, SecondAttempt},
-            {CardFunction.AllInOne, AllInOne},
-            {CardFunction.MinorPrice, MinorPrice},
-            {CardFunction.GirlNextDoor, GirlNextDoor},
-            {CardFunction.Slowpoke, Slowpoke},
-            {CardFunction.EndlessRunner, EndlessRunner},
-            {CardFunction.BigChungus, BigChungus},
-            {CardFunction.Foreground, Foreground},
+            { CardFunction.Reposition, Reposition },
+            { CardFunction.Retreat, Retreat },
+            { CardFunction.StandYourGround, StandYourGround},
+            { CardFunction.DoubleDown, DoubleDown},
+            { CardFunction.Breakthrough, Breakthrough},
+            { CardFunction.MassEffect, MassEffect},
+            { CardFunction.ValiantEffort, ValiantEffort},
+            { CardFunction.ValianterEffort, ValianterEffort },
+            { CardFunction.ValiantestEffort, ValiantestEffort },
+            { CardFunction.Oopsie, Oopsie },
+            { CardFunction.AnArrowToTheKnee, AnArrowToTheKnee},
+            { CardFunction.WeShouldRun, WeShouldRun},
+            { CardFunction.LeftForDead, LeftForDead},
+            { CardFunction.Suicide, Suicide},
+            { CardFunction.ReallyBadLigma, ReallyBadLigma},
+            { CardFunction.AKneeToTheArrow, AKneeToTheArrow},
+            { CardFunction.WeShouldRunRightFuckingNow, WeShouldRunRightFuckingNow},
+            { CardFunction.SurvivalRuleNumber1, SurvivalRuleNumber1},
+            { CardFunction.BigPP, BigPP},
+            { CardFunction.Fallout, Fallout},
+            { CardFunction.OOPSIE, OOPSIE},
+            { CardFunction.Ligma, Ligma},
+            { CardFunction.QualifiedDoctor, QualifiedDoctor },
+            { CardFunction.ItAintMuch, ItAintMuch},
+            { CardFunction.PitifulAdvantage, PitifulAdvantage},
+            { CardFunction.OnePunch, OnePunch},
+            { CardFunction.TakingAdvantage, TakingAdvantage},
+            { CardFunction.Formidibility, Formidibility},
+            { CardFunction.Oof, Oof},
+            { CardFunction.Reinforcements, Reinforcements},
+            { CardFunction.DesperateAttempt, DesperateAttempt},
+            { CardFunction.Ehttack, Ehttack},
+            { CardFunction.EHTTACK, EHTTACK},
+            { CardFunction.Multistrike, Multistrike},
+            { CardFunction.Snipershot, Snipershot},
+            { CardFunction.SecondAttempt, SecondAttempt},
+            { CardFunction.AllInOne, AllInOne},
+            { CardFunction.MinorPrice, MinorPrice},
+            { CardFunction.GirlNextDoor, GirlNextDoor},
+            { CardFunction.Slowpoke, Slowpoke},
+            { CardFunction.EndlessRunner, EndlessRunner},
+            { CardFunction.BigChungus, BigChungus},
+            { CardFunction.Foreground, Foreground},{ CardFunction.RunAndGun, RunAndGun},
+            { CardFunction.OnTheJuice, OnTheJuice},
+            { CardFunction.EagleAspect, EagleAspect},
+            { CardFunction.NoobTube, NoobTube},
+            { CardFunction.WeGetItYouVape, WeGetItYouVape},
+            { CardFunction.RealSteel, RealSteel},
+            { CardFunction.AntiballisticShieldMatrix, AntiballisticShieldMatrix},
+            { CardFunction.PewPewsRevenge, PewPewsRevenge},
+            { CardFunction.SizeMatters, SizeMatters},
+            { CardFunction.OverCompensation, OverCompensation},
+            { CardFunction.BothBarrels, BothBarrels},
+            { CardFunction.ToTheSkies, ToTheSkies},
+            { CardFunction.DeathBall, DeathBall},
+            { CardFunction.HighGroundSimulator, HighGroundSimulator},
+            { CardFunction.DeployWeldATron3000, DeployWeldATron3000},
+            { CardFunction.Overclocked, Overclocked},
+            { CardFunction.OilSlick, OilSlick},
+            { CardFunction.PoppinSmoke, PoppinSmoke},
         };
     }
 

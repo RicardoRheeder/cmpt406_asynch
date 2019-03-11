@@ -79,6 +79,7 @@ public class GameState {
         if (AcceptedUsers == null) AcceptedUsers = new List<string>();
         if (ReadyUsers == null) ReadyUsers = new List<string>();
         if (cards == null) cards = new List<CardController>();
+        if (Actions == null) Actions = new List<Action>();
         UserUnitsMap = new Dictionary<string, List<UnitStats>>();
         foreach(UnitStats unit in units) {
             if (UserUnitsMap.ContainsKey(unit.Owner))

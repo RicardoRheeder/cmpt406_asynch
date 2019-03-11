@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 using CardsAndCarnage;
 
+#pragma warning disable 649
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
 public class GameManager : MonoBehaviour {
 

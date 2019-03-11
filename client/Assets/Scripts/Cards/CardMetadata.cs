@@ -135,7 +135,25 @@ public static class CardMetadata {
         { CardFunction.Slowpoke, Slowpoke},
         { CardFunction.EndlessRunner, EndlessRunner},
         { CardFunction.BigChungus, BigChungus},
-        { CardFunction.Foreground, Foreground}
+        { CardFunction.Foreground, Foreground},
+        { CardFunction.RunAndGun, RunAndGun},
+        { CardFunction.OnTheJuice, OnTheJuice},
+        { CardFunction.EagleAspect, EagleAspect},
+        { CardFunction.NoobTube, NoobTube},
+        { CardFunction.WeGetItYouVape, WeGetItYouVape},
+        { CardFunction.RealSteel, RealSteel},
+        { CardFunction.AntiballisticShieldMatrix, AntiballisticShieldMatrix},
+        { CardFunction.PewPewsRevenge, PewPewsRevenge},
+        { CardFunction.SizeMatters, SizeMatters},
+        { CardFunction.OverCompensation, OverCompensation},
+        { CardFunction.BothBarrels, BothBarrels},
+        { CardFunction.ToTheSkies, ToTheSkies},
+        { CardFunction.DeathBall, DeathBall},
+        { CardFunction.HighGroundSimulator, HighGroundSimulator},
+        { CardFunction.DeployWeldATron3000, DeployWeldATron3000},
+        { CardFunction.Overclocked, Overclocked},
+        { CardFunction.OilSlick, OilSlick},
+        { CardFunction.PoppinSmoke, PoppinSmoke},
     };
 
     private static bool Reposition(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
@@ -742,6 +760,302 @@ public static class CardMetadata {
             if (unit.Owner == username) {
                 unit.AlterArmour(10);
                 unit.AlterSpeed(2);
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool RunAndGun(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.trooper) {
+                unit.AlterSpeed(2);
+                unit.AlterDamage(15);
+                unit.AlterMoveAfterAttack();
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool OnTheJuice(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.trooper) {
+                unit.AlterDamage(10);
+                unit.AlterPierce(10);
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool EagleAspect(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.recon) {
+                unit.AlterRange(3);
+                unit.AlterSpeed(2);
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool NoobTube(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.recon) {
+                unit.AlterDamage(15);
+                unit.AlterAttackType(new AreaStrategy());
+                unit.Aoe = 1;
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool WeGetItYouVape(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.steamer) {
+                unit.AlterAttackType(new CleaveStrategy());
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool RealSteel(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.steamer) {
+                unit.AlterArmour(20);
+                unit.AlterSpeed(-1);
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool AntiballisticShieldMatrix(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.pewpew) {
+                List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
+                foreach (var pos in positions) {
+                    if (allUnits.TryGetValue(pos, out UnitStats friendly)) {
+                        if (friendly.Owner == username) {
+                            friendly.AlterArmour(10);
+                        }
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool PewPewsRevenge(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.pewpew) {
+                unit.AlterSpeed(2);
+                unit.AlterDamage(10);
+                unit.AttackActions += 1;
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool SizeMatters(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.compensator) {
+                unit.AlterPierce(40);
+                unit.AlterRange(2);
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool OverCompensation(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.compensator) {
+                unit.AlterPierce(30);
+                unit.AlterDamage(10);
+                unit.AlterSpeed(2);
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool BothBarrels(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.foundation) {
+                unit.DoublePierce();
+                unit.DoubleDamage();
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool ToTheSkies(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.foundation) {
+                unit.AlterRange(8);
+                unit.Aoe = 1;
+                unit.AlterAttackType(new AreaStrategy());
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool DeathBall(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.powerSurge) {
+                List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 2);
+                foreach (var pos in positions) {
+                    if (allUnits.TryGetValue(pos, out UnitStats friendly)) {
+                        if (friendly.Owner == username) {
+                            friendly.AlterDamage(10);
+                            friendly.AlterArmour(10);
+                        }
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool HighGroundSimulator(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.powerSurge) {
+                List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
+                foreach (var pos in positions) {
+                    if (allUnits.TryGetValue(pos, out UnitStats friendly)) {
+                        if (friendly.Owner == username) {
+                            friendly.AlterDamage(10);
+                            friendly.MovementActions += 1;
+                            friendly.AttackActions += 1;
+                        }
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool DeployWeldATron3000(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.midas) {
+                List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
+                foreach (var pos in positions) {
+                    if (allUnits.TryGetValue(pos, out UnitStats friendly)) {
+                        if (friendly.Owner == username) {
+                            if (!isReplay)
+                                friendly.Heal(30);
+                        }
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool Overclocked(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.midas) {
+                unit.AttackActions += 3;
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool OilSlick(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.claymore) {
+                unit.MovementActions += 1;
+                List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
+                foreach (var pos in positions) {
+                    if (allUnits.TryGetValue(pos, out UnitStats enemy)) {
+                        if (enemy.Owner != username) {
+                                enemy.MovementActions = 0;
+                        }
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static bool PoppinSmoke(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
+        if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (unit.Owner == username && unit.UnitType == UnitType.claymore) {
+                List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 2);
+                foreach (var pos in positions) {
+                    if (allUnits.TryGetValue(pos, out UnitStats enemy)) {
+                        if (enemy.Owner != username) {
+                            enemy.Vision = 0;
+                        }
+                    }
+                }
             }
             else {
                 return false;

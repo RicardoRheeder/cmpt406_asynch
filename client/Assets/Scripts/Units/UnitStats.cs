@@ -26,7 +26,7 @@ public class UnitStats {
     public int Pierce { get; set; }
     public int Range { get; set; }
     //Note: the aoe works as follows: 0 means "just hit the hex you're targeting"
-    public int Aoe { get; private set; }
+    public int Aoe { get; set; }
     public IAttackStrategy attackStrategy;
     private bool moveAfterAttack = false;
 
@@ -164,6 +164,18 @@ public class UnitStats {
 
     public void AlterMoveAfterAttack() {
         this.moveAfterAttack = true;
+    }
+
+    public void AlterAttackType(IAttackStrategy strategy) {
+        this.attackStrategy = strategy;
+    }
+
+    public void DoublePierce() {
+        this.Pierce = this.Pierce * 2;
+    }
+
+    public void DoubleDamage() {
+        this.Damage = this.Damage * 2;
     }
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
