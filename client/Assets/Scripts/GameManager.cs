@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour {
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
-
+        
         boardController = new BoardController();
         boardController.Initialize();
 
@@ -205,17 +205,20 @@ public class GameManager : MonoBehaviour {
     //===================== In game button functionality ===================
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
+        FindObjectOfType<AudioManager>().Play("ButtonPress");
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values)));
         SceneManager.LoadScene("MainMenu");
     }
 
     public void Forfeit() {
+        FindObjectOfType<AudioManager>().Play("ButtonPress");
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
     }
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
+        FindObjectOfType<AudioManager>().Play("ButtonPress");
         SceneManager.LoadScene("MainMenu");
     }
 
