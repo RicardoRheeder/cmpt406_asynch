@@ -235,10 +235,8 @@ public class GameManager : MonoBehaviour {
         cardsSinceLastTurn.Reverse();
         for(int i = 0; i < cardsSinceLastTurn.Count; i++) {
             Action action = cardsSinceLastTurn[i];
-            Debug.Log(action.CardId);
             CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Username, true);
         }
-
     }
 
     //===================== In game button functionality ===================
