@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
-  m_Name: Card1
+  m_Name: HighGroundSimulator
   m_EditorClassIdentifier: 
-  displayName: 
-  effects: []
+  displayName: High Ground Simulator
+  effects:
+  - +10 Attack Damage to adjacent allies
+  - +1 Movement Speed to adjacent allies
+  - +1 Range to adjacent allies
   description: 
   artwork: {fileID: 0}
-  func: 0
-  type: 0
+  func: 161
+  type: 7
   cardCost: 0

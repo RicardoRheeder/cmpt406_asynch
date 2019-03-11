@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
-  m_Name: Card1
+  m_Name: PewPewsRevenge
   m_EditorClassIdentifier: 
-  displayName: 
-  effects: []
+  displayName: PewPew's Revenge
+  effects:
+  - +2 Movement Speed
+  - +10 Attack Damage
+  - +1 Attack Action
   description: 
   artwork: {fileID: 0}
-  func: 0
-  type: 0
+  func: 131
+  type: 4
   cardCost: 0

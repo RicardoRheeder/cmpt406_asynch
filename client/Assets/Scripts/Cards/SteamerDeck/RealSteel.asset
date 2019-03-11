@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
-  m_Name: Card1
+  m_Name: RealSteel
   m_EditorClassIdentifier: 
-  displayName: 
-  effects: []
+  displayName: Real Steel
+  effects:
+  - +20 Armor
+  - -1 Movement Speed
   description: 
   artwork: {fileID: 0}
-  func: 0
-  type: 0
+  func: 121
+  type: 3
   cardCost: 0

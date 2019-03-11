@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
-  m_Name: Card2
+  m_Name: OnTheJuice
   m_EditorClassIdentifier: 
-  displayName: 
-  effects: []
+  displayName: On The Juice
+  effects:
+  - +10 Attack Damage
+  - +10 Armor Penetration
   description: 
   artwork: {fileID: 0}
-  func: 0
-  type: 0
+  func: 101
+  type: 1
   cardCost: 0

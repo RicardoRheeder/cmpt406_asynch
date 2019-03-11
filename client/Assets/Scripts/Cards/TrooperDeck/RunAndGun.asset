@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
-  m_Name: Card2
+  m_Name: RunAndGun
   m_EditorClassIdentifier: 
-  displayName: 
-  effects: []
+  displayName: Run'n'Gun
+  effects:
+  - +2 Movement Speed
+  - +1 Movement Action
+  - +15 Attack Damage
   description: 
   artwork: {fileID: 0}
-  func: 0
-  type: 0
+  func: 100
+  type: 1
   cardCost: 0

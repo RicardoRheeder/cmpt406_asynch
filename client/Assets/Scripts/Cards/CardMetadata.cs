@@ -84,7 +84,7 @@ public enum CardFunction {
 
     //Claymore Cards
     OilSlick = 180, //all units in 1 range of the claymore cannot move next turn
-    SmokeBomb = 181, //all units in 2 range have no sight until their next turn
+    PoppinSmoke = 181, //all units in 2 range have no sight until their next turn
 };
 
 public static class CardMetadata {

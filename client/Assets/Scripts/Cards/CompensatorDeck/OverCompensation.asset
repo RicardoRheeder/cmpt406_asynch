@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
-  m_Name: Card2
+  m_Name: OverCompensation
   m_EditorClassIdentifier: 
-  displayName: 
-  effects: []
+  displayName: Over Compensation
+  effects:
+  - +30 Armor Penetration
+  - +2 Movement Speed
+  - +10 Attack Damage
   description: 
   artwork: {fileID: 0}
-  func: 0
-  type: 0
+  func: 141
+  type: 5
   cardCost: 0

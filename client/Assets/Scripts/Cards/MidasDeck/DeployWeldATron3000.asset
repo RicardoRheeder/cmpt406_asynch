@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81eb0b00d2301bf46bc6666023297025, type: 3}
-  m_Name: Card1
+  m_Name: DeployWeldATron3000
   m_EditorClassIdentifier: 
-  displayName: 
-  effects: []
+  displayName: Deploy Weld-A-Tron 3000
+  effects:
+  - Heal all allies within 1 range of the M.I.D.A.S for 30 Hit Points
   description: 
   artwork: {fileID: 0}
-  func: 0
-  type: 0
+  func: 170
+  type: 8
   cardCost: 0
