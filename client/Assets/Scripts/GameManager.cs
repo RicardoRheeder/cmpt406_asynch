@@ -164,6 +164,7 @@ public class GameManager : MonoBehaviour {
         playerController.Initialize(this, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
         inGameMenu.SetupPanels(isPlacing: true);
+        GameObject.Find("Tabletop").SetActive(false);
 
         fogOfWarController.DeleteFogAtSpawnPoint(spawnPoint, ref boardController);
 
