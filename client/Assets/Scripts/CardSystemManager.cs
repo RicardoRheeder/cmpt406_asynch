@@ -42,6 +42,50 @@ public class CardSystemManager : MonoBehaviour {
     [SerializeField]
     private Card card1;
 
+    private Card Reposition;
+    private Card Retreat;
+    private Card StandYourGround;
+    private Card DoubleDown;
+    private Card Breakthrough;
+    private Card MassEffect;
+    private Card ValiantEffort;
+    private Card ValianterEffort;
+    private Card ValiantestEffort;
+    private Card Oopsie;
+    private Card AnArrowToTheKnee;
+    private Card WeShouldRun;
+    private Card LeftForDead;
+    private Card Suicide;
+    private Card ReallyBadLigma;
+    private Card AKneeToTheArrow;
+    private Card WeShouldRunRightFuckingNow;
+    private Card SurvivalRuleNumber1;
+    private Card BigPP;
+    private Card Fallout;
+    private Card OOPSIE;
+    private Card Ligma;
+    private Card QualifiedDoctor;
+    private Card ItAintMuch;
+    private Card PitifulAdvantage;
+    private Card OnePunch;
+    private Card TakingAdvantage;
+    private Card Formidibility;
+    private Card Oof;
+    private Card Reinforcements;
+    private Card DesperateAttempt;
+    private Card Ehttack;
+    private Card EHTTACK;
+    private Card Multistrike;
+    private Card Snipershot;
+    private Card SecondAttempt;
+    private Card AllInOne;
+    private Card MinorPrice;
+    private Card GirlNextDoor;
+    private Card Slowpoke;
+    private Card EndlessRunner;
+    private Card BigChungus;
+    private Card Foreground;
+
     private static Dictionary<CardFunction, Card> library;
 
     void Awake() {
@@ -51,7 +95,49 @@ public class CardSystemManager : MonoBehaviour {
         TableHand = GameObject.Find("Hand");
 
         library = new Dictionary<CardFunction, Card>() {
-            {CardFunction.card1, card1 }
+            {CardFunction.Reposition, Reposition },
+            {CardFunction.Retreat, Retreat },
+            {CardFunction.StandYourGround, StandYourGround},
+            {CardFunction.DoubleDown, DoubleDown},
+            {CardFunction.Breakthrough, Breakthrough},
+            {CardFunction.MassEffect, MassEffect},
+            {CardFunction.ValiantEffort, ValiantEffort},
+            {CardFunction.ValianterEffort, ValianterEffort },
+            {CardFunction.ValiantestEffort, ValiantestEffort },
+            {CardFunction.Oopsie, Oopsie },
+            {CardFunction.AnArrowToTheKnee, AnArrowToTheKnee},
+            {CardFunction.WeShouldRun, WeShouldRun},
+            {CardFunction.LeftForDead, LeftForDead},
+            {CardFunction.Suicide, Suicide},
+            {CardFunction.ReallyBadLigma, ReallyBadLigma},
+            {CardFunction.AKneeToTheArrow, AKneeToTheArrow},
+            {CardFunction.WeShouldRunRightFuckingNow, WeShouldRunRightFuckingNow},
+            {CardFunction.SurvivalRuleNumber1, SurvivalRuleNumber1},
+            {CardFunction.BigPP, BigPP},
+            {CardFunction.Fallout, Fallout},
+            {CardFunction.OOPSIE, OOPSIE},
+            {CardFunction.Ligma, Ligma},
+            {CardFunction.QualifiedDoctor, QualifiedDoctor },
+            {CardFunction.ItAintMuch, ItAintMuch},
+            {CardFunction.PitifulAdvantage, PitifulAdvantage},
+            {CardFunction.OnePunch, OnePunch},
+            {CardFunction.TakingAdvantage, TakingAdvantage},
+            {CardFunction.Formidibility, Formidibility},
+            {CardFunction.Oof, Oof},
+            {CardFunction.Reinforcements, Reinforcements},
+            {CardFunction.DesperateAttempt, DesperateAttempt},
+            {CardFunction.Ehttack, Ehttack},
+            {CardFunction.EHTTACK, EHTTACK},
+            {CardFunction.Multistrike, Multistrike},
+            {CardFunction.Snipershot, Snipershot},
+            {CardFunction.SecondAttempt, SecondAttempt},
+            {CardFunction.AllInOne, AllInOne},
+            {CardFunction.MinorPrice, MinorPrice},
+            {CardFunction.GirlNextDoor, GirlNextDoor},
+            {CardFunction.Slowpoke, Slowpoke},
+            {CardFunction.EndlessRunner, EndlessRunner},
+            {CardFunction.BigChungus, BigChungus},
+            {CardFunction.Foreground, Foreground},
         };
     }
 
