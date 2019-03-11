@@ -82,7 +82,6 @@ public class CreateGame : MonoBehaviour {
 
     private void SetupCreateScreen(Toggle privateToggle) {
         if(privateToggle.isOn) {
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
             maxPlayersContainer.SetActive(false);
             invitedPlayersContainer.SetActive(true);
             invitePlayersContainer.SetActive(true);
@@ -91,7 +90,6 @@ public class CreateGame : MonoBehaviour {
             confirmButton.onClick.AddListener(() => CreatePrivateGame());
         }
         else {
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
             maxPlayersContainer.SetActive(true);
             invitedPlayersContainer.SetActive(false);
             invitePlayersContainer.SetActive(false);
@@ -119,7 +117,6 @@ public class CreateGame : MonoBehaviour {
         //Check if we are creating a public or a private game
         string gameName = gameNameInput.text;
         if (!StringValidation.ValidateGameName(gameName)) {
-            FindObjectOfType<AudioManager>().Play("ButtonError");
             Debug.Log("invalid game name");
             //Something has to inform the user here
             return;
@@ -145,13 +142,11 @@ public class CreateGame : MonoBehaviour {
             }
             invitedPlayers.Clear();
             opponents.Clear();
-            FindObjectOfType<AudioManager>().Play("ButtonPress");
             GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
             //Maybe pop up a game created message that fades out?
         }
         else {
             //Inform the user that it failed for some reason
-            FindObjectOfType<AudioManager>().Play("ButtonError");
         }
     }
 

@@ -12,7 +12,6 @@ public class Menus : MonoBehaviour {
     }
 
     public void StartScreenStartButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
         SceneManager.LoadScene("LoginScreen");
     }
 
@@ -24,16 +23,13 @@ public class Menus : MonoBehaviour {
         if (!StringValidation.ValidateUsernamePassword(username, password)) {
             //prompt this on the ui, and do nothing
             Debug.Log("username or password is invalid");
-            FindObjectOfType<AudioManager>().Play("ButtonError");
             return;
         }
 
         if (!networkApi.LoginUser(username, password)) {
             //For some reason login failed, we have to figure out what to do here
-            FindObjectOfType<AudioManager>().Play("ButtonError");
             return;
         }
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -45,7 +41,6 @@ public class Menus : MonoBehaviour {
         if(!StringValidation.ValidateUsernamePassword(username, password)) {
             //prompt this on the ui, and do nothing
             Debug.Log("username or password is invalid");
-            FindObjectOfType<AudioManager>().Play("ButtonError");
             return;
         }
 
@@ -53,15 +48,12 @@ public class Menus : MonoBehaviour {
         //We need to figure out the reason and inform the user
         if (!networkApi.CreateUser(username, password)) {
             Debug.Log("Logging in failed, likely because of an invalid username or password");
-            FindObjectOfType<AudioManager>().Play("ButtonError");
             return;
         }
-        FindObjectOfType<AudioManager>().Play("ButtonPress");
         SceneManager.LoadScene("MainMenu");
     }
 
     public void LoginScreenQuitButton() {
-        FindObjectOfType<AudioManager>().Play("ButtonQuit");
         Application.Quit();
     }
 }
