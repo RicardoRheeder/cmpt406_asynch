@@ -75,7 +75,7 @@ public static class CardMetadata {
     public static readonly int GENERIC_CARD_LIMIT = 4;
     public static readonly int UNIQUE_CARD_LIMIT = 3;
 
-    public static readonly Dictionary<CardFunction, CardEffect<Vector2Int, Dictionary<Vector2Int, UnitStats>, string>> CardEffectDictionary = new Dictionary<CardFunction, CardEffect<Vector2Int, Dictionary<Vector2Int, UnitStats>, string>>() {
+    public static readonly Dictionary<CardFunction, CardEffect<Vector2Int, Dictionary<Vector2Int, UnitStats>, string, bool>> CardEffectDictionary = new Dictionary<CardFunction, CardEffect<Vector2Int, Dictionary<Vector2Int, UnitStats>, string, bool>>() {
         { CardFunction.Reposition, Reposition},
         { CardFunction.Retreat , Retreat},
         { CardFunction.StandYourGround, StandYourGround},
@@ -121,7 +121,7 @@ public static class CardMetadata {
         { CardFunction.Foreground, Foreground}
     };
 
-    private static bool Reposition(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Reposition(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(4);
@@ -134,7 +134,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Retreat(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Retreat(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(5);
@@ -148,7 +148,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool StandYourGround(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool StandYourGround(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(-4);
@@ -162,7 +162,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool DoubleDown (Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool DoubleDown (Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AttackActions += 1;
@@ -175,7 +175,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Breakthrough(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Breakthrough(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterPierce(10);
@@ -188,23 +188,25 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool MassEffect(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool MassEffect(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
         foreach (var pos in positions) {
             if (allUnits.TryGetValue(source, out UnitStats unit)) {
                 if (unit.Owner == username) {
-                    unit.Heal(5);
+                    if(!isReplay)
+                        unit.Heal(5);
                 }
             }
         }
         return true;
     }
 
-    private static bool ValiantEffort(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool ValiantEffort(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(1);
-                unit.Heal(10);
+                if (!isReplay)
+                    unit.Heal(10);
             }
             else {
                 return false;
@@ -214,7 +216,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool ValianterEffort(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool ValianterEffort(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(2);
@@ -228,7 +230,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Oopsie(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Oopsie(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(-1);
@@ -242,7 +244,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool AnArrowToTheKnee(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool AnArrowToTheKnee(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AttackActions += 1;
@@ -256,7 +258,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool WeShouldRun(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool WeShouldRun(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
         foreach (var pos in positions) {
             if (allUnits.TryGetValue(source, out UnitStats unit)) {
@@ -268,7 +270,7 @@ public static class CardMetadata {
         return true;
     }
 
-    private static bool LeftForDead(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool LeftForDead(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.MovementActions = 0;
@@ -282,10 +284,11 @@ public static class CardMetadata {
         return false;
     }
     
-    private static bool Suicide(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Suicide(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
-                unit.TakeCardDamage(30);
+                if (!isReplay)
+                    unit.TakeCardDamage(30);
                 unit.AlterArmour(60);
             }
             else {
@@ -296,11 +299,12 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool ReallyBadLigma(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool ReallyBadLigma(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(30);
-                unit.Heal(10);
+                if (!isReplay)
+                    unit.Heal(10);
             }
             else {
                 return false;
@@ -310,7 +314,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool AKneeToTheArrow(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool AKneeToTheArrow(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AttackActions += 1;
@@ -324,7 +328,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool WeShouldRunRightFuckingNow(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool WeShouldRunRightFuckingNow(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
         foreach (var pos in positions) {
             if (allUnits.TryGetValue(source, out UnitStats unit)) {
@@ -336,7 +340,7 @@ public static class CardMetadata {
         return true;
     }
 
-    private static bool SurvivalRuleNumberOne(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool SurvivalRuleNumberOne(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AttackActions += 1;
@@ -350,7 +354,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool BigPP(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool BigPP(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(20);
@@ -364,7 +368,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Fallout(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Fallout(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(30);
@@ -378,7 +382,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool OOPSIE(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool OOPSIE(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(30);
@@ -392,11 +396,12 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Ligma(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Ligma(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(20);
-                unit.Heal(10);
+                if (!isReplay)
+                    unit.Heal(10);
             }
             else {
                 return false;
@@ -406,15 +411,17 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool QualifiedDoctor(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool QualifiedDoctor(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
-                unit.TakeCardDamage(10);
-                foreach(var pos in positions) {
-                    if(allUnits.TryGetValue(pos, out UnitStats friendly)) {
-                        if (friendly.Owner == username) {
-                            friendly.Heal(30);
+                if (!isReplay) {
+                    unit.TakeCardDamage(10);
+                    foreach (var pos in positions) {
+                        if (allUnits.TryGetValue(pos, out UnitStats friendly)) {
+                            if (friendly.Owner == username) {
+                                friendly.Heal(30);
+                            }
                         }
                     }
                 }
@@ -427,12 +434,13 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool ItAintMuch(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool ItAintMuch(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(-1);
                 unit.AlterDamage(-1);
-                unit.Heal(3);
+                if (!isReplay)
+                    unit.Heal(3);
             }
             else {
                 return false;
@@ -442,7 +450,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool PitifulAdvantage(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool PitifulAdvantage(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(1);
@@ -456,7 +464,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool OnePunch(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool OnePunch(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(4);
@@ -470,7 +478,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool TakingAdvantage(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool TakingAdvantage(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(3);
@@ -484,7 +492,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Formidibility(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Formidibility(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterArmour(10);
@@ -498,12 +506,13 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Oof(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Oof(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterArmour(-5);
                 unit.AlterDamage(2);
-                unit.TakeCardDamage(5);
+                if (!isReplay)
+                    unit.TakeCardDamage(5);
             }
             else {
                 return false;
@@ -513,7 +522,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Reinforcements(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Reinforcements(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterArmour(1);
@@ -527,10 +536,11 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool DesperateAttempt(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool DesperateAttempt(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
-                unit.Heal(3);
+                if (!isReplay)
+                    unit.Heal(3);
             }
             else {
                 return false;
@@ -540,7 +550,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Ehttack(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Ehttack(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(3);
@@ -553,7 +563,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool EHTTACK(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool EHTTACK(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(4);
@@ -566,7 +576,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Multistrike(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Multistrike(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterDamage(2);
@@ -581,7 +591,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Snipershot(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Snipershot(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.MovementActions = 0;
@@ -596,7 +606,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool SecondAttempt(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool SecondAttempt(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AttackActions += 1;
@@ -609,7 +619,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool AllInOne(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool AllInOne(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(2);
@@ -624,10 +634,11 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool MinorPrice(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool MinorPrice(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
-                unit.TakeCardDamage(2);
+                if (!isReplay)
+                    unit.TakeCardDamage(2);
                 unit.AlterDamage(20);
             }
             else {
@@ -638,7 +649,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool GirlNextDoor(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool GirlNextDoor(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.Range = 1;
@@ -652,11 +663,12 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool ValiantestEffort(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool ValiantestEffort(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(3);
-                unit.Heal(10);
+                if (!isReplay)
+                    unit.Heal(10);
             }
             else {
                 return false;
@@ -666,7 +678,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Slowpoke(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Slowpoke(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterSpeed(-1);
@@ -680,7 +692,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool EndlessRunner(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool EndlessRunner(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AttackActions = 0;
@@ -694,7 +706,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool BigChungus(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool BigChungus(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterArmour(10);
@@ -708,7 +720,7 @@ public static class CardMetadata {
         return false;
     }
 
-    private static bool Foreground(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static bool Foreground(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AlterArmour(10);

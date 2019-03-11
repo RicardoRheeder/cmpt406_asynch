@@ -223,7 +223,7 @@ public class GameManager : MonoBehaviour {
             }
             else {
                 if (action.Type == ActionType.Card) {
-                    CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Owner);
+                    CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Owner, true);
                 }
             }
         }
@@ -360,7 +360,7 @@ public class GameManager : MonoBehaviour {
 
     public bool UseCard(Vector2Int target, Card card) {
         CardFunction cardId = card.func;
-        if (CardMetadata.CardEffectDictionary[cardId](target, unitPositions, user.Username)) {
+        if (CardMetadata.CardEffectDictionary[cardId](target, unitPositions, user.Username, false)) {
             turnActions.Add(new Action(user.Username, ActionType.Card, target, cardId));
             return true;
         }
