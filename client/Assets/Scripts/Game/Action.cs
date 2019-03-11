@@ -6,8 +6,8 @@ using UnityEngine;
 [DataContract]
 public class Action {
 
-    [DataMember(Name = "owner")]
-    public string Owner { get; private set; }
+    [DataMember(Name = "username")]
+    public string Username { get; private set; }
 
     [DataMember]
     private int actionType;
@@ -31,37 +31,21 @@ public class Action {
     private int ability;
     public GeneralAbility Ability { get; private set; }
 
-    public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile) {
-        this.Owner = owner;
-        this.Type = type;
-        this.OriginXPos = sourceTile.x;
-        this.OriginYPos = sourceTile.y;
-        this.TargetXPos = targetTile.x;
-        this.TargetYPos = targetTile.y;
-    }
-
-    public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile, GeneralAbility ability) {
-        this.Owner = owner;
+    public Action(string username, ActionType type, Vector2Int sourceTile, Vector2Int targetTile, GeneralAbility ability, CardFunction function) {
+        this.Username = username;
         this.Type = type;
         this.OriginXPos = sourceTile.x;
         this.OriginYPos = sourceTile.y;
         this.TargetXPos = targetTile.x;
         this.TargetYPos = targetTile.y;
         this.Ability = ability;
-    }
-
-    public Action(string owner, ActionType type, Vector2Int targetTile, CardFunction function) {
-        this.Owner = owner;
-        this.Type = type;
-        this.TargetXPos = targetTile.x;
-        this.TargetYPos = targetTile.y;
         this.CardId = function;
     }
 
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
         this.Type = (ActionType)actionType;
-        Ability = (GeneralAbility)ability; ;
+        Ability = (GeneralAbility)ability;
         CardId = (CardFunction)cardId;
     }
 

@@ -219,16 +219,24 @@ public class GameManager : MonoBehaviour {
     private void PreprocessCards() {
         List<Action> reverseActions = new List<Action>(state.Actions);
         reverseActions.Reverse();
+        List<Action> cardsSinceLastTurn = new List<Action>();
         for(int i = 0; i < reverseActions.Count; i++) {
             Action action = reverseActions[i];
-            if(action.Owner == user.Username) {
+            if(action.Username == user.Username) {
                 break;
             }
             else {
                 if (action.Type == ActionType.Card) {
-                    CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Owner, true);
+                    cardsSinceLastTurn.Add(action);
                 }
             }
+        }
+
+        cardsSinceLastTurn.Reverse();
+        for(int i = 0; i < cardsSinceLastTurn.Count; i++) {
+            Action action = cardsSinceLastTurn[i];
+            Debug.Log(action.CardId);
+            CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Username, true);
         }
 
     }
@@ -297,14 +305,14 @@ public class GameManager : MonoBehaviour {
 						unit.Move(endpoint, ref boardController);
 					}
                     unitPositions[endpoint] = unit;
-                    turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint));
+                    turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint, GeneralAbility.NONE, CardFunction.NONE));
                 }
             }
         }
     }
 
     public void AttackUnit(Vector2Int source, Vector2Int target) {
-        turnActions.Add(new Action(user.Username, ActionType.Attack, source, target));
+        turnActions.Add(new Action(user.Username, ActionType.Attack, source, target, GeneralAbility.NONE, CardFunction.NONE));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
             if(sourceUnit.AttackActions > 0 && sourceUnit.Owner == user.Username) {
                 List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
@@ -365,14 +373,14 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-        turnActions.Add(new Action(user.Username, ActionType.Ability, source, target, ability));
+        turnActions.Add(new Action(user.Username, ActionType.Ability, source, target, ability, CardFunction.NONE));
         return true;
     }
 
     public bool UseCard(Vector2Int target, Card card) {
         CardFunction cardId = card.func;
         if (CardMetadata.CardEffectDictionary[cardId](target, unitPositions, user.Username, false)) {
-            turnActions.Add(new Action(user.Username, ActionType.Card, target, cardId));
+            turnActions.Add(new Action(user.Username, ActionType.Card, target, target, GeneralAbility.NONE, cardId));
             return true;
         }
         else {

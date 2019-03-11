@@ -6,14 +6,15 @@ using UnityEngine;
 using CardsAndCarnage;
 
 public enum GeneralAbility {
-    TROJAN_SHOT = 0,
-    ARMOUR_PIERCING_AMMO = 1,
-    STEAM_OVERLOAD = 2,
-    THE_BEST_OFFENSE = 3,
-    STICK_AND_POKE = 4,
-    DEEP_PENETRATION = 5,
-    SAHARA_MINE = 6,
-    SANDSTORM = 7
+    NONE = -1,
+    TROJAN_SHOT = 1,
+    ARMOUR_PIERCING_AMMO = 2,
+    STEAM_OVERLOAD = 3,
+    THE_BEST_OFFENSE = 4,
+    STICK_AND_POKE = 5,
+    DEEP_PENETRATION = 6,
+    SAHARA_MINE = 7,
+    SANDSTORM = 8
 };
 
 public enum GeneralPassive {

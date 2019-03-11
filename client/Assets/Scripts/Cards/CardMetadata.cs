@@ -5,6 +5,8 @@ using UnityEngine;
 using CardsAndCarnage;
 
 public enum CardFunction {
+    NONE = -1,
+
     //Generic Cards
     Reposition = 1,
     Retreat = 2, 
