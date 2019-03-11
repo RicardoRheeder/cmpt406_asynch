@@ -121,7 +121,7 @@ public class MainMenu : MonoBehaviour {
 
         //Set up the join button to call the join function with the current state
         pendingJoinButton.onClick.RemoveAllListeners();
-        pendingJoinButton.onClick.AddListener(() => MainMenuJoinPendingGame(state, needToAccept));
+        pendingJoinButton.onClick.AddListener(() => MainMenuJoinPendingGame(state, needToAccept))
     }
 
     public void ActiveGameCellDetailsButton(GameState state) {
