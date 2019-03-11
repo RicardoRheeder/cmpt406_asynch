@@ -173,6 +173,7 @@ func GetPublicGamesSummary(ctx context.Context, limit int) ([]GameState, error) 
 			log.Errorf(ctx, "fetching next Summary: %v", err)
 			break
 		}
+		gs.IsPublic = true
 		gameStates = append(gameStates, gs)
 	}
 

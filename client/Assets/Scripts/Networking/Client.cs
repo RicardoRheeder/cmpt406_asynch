@@ -205,7 +205,7 @@ public class Client : MonoBehaviour, INetwork {
     public Tuple<bool, GameStateCollection> GetPublicGames() {
         BeginRequest();
         HttpWebRequest request = CreatePostRequest(GET_PUBLIC_GAMES);
-        string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100); //just get up to 100 states for now
+        string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100);
         AddJsonToRequest(requestJson, ref request);
 
         try {
