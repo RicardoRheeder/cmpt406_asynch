@@ -409,8 +409,8 @@ For when you are placing your army in a public or private game.
         "cards":        // Note: Should just be the cards that the user now has. (No one elses).  
             {
                 "owner": "ParkerReese1",
-                "hand": ["cardId1", "cardId2", "cardId1"],
-                "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                "hand": [1, 1, 3],
+                "deck": [3, 3, 4, 5],
                 "discard": []
             }
     }
@@ -469,14 +469,14 @@ server know what you did.
             [
                 {
                     "owner": "ParkerReese1",
-                    "hand": ["cardId1", "cardId2", "cardId1"],
-                    "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                    "hand": [1, 1, 3],
+                    "deck": [3, 3, 4, 5],
                     "discard": []
                 },
                 {
                     "owner": "ParkerReese2",
-                    "hand": ["cardId1", "cardId2", "cardId1"],
-                    "deck": ["cardId2", "cardId3", "cardId4", "cardId3"],
+                    "hand": [1, 1, 3],
+                    "deck": [3, 3, 4, 5],
                     "discard": []
                 },
             ],
@@ -517,17 +517,20 @@ type GameState struct {
 	MaxUsers       int       `json:"maxUsers,omitempty"`
 	SpotsAvailable int       `json:"spotsAvailable,omitempty"`
 	IsPublic       bool      `json:"isPublic"`
+	IsComplete     bool      `json:"isComplete"`
 	Users          []string  `json:"users,omitempty"`
 	AcceptedUsers  []string  `json:"acceptedUsers,omitempty"`
 	ReadyUsers     []string  `json:"readyUsers,omitempty"`
 	AliveUsers     []string  `json:"aliveUsers,omitempty"`
 	UsersTurn      string    `json:"usersTurn,omitempty"`
+	InitUnits      []Unit    `json:"initUnits,omitempty"`
 	Units          []Unit    `json:"units,omitempty"`
 	Generals       []Unit    `json:"generals,omitempty"`
 	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
 	CardIDs        []string  `json:"-"`
 	Actions        []Action  `json:"actions,omitempty"`
 	ForfeitTime    int       `json:"forfeitTime,omitempty"`
+	LoseReasons    []Lose    `json:"loseReasons,omitempty"`
 	Created        time.Time `json:"created,omitempty"`
 }
 
@@ -536,30 +539,33 @@ type Unit struct {
 	Owner            string  `json:"owner,omitempty" datastore:",omitempty"`
 	UnitType         int     `json:"unitType,omitempty" datastore:",omitempty"`
 	Health           float32 `json:"health,omitempty" datastore:",omitempty"`
-	XPos             int     `json:"xPos,omitempty" datastore:",omitempty"`
-	YPos             int     `json:"yPos,omitempty" datastore:",omitempty"`
-	Ability1CoolDown int     `json:"ability1CoolDown,omitempty" datastore:",omitempty"`
-	Ability2CoolDown int     `json:"ability2CoolDown,omitempty" datastore:",omitempty"`
+	XPos             int     `json:"xPos" datastore:""`
+	YPos             int     `json:"yPos" datastore:""`
+	Ability1CoolDown int     `json:"ability1CoolDown" datastore:""`
+	Ability2CoolDown int     `json:"ability2CoolDown" datastore:""`
+	Ability1Duration int     `json:"ability1Duration" datastore:""`
+	Ability2Duration int     `json:"ability2Duration" datastore:""`
 }
 
 // Cards contains all the card information on a per user bases
 type Cards struct {
-	ID      string   `json:"id,omitempty" datastore:",omitempty"`
-	Owner   string   `json:"owner,omitempty" datastore:",omitempty"`
-	Hand    []string `json:"hand,omitempty" datastore:",omitempty"`
-	Deck    []string `json:"deck,omitempty" datastore:",omitempty"`
-	Discard []string `json:"discard,omitempty" datastore:",omitempty"`
+	ID      string `json:"id,omitempty" datastore:",omitempty"`
+	Owner   string `json:"owner,omitempty" datastore:",omitempty"`
+	Hand    []int  `json:"hand,omitempty" datastore:",omitempty"`
+	Deck    []int  `json:"deck,omitempty" datastore:",omitempty"`
+	Discard []int  `json:"discard,omitempty" datastore:",omitempty"`
 }
 
 // Action contains the info for a single action in the game
 type Action struct {
-	Username   string     `json:"username,omitempty" datastore:",omitempty"`
-	ActionType ActionType `json:"actionType,omitempty" datastore:",omitempty"`
-	OriginXPos int        `json:"originXPos,omitempty" datastore:",omitempty"`
-	OriginYPos int        `json:"originYPos,omitempty" datastore:",omitempty"`
-	TargetXPos int        `json:"targetXPos,omitempty" datastore:",omitempty"`
-	TargetYPos int        `json:"targetYPos,omitempty" datastore:",omitempty"`
-	CardID     int        `json:"cardId,omitempty" datastore:",omitempty"`
+	Username      string     `json:"username,omitempty" datastore:",omitempty"`
+	ActionType    ActionType `json:"actionType" datastore:""`
+	OriginXPos    int        `json:"originXPos" datastore:""`
+	OriginYPos    int        `json:"originYPos" datastore:""`
+	TargetXPos    int        `json:"targetXPos" datastore:""`
+	TargetYPos    int        `json:"targetYPos" datastore:""`
+	AbilityNumber int        `json:"abilityNumber" datastore:""`
+	CardID        int        `json:"cardId,omitempty" datastore:",omitempty"`
 }
 
 // User is a human player of the game
