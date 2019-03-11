@@ -48,26 +48,43 @@ public enum CardFunction {
     Slowpoke = 40,
     EndlessRunner = 41,
     BigChungus = 42,
-    Foreground = 43
+    Foreground = 43,
 
     //Trooper Cards
+    RunAndGun = 100,
+    OnTheJuice = 101,
 
     //Recon Cards
+    EagleAspect = 110,
+    NoobTube = 111,
 
     //Steamer Cards
+    WeGetItYouVape = 120,
+    RealSteel = 121,
 
     //Pew Pew Cards
+    AntiballisticShieldMatrix = 130,
+    PewPewsRevenge = 131,
 
     //Compensator Cards
+    SizeMatters = 140,
+    OverCompensation = 141,
 
     //Foundation Cards
+    BothBarrels = 150, //double damage double pierce
+    ToTheSkies = 151, //12 range, hits all tiles within 1 range
 
     //Power Surge Cards
+    DeathBall = 160,
+    HighGroundSimulator = 161,
 
     //Midas Cards
+    DeployWeldATron3000 = 170,
+    Overclocked = 171,
 
     //Claymore Cards
-
+    OilSlick = 180, //all units in 1 range of the claymore cannot move next turn
+    SmokeBomb = 181, //all units in 2 range have no sight until their next turn
 };
 
 public static class CardMetadata {

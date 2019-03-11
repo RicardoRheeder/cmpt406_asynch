@@ -28,6 +28,7 @@ public class UnitStats {
     //Note: the aoe works as follows: 0 means "just hit the hex you're targeting"
     public int Aoe { get; private set; }
     public IAttackStrategy attackStrategy;
+    private bool moveAfterAttack = false;
 
     //mobility
     public int MovementSpeed { get; set; }
@@ -93,7 +94,8 @@ public class UnitStats {
     //Returns a value based on the target
     public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, bool specialMove = false) {
         if (!specialMove) {
-            this.MovementActions = 0;
+            if(!moveAfterAttack)
+                this.MovementActions = 0;
             this.AttackActions--;
         }
         return attackStrategy.Attack(this, target);
@@ -158,6 +160,10 @@ public class UnitStats {
     public void AlterRange(int change) {
         this.Range += change;
         this.Range = this.Range < 0 ? 0 : this.Range;
+    }
+
+    public void AlterMoveAfterAttack() {
+        this.moveAfterAttack = true;
     }
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server

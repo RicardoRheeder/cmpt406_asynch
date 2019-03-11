@@ -308,6 +308,8 @@ public class PlayerController : MonoBehaviour {
     public void PlayCard(Card card) {
         this.cardBeingPlayed = card;
         this.interactionState = InteractionState.playingCard;
+
+        //Note: here we have to highlight the appropriate tiles if the card is unique to a unit
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {

@@ -305,9 +305,14 @@ public class GameManager : MonoBehaviour {
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
                         int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
-                        if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
-                            unitPositions.Remove(damage.First);
-                            targetUnit.Kill();
+                        if (modifiedDamage > 0) {
+                            if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
+                                unitPositions.Remove(damage.First);
+                                targetUnit.Kill();
+                            }
+                        }
+                        else {
+                            targetUnit.Heal(modifiedDamage);
                         }
                     }
                 }
