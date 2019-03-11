@@ -16,7 +16,7 @@ public enum BoardType {
     //large maps from 200 to 299
 
     //Random test maps
-    SampleMap = 300,
+    SampleMap = 301,
     Sandbox = 420
 }
 

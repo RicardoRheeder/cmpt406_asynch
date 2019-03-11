@@ -43,8 +43,6 @@ public class CreateGame : MonoBehaviour {
     public void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
 
-        turnDuration = GameObject.Find("DurationTimeDisplay").GetComponent<TMP_Text>();
-        turnSlider = GameObject.Find("DurationSlider").GetComponent<Slider>();
         forfeitDuration = GameObject.Find("ForfeitTimeDisplay").GetComponent<TMP_Text>();
         forfeitSlider = GameObject.Find("ForfeitTimeSlider").GetComponent<Slider>();
         invitePlayerInput = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
@@ -104,12 +102,14 @@ public class CreateGame : MonoBehaviour {
     }
 
     private void PopulateMaxPlayers() {
-        if (Enum.TryParse(mapSelection.options[mapSelection.value].text, out BoardType boardEnum)) {
-            int maxPlayers = BoardMetadata.MaxPlayersDict[boardEnum];
-            List<string> playerOptions = new List<string>(from number in Enumerable.Range(2, maxPlayers + 1) select "" + number);
-            maxPlayersDropdown.ClearOptions();
-            maxPlayersDropdown.AddOptions(playerOptions);
+        BoardType type = BoardMetadata.BoardDisplayNamesReverse[mapSelection.options[mapSelection.value].text];
+        int maxPlayers = BoardMetadata.MaxPlayersDict[type];
+        List<string> playerOptions = new List<string>();
+        for(int i = 2; i <= maxPlayers; i++) {
+            playerOptions.Add("" + i);
         }
+        maxPlayersDropdown.ClearOptions();
+        maxPlayersDropdown.AddOptions(playerOptions);
     }
 
     private void CreatePrivateGame() {
