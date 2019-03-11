@@ -39,6 +39,7 @@ public class CreateGame : MonoBehaviour {
     private GameObject inviedPlayersViewContent;
 
     GameManager manager;
+    AudioManager audioManager;
 
     //We need to find these on awake, since the "Menus.cs" file disables components on start
     public void Awake() {
@@ -58,6 +59,7 @@ public class CreateGame : MonoBehaviour {
         confirmButton = GameObject.Find("ConfirmButton").GetComponent<Button>();
 
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
         //populate the map selection with proper values
         List<string> mapNames = new List<string>();
@@ -82,6 +84,7 @@ public class CreateGame : MonoBehaviour {
 
     private void SetupCreateScreen(Toggle privateToggle) {
         if(privateToggle.isOn) {
+            audioManager.Play("ButtonPress");
             maxPlayersContainer.SetActive(false);
             invitedPlayersContainer.SetActive(true);
             invitePlayersContainer.SetActive(true);
@@ -90,6 +93,7 @@ public class CreateGame : MonoBehaviour {
             confirmButton.onClick.AddListener(() => CreatePrivateGame());
         }
         else {
+            audioManager.Play("ButtonPress");
             maxPlayersContainer.SetActive(true);
             invitedPlayersContainer.SetActive(false);
             invitePlayersContainer.SetActive(false);
@@ -117,6 +121,7 @@ public class CreateGame : MonoBehaviour {
         //Check if we are creating a public or a private game
         string gameName = gameNameInput.text;
         if (!StringValidation.ValidateGameName(gameName)) {
+            audioManager.Play("ButtonError");
             Debug.Log("invalid game name");
             //Something has to inform the user here
             return;
@@ -142,11 +147,13 @@ public class CreateGame : MonoBehaviour {
             }
             invitedPlayers.Clear();
             opponents.Clear();
+            audioManager.Play("ButtonPress");
             GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
             //Maybe pop up a game created message that fades out?
         }
         else {
             //Inform the user that it failed for some reason
+            audioManager.Play("ButtonError");
         }
     }
 

@@ -46,11 +46,11 @@ type Unit struct {
 
 // Cards contains all the card information on a per user bases
 type Cards struct {
-	ID      string   `json:"id,omitempty" datastore:",omitempty"`
-	Owner   string   `json:"owner,omitempty" datastore:",omitempty"`
-	Hand    []string `json:"hand,omitempty" datastore:",omitempty"`
-	Deck    []string `json:"deck,omitempty" datastore:",omitempty"`
-	Discard []string `json:"discard,omitempty" datastore:",omitempty"`
+	ID      string `json:"id,omitempty" datastore:",omitempty"`
+	Owner   string `json:"owner,omitempty" datastore:",omitempty"`
+	Hand    []int  `json:"hand,omitempty" datastore:",omitempty"`
+	Deck    []int  `json:"deck,omitempty" datastore:",omitempty"`
+	Discard []int  `json:"discard,omitempty" datastore:",omitempty"`
 }
 
 // Action contains the info for a single action in the game
