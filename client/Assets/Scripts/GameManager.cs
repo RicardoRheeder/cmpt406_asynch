@@ -105,19 +105,21 @@ public class GameManager : MonoBehaviour {
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
 
-        cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
-        List<CardFunction> hand = new List<CardFunction>();
-        if (state.UserCardsMap.ContainsKey(user.Username)) {
-            hand = state.UserCardsMap[user.Username].Hand;
-        }
-        cardSystem.Initialize(hand, state.UserUnitsMap[user.Username]);
-
         unitPositions = gameBuilder.unitPositions;
         turnActions = new List<Action>();
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, user.Username, state, null, gameBuilder, boardController, isPlacing);
+
+        GameObject.Find("Tabletop").GetComponent<DropZone>().SetPlayerController(playerController);
+
+        cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
+        List<CardFunction> hand = new List<CardFunction>();
+        if (state.UserCardsMap.ContainsKey(user.Username)) {
+            hand = state.UserCardsMap[user.Username].Hand;
+        }
+        cardSystem.Initialize(hand, state.UserUnitsMap[user.Username]);
 
         inGameMenu.SetupPanels(isPlacing: false);
 
@@ -342,11 +344,14 @@ public class GameManager : MonoBehaviour {
         return true;
     }
 
-    public bool UseCard(Vector2Int source, Vector2Int target, int cardId) {
-        CardFunction convertedId = (CardFunction)cardId;
-
-
-        turnActions.Add(new Action(user.Username, ActionType.Card, source, target, convertedId));
-        return true;
+    public bool UseCard(Vector2Int target, Card card) {
+        CardFunction cardId = card.func;
+        if (CardMetadata.CardEffectDictionary[cardId](target, unitPositions, user.Username)) {
+            turnActions.Add(new Action(user.Username, ActionType.Card, target, cardId));
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

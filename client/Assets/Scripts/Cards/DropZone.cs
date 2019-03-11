@@ -5,13 +5,17 @@ using System.Net.NetworkInformation;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
-{
+public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler {
 
     public GameObject go;
 
+    private PlayerController controller;
+
+    public void SetPlayerController(PlayerController controller) {
+        this.controller = controller;
+    }
+
     public void OnPointerEnter(PointerEventData eventData) {
-        //Debug.Log("OnPointerEnter");
         if(eventData.pointerDrag == null)
             return;
 
@@ -23,7 +27,6 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     }
     
     public void OnPointerExit(PointerEventData eventData) {
-        //Debug.Log("OnPointerExit");
         if(eventData.pointerDrag == null)
             return;
 
@@ -37,41 +40,25 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     public void OnDrop(PointerEventData eventData) {
         GameObject droppedCard = eventData.pointerDrag.gameObject;
 
-        if (droppedCard.GetComponent<Draggable>().allowDrag == true)
-        {
-            Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
+        if (droppedCard.GetComponent<Draggable>().allowDrag == true) {
             Draggable d = droppedCard.GetComponent<Draggable>();
-            if (d != null)
-            {
+            if (d != null) {
                 d.parentToReturnTo = this.transform;
             }
 
-            if (this.gameObject.name == "Tabletop")
-            {
+            if (this.gameObject.name == "Tabletop") {
                 Transform cardTemp = droppedCard.transform.Find("CardTemplate");
-                cardTemp.gameObject.GetComponent<Image>().material = droppedCard.GetComponent<CardDisplay_v2>().dissolveMaterial;
-                //            eventData.pointerDrag.transform.GetChild(0).GetComponent<Image>().material = eventData.pointerDrag.GetComponent<CardDisplay_v2>().dissolveMaterial;
+                cardTemp.gameObject.GetComponent<Image>().material = droppedCard.GetComponent<CardDisplay>().dissolveMaterial;
 
-
-                droppedCard.BroadcastMessage("dissolve");
+                droppedCard.BroadcastMessage("Dissolve");
                 Destroy(droppedCard, 3f);
 
-
-                sendToGameManager(droppedCard.GetComponent<CardDisplay_v2>().card.displayName);
-                //            subtractCost(droppedCard.GetComponent<CardDisplay_v2>().cost);
+                controller.PlayCard(droppedCard.GetComponent<CardDisplay>().card);
             }
         }
-       
-
     }
 
-    public void sendToGameManager(String cardName)
-    {
-        print(cardName + " sent to GameManager!");
-    }
-
-    public void subtractCost(int costToSubtract)
-    {
+    public void SubtractCost(int costToSubtract)  {
         print(costToSubtract + " subtracted from available spending.");
     }
 }

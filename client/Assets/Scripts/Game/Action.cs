@@ -50,11 +50,9 @@ public class Action {
         this.Ability = ability;
     }
 
-    public Action(string owner, ActionType type, Vector2Int sourceTile, Vector2Int targetTile, CardFunction function) {
+    public Action(string owner, ActionType type, Vector2Int targetTile, CardFunction function) {
         this.owner = owner;
         this.Type = type;
-        this.OriginXPos = sourceTile.x;
-        this.OriginYPos = sourceTile.y;
         this.TargetXPos = targetTile.x;
         this.TargetYPos = targetTile.y;
         this.CardId = function;

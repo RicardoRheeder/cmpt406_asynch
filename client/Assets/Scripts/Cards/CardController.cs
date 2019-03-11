@@ -32,7 +32,7 @@ public class CardController {
     [OnSerializing()]
     internal void OnSerializingMethod(StreamingContext context) {
         hand = new List<int>();
-        for (int i = 0; i < hand.Count; i++) {
+        for (int i = 0; i < Hand.Count; i++) {
             hand.Add((int)Hand[i]);
         }
     }

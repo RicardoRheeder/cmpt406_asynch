@@ -30,7 +30,6 @@ Transform:
   m_Children:
   - {fileID: 5363877012716917211}
   - {fileID: 5363877013351025618}
-  - {fileID: 4616018355462476388}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -58,7 +57,51 @@ MonoBehaviour:
   claymoreDeck: {fileID: 11400000, guid: 17af8a106ae2641458846416b8758e84, type: 2}
   pewpewDeck: {fileID: 11400000, guid: b4b3190edb84ce34cbc758687a241a5f, type: 2}
   steamerDeck: {fileID: 11400000, guid: 227fe0a58ee694243958d8b82bd3cbeb, type: 2}
-  card1: {fileID: 11400000, guid: ba13818bb4226a040b0055c2a9b968b8, type: 2}
+  Reposition: {fileID: 11400000, guid: dafdb59f71cbfc74b9f1c43c52f94c67, type: 2}
+  Retreat: {fileID: 11400000, guid: 11259ee60982ff140b5e734b23d5c344, type: 2}
+  StandYourGround: {fileID: 11400000, guid: d3de75b9777e5654880a18886ae59bb2, type: 2}
+  DoubleDown: {fileID: 11400000, guid: 95661bbafed600c42bd86dfc307d5dc4, type: 2}
+  Breakthrough: {fileID: 11400000, guid: 3b9a51304e32f8240a343c1b9a4aeba8, type: 2}
+  MassEffect: {fileID: 11400000, guid: c071aad239165814580089032c5ff202, type: 2}
+  ValiantEffort: {fileID: 11400000, guid: e1387f5a3ceac39498e7e19f3c2c6a3a, type: 2}
+  ValianterEffort: {fileID: 11400000, guid: 21f4972e6e67c2046b2715fe0443b137, type: 2}
+  ValiantestEffort: {fileID: 11400000, guid: aad72ce1abdaaf14bbcba8e219877786, type: 2}
+  Oopsie: {fileID: 11400000, guid: 5f70ff7e52c6d284882eb2c2f41bc608, type: 2}
+  AnArrowToTheKnee: {fileID: 11400000, guid: f63aba8db392cf24e909ee4c9c72e2f7, type: 2}
+  WeShouldRun: {fileID: 11400000, guid: 8a3297512c6157344b0d60b52335e427, type: 2}
+  LeftForDead: {fileID: 11400000, guid: 6afec3a02a5b40f47889a3e642ad4b66, type: 2}
+  Suicide: {fileID: 11400000, guid: df66a12859c76bc468aea8c457951b5e, type: 2}
+  ReallyBadLigma: {fileID: 11400000, guid: a433e7572ff7c014da3c239d7d4475e1, type: 2}
+  AKneeToTheArrow: {fileID: 11400000, guid: 749239cde427a1f49beef06bb8874770, type: 2}
+  WeShouldRunRightFuckingNow: {fileID: 11400000, guid: f48ceaf291a89444fa331bdb0c073f96,
+    type: 2}
+  SurvivalRuleNumber1: {fileID: 11400000, guid: 431012c2044cf2b4b9c3b5813504b7d5,
+    type: 2}
+  BigPP: {fileID: 11400000, guid: e9686f17ece50a940a426aad8dfdc051, type: 2}
+  Fallout: {fileID: 11400000, guid: b84cf7b8cecc71f4ca7a0136f91f6125, type: 2}
+  OOPSIE: {fileID: 11400000, guid: 6872bb77234dee245ad556f7cbd648c0, type: 2}
+  Ligma: {fileID: 11400000, guid: 7a8e00864d5dd1249a6176649d9a4e6a, type: 2}
+  QualifiedDoctor: {fileID: 11400000, guid: 4bb9e94d0861531468130b47adfb6173, type: 2}
+  ItAintMuch: {fileID: 11400000, guid: 95151bcaf5561e44498ccaaa92690656, type: 2}
+  PitifulAdvantage: {fileID: 11400000, guid: 73e038d900853484b807557aa288a525, type: 2}
+  OnePunch: {fileID: 11400000, guid: 2b163b07d5727d94f8525b0f374f0539, type: 2}
+  TakingAdvantage: {fileID: 11400000, guid: 3441dc8ba692955458b037d2e9499a25, type: 2}
+  Formidibility: {fileID: 11400000, guid: a3e2c7b23b0f17242b03b46b527d5cbe, type: 2}
+  Oof: {fileID: 11400000, guid: 8b3fbaef262b875479b0b32e4d48721b, type: 2}
+  Reinforcements: {fileID: 11400000, guid: b1f3c8b65b7e94e4589b244d4622dbd4, type: 2}
+  DesperateAttempt: {fileID: 11400000, guid: 429f9f68aadefd740b3dee075870f732, type: 2}
+  Ehttack: {fileID: 11400000, guid: 53d677c8f5f45604591e176808720e15, type: 2}
+  EHTTACK: {fileID: 11400000, guid: 396d9096fa4b31f428a1bed2e10ea783, type: 2}
+  Multistrike: {fileID: 11400000, guid: dcf5ce0c3ce0b1345be505c0cb8562ad, type: 2}
+  Snipershot: {fileID: 11400000, guid: 1b66dd2fb02e04a429d4bd455d899695, type: 2}
+  SecondAttempt: {fileID: 11400000, guid: 21afb44fc6c9983409761e0692b850f8, type: 2}
+  AllInOne: {fileID: 11400000, guid: 2ef55ccfc55ad024a993381bb834fe1a, type: 2}
+  MinorPrice: {fileID: 11400000, guid: 284b415ad8f360b49ac09e84b5bd445a, type: 2}
+  GirlNextDoor: {fileID: 11400000, guid: acf41b8b173f00847a0a3a91cc61c1fe, type: 2}
+  Slowpoke: {fileID: 11400000, guid: 8962aa105469fa74980d7c73ac0cda1d, type: 2}
+  EndlessRunner: {fileID: 11400000, guid: d9ed4be71dae80d43bb8405f2cb6ed54, type: 2}
+  BigChungus: {fileID: 11400000, guid: e37e82d1c984ed844a00ae0f413832a0, type: 2}
+  Foreground: {fileID: 11400000, guid: b57b0aa51b69e2440a34c175a2817df4, type: 2}
 --- !u!1 &5363877012716917206
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,149 +326,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   go: {fileID: 0}
---- !u!1001 &5363877011973217827
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 5363877012354416884}
-    m_Modifications:
-    - target: {fileID: 756382112055692358, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_Name
-      value: Player1DeckPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -339
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -88
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 140
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382112055692354, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: DeckDisplayTemplate
-      value: 
-      objectReference: {fileID: 695489556233628863, guid: 1427e52f6bf8c2b498cf0322eac13289,
-        type: 3}
-    - target: {fileID: 756382111198877832, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 756382111198877832, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231753628806752618, guid: cf954fd825d7d4044977bb1827c20082,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: cf954fd825d7d4044977bb1827c20082, type: 3}
---- !u!224 &4616018355462476388 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 756382112055692359, guid: cf954fd825d7d4044977bb1827c20082,
-    type: 3}
-  m_PrefabInstance: {fileID: 5363877011973217827}
-  m_PrefabAsset: {fileID: 0}

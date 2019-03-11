@@ -75,7 +75,8 @@ public class PlayerController : MonoBehaviour {
         ability1,
         ability2,
         moving,
-        attacking
+        attacking,
+        playingCard
     };
     private InteractionState interactionState;
     private List<int> armyPreset;
@@ -87,6 +88,7 @@ public class PlayerController : MonoBehaviour {
     private bool spawnZoneHighlighted = false;
     private bool isPlacing;
     private string username;
+    private Card cardBeingPlayed;
 
     private List<Vector2Int> highlightedTiles;
 
@@ -206,6 +208,10 @@ public class PlayerController : MonoBehaviour {
                                 }
                                 boardController.ClearHighlighting();
                                 break;
+                            case (InteractionState.playingCard):
+                                if(manager.UseCard(tilePos, cardBeingPlayed))
+                                    interactionState = InteractionState.none;
+                                break;
                             case (InteractionState.none):
                                 if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
                                     if (selectedUnit != null) {
@@ -297,6 +303,11 @@ public class PlayerController : MonoBehaviour {
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
             boardController.HighlightTiles(this.highlightedTiles);
         }
+    }
+
+    public void PlayCard(Card card) {
+        this.cardBeingPlayed = card;
+        this.interactionState = InteractionState.playingCard;
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {

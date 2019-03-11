@@ -5,8 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardDisplay_v2 : MonoBehaviour
-{
+public class CardDisplay : MonoBehaviour {
     public Card card;
 
     public Text nameText;
@@ -31,8 +30,7 @@ public class CardDisplay_v2 : MonoBehaviour
 
 
     // Use this for initialization
-    public void setCard(Card aCard)
-    {
+    public void SetCard(Card aCard) {
         card = aCard;
 
         nameText.text = card.displayName;
@@ -45,24 +43,14 @@ public class CardDisplay_v2 : MonoBehaviour
             effectText.text += effect + '\n';
         }
         cardCostText.text = card.cardCost.ToString();
-//        attackText.text = card.attack.ToString();
-//        healthText.text = card.health.ToString();
-
-
-
     }
 
-    void Start()
-    {
+    void Start() {
         this.transform.Find("CardTemplate").GetComponent<Image>().material = standardMaterial;
     }
 
-    void OnMouseUp()
-    {
+    void OnMouseUp() {
         this.transform.rotation = this.transform.rotation;
         this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, 0);
     }
-
-
-
 }

@@ -1,17 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.UI;
-using Debug = UnityEngine.Debug;
 
 public class CardSystemManager : MonoBehaviour {
 
     [SerializeField]
-    private GameObject CardTemplate; //Card_V2
+    private GameObject CardTemplate;
 
     [SerializeField]
     private Deck genericDeck;
@@ -40,59 +33,95 @@ public class CardSystemManager : MonoBehaviour {
     private GameObject TableHand;
 
     [SerializeField]
-    private Card card1;
-
     private Card Reposition;
+    [SerializeField]
     private Card Retreat;
+    [SerializeField]
     private Card StandYourGround;
+    [SerializeField]
     private Card DoubleDown;
+    [SerializeField]
     private Card Breakthrough;
+    [SerializeField]
     private Card MassEffect;
+    [SerializeField]
     private Card ValiantEffort;
+    [SerializeField]
     private Card ValianterEffort;
+    [SerializeField]
     private Card ValiantestEffort;
+    [SerializeField]
     private Card Oopsie;
+    [SerializeField]
     private Card AnArrowToTheKnee;
+    [SerializeField]
     private Card WeShouldRun;
+    [SerializeField]
     private Card LeftForDead;
+    [SerializeField]
     private Card Suicide;
+    [SerializeField]
     private Card ReallyBadLigma;
+    [SerializeField]
     private Card AKneeToTheArrow;
+    [SerializeField]
     private Card WeShouldRunRightFuckingNow;
+    [SerializeField]
     private Card SurvivalRuleNumber1;
+    [SerializeField]
     private Card BigPP;
+    [SerializeField]
     private Card Fallout;
+    [SerializeField]
     private Card OOPSIE;
+    [SerializeField]
     private Card Ligma;
+    [SerializeField]
     private Card QualifiedDoctor;
+    [SerializeField]
     private Card ItAintMuch;
+    [SerializeField]
     private Card PitifulAdvantage;
+    [SerializeField]
     private Card OnePunch;
+    [SerializeField]
     private Card TakingAdvantage;
+    [SerializeField]
     private Card Formidibility;
+    [SerializeField]
     private Card Oof;
+    [SerializeField]
     private Card Reinforcements;
+    [SerializeField]
     private Card DesperateAttempt;
+    [SerializeField]
     private Card Ehttack;
+    [SerializeField]
     private Card EHTTACK;
+    [SerializeField]
     private Card Multistrike;
+    [SerializeField]
     private Card Snipershot;
+    [SerializeField]
     private Card SecondAttempt;
+    [SerializeField]
     private Card AllInOne;
+    [SerializeField]
     private Card MinorPrice;
+    [SerializeField]
     private Card GirlNextDoor;
+    [SerializeField]
     private Card Slowpoke;
+    [SerializeField]
     private Card EndlessRunner;
+    [SerializeField]
     private Card BigChungus;
+    [SerializeField]
     private Card Foreground;
 
     private static Dictionary<CardFunction, Card> library;
 
     void Awake() {
-        TableTop = GameObject.Find("Tabletop");
-        TableTop.SetActive(false);
-
-        TableHand = GameObject.Find("Hand");
 
         library = new Dictionary<CardFunction, Card>() {
             {CardFunction.Reposition, Reposition },
@@ -142,19 +171,18 @@ public class CardSystemManager : MonoBehaviour {
     }
 
     public void Initialize(List<CardFunction> startingHand, List<UnitStats> playerUnits) {
+        TableTop = GameObject.Find("Tabletop");
+        TableTop.SetActive(false);
+        TableHand = GameObject.Find("Hand");
+
         currentHand = new List<Card>();
         foreach(var card in startingHand) {
-            if(library.TryGetValue(card, out Card prefab)) { //TODO MAKE THIS CRASH ON MISSING CARDS
-                currentHand.Add(prefab);
-            }
-            else {
-                currentHand.Add(card1);
-            }
+            currentHand.Add(library[card]);
         }
 
         foreach(var card in currentHand) {
             GameObject newCard = (GameObject)Instantiate(CardTemplate, transform.position, Quaternion.identity);
-            newCard.GetComponent<CardDisplay_v2>().setCard(currentCard);
+            newCard.GetComponent<CardDisplay>().SetCard(currentCard);
             newCard.GetComponent<Draggable>().SetTableTop(TableTop);
             newCard.transform.SetParent(TableHand.transform, false);
         }
@@ -231,7 +259,7 @@ public class CardSystemManager : MonoBehaviour {
         currentHand.Add(currentCard);
 
         GameObject drawnCard = (GameObject)Instantiate(CardTemplate, transform.position, Quaternion.identity);
-        drawnCard.GetComponent<CardDisplay_v2>().setCard(currentCard);
+        drawnCard.GetComponent<CardDisplay>().SetCard(currentCard);
         drawnCard.GetComponent<Draggable>().SetTableTop(TableTop);
         drawnCard.transform.SetParent(TableHand.transform, false);
     }

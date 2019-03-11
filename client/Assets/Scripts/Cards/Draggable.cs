@@ -27,8 +27,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
 
         if (allowDrag == true) {
-            Debug.Log("OnBeginDrag");
-
             placeholder = new GameObject();
             placeholder.transform.SetParent(this.transform.parent);
             LayoutElement le = placeholder.AddComponent<LayoutElement>();
@@ -50,18 +48,11 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     
     public void OnDrag(PointerEventData eventData) {
         if (allowDrag == true) {
-            //Debug.Log ("OnDrag");
 
             this.transform.position = eventData.position;
-
-//            this.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-////            this.transform.rotation.Set(-30.84f, this.transform.rotation.y, this.transform.rotation.z, this.transform.rotation.w); 
-//            this.transform.position = new Vector3(this.transform.position.x+12, this.transform.position.y, this.transform.position.z );
-
              
             if (this.transform.parent.GetComponent<RectTransform>() != null) {
                 this.GetComponent<RectTransform>().rotation = placeholder.transform.parent.GetComponent<RectTransform>().rotation;
-
             }
 
             if (placeholder.transform.parent != placeholderParent) {
