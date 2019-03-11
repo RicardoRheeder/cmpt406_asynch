@@ -330,6 +330,23 @@ public static class HexUtility {
         return neighbors.Count < 6;
     }
 
+    public static int DirectionToAngle(int direction) {
+        switch(direction) {
+            case 1:
+                return 60;
+            case 2:
+                return 120;
+            case 3:
+                return 180;
+            case 4:
+                return 240;
+            case 5:
+                return 300;
+            default:
+                return 0;
+        }
+    }
+
     //Helper class to say that direction(0) = curPos + cubeDirections[0]
     //DO NOT CHANGE THE ORDER OF THE LIST
     private static readonly List<Vector2Int> oddYOffsetDirections = new List<Vector2Int> {
@@ -362,7 +379,7 @@ public static class HexUtility {
         return new Vector3Int(a.x + b.x, a.y + b.y, a.z + b.z);
     }
 
-    public static Vector3Int cubeScale(Vector3Int a, int k) {
+    private static Vector3Int cubeScale(Vector3Int a, int k) {
         return new Vector3Int(a.x * k, a.y * k, a.z * k);
     }
 

@@ -6,7 +6,8 @@ using UnityEngine.Tilemaps;
 public enum GridTestType { 
     HasTile, 
     Pathfinding,
-    GetTile 
+    GetTile,
+    Rotate 
 }
 
 /*
@@ -18,6 +19,8 @@ public class GridTester : MonoBehaviour {
 
     Vector2Int currTilePosition;
     BoardController boardController;
+
+    int direction = 0;
 
     void Start() {
         boardController = new BoardController();
@@ -39,6 +42,9 @@ public class GridTester : MonoBehaviour {
                     break;
                 case GridTestType.GetTile:
                     TestGetTile();
+                    break;
+                case GridTestType.Rotate:
+                    TestRotation();
                     break;
                 default:
                     break;
@@ -66,21 +72,54 @@ public class GridTester : MonoBehaviour {
         StartCoroutine(PathMovement(path, 5f));
     }
 
+    public void TestRotation() {
+        int dir = direction + 1;
+        int clampedDir = (int)Mathf.Repeat(dir,6);
+        Debug.Log("Rotate to direction: " + clampedDir);
+        StartCoroutine(RotateToDirection(clampedDir));
+    }
+
     IEnumerator PathMovement(List<Vector2Int> path, float speed) {
-         float step = speed * Time.fixedDeltaTime;
-         float t = 0;
-         Vector3 prevPos = transform.position;
-         for(int i = 0; i < path.Count; i++) {
+        float step = speed * Time.fixedDeltaTime;
+        float t = 0;
+        Vector3 prevPos = transform.position;
+        Vector2Int prevTilePos = currTilePosition;
+        int prevDir = direction;
+        Quaternion prevRotation = transform.rotation;
+        for(int i = 0; i < path.Count; i++) {
             currTilePosition = path[i];
             Vector3 worldPos = boardController.CellToWorld(currTilePosition);
+            direction = HexUtility.FindDirection(prevTilePos,currTilePosition);
+            int angle = HexUtility.DirectionToAngle(direction) - HexUtility.DirectionToAngle(prevDir);
+            Debug.Log(angle);
+            Quaternion rot = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
             t = 0;
             while (t <= 1.0f) {
                 t += step;
                 transform.position = Vector3.Lerp(prevPos, worldPos, t);
+                transform.rotation = Quaternion.Lerp(prevRotation, rot, t);
                 yield return new WaitForFixedUpdate();
             }
             prevPos = worldPos;
+            prevTilePos = currTilePosition;
+            prevDir = direction;
+            prevRotation = transform.rotation;
             transform.position = worldPos;
+        }
+    }
+
+    IEnumerator RotateToDirection(int dir) {
+        float step = 5f * Time.fixedDeltaTime;
+        float t = 0;
+        int prevDir = direction;
+        direction = dir;
+        Quaternion prevRotation = transform.rotation;
+        int angle = HexUtility.DirectionToAngle(direction) - HexUtility.DirectionToAngle(prevDir);
+        Quaternion rot = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
+        while (t <= 1.0f) {
+            t += step;
+            transform.rotation = Quaternion.Lerp(prevRotation, rot, t);
+            yield return new WaitForFixedUpdate();
         }
     }
 }
