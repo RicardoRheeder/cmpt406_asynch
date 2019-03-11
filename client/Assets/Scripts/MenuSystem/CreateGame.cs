@@ -124,11 +124,23 @@ public class CreateGame : MonoBehaviour {
         int forfeitTime = (int)forfeitSlider.value;
         int boardId = (int)BoardMetadata.BoardDisplayNamesReverse[mapSelection.options[mapSelection.value].text];
 
-        if (networkApi.CreatePrivateGame(gameName, forfeitTime, opponents, boardId)) {
-            opponents.Clear();
+        int maxPlayers = BoardMetadata.MaxPlayersDict[(BoardType)boardId];
+        if (opponents.Count > maxPlayers - 1) {
+            Debug.Log("game has too many players");
             foreach (var item in invitedPlayers) {
                 Destroy(item.Value);
             }
+            invitedPlayers.Clear();
+            opponents.Clear();
+            return;
+        }
+
+        if (networkApi.CreatePrivateGame(gameName, forfeitTime, opponents, boardId)) {
+            foreach (var item in invitedPlayers) {
+                Destroy(item.Value);
+            }
+            invitedPlayers.Clear();
+            opponents.Clear();
             GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
             //Maybe pop up a game created message that fades out?
         }
