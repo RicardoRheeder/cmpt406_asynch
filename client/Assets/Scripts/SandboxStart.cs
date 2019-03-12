@@ -6,7 +6,7 @@ public class SandboxStart : MonoBehaviour {
     private GameState state;
     private GameManager manager;
     private readonly string stateString ="{\"actions\":null,\"aliveUsers\":[\"katlin\"]," +
-                                "\"boardId\":420,\"cards\":[{\"discardPile\":null,\"drawPile\":null,\"hand\":null," +
+                                "\"boardId\":420,\"cards\":[{\"discardPile\":[],\"drawPile\":[],\"hand\":[]," +
                                 "\"owner\":\"katlin\"}],\"createdBy\":\"katlin\",\"forfeitTime\":-1,\"gameName\":\"lolol\"," +
                                 "\"generals\":[{\"ability1CoolDown\":0,\"ability1Duration\":0,\"ability2CoolDown\":0," +
                                 "\"ability2Duration\":0,\"health\":200,\"owner\":\"katlin\",\"unitType\":103,\"xPos\":-11," +
