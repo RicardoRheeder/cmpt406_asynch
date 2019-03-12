@@ -147,7 +147,7 @@ public class ArmyPreset {
     }
 
     [OnDeserialized]
-    public void OnDeserialized() {
+    public void OnDeserialized(StreamingContext c) {
         Cost = UnitFactory.CalculateCost(Units);
     }
 
@@ -161,5 +161,9 @@ public class ArmyPreset {
 
     public string GetDescription() {
         return Name;
+    }
+
+    public void ReplaceGeneral(int newGeneral){
+        General = newGeneral;
     }
 }

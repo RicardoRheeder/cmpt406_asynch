@@ -233,7 +233,6 @@ public class EndTurnState {
             }
         }
 
-
         List<string> aliveUsers = new List<string>(state.AliveUsers);
         units = new List<UnitStats>();
         generals = new List<UnitStats>();

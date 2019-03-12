@@ -116,7 +116,6 @@ func GetGameState(ctx context.Context, ID string) (*GameState, error) {
 
 	/* Now get the cards for the GameState */
 	cardKeys := []*datastore.Key{}
-
 	for i := 0; i < len(gameState.CardIDs); i++ {
 		cardKeys = append(cardKeys, datastore.NewKey(ctx, "Cards", gameState.CardIDs[i], 0, nil))
 	}

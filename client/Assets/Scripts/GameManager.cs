@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
         this.isPlacing = false;
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
+
         
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
@@ -94,6 +95,8 @@ public class GameManager : MonoBehaviour {
     }
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
+        Debug.Log("Loading state: " + state);
+
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
         

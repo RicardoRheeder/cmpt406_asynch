@@ -61,7 +61,6 @@ type ReadyUnits struct {
 	GameID  string           `json:"gameId"`
 	Units   []gamestate.Unit `json:"units"`
 	General gamestate.Unit   `json:"general"`
-	Cards   gamestate.Cards  `json:"cards"`
 }
 
 // MakeMove holds all the information for doing a turn
