@@ -162,4 +162,8 @@ public class ArmyPreset {
     public string GetDescription() {
         return Name;
     }
+
+    public void replaceGeneral(int newGeneral){
+        General = newGeneral;
+    }
 }
