@@ -81,13 +81,11 @@ public class FogOfWarController {
         oldTiles.AddRange(viewer.GetEdgeTiles());
         for(int i=0; i < oldTiles.Count; i++) {
             clearedTiles.TryGetValue(oldTiles[i], out List<FogViewer> tileList);
-            if(tileList == null) {
-                break;
-            }else if(tileList.Count > 0) {
+            if(tileList != null && tileList.Count > 0) {
                 tileList.Remove(viewer);
                 clearedTiles[oldTiles[i]] = tileList;
             }
-            if(tileList.Count == 0) {
+            if(tileList == null || tileList.Count == 0) {
                 clearedTiles.Remove(oldTiles[i]);
                 FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
                 mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile madEdgeTile);
@@ -120,7 +118,6 @@ public class FogOfWarController {
         for(int i=0; i < edgePositions.Count; i++) {
             clearedTiles.TryGetValue(edgePositions[i],out List<FogViewer> tileList);
             FogTile tile = fogTilemap.GetTile((Vector3Int)edgePositions[i]) as FogTile;
-            // TODO: this looks like it might be setting all new tiles as edge tiles
             if((tileList == null || tileList.Count == 0) && tile != null) {
                 tile.SetAsEdge();
                 fogTilemap.RefreshTile((Vector3Int)edgePositions[i]);
