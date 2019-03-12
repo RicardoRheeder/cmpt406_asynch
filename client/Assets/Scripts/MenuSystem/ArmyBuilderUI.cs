@@ -62,8 +62,7 @@ public class ArmyBuilderUI : MonoBehaviour {
 
     private void ConfigureOnClick(Button button, UnitType type) {
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() =>
-        {
+        button.onClick.AddListener(() => {
             selectedUnit = type;
             UpdateDisplay();
             audioManager.Play("ButtonPress");
@@ -82,11 +81,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         selectedArmy = newPreset;
         GetCost();
         DeleteUnitsHelper();
-    }
-
-    //changes the name of an army
-    public void ChangeName(string newName) {
-        selectedArmy.Name = newName;
     }
 
     public void UpdateDisplay() {
