@@ -9,9 +9,10 @@ public class Sandbox : INetwork{
     public Tuple<bool, GameState> GetGamestate(string id){return new Tuple<bool, GameState>(true, null);}
     
     public PlayerMetadata GetUserInformation(){
-        PlayerMetadata p = new PlayerMetadata();
-        p.Username = "katlin";
-        
+        PlayerMetadata p = new PlayerMetadata {
+            Username = "katlin"
+        };
+
         return p;
     }
 }
