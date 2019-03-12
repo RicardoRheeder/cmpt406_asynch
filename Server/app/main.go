@@ -491,7 +491,7 @@ func handleReadyUnits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.General, ru.Cards)
+	err = ReadyUnits(ctx, username, ru.GameID, ru.Units, ru.General)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

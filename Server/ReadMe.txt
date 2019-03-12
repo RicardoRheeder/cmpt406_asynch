@@ -406,13 +406,6 @@ For when you are placing your army in a public or private game.
                 "xPos": 1,
                 "yPos": 2,
             }
-        "cards":        // Note: Should just be the cards that the user now has. (No one elses).  
-            {
-                "owner": "ParkerReese1",
-                "hand": [1, 1, 3],
-                "deck": [3, 3, 4, 5],
-                "discard": []
-            }
     }
  - Return: Http Resonse Code
 
@@ -465,15 +458,17 @@ server know what you did.
                 }
             ]
         },
-        "cards":        // Note: Should be ALL of the cards for all users.
+        "cards":        // Note: Should be ALL of the cards for all users. (or as many card structs the client knows about so far)
             [
                 {
+                    "id": "abc-123",
                     "owner": "ParkerReese1",
                     "hand": [1, 1, 3],
                     "deck": [3, 3, 4, 5],
                     "discard": []
                 },
                 {
+                    "id": "abc-124",
                     "owner": "ParkerReese2",
                     "hand": [1, 1, 3],
                     "deck": [3, 3, 4, 5],
