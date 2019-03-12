@@ -4,7 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ArmyBuilderUI : MonoBehaviour {
+public class ArmyBuilderUI : MonoBehaviour
+{
 
     //References to the used APIs
     private Client client;
@@ -17,7 +18,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     public ArmyPreset selectedArmy;
 
     //References to the in game panel we populate with unit names
-    private GameObject armyContent;
+    public GameObject armyContent;
     public GameObject friendsListCellPrefab; //Note: this can be a button where we apply a dynamic listener that removes it from the army
 
     //References to texts we update
@@ -31,7 +32,8 @@ public class ArmyBuilderUI : MonoBehaviour {
     private TMP_Text movementNum;
     private TMP_Text unitName;
 
-    public void Awake() {
+    public void Awake()
+    {
         client = GameObject.Find("Networking").GetComponent<Client>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
@@ -54,12 +56,17 @@ public class ArmyBuilderUI : MonoBehaviour {
         ConfigureOnClick(GameObject.Find("FoundationButton").GetComponent<Button>(), UnitType.foundation);
         ConfigureOnClick(GameObject.Find("ClaymoreButton").GetComponent<Button>(), UnitType.claymore);
         ConfigureOnClick(GameObject.Find("MidasButton").GetComponent<Button>(), UnitType.midas);
-        ConfigureOnClick(GameObject.Find("PowerSurgeButton").GetComponent<Button>(), UnitType.powerSurge);
+        ConfigureOnClick(GameObject.Find("General1").GetComponent<Button>(), UnitType.heavy_albarn);
+        ConfigureOnClick(GameObject.Find("General2").GetComponent<Button>(), UnitType.piercing_tungsten);
+        ConfigureOnClick(GameObject.Find("General3").GetComponent<Button>(), UnitType.light_adren);
+        ConfigureOnClick(GameObject.Find("General4").GetComponent<Button>(), UnitType.support_sandman);
     }
 
-    private void ConfigureOnClick(Button button, UnitType type) {
+    private void ConfigureOnClick(Button button, UnitType type)
+    {
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => {
+        button.onClick.AddListener(() =>
+        {
             selectedUnit = type;
             UpdateDisplay();
             audioManager.Play("ButtonPress");
@@ -67,7 +74,8 @@ public class ArmyBuilderUI : MonoBehaviour {
     }
 
     //creates a new army
-    public void CreateArmy() {
+    public void CreateArmy()
+    {
         string newArmyName = "Name Army";
         ArmyPreset newPreset = new ArmyPreset(
             newArmyName,
@@ -77,14 +85,17 @@ public class ArmyBuilderUI : MonoBehaviour {
 
         selectedArmy = newPreset;
         GetCost();
+        DeleteUnitsHelper();
     }
 
     //changes the name of an army
-    public void ChangeName(string newName) {
+    public void ChangeName(string newName)
+    {
         selectedArmy.Name = newName;
     }
 
-    public void UpdateDisplay() {
+    public void UpdateDisplay()
+    {
         unitName.GetComponent<TextMeshProUGUI>().SetText(UnitMetadata.ReadableNames[selectedUnit]);
 
         UnitStats baseUnit = UnitFactory.GetBaseUnit(selectedUnit);
@@ -98,52 +109,91 @@ public class ArmyBuilderUI : MonoBehaviour {
     }
 
     //adds a unit to an army
-    public void AddUnit() {
+    public void AddUnit()
+    {
         //if it is a unit, add it to the army
-        if ((int)selectedUnit < UnitMetadata.GENERAL_THRESHOLD)//generals are above 100
+        if ((int)selectedUnit < UnitMetadata.GENERAL_THRESHOLD)
+        {//generals are above 100
             selectedArmy.AddUnit(selectedUnit);
-
-        GetCost();
-        AddUnitHelper(selectedUnit);
+            GetCost();
+            AddUnitHelper(selectedUnit);
+        }
+        //else, it is a general and you have to replace the other general
+        else
+        {
+            selectedArmy.replaceGeneral((int)selectedUnit);
+            GetCost();
+            DeleteGeneralHelper();
+            AddUnitHelper(selectedUnit);
+        }
     }
 
-    public void DeleteUnit() {
+    public void DeleteUnit()
+    {
         //only remove the unit if it is not a general
         //a general must be in an army
         if ((int)selectedUnit < UnitMetadata.GENERAL_THRESHOLD)
+        {
             selectedArmy.RemoveUnit(selectedUnit);
-
-        GetCost();
-        DeleteUnitHelper(selectedUnit);
+            GetCost();
+            DeleteUnitHelper(selectedUnit);
+        }
     }
 
     //gets the cost of an army
-    public void GetCost() {
+    public void GetCost()
+    {
         stockNum.SetText(UnitFactory.CalculateCost(selectedArmy.Units).ToString());
     }
 
     //TODO: add saving army to server
-    public void SaveArmy() {
+    public void SaveArmy()
+    {
         client.RegisterArmyPreset(selectedArmy);
     }
 
-    public void DeleteArmy() {
+    public void DeleteArmy()
+    {
         client.RemoveArmyPreset(selectedArmy.Id);
     }
 
-    private void AddUnitHelper(UnitType type) {
+    private void AddUnitHelper(UnitType type)
+    {
         GameObject unitText = Instantiate(friendsListCellPrefab);
         unitText.GetComponent<TMP_Text>().SetText(UnitMetadata.ReadableNames[type]);
         unitText.transform.SetParent(armyContent.transform, false);
     }
 
-    public void DeleteUnitHelper(UnitType unit) {
+    public void DeleteUnitHelper(UnitType unit){
         string name = UnitMetadata.ReadableNames[unit];
-        foreach (Transform child in armyContent.transform) {
-            if (child.transform.name != "Content" && child.GetComponent<TextMeshProUGUI>().text == name) {
+        foreach (Transform child in armyContent.transform){
+            if (child.transform.name != "Content" && child.GetComponent<TextMeshProUGUI>().text == name){
                 Destroy(child.gameObject);
                 return;
             }
+        }
+    }
+
+    public void DeleteGeneralHelper()
+    {
+        foreach (Transform child in armyContent.transform)
+        {
+            if (child.transform.name != "Content" &&
+                (child.GetComponent<TextMeshProUGUI>().text == "Albarn" ||
+                child.GetComponent<TextMeshProUGUI>().text == "Tungsten" ||
+                child.GetComponent<TextMeshProUGUI>().text == "Adren-LN" ||
+                child.GetComponent<TextMeshProUGUI>().text == "The Sandman"))
+            {
+                Destroy(child.gameObject);
+                return;
+            }
+        }
+    }
+
+    public void DeleteUnitsHelper(){
+        foreach (Transform child in armyContent.transform){
+            if (child.transform.name != "Content")
+                Destroy(child.gameObject);   
         }
     }
 }
