@@ -7,15 +7,13 @@ using UnityEngine;
 //Make sure there is an Audio Source component on the GameObject
 [RequireComponent(typeof(AudioSource))]
 
-public class pitchManipulator : MonoBehaviour
-{
+public class PitchManipulator : MonoBehaviour {
     [Range (-3f,3f)]
     public int startingPitch;
     public float timeToDecrease;
     public AudioSource audioSource;
 
-    void Start()
-    {
+    void Start() {
         //Fetch the AudioSource from the GameObject
         //audioSource = GetComponent<AudioSource>();
 
@@ -23,15 +21,12 @@ public class pitchManipulator : MonoBehaviour
         audioSource.pitch = startingPitch;
     }
 
-    void Update()
-    {
+    void Update() {
         //While the pitch is over 0, decrease it as time passes.
-        if (audioSource.pitch < 1)
-        {
+        if (audioSource.pitch < 1) {
             audioSource.pitch -= Time.deltaTime * startingPitch * timeToDecrease;
         }
-        else
-        {
+        else {
             audioSource.pitch = 1;
         }
     }

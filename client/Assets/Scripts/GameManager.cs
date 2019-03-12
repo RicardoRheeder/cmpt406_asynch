@@ -86,6 +86,7 @@ public class GameManager : MonoBehaviour {
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
 
+        
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
         SceneManager.sceneLoaded += OnSandboxLoaded;
@@ -95,7 +96,7 @@ public class GameManager : MonoBehaviour {
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
-		GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
+        GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
         
         boardController = new BoardController();
         boardController.Initialize();
@@ -133,7 +134,6 @@ public class GameManager : MonoBehaviour {
     }
     
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
-		SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
     }
 
@@ -184,8 +184,6 @@ public class GameManager : MonoBehaviour {
     private void OnMenuSandbox(Scene scene, LoadSceneMode mode){
         client = GameObject.Find("Networking").GetComponent<Client>();
         this.user = client.GetUserInformation();
-		
-		SceneManager.sceneLoaded -= OnMenuSandbox;
     }
 
     //===================== Preprocessing functions ===================
@@ -333,9 +331,6 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-		if(state.boardId == BoardType.Sandbox){
-		    sourceUnit.AttackActions += 1;
-        }
     }
 
     //Takes in a position and an ability and does the ability
@@ -346,12 +341,7 @@ public class GameManager : MonoBehaviour {
                 AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
                     if(GetUnitOnTile(target, out UnitStats targetUnit)) {
-                        if(state.boardId == BoardType.Sandbox){
-							general.Ability1Cooldown = 0;
-						}
-						else{
-							general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-						}
+                        general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
                         abilityFunction(ref targetUnit, unitPositions, user.Username);
                     }
                     else {
@@ -359,12 +349,7 @@ public class GameManager : MonoBehaviour {
                     }
                 }
                 else {
-					if(state.boardId == BoardType.Sandbox){
-						general.Ability1Cooldown = 0;
-					}
-					else{
-						general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-					}
+                    general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
                     abilityFunction(ref general, unitPositions, user.Username);
                 }
             }
@@ -374,12 +359,7 @@ public class GameManager : MonoBehaviour {
                 AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
                     if (GetUnitOnTile(target, out UnitStats targetUnit)) {
-                        if(state.boardId == BoardType.Sandbox){
-							general.Ability2Cooldown = 0;
-						}
-						else{
-							general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-						}
+                        general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
                         abilityFunction(ref targetUnit, unitPositions, user.Username);
                     }
                     else {
@@ -387,12 +367,7 @@ public class GameManager : MonoBehaviour {
                     }
                 }
                 else {
-					if(state.boardId == BoardType.Sandbox){
-						general.Ability2Cooldown = 0;
-					}
-					else{
-						general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-					}
+                    general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
                     abilityFunction(ref general, unitPositions, user.Username);
                 }
             }
