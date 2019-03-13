@@ -87,6 +87,10 @@ public class GameState {
             else
                 UserUnitsMap.Add(unit.Owner, new List<UnitStats>() { unit });
         }
+        foreach(var user in AliveUsers) {
+            if (!UserUnitsMap.ContainsKey(user))
+                UserUnitsMap[user] = new List<UnitStats>();
+        }
 
         if (generals == null) generals = new List<UnitStats>();
         UserGeneralsMap = new Dictionary<string, List<UnitStats>>();
