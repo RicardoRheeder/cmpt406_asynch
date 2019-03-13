@@ -56,28 +56,37 @@ public class GameManager : MonoBehaviour {
     //The method called when the load game button is pressed
     //Since we are loading the correct scene, we have to setup the onsceneloaded function
     public void LoadGame(GameState state) {
-        this.state = state;
-        this.user = client.GetUserInformation();
-        this.isPlacing = false;
+        Tuple<bool, GameState> result = client.GetGamestate(state.id);
+        if (result.First) {
+            this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
+            this.user = client.GetUserInformation();
+            this.isPlacing = false;
 
-        SceneManager.sceneLoaded -= OnMenuLoaded;
-        SceneManager.sceneLoaded += OnGameLoaded;
+            SceneManager.sceneLoaded -= OnMenuLoaded;
+            SceneManager.sceneLoaded += OnGameLoaded;
 
-        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
+            SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
+        }
     }
 
     //This method is called when we need to place units
     public void PlaceUnits(GameState state, ArmyPreset selectedPreset) {
-        this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
-        this.user = client.GetUserInformation();
-        this.selectedPreset = selectedPreset;
-        this.isPlacing = true;
-        this.placedUnits = new List<UnitStats>();
+        Tuple<bool, GameState> result = client.GetGamestate(state.id);
+        if(result.First) {
+            this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
+            this.user = client.GetUserInformation();
+            this.selectedPreset = selectedPreset;
+            this.isPlacing = true;
+            this.placedUnits = new List<UnitStats>();
 
-        SceneManager.sceneLoaded -= OnMenuLoaded;
-        SceneManager.sceneLoaded += OnPlaceUnits;
+            SceneManager.sceneLoaded -= OnMenuLoaded;
+            SceneManager.sceneLoaded += OnPlaceUnits;
 
-        SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
+            SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
+        }
+        else {
+            //something bad happened
+        }
     }
     
     public void StartSandbox(GameState state){

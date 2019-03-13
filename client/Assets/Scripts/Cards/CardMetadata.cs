@@ -689,7 +689,7 @@ public static class CardMetadata {
     private static bool GirlNextDoor(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
-                unit.Range = 1;
+                unit.AlterRange(1);
                 unit.AlterDamage(30);
             }
             else {
@@ -733,7 +733,7 @@ public static class CardMetadata {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username) {
                 unit.AttackActions = 0;
-                unit.MovementSpeed = 2 * unit.MovementSpeed;
+                unit.DoubleSpeed();
             }
             else {
                 return false;
