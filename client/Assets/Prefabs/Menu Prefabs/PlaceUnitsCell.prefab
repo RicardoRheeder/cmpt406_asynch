@@ -51,9 +51,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: 100
-  m_MinHeight: -1
+  m_MinHeight: 0
   m_PreferredWidth: 135
-  m_PreferredHeight: -1
+  m_PreferredHeight: 30
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -306,11 +306,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2962149949241020966}
     m_Modifications:
-    - target: {fileID: 7918711945486396909, guid: d99b6cefa1a27e04f8cab8f667bde6e5,
-        type: 3}
-      propertyPath: m_Name
-      value: PlaceUnitsCellText
-      objectReference: {fileID: 0}
     - target: {fileID: 7351972005800149650, guid: d99b6cefa1a27e04f8cab8f667bde6e5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -415,6 +410,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918711945486396909, guid: d99b6cefa1a27e04f8cab8f667bde6e5,
+        type: 3}
+      propertyPath: m_Name
+      value: PlaceUnitsCellText
       objectReference: {fileID: 0}
     - target: {fileID: 1001017733875112149, guid: d99b6cefa1a27e04f8cab8f667bde6e5,
         type: 3}
