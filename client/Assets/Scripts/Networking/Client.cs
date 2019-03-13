@@ -82,7 +82,8 @@ public class Client : MonoBehaviour, INetwork {
     //Sends new user information to the server
     public bool CreateUser(string username, string password) {
         BeginRequest();
-        user = new Credentials(username, password);
+        string encryptedPassword = StringEncryption.EncryptString(password);
+        user = new Credentials(username, encryptedPassword);
         HttpWebRequest request = CreatePostRequestWithoutAuth(CREATE_USER);
         string requestJson = JsonConversion.ConvertObjectToJson<Credentials>(user);
         AddJsonToRequest(requestJson, ref request);
@@ -109,9 +110,12 @@ public class Client : MonoBehaviour, INetwork {
     //This function should cache the username within the client so that we can use it in future functions
     public bool LoginUser(string username, string password) {
         BeginRequest();
+
+        string encryptedPassword = StringEncryption.EncryptString(password);
+
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + GET_USER_INFO);
         request.Method = "GET";
-        request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes( username + ":" + password));
+        request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(Encoding.Default.GetBytes( username + ":" + encryptedPassword));
 
         //We might want to do more logic here depending on what the various status codes we have mean
         //This will come in place later once more functionality is in place
