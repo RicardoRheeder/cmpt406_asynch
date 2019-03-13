@@ -54,6 +54,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         ConfigureOnClick(GameObject.Find("FoundationButton").GetComponent<Button>(), UnitType.foundation);
         ConfigureOnClick(GameObject.Find("ClaymoreButton").GetComponent<Button>(), UnitType.claymore);
         ConfigureOnClick(GameObject.Find("MidasButton").GetComponent<Button>(), UnitType.midas);
+        ConfigureOnClick(GameObject.Find("PowerSurgeButton").GetComponent<Button>(), UnitType.powerSurge);
         ConfigureOnClick(GameObject.Find("General1").GetComponent<Button>(), UnitType.heavy_albarn);
         ConfigureOnClick(GameObject.Find("General2").GetComponent<Button>(), UnitType.piercing_tungsten);
         ConfigureOnClick(GameObject.Find("General3").GetComponent<Button>(), UnitType.light_adren);
