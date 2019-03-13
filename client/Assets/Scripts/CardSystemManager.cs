@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 #pragma warning disable 649
@@ -223,16 +225,28 @@ public class CardSystemManager : MonoBehaviour {
         };
     }
 
-    public void Initialize(List<CardFunction> startingHand, List<UnitStats> playerUnits) {
+    public void Initialize(List<CardFunction> startingHand, List<UnitStats> playerUnits, string id) {
         TableTop = GameObject.Find("Tabletop");
         TableTop.SetActive(false);
         TableHand = GameObject.Find("Hand");
 
-        currentHand = new List<Card>();
-        foreach(var card in startingHand) {
-            currentHand.Add(library[card]);
+        bool previouslyGeneratedCards = false;
+        string path = CardMetadata.FILE_PATH_BASE + "/." + id;
+        if(System.IO.File.Exists(path)) {
+            previouslyGeneratedCards = true;
+            StreamReader reader = new StreamReader(path);
+            string cardData = reader.ReadToEnd();
+            string[] cards = cardData.Split('X');
+            startingHand.Clear();
+            for(int i = 0; i < CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT; i++) {
+                startingHand.Add((CardFunction)int.Parse(cards[i]));
+            }
         }
 
+        currentHand = new List<Card>();
+        foreach (var card in startingHand) {
+            currentHand.Add(library[card]);
+        }
         int genericCards = 0;
         int uniqueCards = 0;
         foreach (var card in currentHand) {
@@ -248,20 +262,30 @@ public class CardSystemManager : MonoBehaviour {
             }
         }
 
-        List<UnitType> types = new List<UnitType>();
-        for(int i = 0; i < playerUnits.Count; i++) {
-            UnitStats unit = playerUnits[i];
-            if((int)unit.UnitType < UnitMetadata.GENERAL_THRESHOLD) {
-                types.Add(unit.UnitType);
+        if (!previouslyGeneratedCards) {
+            List<UnitType> types = new List<UnitType>();
+            for (int i = 0; i < playerUnits.Count; i++) {
+                UnitStats unit = playerUnits[i];
+                if ((int)unit.UnitType < UnitMetadata.GENERAL_THRESHOLD) {
+                    types.Add(unit.UnitType);
+                }
             }
-        }
-        while (genericCards < CardMetadata.GENERIC_CARD_LIMIT) {
-            DrawCard();
-            genericCards++;
-        }
-        while (uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT) {
-            DrawCard(types[Random.Range(0, types.Count)]);
-            uniqueCards++;
+            while (genericCards < CardMetadata.GENERIC_CARD_LIMIT) {
+                DrawCard();
+                genericCards++;
+            }
+            while (uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT) {
+                DrawCard(types[Random.Range(0, types.Count)]);
+                uniqueCards++;
+            }
+
+            StreamWriter writer = new StreamWriter(path);
+            StringBuilder cardData = new StringBuilder();
+            foreach(var card in currentHand) {
+                cardData.Append((int)card.func + "X");
+            }
+            writer.WriteLine(cardData.ToString());
+            writer.Close();
         }
     }
 

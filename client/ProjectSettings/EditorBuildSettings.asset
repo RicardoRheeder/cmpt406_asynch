@@ -27,7 +27,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Maps/InGameMaps/Map_Med_Lowlands.unity
     guid: d30c947c41e4aa147b77f8afcc5190fd
   - enabled: 1
-    path: Assets/Scenes/Maps/InGameMaps/Map_Med_Pinnicle.unity
+    path: Assets/Scenes/Maps/InGameMaps/Map_Med_Pinnacle.unity
     guid: 324c003adc037ee47be49b370f426d7d
   - enabled: 1
     path: Assets/Scenes/Maps/InGameMaps/Map_Med_Valley.unity

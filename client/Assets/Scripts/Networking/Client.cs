@@ -108,10 +108,13 @@ public class Client : MonoBehaviour, INetwork {
 
     //Logs the specified user in
     //This function should cache the username within the client so that we can use it in future functions
-    public bool LoginUser(string username, string password) {
+    public bool LoginUser(string username, string password, bool encryptPassword = false) {
         BeginRequest();
 
-        string encryptedPassword = StringEncryption.EncryptString(password);
+        string encryptedPassword = password;
+        if(encryptPassword) {
+            encryptedPassword = StringEncryption.EncryptString(password);
+        }
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL + GET_USER_INFO);
         request.Method = "GET";
@@ -127,7 +130,7 @@ public class Client : MonoBehaviour, INetwork {
             }
             UserInformation = JsonConversion.CreateFromJson<PlayerMetadata>(responseJson, typeof(PlayerMetadata));
             UserInformation.Username = username;
-            user = new Credentials(username, password);
+            user = new Credentials(username, encryptedPassword);
             EndRequest();
             return true;
         }
@@ -516,6 +519,7 @@ public class Client : MonoBehaviour, INetwork {
         using (var reader = new StreamReader(response.GetResponseStream())) {
             responseJson = reader.ReadToEnd();
         }
+        Debug.Log(user.password);
         Debug.Log(string.Format("Call to endpoint {0} failed: {1} {2}; {3}",
             endpoint,
             (int)response.StatusCode,

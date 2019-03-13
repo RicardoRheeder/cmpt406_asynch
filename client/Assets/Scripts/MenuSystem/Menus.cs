@@ -30,7 +30,7 @@ public class Menus : MonoBehaviour {
             return;
         }
 
-        if (!networkApi.LoginUser(username, password)) {
+        if (!networkApi.LoginUser(username, password, encryptPassword:true)) {
             //For some reason login failed, we have to figure out what to do here
             audioManager.Play("ButtonError");
             return;

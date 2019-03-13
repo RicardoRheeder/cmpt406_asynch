@@ -91,6 +91,11 @@ public enum CardFunction {
 
 public static class CardMetadata {
 
+#if UNITY_EDITOR
+    public static readonly string FILE_PATH_BASE = "Assets/Resources";
+#else
+    public static readonly string FILE_PATH_BASE = "Resources";
+#endif
     public static readonly int GENERIC_CARD_LIMIT = 4;
     public static readonly int UNIQUE_CARD_LIMIT = 3;
 
