@@ -19,5 +19,5 @@ MonoBehaviour:
   description: 
   artwork: {fileID: 0}
   func: 26
-  type: 0
+  type: -2
   cardCost: 0

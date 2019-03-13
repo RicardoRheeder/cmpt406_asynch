@@ -233,16 +233,13 @@ public class CardSystemManager : MonoBehaviour {
             currentHand.Add(library[card]);
         }
 
-        foreach(var card in currentHand) {
-            GameObject newCard = (GameObject)Instantiate(CardTemplate, transform.position, Quaternion.identity);
-            newCard.GetComponent<CardDisplay>().SetCard(currentCard);
-            newCard.GetComponent<Draggable>().SetTableTop(TableTop);
-            newCard.transform.SetParent(TableHand.transform, false);
-        }
-
         int genericCards = 0;
         int uniqueCards = 0;
         foreach (var card in currentHand) {
+            GameObject newCard = (GameObject)Instantiate(CardTemplate, transform.position, Quaternion.identity);
+            newCard.GetComponent<CardDisplay>().SetCard(card);
+            newCard.GetComponent<Draggable>().SetTableTop(TableTop);
+            newCard.transform.SetParent(TableHand.transform, false);
             if (card.type == UnitType.none) {
                 genericCards++;
             }
@@ -250,6 +247,7 @@ public class CardSystemManager : MonoBehaviour {
                 uniqueCards++;
             }
         }
+
         List<UnitType> types = new List<UnitType>();
         for(int i = 0; i < playerUnits.Count; i++) {
             UnitStats unit = playerUnits[i];
