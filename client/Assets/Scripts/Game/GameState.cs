@@ -191,14 +191,10 @@ public class ReadyUnitsGameState {
     [DataMember]
     private UnitStats general;
 
-    [DataMember]
-    private CardController cards;
-
-    public ReadyUnitsGameState(string gameId, List<UnitStats> units, UnitStats general, CardController cards) {
+    public ReadyUnitsGameState(string gameId, List<UnitStats> units, UnitStats general) {
         this.gameId = gameId;
         this.units = units;
         this.general = general;
-        this.cards = cards;
     }
 }
 

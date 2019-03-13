@@ -314,4 +314,8 @@ public class CardSystemManager : MonoBehaviour {
         drawnCard.GetComponent<Draggable>().SetTableTop(TableTop);
         drawnCard.transform.SetParent(TableHand.transform, false);
     }
+
+    public void PlayCard(Card card) {
+        currentHand.Remove(card);
+    }
 }

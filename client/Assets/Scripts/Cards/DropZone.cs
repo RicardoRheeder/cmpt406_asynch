@@ -10,9 +10,14 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     public GameObject go;
 
     private PlayerController controller;
+    private CardSystemManager manager;
 
     public void SetPlayerController(PlayerController controller) {
         this.controller = controller;
+    }
+
+    public void SetCardSystemManager(CardSystemManager manager) {
+        this.manager = manager;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -53,7 +58,9 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                 droppedCard.BroadcastMessage("Dissolve");
                 Destroy(droppedCard, 3f);
 
-                controller.PlayCard(droppedCard.GetComponent<CardDisplay>().card);
+                Card card = droppedCard.GetComponent<CardDisplay>().card;
+                controller.PlayCard(card);
+                manager.PlayCard(card);
             }
         }
     }

@@ -126,13 +126,16 @@ public class GameManager : MonoBehaviour {
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, isPlacing);
 
-        GameObject.Find("Tabletop").GetComponent<DropZone>().SetPlayerController(playerController);
-
         cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
         List<CardFunction> hand = new List<CardFunction>();
         if (state.UserCardsMap.ContainsKey(user.Username)) {
             hand = state.UserCardsMap[user.Username].Hand;
         }
+
+        DropZone dropZone = GameObject.Find("Tabletop").GetComponent<DropZone>();
+        dropZone.SetPlayerController(playerController);
+        dropZone.SetCardSystemManager(cardSystem);
+
         cardSystem.Initialize(hand, state.UserUnitsMap[user.Username]);
 
         inGameMenu.SetupPanels(isPlacing: false);
@@ -275,9 +278,8 @@ public class GameManager : MonoBehaviour {
         //This function will have to figure out how to send the unit data to the server, and confirm that we are going
         //to be playing in this game
         UnitStats general = placedUnits[0];
-        CardController cards = CardFactory.GetCardControllerFromUnits(placedUnits, user.Username);
         placedUnits.RemoveAt(0);
-        ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general, cards);
+        ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general);
         client.ReadyUnits(readyState);
         SceneManager.LoadScene("MainMenu");
     }
