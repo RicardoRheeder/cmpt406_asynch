@@ -160,12 +160,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scrollZone: 100
   sensitivity: 0.7
-  zoomSensitivity: 10
+  zoomSensitivity: 80
   smoothFactor: 0.2
   zoomLimits: {x: 10, y: 100}
   useCursor: 1
   maxRotationSpeed: 100
-  tilemap: {fileID: 0}
 --- !u!1 &6525353359766537967
 GameObject:
   m_ObjectHideFlags: 0

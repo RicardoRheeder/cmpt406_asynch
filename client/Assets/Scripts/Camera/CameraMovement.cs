@@ -17,8 +17,8 @@ public class CameraMovement : MonoBehaviour {
     public float sensitivity = 1f;
 
     [Tooltip("Multiplier for camera zoom sensitivity.")]
-    [Range(0f, 20f)]
-    public float zoomSensitivity = 10f;
+    [Range(0f, 80f)]
+    public float zoomSensitivity = 40f;
 
     [Tooltip("Smoothing factor.")]
     [Range(0f, 10f)]

@@ -63,11 +63,11 @@ MonoBehaviour:
     type: 3}
   midasPrefab: {fileID: 6445304330403168614, guid: 7c830741b3a2247748cad4e620b63fee,
     type: 3}
-  heavyAlbarnPrefab: {fileID: 4919777667069319217, guid: 81aec7d2f2d004dd4abb9eb91e2ac69c,
+  heavyAlbarnPrefab: {fileID: 6396279381953640858, guid: 5b65bc59e7a6a4e31a710cdd9d312281,
     type: 3}
-  piercingTungstenPrefab: {fileID: 3069374731066623444, guid: 798afdcebfafb9248beab8f67c219e1f,
+  piercingTungstenPrefab: {fileID: 5037938709512185577, guid: 70abdc17d951b4533a41346e131a1aac,
     type: 3}
-  lightAdrenPrefab: {fileID: 8621414826371495951, guid: 0000ea8501e0441129aa24f8ec3eaaf4,
+  lightAdrenPrefab: {fileID: 1407151921584394377, guid: cdb356508a70946a18bce1afad087d8d,
     type: 3}
-  supportSandmanPrefab: {fileID: 6445304330403168614, guid: 7c830741b3a2247748cad4e620b63fee,
+  supportSandmanPrefab: {fileID: 1205910381523156972, guid: a1df1964ca522470d959d428a6ad4a6d,
     type: 3}
