@@ -80,11 +80,11 @@ public static class GeneralMetadata {
     //Note: to work with function pointers all of these functions have to take the same arguments, even if they don't require them all
     private static void TrojanShot(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
         source.attackStrategy = new LineStrategy();
-        source.Range = 20;
+        source.AlterRange(20);
     }
 
     private static void ArmourPiercingAmmo(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
-        source.Pierce += 10;
+        source.AlterPierce(10);
     }
 
     private static void SteamOverload(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
@@ -116,7 +116,7 @@ public static class GeneralMetadata {
     }
 
     private static void TheBestOffense(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
-        source.Damage += source.Armour;
+        source.AlterDamage(source.Armour);
     }
 
     private static void StickAndPoke(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
@@ -124,7 +124,7 @@ public static class GeneralMetadata {
             UnitStats unit = allUnits[key];
             if(unit.UnitClass == UnitClass.light && unit.Owner == username) {
                 unit.MovementActions += 1;
-                unit.MovementSpeed += 3;
+                unit.AlterSpeed(3);
             }
         }
     }
@@ -159,7 +159,6 @@ public static class GeneralMetadata {
         {UnitType.support_sandman, GeneralPassive.SUPPORT_SANDMAN }
     };
 
-    //TODO, finish implementing passives
     public static readonly Dictionary<GeneralPassive, PassiveAction<Dictionary<Vector2Int, UnitStats>, string>> PassiveEffectsDictionary = new Dictionary<GeneralPassive, PassiveAction<Dictionary<Vector2Int, UnitStats>, string>>() {
         {GeneralPassive.HEAVY_ALBARN, AlbarnPassive },
         {GeneralPassive.PIERCING_TUNGSTEN, TungstenPassive },
@@ -170,21 +169,27 @@ public static class GeneralMetadata {
     private static void AlbarnPassive(Dictionary<Vector2Int, UnitStats> unitPositions, string username) {
         foreach (var key in unitPositions.Keys) {
             UnitStats unit = unitPositions[key];
-            unit.Armour += 5;
+            if (unit.Owner == username) {
+                unit.AlterArmour(5);
+            }
         }
     }
 
     private static void TungstenPassive(Dictionary<Vector2Int, UnitStats> unitPositions, string username) {
         foreach (var key in unitPositions.Keys) {
             UnitStats unit = unitPositions[key];
-            unit.Vision += 2;
+            if (unit.Owner == username) {
+                unit.AlterVision(2);
+            }
         }
     }
 
     private static void AdrenPassive(Dictionary<Vector2Int, UnitStats> unitPositions, string username) {
         foreach (var key in unitPositions.Keys) {
             UnitStats unit = unitPositions[key];
-            unit.MovementSpeed += 2;
+            if (unit.Owner == username) {
+                unit.AlterSpeed(2);
+            }
         }
     }
 

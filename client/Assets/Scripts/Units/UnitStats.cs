@@ -32,6 +32,7 @@ public class UnitStats {
 
     //mobility
     public int MovementSpeed { get; set; }
+    private int defaultSpeed;
     public Vector2Int Position { get; private set; }
     //xPos and yPos are the variables sent by the server, so we have to convert them to position
     [DataMember]
@@ -77,6 +78,7 @@ public class UnitStats {
         this.Pierce = pierce;
         this.Aoe = aoe;
         this.MovementSpeed = movementSpeed;
+        this.defaultSpeed = movementSpeed;
         this.Cost = cost;
         this.attackStrategy = attackStrategy;
         this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
@@ -143,8 +145,15 @@ public class UnitStats {
     }
 
     public void AlterSpeed(int change) {
-        this.MovementSpeed += change;
-        this.MovementSpeed = this.MovementSpeed < 0 ? 0 : this.MovementSpeed;
+        if(this.defaultSpeed != 0) {
+            this.MovementSpeed += change;
+            this.MovementSpeed = this.MovementSpeed < 0 ? 0 : this.MovementSpeed;
+        }
+    }
+
+    public void AlterVision(int change) {
+        this.Vision += change;
+        this.Vision = this.Vision < 0 ? 0 : this.Vision;
     }
 
     public void AlterPierce(int change) {
@@ -158,8 +167,10 @@ public class UnitStats {
     }
 
     public void AlterRange(int change) {
-        this.Range += change;
-        this.Range = this.Range < 0 ? 0 : this.Range;
+        if(!attackStrategy.GetType().Equals(typeof(CleaveStrategy))) { //if we have a cleave strategy, we want the range to be 1
+            this.Range += change;
+            this.Range = this.Range < 1 ? 1 : this.Range;
+        }
     }
 
     public void AlterMoveAfterAttack() {
@@ -167,6 +178,9 @@ public class UnitStats {
     }
 
     public void AlterAttackType(IAttackStrategy strategy) {
+        if(strategy.GetType().Equals(typeof(CleaveStrategy))) { //if we are a cleave unit, our range should always be 1
+            this.Range = 1;
+        }
         this.attackStrategy = strategy;
     }
 
@@ -178,11 +192,14 @@ public class UnitStats {
         this.Damage = this.Damage * 2;
     }
 
+    public void DoubleSpeed() {
+        this.MovementSpeed = 2 * this.MovementSpeed;
+    }
+
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
 	   if(!specialMove)
             this.MovementActions--;
-		
 		
         this.Position = position;
         MyUnit.MoveTo(position,ref board);
@@ -209,6 +226,7 @@ public class UnitStats {
         this.Range = baseUnit.Range;
         this.Aoe = baseUnit.Aoe;
         this.MovementSpeed = baseUnit.MovementSpeed;
+        this.defaultSpeed = baseUnit.MovementSpeed;
     }
 
     //Note: the unit type will never change so we don't have to update the int value

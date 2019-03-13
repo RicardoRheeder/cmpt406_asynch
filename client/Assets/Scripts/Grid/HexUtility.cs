@@ -160,6 +160,15 @@ public static class HexUtility {
         return neighbors;
     }
 
+    // Returns a list containing the positions of all immediate neighbours to a tile
+    public static List<Vector2Int> GetNeighborsWithoutMap(Vector2Int hex, bool ignoreElevation) {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+        for (int i = 0; i <= 5; i++) {
+            neighbors.Add(NeighborTile(hex, i));
+        }
+        return neighbors;
+    }
+
     public static List<Vector2Int> GetNeighborPositions(Vector2Int hex) {
         List<Vector2Int> neighbors = new List<Vector2Int>();
         for(int i = 0; i<=5; i++){

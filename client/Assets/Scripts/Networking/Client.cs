@@ -191,6 +191,7 @@ public class Client : MonoBehaviour, INetwork {
             using (var reader = new StreamReader(response.GetResponseStream())) {
                 responseJson = reader.ReadToEnd();
             }
+            Debug.Log(responseJson);
             GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
             EndRequest();
             return new Tuple<bool, GameStateCollection>(true, states);
