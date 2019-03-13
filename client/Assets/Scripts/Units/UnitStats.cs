@@ -100,6 +100,7 @@ public class UnitStats {
                 this.MovementActions = 0;
             this.AttackActions--;
         }
+        MyUnit.Attack(target);
         return attackStrategy.Attack(this, target);
     }
 
