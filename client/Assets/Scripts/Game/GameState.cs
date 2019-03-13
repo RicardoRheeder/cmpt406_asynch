@@ -224,14 +224,17 @@ public class EndTurnState {
         gameId = state.id;
         actions = turnActions;
 
-        this.cards = new List<CardController>() {
-            new CardController(currentUser, cards)
-        };
-        foreach(CardController controller in state.UserCardsMap.Values) {
+        CardController userCards = new CardController(currentUser, cards);
+        this.cards = new List<CardController>();
+        foreach (CardController controller in state.UserCardsMap.Values) {
             if(controller.owner != currentUser) {
                 this.cards.Add(controller);
             }
+            else {
+                userCards.id = controller.id;
+            }
         }
+        this.cards.Add(userCards);
 
         List<string> aliveUsers = new List<string>(state.AliveUsers);
         units = new List<UnitStats>();
