@@ -934,10 +934,10 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 		}
 
 		/* For the first move of every player the cards will not have an id, must assign that */
-		for _, c := range cards {
-			if c.ID == "" {
-				c.ID = common.GetRandomID()
-				gs.CardIDs = append(gs.CardIDs, c.ID)
+		for i := 0; i < len(cards); i++ {
+			if cards[i].ID == "" {
+				cards[i].ID = common.GetRandomID()
+				gs.CardIDs = append(gs.CardIDs, cards[i].ID)
 			}
 		}
 
