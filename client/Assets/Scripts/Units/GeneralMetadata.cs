@@ -49,7 +49,7 @@ public static class GeneralMetadata {
         { GeneralAbility.ARMOUR_PIERCING_AMMO, 6 },
         { GeneralAbility.STEAM_OVERLOAD, 3 },
         { GeneralAbility.THE_BEST_OFFENSE, 2 },
-        { GeneralAbility.STICK_AND_POKE, 3 },
+        { GeneralAbility.STICK_AND_POKE, 5 },
         { GeneralAbility.DEEP_PENETRATION, 3 },
         { GeneralAbility.SAHARA_MINE, 4 },
         { GeneralAbility.SANDSTORM, 4 }
@@ -70,9 +70,9 @@ public static class GeneralMetadata {
         { GeneralAbility.TROJAN_SHOT, 0 },
         { GeneralAbility.ARMOUR_PIERCING_AMMO, 10 },
         { GeneralAbility.STEAM_OVERLOAD, 10 },
-        { GeneralAbility.THE_BEST_OFFENSE, 10 },
+        { GeneralAbility.THE_BEST_OFFENSE, 100 },
         { GeneralAbility.STICK_AND_POKE, 0 },
-        { GeneralAbility.DEEP_PENETRATION, 10 },
+        { GeneralAbility.DEEP_PENETRATION, 100 },
         { GeneralAbility.SAHARA_MINE, 2 },
         { GeneralAbility.SANDSTORM, 0 }
     };

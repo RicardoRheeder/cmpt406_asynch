@@ -39,7 +39,7 @@ public static class ArmyBuilder {
     }
 
 
-    private static readonly string presetOneName = "Steamer Ray Vaughn";
+    private static readonly string presetOneName = "Steamy Ray Vaughn";
     private static readonly ArmyPreset presetOne = new ArmyPreset(
         presetOneName,
         new List<int>() {
