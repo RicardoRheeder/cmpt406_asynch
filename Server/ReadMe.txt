@@ -513,20 +513,21 @@ type GameState struct {
 	SpotsAvailable int       `json:"spotsAvailable,omitempty"`
 	IsPublic       bool      `json:"isPublic"`
 	IsComplete     bool      `json:"isComplete"`
-	Users          []string  `json:"users,omitempty"`
-	AcceptedUsers  []string  `json:"acceptedUsers,omitempty"`
-	ReadyUsers     []string  `json:"readyUsers,omitempty"`
-	AliveUsers     []string  `json:"aliveUsers,omitempty"`
-	UsersTurn      string    `json:"usersTurn,omitempty"`
-	InitUnits      []Unit    `json:"initUnits,omitempty"`
-	Units          []Unit    `json:"units,omitempty"`
-	Generals       []Unit    `json:"generals,omitempty"`
+	Users          []string  `json:"users,omitempty" datastore:",noindex,omitempty"`
+	AcceptedUsers  []string  `json:"acceptedUsers,omitempty" datastore:",noindex,omitempty"`
+	ReadyUsers     []string  `json:"readyUsers,omitempty" datastore:",noindex,omitempty"`
+	AliveUsers     []string  `json:"aliveUsers,omitempty" datastore:",noindex,omitempty"`
+	UsersTurn      string    `json:"usersTurn,omitempty" datastore:",noindex"`
+	InitUnits      []Unit    `json:"initUnits,omitempty" datastore:",noindex,omitempty"`
+	Units          []Unit    `json:"units,omitempty" datastore:",noindex,omitempty"`
+	Generals       []Unit    `json:"generals,omitempty" datastore:",noindex,omitempty"`
 	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
-	CardIDs        []string  `json:"-"`
-	Actions        []Action  `json:"actions,omitempty"`
-	ForfeitTime    int       `json:"forfeitTime,omitempty"`
-	LoseReasons    []Lose    `json:"loseReasons,omitempty"`
-	Created        time.Time `json:"created,omitempty"`
+	CardIDs        []string  `json:"-" datastore:",noindex,omitempty"`
+	ActiveEffects  []Effect  `json:"activeEffects,omitempty" datastore:",noindex,omitempty"`
+	Actions        []Action  `json:"actions,omitempty" datastore:",noindex,omitempty"`
+	ForfeitTime    int       `json:"forfeitTime,omitempty" datastore:",noindex"`
+	LoseReasons    []Lose    `json:"loseReasons,omitempty" datastore:",noindex,omitempty"`
+	Created        time.Time `json:"created,omitempty" datastore:",noindex,omitempty"`
 }
 
 // Unit is a game piece on the board
@@ -540,6 +541,7 @@ type Unit struct {
 	Ability2CoolDown int     `json:"ability2CoolDown" datastore:""`
 	Ability1Duration int     `json:"ability1Duration" datastore:""`
 	Ability2Duration int     `json:"ability2Duration" datastore:""`
+	Direction        int     `json:"direction" datastore:""`
 }
 
 // Cards contains all the card information on a per user bases
@@ -563,13 +565,38 @@ type Action struct {
 	CardID        int        `json:"cardId,omitempty" datastore:",omitempty"`
 }
 
+// Lose is a struct to say who lost and why
+type Lose struct {
+	Username string     `json:"username,omitempty" datastore:",omitempty"`
+	Reason   LoseReason `json:"reason" datastore:""`
+}
+
+// Effect is a struct used to say what tiles have additional effects present on them
+type Effect struct {
+	Owner        string `json:"owner,omitempty" datastore:",omitempty"`
+	Type         int    `json:"type" datastore:""`
+	XPos         int    `json:"xPos" datastore:""`
+	YPos         int    `json:"yPos" datastore:""`
+	DurationLeft int    `json:"durationLeft" datastore:""`
+}
+
 // User is a human player of the game
 type User struct {
-	Username            string
-	Password            string
-	Friends             []string
-	ActiveGames         []string
-	PendingPrivateGames []string
-	PendingPublicGames  []string
-	CompletedGames      []string
+	Username            string       `json:"username,omitempty" datastore:",omitempty"`
+	Password            string       `json:"password,omitempty" datastore:",omitempty"`
+	Friends             []string     `json:"friends,omitempty" datastore:",omitempty,noindex"`
+	ActiveGames         []string     `json:"activeGames,omitempty" datastore:",omitempty,noindex"`
+	PendingPrivateGames []string     `json:"pendingPrivateGames,omitempty" datastore:",omitempty,noindex"`
+	PendingPublicGames  []string     `json:"pendingPublicGames,omitempty" datastore:",omitempty,noindex"`
+	CompletedGames      []string     `json:"completedGames,omitempty" datastore:",omitempty,noindex"`
+	ArmyPresets         []ArmyPreset `json:"armyPresets,omitempty" datastore:"-"`
+	ArmyPresetIDs       []string     `json:"-" datastore:",omitempty,noindex"`
+}
+
+// ArmyPreset is an army created and saved by the user for future use
+type ArmyPreset struct {
+	ID      string `json:"id,omitempty" datastore:",omitempty,noindex"`
+	Name    string `json:"name,omitempty" datastore:",omitempty,noindex"`
+	Units   []int  `json:"units,omitempty" datastore:",omitempty,noindex"`
+	General int    `json:"general,omitempty" datastore:",omitempty,noindex"`
 }
