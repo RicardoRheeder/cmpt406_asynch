@@ -65,12 +65,13 @@ type ReadyUnits struct {
 
 // MakeMove holds all the information for doing a turn
 type MakeMove struct {
-	GameID      string             `json:"gameId"`
-	KilledUsers []string           `json:"killedUsers"`
-	Units       []gamestate.Unit   `json:"units"`
-	Generals    []gamestate.Unit   `json:"generals"`
-	Cards       []gamestate.Cards  `json:"cards"`
-	Actions     []gamestate.Action `json:"actions"`
+	GameID        string             `json:"gameId"`
+	KilledUsers   []string           `json:"killedUsers"`
+	Units         []gamestate.Unit   `json:"units"`
+	Generals      []gamestate.Unit   `json:"generals"`
+	Cards         []gamestate.Cards  `json:"cards"`
+	ActiveEffects []gamestate.Effect `json:"activeEffects"`
+	Actions       []gamestate.Action `json:"actions"`
 }
 
 // MultiStatesResponse is here because client requires that states to be one field nested

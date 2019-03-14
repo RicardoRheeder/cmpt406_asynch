@@ -36,6 +36,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		InitUnits:      []Unit{},
 		Generals:       []Unit{},
 		CardIDs:        []string{},
+		ActiveEffects:  []Effect{},
 		Actions:        []Action{},
 		ForfeitTime:    forfeitTime,
 		LoseReasons:    []Lose{},
@@ -74,14 +75,16 @@ func UpdateGameState(ctx context.Context, ID string, updateGameStateFunc UpdateG
 		}
 
 		/* Put the changes to cards */
-		cardKeys := []*datastore.Key{}
-		for i := 0; i < len(gameState.Cards); i++ {
-			cardKeys = append(cardKeys, datastore.NewKey(ctx, "Cards", gameState.Cards[i].ID, 0, nil))
-		}
-		_, err = datastore.PutMulti(ctx, cardKeys, gameState.Cards)
-		if err != nil {
-			log.Errorf(ctx, "Failed to Put (update) the Cards: %s", ID)
-			return err
+		if len(gameState.Cards) > 0 {
+			cardKeys := []*datastore.Key{}
+			for i := 0; i < len(gameState.Cards); i++ {
+				cardKeys = append(cardKeys, datastore.NewKey(ctx, "Cards", gameState.Cards[i].ID, 0, nil))
+			}
+			_, err = datastore.PutMulti(ctx, cardKeys, gameState.Cards)
+			if err != nil {
+				log.Errorf(ctx, "Failed to Put (update) the Cards: %s", ID)
+				return err
+			}
 		}
 
 		/* Put the changes to gamestate */
