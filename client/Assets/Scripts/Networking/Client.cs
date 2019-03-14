@@ -519,7 +519,6 @@ public class Client : MonoBehaviour, INetwork {
         using (var reader = new StreamReader(response.GetResponseStream())) {
             responseJson = reader.ReadToEnd();
         }
-        Debug.Log(user.password);
         Debug.Log(string.Format("Call to endpoint {0} failed: {1} {2}; {3}",
             endpoint,
             (int)response.StatusCode,
