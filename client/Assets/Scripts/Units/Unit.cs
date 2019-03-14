@@ -11,7 +11,7 @@ public class Unit : MonoBehaviour {
     Vector2Int currTilePosition;
     FogViewer fogViewer;
 
-    public int direction = 0;
+    private int currDirection = 0;
 
     
     void Awake() {
@@ -21,8 +21,7 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(Vector2Int targetPosition) {
-        int dir = HexUtility.FindDirection(currTilePosition,targetPosition);
+    public void Attack(int dir) {
         TurnToDirection(dir);
     }
 
@@ -31,9 +30,8 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the movement animation
-    public void MoveTo(Vector2Int endPosition, ref BoardController board) {
-        List<Vector2Int> path = HexUtility.Pathfinding(currTilePosition,endPosition,board.GetTilemap(),false);
-        StartCoroutine(PathMovement(path, board));
+    public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board) {
+        StartCoroutine(PathMovement(path,board));
     }
 
     public void PlaceAt(Vector2Int position, ref BoardController board) {
@@ -47,19 +45,27 @@ public class Unit : MonoBehaviour {
         StartCoroutine(RotateToDirection(dir));
     }
 
-    IEnumerator PathMovement(List<Vector2Int> path, BoardController board) {
+    // Turns unit to direction without animation. Should be used during game building
+    public void SnapToDirection(int dir) {
+        int prevDir = currDirection;
+        currDirection = dir;
+        int angle = HexUtility.DirectionToAngle(currDirection) - HexUtility.DirectionToAngle(prevDir);
+        transform.rotation = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
+    }
+
+    IEnumerator PathMovement(List<Tuple<Vector2Int,int>> path, BoardController board) {
          float step = moveSpeed * Time.fixedDeltaTime;
          float t = 0;
          Vector3 prevPos = transform.position;
          Vector2Int prevTilePos = currTilePosition;
-         int prevDir = direction;
+         int prevDir = currDirection;
          Quaternion prevRotation = transform.rotation;
          for(int i = 0; i < path.Count; i++) {
-            currTilePosition = path[i];
+            currTilePosition = path[i].First;
+            currDirection = path[i].Second;
             fogViewer.SetPosition(currTilePosition);
             Vector3 worldPos = board.CellToWorld(currTilePosition);
-            direction = HexUtility.FindDirection(prevTilePos,currTilePosition);
-            int angle = HexUtility.DirectionToAngle(direction) - HexUtility.DirectionToAngle(prevDir);
+            int angle = HexUtility.DirectionToAngle(currDirection) - HexUtility.DirectionToAngle(prevDir);
             Quaternion rot = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
             t = 0;
             while (t <= 1.0f) {
@@ -70,7 +76,7 @@ public class Unit : MonoBehaviour {
             }
             prevPos = worldPos;
             prevTilePos = currTilePosition;
-            prevDir = direction;
+            prevDir = currDirection;
             prevRotation = transform.rotation;
             transform.position = worldPos;
         }
@@ -79,10 +85,10 @@ public class Unit : MonoBehaviour {
     IEnumerator RotateToDirection(int dir) {
         float step = moveSpeed * Time.fixedDeltaTime;
         float t = 0;
-        int prevDir = direction;
-        direction = dir;
+        int prevDir = currDirection;
+        currDirection = dir;
         Quaternion prevRotation = transform.rotation;
-        int angle = HexUtility.DirectionToAngle(direction) - HexUtility.DirectionToAngle(prevDir);
+        int angle = HexUtility.DirectionToAngle(currDirection) - HexUtility.DirectionToAngle(prevDir);
         Quaternion rot = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
         while (t <= 1.0f) {
             t += step;

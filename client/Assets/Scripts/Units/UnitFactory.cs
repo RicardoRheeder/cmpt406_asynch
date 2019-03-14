@@ -147,6 +147,8 @@ public static class UnitFactory {
     private readonly static int SUPPORT_SANDMAN_COST = 0;
     private readonly static IAttackStrategy SUPPORT_SANDMAN_ATTACK_STRATEGY = new AreaStrategy();
 
+    private readonly static int DEFAULT_DIRECTION = 0;
+
     private static UnitStats CreateTrooper() {
         return new UnitStats(
             UnitType.trooper,
@@ -159,6 +161,7 @@ public static class UnitFactory {
             TROOPER_SPEED,
             TROOPER_VISION,
             TROOPER_COST,
+            DEFAULT_DIRECTION,
             TROOPER_ATTACK_STRATEGY
         );
     }
@@ -175,6 +178,7 @@ public static class UnitFactory {
             REACON_SPEED,
             REACON_VISION,
             REACON_COST,
+            DEFAULT_DIRECTION,
             REACON_ATTACK_STRATEGY
         );
     }
@@ -191,6 +195,7 @@ public static class UnitFactory {
             STEAMER_SPEED,
             STEAMER_VISION,
             STEAMER_COST,
+            DEFAULT_DIRECTION,
             STEAMER_ATTACK_STRATEGY
         );
     }
@@ -207,6 +212,7 @@ public static class UnitFactory {
             PEWPEW_SPEED,
             PEWPEW_VISION,
             PEWPEW_COST,
+            DEFAULT_DIRECTION,
             PEWPEW_ATTACK_STRATEGY
         );
     }
@@ -223,6 +229,7 @@ public static class UnitFactory {
             COMPENSATOR_SPEED,
             COMPENSATOR_VISION,
             COMPENSATOR_COST,
+            DEFAULT_DIRECTION,
             COMPENSATOR_ATTACK_STRATEGY
         );
     }
@@ -239,6 +246,7 @@ public static class UnitFactory {
             FOUNDATION_SPEED,
             FOUNDATION_VISION,
             FOUNDATION_COST,
+            DEFAULT_DIRECTION,
             FOUNDATION_ATTACK_STRATEGY
         );
     }
@@ -255,6 +263,7 @@ public static class UnitFactory {
             POWER_SURGE_SPEED,
             POWER_SURGE_VISION,
             POWER_SURGE_COST,
+            DEFAULT_DIRECTION,
             POWER_SURGE_ATTACK_STRATEGY
         );
     }
@@ -271,6 +280,7 @@ public static class UnitFactory {
             MIDAS_SPEED,
             MIDAS_VISION,
             MIDAS_COST,
+            DEFAULT_DIRECTION,
             MIDAS_ATTACK_STRATEGY
         );
     }
@@ -287,6 +297,7 @@ public static class UnitFactory {
             CLAYMORE_SPEED,
             CLAYMORE_VISION,
             CLAYMORE_COST,
+            DEFAULT_DIRECTION,
             CLAYMORE_ATTACK_STRATEGY
         );
     }
@@ -303,6 +314,7 @@ public static class UnitFactory {
             HEAVY_ALBARN_SPEED,
             HEAVY_ALBARN_VISION,
             HEAVY_ALBARN_COST,
+            DEFAULT_DIRECTION,
             HEAVY_ALBARN_ATTACK_STRATEGY
         );
     }
@@ -319,6 +331,7 @@ public static class UnitFactory {
             PIERCING_TUNGSTEN_SPEED,
             PIERCING_TUNGSTEN_VISION,
             PIERCING_TUNGSTEN_COST,
+            DEFAULT_DIRECTION,
             PIERCING_TUNGSTEN_ATTACK_STRATEGY
         );
     }
@@ -335,6 +348,7 @@ public static class UnitFactory {
             LIGHT_ADREN_SPEED,
             LIGHT_ADREN_VISION,
             LIGHT_ADREN_COST,
+            DEFAULT_DIRECTION,
             LIGHT_ADREN_ATTACK_STRATEGY
         );
     }
@@ -351,6 +365,7 @@ public static class UnitFactory {
             SUPPORT_SANDMAN_SPEED,
             SUPPORT_SANDMAN_VISION,
             SUPPORT_SANDMAN_COST,
+            DEFAULT_DIRECTION,
             SUPPORT_SANDMAN_ATTACK_STRATEGY
         );
     }

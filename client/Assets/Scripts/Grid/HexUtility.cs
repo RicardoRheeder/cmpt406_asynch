@@ -303,6 +303,45 @@ public static class HexUtility {
         return path;
     }
 
+    // Finds a path with direction between starting and ending position
+    // only paths to non-null tiles on the argument tilemap
+    // if ignoreElevation is false, it won't path to an elevation difference >= 2
+    public static List<Tuple<Vector2Int,int>> PathfindingWithDirection(Vector2Int start, Vector2Int end, Tilemap tilemap, bool ignoreElevation){
+        PriorityQueue<PriorityTuple> frontier = new PriorityQueue<PriorityTuple>();
+        frontier.Enqueue(new PriorityTuple(0,start));
+        Dictionary<Vector2Int,Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+        Dictionary<Vector2Int, int> costSoFar = new Dictionary<Vector2Int, int>();
+        
+        cameFrom.Add(start, start);
+        costSoFar.Add(start, 0);
+        while(frontier.Count()>0){
+            Vector2Int current = frontier.Dequeue().GetHex();
+            if (current == end){
+                break;
+            }
+            List<Vector2Int> neighbors = GetNeighbors(current, tilemap, ignoreElevation);
+            foreach(Vector2Int next in neighbors){
+                int newCost = costSoFar[current] + 1;
+                if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next]){
+                    costSoFar[next] = newCost;
+                    int heuristicFunction = (int)HexDistance(next, end);
+                    int evalFunction = newCost + heuristicFunction;
+                    frontier.Enqueue(new PriorityTuple(evalFunction, next));
+                    cameFrom[next] = current;
+                }
+            }
+        }
+        List<Tuple<Vector2Int,int>> path = new List<Tuple<Vector2Int,int>> ();
+        Vector2Int stepBack = end;
+        while(cameFrom.ContainsKey(stepBack) && cameFrom[stepBack] != stepBack) {
+            int direction = FindDirection(cameFrom[stepBack],stepBack);
+            path.Insert(0, new Tuple<Vector2Int, int>(stepBack,direction));
+            stepBack = cameFrom[stepBack];
+        }
+
+        return path;
+    }
+
     // Returns true if elevated movement between two tiles is possible, false otherwise
     public static bool IsElevationReachable(Vector2Int startPos, Vector2Int endPos, Tilemap tilemap) {
         if(tilemap == null) {
