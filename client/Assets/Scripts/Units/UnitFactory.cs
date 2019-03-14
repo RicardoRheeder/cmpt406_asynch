@@ -12,7 +12,7 @@ public static class UnitFactory {
     private readonly static int TROOPER_AOE = 0;
     private readonly static int TROOPER_SPEED = 6;
     private readonly static int TROOPER_VISION = 5;
-    private readonly static int TROOPER_COST = 1;
+    private readonly static int TROOPER_COST = 2;
     private readonly static IAttackStrategy TROOPER_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int REACON_HP = 85;
@@ -23,7 +23,7 @@ public static class UnitFactory {
     private readonly static int REACON_AOE = 0;
     private readonly static int REACON_SPEED = 9;
     private readonly static int REACON_VISION = 5;
-    private readonly static int REACON_COST = 1;
+    private readonly static int REACON_COST = 2;
     private readonly static IAttackStrategy REACON_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int STEAMER_HP = 120;
@@ -45,7 +45,7 @@ public static class UnitFactory {
     private readonly static int PEWPEW_AOE = 0;
     private readonly static int PEWPEW_SPEED = 5;
     private readonly static int PEWPEW_VISION = 5;
-    private readonly static int PEWPEW_COST = 1;
+    private readonly static int PEWPEW_COST = 2;
     private readonly static IAttackStrategy PEWPEW_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int COMPENSATOR_HP = 90;
@@ -56,7 +56,7 @@ public static class UnitFactory {
     private readonly static int COMPENSATOR_AOE = 0;
     private readonly static int COMPENSATOR_SPEED = 7;
     private readonly static int COMPENSATOR_VISION = 5;
-    private readonly static int COMPENSATOR_COST = 3;
+    private readonly static int COMPENSATOR_COST = 2;
     private readonly static IAttackStrategy COMPENSATOR_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int FOUNDATION_HP = 75;
@@ -78,7 +78,7 @@ public static class UnitFactory {
     private readonly static int POWER_SURGE_AOE = 0;
     private readonly static int POWER_SURGE_SPEED = 6;
     private readonly static int POWER_SURGE_VISION = 5;
-    private readonly static int POWER_SURGE_COST = 1;
+    private readonly static int POWER_SURGE_COST = 2;
     private readonly static IAttackStrategy POWER_SURGE_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int MIDAS_HP = 80;
