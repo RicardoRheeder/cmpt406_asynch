@@ -314,12 +314,12 @@ public class GameManager : MonoBehaviour {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
                 if(unit.MovementActions > 0 && unit.Owner == user.Username) {
                     unitPositions.Remove(targetUnit);
-					if(state.boardId == BoardType.Sandbox){
-						unit.SandboxMove(endpoint, ref boardController);
-					}
-					else{
-						unit.Move(endpoint, ref boardController);
-					}
+                    if(state.boardId == BoardType.Sandbox){
+                        unit.SandboxMove(endpoint, ref boardController);
+                    }
+                    else{
+                        unit.Move(endpoint, ref boardController);
+                    }
                     unitPositions[endpoint] = unit;
                     turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint, GeneralAbility.NONE, CardFunction.NONE));
                 }

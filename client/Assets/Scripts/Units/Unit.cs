@@ -14,11 +14,11 @@ public class Unit : MonoBehaviour {
     public int direction = 0;
 
     
-	void Awake() {
-		rend = this.GetComponent<Renderer>();
+    void Awake() {
+        rend = this.GetComponent<Renderer>();
         fogViewer = new FogViewer();
         transform.rotation = Quaternion.Euler(-90,0,0); 
-	}
+    }
 
     //Method used to handle the attack animation
     public void Attack(Vector2Int targetPosition) {
