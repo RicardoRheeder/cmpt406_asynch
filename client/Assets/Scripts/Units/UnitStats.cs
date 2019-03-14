@@ -204,7 +204,7 @@ public class UnitStats {
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
-	   if(!specialMove)
+       if(!specialMove)
             this.MovementActions--;
 		
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
