@@ -40,7 +40,7 @@ public class UnitStats {
     [DataMember]
     private int yPos;
 
-    [DataMember]
+    [DataMember (Name = "direction")]
     public int direction { get; set; }
 
     //Variables for the generals
@@ -104,7 +104,8 @@ public class UnitStats {
                 this.MovementActions = 0;
             this.AttackActions--;
         }
-        MyUnit.Attack(target);
+        int dir = HexUtility.FindDirection(this.Position,target);
+        MyUnit.Attack(dir);
         return attackStrategy.Attack(this, target);
     }
 
@@ -209,12 +210,18 @@ public class UnitStats {
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
+        if(pathWithDirection.Count > 0) {
+            this.direction = pathWithDirection[pathWithDirection.Count - 1].Second;
+        }
     }
 	
 	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
 	    List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
+        if(pathWithDirection.Count > 0) {
+            this.direction = pathWithDirection[pathWithDirection.Count - 1].Second;
+        }
 	}
 
     //We need to convert the xPos and yPos variables to be Position

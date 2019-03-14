@@ -21,8 +21,7 @@ public class Unit : MonoBehaviour {
 	}
 
     //Method used to handle the attack animation
-    public void Attack(Vector2Int targetPosition) {
-        int dir = HexUtility.FindDirection(currTilePosition,targetPosition);
+    public void Attack(int dir) {
         TurnToDirection(dir);
     }
 
