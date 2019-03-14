@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,8 +22,8 @@ public class MainMenu : MonoBehaviour {
     private GameObject joinGamePanel;
     private GameObject armyBuilderPanel;
     private GameObject armySelectorPanel;
-	private GameObject mapsPanel;
-	private Dropdown mapSelect;
+    private GameObject mapsPanel;
+    private Dropdown mapSelect;
 
     //Variables and prefabs to populate friends list
     [SerializeField]
@@ -57,19 +58,20 @@ public class MainMenu : MonoBehaviour {
 
     //Reference to the game manager to start a game
     private GameManager manager;
-	
-	//Stuff for Map Preview
-	private TMP_Text sizeText;
-	private TMP_Text stockText;
-	private TMP_Text maxText;
-	private Image preview;
-	public Sprite alphaChannel;
-	public Sprite theEye;
-	public Sprite snakeValley;
-	public Sprite valley;
-	public Sprite pinnacle;
-	public Sprite lowlands;
-	public Sprite wheel;
+    
+    //Stuff for Map Preview
+    private TMP_Text sizeText;
+    private TMP_Text stockText;
+    private TMP_Text maxText;
+    private Image preview;
+    public Sprite alphaChannel;
+    public Sprite theEye;
+    public Sprite snakeValley;
+    public Sprite valley;
+    public Sprite pinnacle;
+    public Sprite lowlands;
+    public Sprite wheel;
+    private Dropdown mapdown;
     
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
@@ -81,9 +83,9 @@ public class MainMenu : MonoBehaviour {
         joinGamePanel = GameObject.Find("JoinGamePanel");
         armyBuilderPanel = GameObject.Find("ArmyBuilder");
         armySelectorPanel = GameObject.Find("ArmySelector");
-		mapsPanel = GameObject.Find("MapsContainer");
-		mapSelect = GameObject.Find("Mapdown").GetComponent<Dropdown>();
-		preview = GameObject.Find("preview").GetComponent<Image>();
+        mapsPanel = GameObject.Find("MapsContainer");
+        mapSelect = GameObject.Find("Mapdown").GetComponent<Dropdown>();
+        preview = GameObject.Find("preview").GetComponent<Image>();
 
         friendsListInputField = GameObject.Find("FriendsInputField").GetComponent<TMP_InputField>();
         friendsListDict = new Dictionary<string, GameObject> {};
@@ -103,15 +105,29 @@ public class MainMenu : MonoBehaviour {
         activeMaxPlayers = GameObject.Find("ActiveMaxPlayers").GetComponent<TMP_Text>();
         activeTurnNumber = GameObject.Find("ActiveTurnNumber").GetComponent<TMP_Text>();
         activeJoinButton = GameObject.Find("ActiveJoinButton").GetComponent<Button>();
-		
-		sizeText = GameObject.Find("sizeText").GetComponent<TMP_Text>();
-		stockText = GameObject.Find("stockText").GetComponent<TMP_Text>();
-		maxText = GameObject.Find("maxText").GetComponent<TMP_Text>();
+        
+        sizeText = GameObject.Find("sizeText").GetComponent<TMP_Text>();
+        stockText = GameObject.Find("stockText").GetComponent<TMP_Text>();
+        maxText = GameObject.Find("maxText").GetComponent<TMP_Text>();
 
         armyChooserViewport = GameObject.Find("ArmyChooserViewport");
 
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
+        //populate the map selection with proper values
+        mapdown = GameObject.Find("Mapdown").GetComponent<Dropdown>();
+        List<string> mapNames = new List<string>();
+        foreach (BoardType name in Enum.GetValues(typeof(BoardType))) {
+            if ((int)name < BoardMetadata.TEST_BOARD_LIMIT)
+                mapNames.Add(BoardMetadata.BoardDisplayNames[name]);
+        }
+        mapdown.AddOptions(mapNames);
+        mapdown.onValueChanged.RemoveAllListeners();
+        mapdown.onValueChanged.AddListener(delegate {
+            //play sound here
+            MapSelection();
+        });
     }
 
     // Start is called before the first frame update
@@ -137,7 +153,7 @@ public class MainMenu : MonoBehaviour {
         joinGamePanel.SetActive(joinState);
         armyBuilderPanel.SetActive(builderState);
         armySelectorPanel.SetActive(selectorState);
-		mapsPanel.SetActive(mapState);
+        mapsPanel.SetActive(mapState);
     }
 
     public void PendingGameCellDetailsButton(GameState state, bool needToAccept) {
@@ -310,73 +326,67 @@ public class MainMenu : MonoBehaviour {
             armyCell.transform.SetParent(armyChooserViewport.transform, false);
         }
     }
-	
-	public void MainMenuMapsButton() {
-		audioManager.Play("ButtonPress");
-		SetMenuState(false, false, false, false, false, false, true);
-		MapSelection();
-		
-	}
-	
-	public void MapSelection() {
-		switch (mapSelect.value){
-			case 0:
-				preview.sprite = alphaChannel;
-				sizeText.SetText("Small");
-				maxText.SetText("2");
-				stockText.SetText("12");
-				break;
-				
-			case 1:
-				preview.sprite = lowlands;
-				sizeText.SetText("Medium");
-				maxText.SetText("4");
-				stockText.SetText("16");
-				break;
-				
-			case 2:
-				preview.sprite = pinnacle;
-				sizeText.SetText("Medium");
-				maxText.SetText("2");
-				stockText.SetText("20");
-				break;
-				
-			case 3:
-				preview.sprite = snakeValley;
-				sizeText.SetText("Small");
-				maxText.SetText("2");
-				stockText.SetText("25");
-				break;
-				
-			case 4:
-				preview.sprite = theEye;
-				sizeText.SetText("Small");
-				maxText.SetText("2");
-				stockText.SetText("25");
-				break;
-				
-			case 5:
-				preview.sprite = valley;
-				sizeText.SetText("Medium");
-				maxText.SetText("4");
-				stockText.SetText("10");
-				break;
-				
-			case 6:
-				preview.sprite = wheel;
-				sizeText.SetText("Large");
-				maxText.SetText("6");
-				stockText.SetText("40");
-				break;
-		}
-	}
+    
+    public void MainMenuMapsButton() {
+        audioManager.Play("ButtonPress");
+        SetMenuState(false, false, false, false, false, false, true);
+        MapSelection();
+    }
+    
+    public void MapSelection() {
+        BoardType type = BoardMetadata.BoardDisplayNamesReverse[mapdown.options[mapdown.value].text];
 
-	public void MapsBackButton () {
-		audioManager.Play("ButtonPress");
-		mainMenuContainer.SetActive(true);
+        switch (type) {
+            case BoardType.AlphaChannel:
+                preview.sprite = alphaChannel;
+                sizeText.SetText("Small");
+                break;
+                
+            case BoardType.Lowlands:
+                preview.sprite = lowlands;
+                sizeText.SetText("Medium");
+                break;
+                
+            case BoardType.Pinnacle:
+                preview.sprite = pinnacle;
+                sizeText.SetText("Medium");
+                break;
+                
+            case BoardType.SnakeValley:
+                preview.sprite = snakeValley;
+                sizeText.SetText("Small");
+                break;
+                
+            case BoardType.TheEye:
+                preview.sprite = theEye;
+                sizeText.SetText("Small");
+                break;
+                
+            case BoardType.Valley:
+                preview.sprite = valley;
+                sizeText.SetText("Medium");
+                break;
+                
+            case BoardType.Wheel:
+                preview.sprite = wheel;
+                sizeText.SetText("Large");
+                break;
+
+            default:
+                preview.sprite = null;
+                sizeText.SetText("missing");
+                break;
+        }
+        maxText.SetText(BoardMetadata.MaxPlayersDict[type].ToString());
+        stockText.SetText(BoardMetadata.CostDict[type].ToString());
+    }
+
+    public void MapsBackButton () {
+        audioManager.Play("ButtonPress");
+        mainMenuContainer.SetActive(true);
         SetMenuState(false, false, false, false, false, false, false);
-	}
-	
+    }
+    
     public void MainMenuArmySelectorBack() {
         audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(true);
