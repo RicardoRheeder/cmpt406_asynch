@@ -518,7 +518,7 @@ func handleMakeMove(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Generals, mm.Cards, mm.Actions, mm.KilledUsers)
+	err = MakeMove(ctx, username, mm.GameID, mm.Units, mm.Generals, mm.Cards, mm.ActiveEffects, mm.Actions, mm.KilledUsers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
