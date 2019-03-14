@@ -40,6 +40,9 @@ public class UnitStats {
     [DataMember]
     private int yPos;
 
+    [DataMember]
+    public int direction { get; set; }
+
     //Variables for the generals
     public GeneralAbility Ability1 { get; private set; }
     [DataMember(Name = "ability1CoolDown", EmitDefaultValue = false)]
@@ -66,7 +69,7 @@ public class UnitStats {
     public int MovementActions { get; set; } = 1;
 
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
-    public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int vision, int cost, IAttackStrategy attackStrategy) {
+    public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int vision, int cost, int direction, IAttackStrategy attackStrategy) {
         this.UnitType = type;
         this.serverUnitType = (int)type;
         this.CurrentHP = maxHP;
@@ -83,6 +86,7 @@ public class UnitStats {
         this.attackStrategy = attackStrategy;
         this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
         this.Vision = vision;
+        this.direction = direction;
     }
 
     public string GetDisplayName() {
@@ -202,13 +206,15 @@ public class UnitStats {
 	   if(!specialMove)
             this.MovementActions--;
 		
+        List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
+        MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
-        MyUnit.MoveTo(position,ref board);
     }
 	
 	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
-	    this.Position = position;
-		MyUnit.MoveTo(position, ref board);
+	    List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
+        MyUnit.MoveAlongPath(pathWithDirection,ref board);
+        this.Position = position;
 	}
 
     //We need to convert the xPos and yPos variables to be Position
