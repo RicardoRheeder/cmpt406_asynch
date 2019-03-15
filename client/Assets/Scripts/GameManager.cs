@@ -153,6 +153,7 @@ public class GameManager : MonoBehaviour {
     }
     
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
+        SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
     }
 
@@ -197,13 +198,14 @@ public class GameManager : MonoBehaviour {
     }
 
     private void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
+        SceneManager.sceneLoaded -= OnMenuLoaded;
         state = null; //Verify that the state is destroyed;
         unitPositions.Clear();
         turnActions.Clear();
-        //Anything else that the game manager has to reset needs to be done here
     }
     
-    private void OnMenuSandbox(Scene scene, LoadSceneMode mode){
+    private void OnMenuSandbox(Scene scene, LoadSceneMode mode) {
+        SceneManager.sceneLoaded -= OnMenuSandbox;
         client = GameObject.Find("Networking").GetComponent<Client>();
         this.user = client.GetUserInformation();
     }
