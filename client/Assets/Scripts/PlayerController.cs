@@ -125,7 +125,6 @@ public class PlayerController : MonoBehaviour {
             unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
             unitDisplayName = GameObject.Find("unitName").GetComponent<TMP_Text>();
             userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
-            turnText = GameObject.Find("GameTurnsText").GetComponent<TMP_Text>();
 
             actionsName = GameObject.Find("ActionName");
             attackButtonObject = GameObject.Find("AttackButton");
@@ -135,7 +134,6 @@ public class PlayerController : MonoBehaviour {
             movementButton = movementButtonObject.GetComponent<Button>();
             movementButton.onClick.AddListener(MovementButton);
             
-            turnText.text = "Turn " + gamestate.TurnNumber;
             userTurnText.text = gamestate.UsersTurn + "'s Turn";
 
             generalName = GameObject.Find("GeneralName");

@@ -132,7 +132,7 @@ public static class UnitFactory {
     private readonly static int LIGHT_ADREN_PIERCE = 0;
     private readonly static int LIGHT_ADREN_AOE = 0;
     private readonly static int LIGHT_ADREN_SPEED = 0;
-    private readonly static int LIGHT_ADREN_VISION = 25;
+    private readonly static int LIGHT_ADREN_VISION = 15;
     private readonly static int LIGHT_ADREN_COST = 0;
     private readonly static IAttackStrategy LIGHT_ADREN_ATTACK_STRATEGY = new AreaStrategy();
 

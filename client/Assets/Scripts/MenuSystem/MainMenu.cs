@@ -97,13 +97,11 @@ public class MainMenu : MonoBehaviour {
         pendingMapName = GameObject.Find("PendingGameMap").GetComponent<TMP_Text>();
         pendingCurrentPlayers = GameObject.Find("PendingNumberPlayers").GetComponent<TMP_Text>();
         pendingMaxPlayers = GameObject.Find("PendingMaxPlayers").GetComponent<TMP_Text>();
-        pendingTurnNumber = GameObject.Find("PendingTurnNumber").GetComponent<TMP_Text>();
         pendingJoinButton = GameObject.Find("PendingJoinButton").GetComponent<Button>();
 
         activeMapName = GameObject.Find("ActiveGameMap").GetComponent<TMP_Text>();
         activeCurrentPlayers = GameObject.Find("ActiveNumberPlayers").GetComponent<TMP_Text>();
         activeMaxPlayers = GameObject.Find("ActiveMaxPlayers").GetComponent<TMP_Text>();
-        activeTurnNumber = GameObject.Find("ActiveTurnNumber").GetComponent<TMP_Text>();
         activeJoinButton = GameObject.Find("ActiveJoinButton").GetComponent<Button>();
         
         sizeText = GameObject.Find("sizeText").GetComponent<TMP_Text>();
@@ -162,7 +160,6 @@ public class MainMenu : MonoBehaviour {
         pendingMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
         pendingMaxPlayers.SetText("" + state.maxUsers);
-        pendingTurnNumber.SetText("" + state.TurnNumber);
 
         //Set up the join button to call the join function with the current state
         pendingJoinButton.onClick.RemoveAllListeners();
@@ -175,7 +172,6 @@ public class MainMenu : MonoBehaviour {
         activeMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         activeCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
         activeMaxPlayers.SetText("" + state.maxUsers);
-        activeTurnNumber.SetText("" + state.TurnNumber);
 
         //Set up the join button to call the join function with the current state
         activeJoinButton.onClick.RemoveAllListeners();

@@ -26,9 +26,7 @@ public class GameManager : MonoBehaviour {
     private FogOfWarController fogOfWarController;
 
     private CameraMovement cameraRig;
-
     private InGameMenu inGameMenu;
-
     private AudioManager audioManager;
 
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
@@ -75,7 +73,7 @@ public class GameManager : MonoBehaviour {
     public void PlaceUnits(GameState state, ArmyPreset selectedPreset) {
         Tuple<bool, GameState> result = client.GetGamestate(state.id);
         if(result.First) {
-            this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
+            this.state = result.Second; //get the updated gamestate
             this.user = client.GetUserInformation();
             this.selectedPreset = selectedPreset;
             this.isPlacing = true;
@@ -188,7 +186,6 @@ public class GameManager : MonoBehaviour {
         cameraRig.SnapToPosition(boardController.CellToWorld(boardController.GetCenterSpawnTile(spawnPoint)));
 
         inGameMenu.SetupPanels(isPlacing: true);
-        GameObject.Find("Tabletop").SetActive(false);
 
         fogOfWarController.DeleteFogAtSpawnPoint(spawnPoint, ref boardController);
 

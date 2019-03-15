@@ -61,9 +61,6 @@ public class GameState {
     [DataMember(Name="forfeitTime")]
     public int ForfeitTime { get; private set; }
 
-    [DataMember(Name = "turnNumber")]
-    public int TurnNumber { get; private set; }
-
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(this);
     }
