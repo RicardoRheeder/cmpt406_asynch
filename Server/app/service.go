@@ -880,7 +880,7 @@ func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit)
 }
 
 // MakeMove is used to initiate a turn in the game
-func MakeMove(ctx context.Context, username, gameID string, units []gamestate.Unit, generals []gamestate.Unit, cards []gamestate.Cards, actions []gamestate.Action, killedUsers []string) error {
+func MakeMove(ctx context.Context, username, gameID string, units []gamestate.Unit, generals []gamestate.Unit, cards []gamestate.Cards, activeEffects []gamestate.Effect, actions []gamestate.Action, killedUsers []string) error {
 
 	err := common.StringNotEmpty(username)
 	if err != nil {
@@ -893,11 +893,11 @@ func MakeMove(ctx context.Context, username, gameID string, units []gamestate.Un
 		return errors.New("gameID is required")
 	}
 
-	return gamestate.UpdateGameState(ctx, gameID, makeMove(username, units, generals, cards, actions, killedUsers))
+	return gamestate.UpdateGameState(ctx, gameID, makeMove(username, units, generals, cards, activeEffects, actions, killedUsers))
 }
 
 // makeMove is a helper function to update the GameState for doing a turn
-func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit, cards []gamestate.Cards, actions []gamestate.Action, killedUsers []string) gamestate.UpdateGameStateFunc {
+func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit, cards []gamestate.Cards, activeEffects []gamestate.Effect, actions []gamestate.Action, killedUsers []string) gamestate.UpdateGameStateFunc {
 
 	return func(ctx context.Context, gs *gamestate.GameState) error {
 
@@ -945,6 +945,7 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 		gs.Units = units
 		gs.Cards = cards // The client will always give the server ALL of the cards on MakeMove
 		gs.Generals = generals
+		gs.ActiveEffects = activeEffects
 
 		return nil
 	}

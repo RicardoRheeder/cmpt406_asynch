@@ -5,9 +5,9 @@ public static class UnitMetadata {
 
     public readonly static int GENERAL_THRESHOLD = 100;
 
-    private readonly static float LIGHT_STRENGTH = 1.5f;
-    private readonly static float HEAVY_STRENGHTH = 1.5f;
-    private readonly static float PIERCING_STRENGTH = 1.5f;
+    private readonly static float LIGHT_STRENGTH = 1.0f;
+    private readonly static float HEAVY_STRENGHTH = 1.0f;
+    private readonly static float PIERCING_STRENGTH = 1.0f;
 
     //Update this with any new pairings that come up.
     //The floating point value represents the multiplier, we might want to change this in the future.

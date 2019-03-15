@@ -49,10 +49,10 @@ public static class GeneralMetadata {
         { GeneralAbility.ARMOUR_PIERCING_AMMO, 6 },
         { GeneralAbility.STEAM_OVERLOAD, 3 },
         { GeneralAbility.THE_BEST_OFFENSE, 2 },
-        { GeneralAbility.STICK_AND_POKE, 3 },
+        { GeneralAbility.STICK_AND_POKE, 5 },
         { GeneralAbility.DEEP_PENETRATION, 3 },
         { GeneralAbility.SAHARA_MINE, 4 },
-        { GeneralAbility.SANDSTORM, 5 }
+        { GeneralAbility.SANDSTORM, 4 }
     };
 
     public static readonly Dictionary<GeneralAbility, int> AbilityDurationDictionary = new Dictionary<GeneralAbility, int>() {
@@ -63,17 +63,17 @@ public static class GeneralMetadata {
         { GeneralAbility.STICK_AND_POKE, 2 },
         { GeneralAbility.DEEP_PENETRATION, 0 },
         { GeneralAbility.SAHARA_MINE, 0 },
-        { GeneralAbility.SANDSTORM, 3 }
+        { GeneralAbility.SANDSTORM, 2 }
     };
 
     public static readonly Dictionary<GeneralAbility, int> AbilityRangeDictionary = new Dictionary<GeneralAbility, int>() {
         { GeneralAbility.TROJAN_SHOT, 0 },
         { GeneralAbility.ARMOUR_PIERCING_AMMO, 10 },
         { GeneralAbility.STEAM_OVERLOAD, 10 },
-        { GeneralAbility.THE_BEST_OFFENSE, 10 },
+        { GeneralAbility.THE_BEST_OFFENSE, 100 },
         { GeneralAbility.STICK_AND_POKE, 0 },
-        { GeneralAbility.DEEP_PENETRATION, 10 },
-        { GeneralAbility.SAHARA_MINE, 0 },
+        { GeneralAbility.DEEP_PENETRATION, 100 },
+        { GeneralAbility.SAHARA_MINE, 2 },
         { GeneralAbility.SANDSTORM, 0 }
     };
 
@@ -134,11 +134,26 @@ public static class GeneralMetadata {
     }
 
     private static void SaharaMine(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
-        //TODO
+        List<Vector2Int> unitsInRange = HexUtility.GetTilePositionsInRangeWithoutMap(source.Position, 1);
+        foreach(Vector2Int pos in unitsInRange) {
+            if (allUnits.TryGetValue(pos, out UnitStats target)) {
+                target.AlterArmour(-10);
+                if (target.TakeDamage(10, 10000)) {
+                    target.Kill();
+                    allUnits.Remove(pos);
+                }
+            }
+        }
     }
 
     private static void Sandstorm(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
-        //TODO
+        List<Vector2Int> unitsInRange = HexUtility.GetTilePositionsInRangeWithoutMap(source.Position, 2);
+        foreach (Vector2Int pos in unitsInRange) {
+            if (allUnits.TryGetValue(pos, out UnitStats target)) {
+                target.AlterVision(-3);
+                target.AlterSpeed(-3);
+            }
+        }
     }
 
     public static readonly Dictionary<GeneralAbility, AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string>> ActiveAbilityFunctionDictionary = new Dictionary<GeneralAbility, AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string>>() {
@@ -193,8 +208,23 @@ public static class GeneralMetadata {
         }
     }
 
-    //Lay sand tiles as it drives
     private static void SandmanPassive(Dictionary<Vector2Int, UnitStats> unitPositions, string username) {
-
+        foreach (var key in unitPositions.Keys) {
+            UnitStats unit = unitPositions[key];
+            switch (unit.UnitClass) {
+                case UnitClass.heavy:
+                    unit.AlterArmour(-5);
+                    break;
+                case UnitClass.piercing:
+                    unit.AlterVision(-1);
+                    break;
+                case UnitClass.light:
+                    unit.AlterSpeed(-1);
+                    break;
+                case UnitClass.support:
+                    unit.AlterMoveAfterAttack();
+                    break;
+            }
+        }
     }
 }

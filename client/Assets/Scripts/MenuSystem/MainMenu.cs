@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,6 +22,8 @@ public class MainMenu : MonoBehaviour {
     private GameObject joinGamePanel;
     private GameObject armyBuilderPanel;
     private GameObject armySelectorPanel;
+    private GameObject mapsPanel;
+    private Dropdown mapSelect;
 
     //Variables and prefabs to populate friends list
     [SerializeField]
@@ -56,6 +59,20 @@ public class MainMenu : MonoBehaviour {
     //Reference to the game manager to start a game
     private GameManager manager;
     
+    //Stuff for Map Preview
+    private TMP_Text sizeText;
+    private TMP_Text stockText;
+    private TMP_Text maxText;
+    private Image preview;
+    public Sprite alphaChannel;
+    public Sprite theEye;
+    public Sprite snakeValley;
+    public Sprite valley;
+    public Sprite pinnacle;
+    public Sprite lowlands;
+    public Sprite wheel;
+    private Dropdown mapdown;
+    
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
 
@@ -66,6 +83,9 @@ public class MainMenu : MonoBehaviour {
         joinGamePanel = GameObject.Find("JoinGamePanel");
         armyBuilderPanel = GameObject.Find("ArmyBuilder");
         armySelectorPanel = GameObject.Find("ArmySelector");
+        mapsPanel = GameObject.Find("MapsContainer");
+        mapSelect = GameObject.Find("Mapdown").GetComponent<Dropdown>();
+        preview = GameObject.Find("preview").GetComponent<Image>();
 
         friendsListInputField = GameObject.Find("FriendsInputField").GetComponent<TMP_InputField>();
         friendsListDict = new Dictionary<string, GameObject> {};
@@ -85,11 +105,29 @@ public class MainMenu : MonoBehaviour {
         activeMaxPlayers = GameObject.Find("ActiveMaxPlayers").GetComponent<TMP_Text>();
         activeTurnNumber = GameObject.Find("ActiveTurnNumber").GetComponent<TMP_Text>();
         activeJoinButton = GameObject.Find("ActiveJoinButton").GetComponent<Button>();
+        
+        sizeText = GameObject.Find("sizeText").GetComponent<TMP_Text>();
+        stockText = GameObject.Find("stockText").GetComponent<TMP_Text>();
+        maxText = GameObject.Find("maxText").GetComponent<TMP_Text>();
 
         armyChooserViewport = GameObject.Find("ArmyChooserViewport");
 
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
+        //populate the map selection with proper values
+        mapdown = GameObject.Find("Mapdown").GetComponent<Dropdown>();
+        List<string> mapNames = new List<string>();
+        foreach (BoardType name in Enum.GetValues(typeof(BoardType))) {
+            if ((int)name < BoardMetadata.TEST_BOARD_LIMIT)
+                mapNames.Add(BoardMetadata.BoardDisplayNames[name]);
+        }
+        mapdown.AddOptions(mapNames);
+        mapdown.onValueChanged.RemoveAllListeners();
+        mapdown.onValueChanged.AddListener(delegate {
+            //play sound here
+            MapSelection();
+        });
     }
 
     // Start is called before the first frame update
@@ -104,17 +142,18 @@ public class MainMenu : MonoBehaviour {
 
     //Helper function so that other buttons can easily return to this state when they are done in their sub menu
     public void SetInitialMenuState() {
-        SetMenuState(false, false, false, false, false, false);
+        SetMenuState(false, false, false, false, false, false, false);
     }
 
     //Helper function to enable/disable menus with boolean flags
-    private void SetMenuState(bool pendingState, bool activeState, bool createState, bool joinState, bool builderState, bool selectorState) {
+    private void SetMenuState(bool pendingState, bool activeState, bool createState, bool joinState, bool builderState, bool selectorState, bool mapState) {
         pendingGamesPanel.SetActive(pendingState);
         activeGamesPanel.SetActive(activeState);
         createGamePanel.SetActive(createState);
         joinGamePanel.SetActive(joinState);
         armyBuilderPanel.SetActive(builderState);
         armySelectorPanel.SetActive(selectorState);
+        mapsPanel.SetActive(mapState);
     }
 
     public void PendingGameCellDetailsButton(GameState state, bool needToAccept) {
@@ -149,30 +188,30 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuCreateGameButton() {
         audioManager.Play("ButtonPress");
-        SetMenuState(false, false, true, false, false, false);
+        SetMenuState(false, false, true, false, false, false, false);
     }
 
     public void MainMenuArmyBuilderButton() {
         audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(false);
-        SetMenuState(false, false, false, false, true, false);
+        SetMenuState(false, false, false, false, true, false, false);
     }
 
     public void MainMenuArmyBuilderBack() {
         audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(true);
-        SetMenuState(false, false, false, false, false, false);
+        SetMenuState(false, false, false, false, false, false, false);
     }
 
     public void MainMenuArmySelectorButton() {
         audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(false);
-        SetMenuState(false, false, false, false, false, true);
+        SetMenuState(false, false, false, false, false, true, false);
     }
 
     public void MainMenuJoinGameButton() {
         audioManager.Play("ButtonPress");
-        SetMenuState(false, false, false, true, false, false);
+        SetMenuState(false, false, false, true, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
             foreach (var state in response.Second.states) {
@@ -192,7 +231,7 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuActiveGamesButton() {
         audioManager.Play("ButtonPress");
-        SetMenuState(false, true, false, false, false, false);
+        SetMenuState(false, true, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
             foreach (var state in response.Second.states) {
@@ -212,7 +251,7 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuPendingGamesButton() {
         audioManager.Play("ButtonPress");
-        SetMenuState(true, false, false, false, false, false);
+        SetMenuState(true, false, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         int childrenCount = pendingGamesViewContent.transform.childCount;
         for(int i = 1; i < childrenCount; i++) {
@@ -287,10 +326,70 @@ public class MainMenu : MonoBehaviour {
             armyCell.transform.SetParent(armyChooserViewport.transform, false);
         }
     }
+    
+    public void MainMenuMapsButton() {
+        audioManager.Play("ButtonPress");
+        SetMenuState(false, false, false, false, false, false, true);
+        MapSelection();
+    }
+    
+    public void MapSelection() {
+        BoardType type = BoardMetadata.BoardDisplayNamesReverse[mapdown.options[mapdown.value].text];
 
+        switch (type) {
+            case BoardType.AlphaChannel:
+                preview.sprite = alphaChannel;
+                sizeText.SetText("Small");
+                break;
+                
+            case BoardType.Lowlands:
+                preview.sprite = lowlands;
+                sizeText.SetText("Medium");
+                break;
+                
+            case BoardType.Pinnacle:
+                preview.sprite = pinnacle;
+                sizeText.SetText("Medium");
+                break;
+                
+            case BoardType.SnakeValley:
+                preview.sprite = snakeValley;
+                sizeText.SetText("Small");
+                break;
+                
+            case BoardType.TheEye:
+                preview.sprite = theEye;
+                sizeText.SetText("Small");
+                break;
+                
+            case BoardType.Valley:
+                preview.sprite = valley;
+                sizeText.SetText("Medium");
+                break;
+                
+            case BoardType.Wheel:
+                preview.sprite = wheel;
+                sizeText.SetText("Large");
+                break;
+
+            default:
+                preview.sprite = null;
+                sizeText.SetText("missing");
+                break;
+        }
+        maxText.SetText(BoardMetadata.MaxPlayersDict[type].ToString());
+        stockText.SetText(BoardMetadata.CostDict[type].ToString());
+    }
+
+    public void MapsBackButton () {
+        audioManager.Play("ButtonPress");
+        mainMenuContainer.SetActive(true);
+        SetMenuState(false, false, false, false, false, false, false);
+    }
+    
     public void MainMenuArmySelectorBack() {
         audioManager.Play("ButtonPress");
         mainMenuContainer.SetActive(true);
-        SetMenuState(true, false, false, false, false, false);
+        SetMenuState(true, false, false, false, false, false, false);
     }
 }

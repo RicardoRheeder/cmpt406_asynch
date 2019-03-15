@@ -12,7 +12,7 @@ public static class UnitFactory {
     private readonly static int TROOPER_AOE = 0;
     private readonly static int TROOPER_SPEED = 6;
     private readonly static int TROOPER_VISION = 5;
-    private readonly static int TROOPER_COST = 1;
+    private readonly static int TROOPER_COST = 2;
     private readonly static IAttackStrategy TROOPER_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int REACON_HP = 85;
@@ -23,7 +23,7 @@ public static class UnitFactory {
     private readonly static int REACON_AOE = 0;
     private readonly static int REACON_SPEED = 9;
     private readonly static int REACON_VISION = 5;
-    private readonly static int REACON_COST = 1;
+    private readonly static int REACON_COST = 2;
     private readonly static IAttackStrategy REACON_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int STEAMER_HP = 120;
@@ -45,7 +45,7 @@ public static class UnitFactory {
     private readonly static int PEWPEW_AOE = 0;
     private readonly static int PEWPEW_SPEED = 5;
     private readonly static int PEWPEW_VISION = 5;
-    private readonly static int PEWPEW_COST = 1;
+    private readonly static int PEWPEW_COST = 2;
     private readonly static IAttackStrategy PEWPEW_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int COMPENSATOR_HP = 90;
@@ -56,7 +56,7 @@ public static class UnitFactory {
     private readonly static int COMPENSATOR_AOE = 0;
     private readonly static int COMPENSATOR_SPEED = 7;
     private readonly static int COMPENSATOR_VISION = 5;
-    private readonly static int COMPENSATOR_COST = 3;
+    private readonly static int COMPENSATOR_COST = 2;
     private readonly static IAttackStrategy COMPENSATOR_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int FOUNDATION_HP = 75;
@@ -78,7 +78,7 @@ public static class UnitFactory {
     private readonly static int POWER_SURGE_AOE = 0;
     private readonly static int POWER_SURGE_SPEED = 6;
     private readonly static int POWER_SURGE_VISION = 5;
-    private readonly static int POWER_SURGE_COST = 1;
+    private readonly static int POWER_SURGE_COST = 2;
     private readonly static IAttackStrategy POWER_SURGE_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int MIDAS_HP = 80;
@@ -103,49 +103,51 @@ public static class UnitFactory {
     private readonly static int CLAYMORE_COST = 2;
     private readonly static IAttackStrategy CLAYMORE_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int HEAVY_ALBARN_HP = 200;
+    private readonly static int HEAVY_ALBARN_HP = 500;
     private readonly static int HEAVY_ALBARN_ARMOUR = 30;
-    private readonly static int HEAVY_ALBARN_RANGE = 10;
-    private readonly static int HEAVY_ALBARN_DAMAGE = 25;
+    private readonly static int HEAVY_ALBARN_RANGE = 1000;
+    private readonly static int HEAVY_ALBARN_DAMAGE = 10;
     private readonly static int HEAVY_ALBARN_PIERCE = 0;
-    private readonly static int HEAVY_ALBARN_AOE = 0;
+    private readonly static int HEAVY_ALBARN_AOE = 1;
     private readonly static int HEAVY_ALBARN_SPEED = 0;
-    private readonly static int HEAVY_ALBARN_VISION = 5;
+    private readonly static int HEAVY_ALBARN_VISION = 3;
     private readonly static int HEAVY_ALBARN_COST = 0;
     private readonly static IAttackStrategy HEAVY_ALBARN_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int PIERCING_TUNGSTEN_HP = 200;
-    private readonly static int PIERCING_TUNGSTEN_ARMOUR = 30;
-    public readonly static int PIERCING_TUNGSTEN_RANGE = 10;
+    private readonly static int PIERCING_TUNGSTEN_HP = 300;
+    private readonly static int PIERCING_TUNGSTEN_ARMOUR = 15;
+    public readonly static int PIERCING_TUNGSTEN_RANGE = 10; //Public because his ability modifies it
     private readonly static int PIERCING_TUNGSTEN_DAMAGE = 25;
-    private readonly static int PIERCING_TUNGSTEN_PIERCE = 0;
+    private readonly static int PIERCING_TUNGSTEN_PIERCE = 40;
     private readonly static int PIERCING_TUNGSTEN_AOE = 0;
-    private readonly static int PIERCING_TUNGSTEN_SPEED = 0;
-    private readonly static int PIERCING_TUNGSTEN_VISION = 5;
+    private readonly static int PIERCING_TUNGSTEN_SPEED = 1;
+    private readonly static int PIERCING_TUNGSTEN_VISION = 8;
     private readonly static int PIERCING_TUNGSTEN_COST = 0;
     public readonly static IAttackStrategy PIERCING_TUNGSTEN_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int LIGHT_ADREN_HP = 200;
+    private readonly static int LIGHT_ADREN_HP = 500;
     private readonly static int LIGHT_ADREN_ARMOUR = 30;
-    private readonly static int LIGHT_ADREN_RANGE = 10;
-    private readonly static int LIGHT_ADREN_DAMAGE = 25;
+    private readonly static int LIGHT_ADREN_RANGE = 1000;
+    private readonly static int LIGHT_ADREN_DAMAGE = 20;
     private readonly static int LIGHT_ADREN_PIERCE = 0;
     private readonly static int LIGHT_ADREN_AOE = 0;
     private readonly static int LIGHT_ADREN_SPEED = 0;
-    private readonly static int LIGHT_ADREN_VISION = 5;
+    private readonly static int LIGHT_ADREN_VISION = 25;
     private readonly static int LIGHT_ADREN_COST = 0;
     private readonly static IAttackStrategy LIGHT_ADREN_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int SUPPORT_SANDMAN_HP = 200;
-    private readonly static int SUPPORT_SANDMAN_ARMOUR = 30;
-    private readonly static int SUPPORT_SANDMAN_RANGE = 10;
-    private readonly static int SUPPORT_SANDMAN_DAMAGE = 25;
+    private readonly static int SUPPORT_SANDMAN_HP = 500;
+    private readonly static int SUPPORT_SANDMAN_ARMOUR = 50;
+    private readonly static int SUPPORT_SANDMAN_RANGE = 1;
+    private readonly static int SUPPORT_SANDMAN_DAMAGE = 1;
     private readonly static int SUPPORT_SANDMAN_PIERCE = 0;
     private readonly static int SUPPORT_SANDMAN_AOE = 0;
-    private readonly static int SUPPORT_SANDMAN_SPEED = 0;
+    private readonly static int SUPPORT_SANDMAN_SPEED = 15;
     private readonly static int SUPPORT_SANDMAN_VISION = 5;
     private readonly static int SUPPORT_SANDMAN_COST = 0;
     private readonly static IAttackStrategy SUPPORT_SANDMAN_ATTACK_STRATEGY = new AreaStrategy();
+
+    private readonly static int DEFAULT_DIRECTION = 0;
 
     private static UnitStats CreateTrooper() {
         return new UnitStats(
@@ -159,6 +161,7 @@ public static class UnitFactory {
             TROOPER_SPEED,
             TROOPER_VISION,
             TROOPER_COST,
+            DEFAULT_DIRECTION,
             TROOPER_ATTACK_STRATEGY
         );
     }
@@ -175,6 +178,7 @@ public static class UnitFactory {
             REACON_SPEED,
             REACON_VISION,
             REACON_COST,
+            DEFAULT_DIRECTION,
             REACON_ATTACK_STRATEGY
         );
     }
@@ -191,6 +195,7 @@ public static class UnitFactory {
             STEAMER_SPEED,
             STEAMER_VISION,
             STEAMER_COST,
+            DEFAULT_DIRECTION,
             STEAMER_ATTACK_STRATEGY
         );
     }
@@ -207,6 +212,7 @@ public static class UnitFactory {
             PEWPEW_SPEED,
             PEWPEW_VISION,
             PEWPEW_COST,
+            DEFAULT_DIRECTION,
             PEWPEW_ATTACK_STRATEGY
         );
     }
@@ -223,6 +229,7 @@ public static class UnitFactory {
             COMPENSATOR_SPEED,
             COMPENSATOR_VISION,
             COMPENSATOR_COST,
+            DEFAULT_DIRECTION,
             COMPENSATOR_ATTACK_STRATEGY
         );
     }
@@ -239,6 +246,7 @@ public static class UnitFactory {
             FOUNDATION_SPEED,
             FOUNDATION_VISION,
             FOUNDATION_COST,
+            DEFAULT_DIRECTION,
             FOUNDATION_ATTACK_STRATEGY
         );
     }
@@ -255,6 +263,7 @@ public static class UnitFactory {
             POWER_SURGE_SPEED,
             POWER_SURGE_VISION,
             POWER_SURGE_COST,
+            DEFAULT_DIRECTION,
             POWER_SURGE_ATTACK_STRATEGY
         );
     }
@@ -271,6 +280,7 @@ public static class UnitFactory {
             MIDAS_SPEED,
             MIDAS_VISION,
             MIDAS_COST,
+            DEFAULT_DIRECTION,
             MIDAS_ATTACK_STRATEGY
         );
     }
@@ -287,6 +297,7 @@ public static class UnitFactory {
             CLAYMORE_SPEED,
             CLAYMORE_VISION,
             CLAYMORE_COST,
+            DEFAULT_DIRECTION,
             CLAYMORE_ATTACK_STRATEGY
         );
     }
@@ -303,6 +314,7 @@ public static class UnitFactory {
             HEAVY_ALBARN_SPEED,
             HEAVY_ALBARN_VISION,
             HEAVY_ALBARN_COST,
+            DEFAULT_DIRECTION,
             HEAVY_ALBARN_ATTACK_STRATEGY
         );
     }
@@ -319,6 +331,7 @@ public static class UnitFactory {
             PIERCING_TUNGSTEN_SPEED,
             PIERCING_TUNGSTEN_VISION,
             PIERCING_TUNGSTEN_COST,
+            DEFAULT_DIRECTION,
             PIERCING_TUNGSTEN_ATTACK_STRATEGY
         );
     }
@@ -335,6 +348,7 @@ public static class UnitFactory {
             LIGHT_ADREN_SPEED,
             LIGHT_ADREN_VISION,
             LIGHT_ADREN_COST,
+            DEFAULT_DIRECTION,
             LIGHT_ADREN_ATTACK_STRATEGY
         );
     }
@@ -351,6 +365,7 @@ public static class UnitFactory {
             SUPPORT_SANDMAN_SPEED,
             SUPPORT_SANDMAN_VISION,
             SUPPORT_SANDMAN_COST,
+            DEFAULT_DIRECTION,
             SUPPORT_SANDMAN_ATTACK_STRATEGY
         );
     }

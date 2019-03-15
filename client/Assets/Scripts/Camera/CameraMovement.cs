@@ -12,9 +12,13 @@ public class CameraMovement : MonoBehaviour {
     [Range(0f, 100f)]
     public float scrollZone = 100f;
 
-    [Tooltip("Multiplier for camera movement sensitivity.")]
+    [Tooltip("Multiplier for camera movement sensitivity when using mouse.")]
     [Range(0f, 2f)]
-    public float sensitivity = 1f;
+    public float mouseSensitivity = 1f;
+
+    [Tooltip("Multiplier for camera movement sensitivity when using input.")]
+    [Range(1f, 100f)]
+    public float inputSensitivity = 50f;
 
     [Tooltip("Multiplier for camera zoom sensitivity.")]
     [Range(0f, 80f)]
@@ -55,11 +59,27 @@ public class CameraMovement : MonoBehaviour {
             rotationAnchorPoint = Input.mousePosition;
         }
 
-        if(Input.GetMouseButton(1)) {
-            HandleRotation();
-        } else {
-            HandlePan();
-            HandleZoom();
+        HandleRotation();
+        HandlePan();
+        HandleZoom();
+    }
+
+    public void SnapToPosition(Vector2 position) {
+        transform.position = position;
+    }
+
+    public void MoveToPosition(Vector2 position) {
+        StartCoroutine(TransitionPosition(position));
+    }
+
+    IEnumerator TransitionPosition(Vector2 position) {
+        float step = Time.fixedDeltaTime;
+        float t = 0;
+        Vector3 prevPos = transform.position;
+        while (t <= 1.0f) {
+            t += step;
+            transform.position = Vector3.Lerp(prevPos, position, t);
+            yield return new WaitForFixedUpdate();
         }
     }
 
@@ -69,22 +89,22 @@ public class CameraMovement : MonoBehaviour {
 
             if (Input.mousePosition.x < scrollZone) {   // pan left
                 percentOutsideScrollZone = scrollZone - Input.mousePosition.x;
-                transform.Translate(-transform.right*Time.deltaTime*sensitivity*percentOutsideScrollZone,Space.World);
+                transform.Translate(-transform.right*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             } else if (Input.mousePosition.x > Screen.width - scrollZone) { // pan right
                 percentOutsideScrollZone = Input.mousePosition.x - (Screen.width - scrollZone);
-                transform.Translate(transform.right*Time.deltaTime*sensitivity*percentOutsideScrollZone,Space.World);
+                transform.Translate(transform.right*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
 
             if (Input.mousePosition.y < scrollZone) {   // pan down
                 percentOutsideScrollZone = scrollZone - Input.mousePosition.y;
-                transform.Translate(-transform.up*Time.deltaTime*sensitivity*percentOutsideScrollZone,Space.World);
+                transform.Translate(-transform.up*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             } else if (Input.mousePosition.y > Screen.height - scrollZone) {    // pan up
                 percentOutsideScrollZone = Input.mousePosition.y - (Screen.height - scrollZone);
-                transform.Translate(transform.up*Time.deltaTime*sensitivity*percentOutsideScrollZone,Space.World);
+                transform.Translate(transform.up*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
         } else {
-            transform.Translate(transform.right*Input.GetAxis("Horizontal")*sensitivity*Time.deltaTime,Space.World);
-            transform.Translate(transform.up*Input.GetAxis("Vertical")*sensitivity*Time.deltaTime,Space.World);
+            transform.Translate(transform.right*Input.GetAxis("Horizontal")*inputSensitivity*Time.deltaTime,Space.World);
+            transform.Translate(transform.up*Input.GetAxis("Vertical")*inputSensitivity*Time.deltaTime,Space.World);
         }
 
         if(tilemap != null) {
@@ -93,15 +113,19 @@ public class CameraMovement : MonoBehaviour {
     }
 
     void HandleRotation() {
-        float rotationSpeed = Math.Abs(Input.mousePosition.x - rotationAnchorPoint.x);
-        if(rotationSpeed > maxRotationSpeed) {
-            rotationSpeed = maxRotationSpeed;
-        }
+        if(useCursor && Input.GetMouseButton(1)) {
+            float rotationSpeed = Math.Abs(Input.mousePosition.x - rotationAnchorPoint.x);
+            if(rotationSpeed > maxRotationSpeed) {
+                rotationSpeed = maxRotationSpeed;
+            }
 
-        if (Input.mousePosition.x < rotationAnchorPoint.x) {
-            transform.Rotate(new Vector3(0,0,-rotationSpeed*Time.deltaTime*sensitivity));
-        } else if (Input.mousePosition.x > rotationAnchorPoint.x) {
-            transform.Rotate(new Vector3(0,0,rotationSpeed*Time.deltaTime*sensitivity));
+            if (Input.mousePosition.x < rotationAnchorPoint.x) {
+                transform.Rotate(new Vector3(0,0,-rotationSpeed*Time.deltaTime*mouseSensitivity));
+            } else if (Input.mousePosition.x > rotationAnchorPoint.x) {
+                transform.Rotate(new Vector3(0,0,rotationSpeed*Time.deltaTime*mouseSensitivity));
+            }
+        } else {
+            transform.Rotate(new Vector3(0,0,Input.GetAxis("Rotate")*Time.deltaTime*inputSensitivity));
         }
     }
 

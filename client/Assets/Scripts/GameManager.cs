@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour {
     private BoardController boardController;
     private FogOfWarController fogOfWarController;
 
+    private CameraMovement cameraRig;
+
     private InGameMenu inGameMenu;
 
     private AudioManager audioManager;
@@ -126,6 +128,9 @@ public class GameManager : MonoBehaviour {
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, isPlacing);
 
+        cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
+        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition()));
+
         cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
         List<CardFunction> hand = new List<CardFunction>();
         if (state.UserCardsMap.ContainsKey(user.Username)) {
@@ -136,7 +141,7 @@ public class GameManager : MonoBehaviour {
         dropZone.SetPlayerController(playerController);
         dropZone.SetCardSystemManager(cardSystem);
 
-        cardSystem.Initialize(hand, state.UserUnitsMap[user.Username]);
+        cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
 
         inGameMenu.SetupPanels(isPlacing: false);
 
@@ -178,6 +183,9 @@ public class GameManager : MonoBehaviour {
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
+
+        cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
+        cameraRig.SnapToPosition(boardController.CellToWorld(boardController.GetCenterSpawnTile(spawnPoint)));
 
         inGameMenu.SetupPanels(isPlacing: true);
         GameObject.Find("Tabletop").SetActive(false);
@@ -230,6 +238,19 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    // Returns first general position, or position of last unit
+    private Vector2Int GetGeneralPosition() {
+        Vector2Int lastPosition = Vector2Int.zero;
+        foreach(Vector2Int position in unitPositions.Keys) {
+            lastPosition = position;
+            UnitStats general = unitPositions[position];
+            if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
+                return position;
+            }
+        }
+        return lastPosition;
+    }
+
     //Deal with persistant cards
     private void PreprocessCards() {
         List<Action> reverseActions = new List<Action>(state.Actions);
@@ -258,6 +279,10 @@ public class GameManager : MonoBehaviour {
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
+        string path = CardMetadata.FILE_PATH_BASE + "/." + state.id;
+        if (System.IO.File.Exists(path)) {
+            System.IO.File.Delete(path);
+        }
         audioManager.Play("ButtonPress");
         SceneManager.LoadScene("MainMenu");
     }
@@ -310,12 +335,12 @@ public class GameManager : MonoBehaviour {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
                 if(unit.MovementActions > 0 && unit.Owner == user.Username) {
                     unitPositions.Remove(targetUnit);
-					if(state.boardId == BoardType.Sandbox){
-						unit.SandboxMove(endpoint, ref boardController);
-					}
-					else{
-						unit.Move(endpoint, ref boardController);
-					}
+                    if(state.boardId == BoardType.Sandbox){
+                        unit.SandboxMove(endpoint, ref boardController);
+                    }
+                    else{
+                        unit.Move(endpoint, ref boardController);
+                    }
                     unitPositions[endpoint] = unit;
                     turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint, GeneralAbility.NONE, CardFunction.NONE));
                 }

@@ -159,11 +159,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scrollZone: 100
-  sensitivity: 0.7
+  mouseSensitivity: 1
+  inputSensitivity: 50
   zoomSensitivity: 80
   smoothFactor: 0.2
   zoomLimits: {x: 10, y: 100}
-  useCursor: 1
+  useCursor: 0
   maxRotationSpeed: 100
 --- !u!1 &6525353359766537967
 GameObject:
