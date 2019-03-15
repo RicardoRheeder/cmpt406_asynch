@@ -130,10 +130,10 @@ public class GameBuilder : MonoBehaviour {
         GameObject unitObject = Instantiate(typePrefabStorage[unit.UnitType]);
         Unit unitComponent = unitObject.GetComponent<Unit>();
         unitComponent.PlaceAt(pos, ref board);
-        unit.direction = serverUnit.direction;
-        unitComponent.SnapToDirection(unit.direction);
+        unit.Direction = serverUnit.Direction;
+        unitComponent.SnapToDirection(unit.Direction);
         unit.SetUnit(unitComponent);
-        unit.Move(pos, ref board, true);
+        unit.Place(pos, ref board);
         unit.Owner = username;
         if(this.username == username) {
             FogViewer unitFogViewer = unitComponent.GetFogViewer();
@@ -152,7 +152,7 @@ public class GameBuilder : MonoBehaviour {
         GameObject unitObject = Instantiate(typePrefabStorage[unit.UnitType]);
         Unit unitComponent = unitObject.GetComponent<Unit>();
         unitComponent.PlaceAt(pos, ref board);
-        unitComponent.SnapToDirection(unit.direction);
+        unitComponent.SnapToDirection(unit.Direction);
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Move(pos, ref board, true);
         unit.Owner = username;

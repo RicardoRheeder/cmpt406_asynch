@@ -41,7 +41,7 @@ public class UnitStats {
     private int yPos;
 
     [DataMember (Name = "direction")]
-    public int direction { get; set; }
+    public int Direction { get; set; }
 
     //Variables for the generals
     public GeneralAbility Ability1 { get; private set; }
@@ -86,7 +86,7 @@ public class UnitStats {
         this.attackStrategy = attackStrategy;
         this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
         this.Vision = vision;
-        this.direction = direction;
+        this.Direction = direction;
     }
 
     public string GetDisplayName() {
@@ -211,8 +211,13 @@ public class UnitStats {
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
         if(pathWithDirection.Count > 0) {
-            this.direction = pathWithDirection[pathWithDirection.Count - 1].Second;
+            this.Direction = pathWithDirection[pathWithDirection.Count - 1].Second;
         }
+    }
+
+    public void Place(Vector2Int position, ref BoardController board) {
+        this.Position = position;
+        MyUnit.PlaceAt(position, ref board);
     }
 	
 	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
@@ -220,7 +225,7 @@ public class UnitStats {
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
         if(pathWithDirection.Count > 0) {
-            this.direction = pathWithDirection[pathWithDirection.Count - 1].Second;
+            this.Direction = pathWithDirection[pathWithDirection.Count - 1].Second;
         }
 	}
 
