@@ -7,7 +7,11 @@ public class CardSystemManager : MonoBehaviour {
     [SerializeField]
     private GameObject CardTemplate;
 
-    [SerializeField]
+    [HideInInspector] public GameObject cardDisplayPanel;
+    [HideInInspector] public bool cardBeingDragged = false;
+
+
+   [SerializeField]
     private Deck genericDeck;
     [SerializeField]
     private Deck compensatorDeck;
@@ -159,6 +163,9 @@ public class CardSystemManager : MonoBehaviour {
     private static Dictionary<CardFunction, Card> library;
 
     void Awake() {
+        cardDisplayPanel = GameObject.Find("CardDisplayPanel");
+        cardDisplayPanel.SetActive(false);
+
         library = new Dictionary<CardFunction, Card>() {
             { CardFunction.Reposition, Reposition },
             { CardFunction.Retreat, Retreat },

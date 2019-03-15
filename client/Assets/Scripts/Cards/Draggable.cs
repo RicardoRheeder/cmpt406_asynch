@@ -3,8 +3,10 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
-    
+public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+{
+    private CardSystemManager cardSystem;
+
     public Transform parentToReturnTo = null;
     public Transform placeholderParent = null;
 
@@ -13,6 +15,16 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public bool allowDrag = false;
 
     private GameObject tableTop;
+
+    private Vector3 defaultScale;
+
+//    private GameObject cardDisplayPanel;
+    private GameObject tempCardDisplaying;
+
+    void Start()
+    {
+        cardSystem = FindObjectOfType<CardSystemManager>();
+    }
 
     public void SetTableTop(GameObject tableTop) {
         this.tableTop = tableTop;
@@ -46,7 +58,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     }
     
-    public void OnDrag(PointerEventData eventData) {
+    public void OnDrag(PointerEventData eventData)
+    {
+        cardSystem.cardBeingDragged = true;
         if (allowDrag == true) {
 
             this.transform.position = eventData.position;
@@ -77,7 +91,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
     }
     
-    public void OnEndDrag(PointerEventData eventData) {
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        cardSystem.cardBeingDragged = false;
         tableTop.SetActive(false);
         if (allowDrag == true) {
             this.transform.SetParent(parentToReturnTo);
@@ -86,5 +102,38 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
             Destroy(placeholder);
         }
+
+        if (tempCardDisplaying != null)
+        {
+            this.transform.localScale = defaultScale;
+            Destroy(tempCardDisplaying);
+            cardSystem.cardDisplayPanel.SetActive(false);
+        }
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!cardSystem.cardBeingDragged)
+        {
+            defaultScale = this.transform.localScale;
+            this.transform.localScale *= 1.2f;
+
+            tempCardDisplaying = GameObject.Instantiate(this.gameObject) as GameObject;
+            cardSystem.cardDisplayPanel.SetActive(true);
+            tempCardDisplaying.transform.SetParent(cardSystem.cardDisplayPanel.transform);
+            tempCardDisplaying.transform.localScale *= 4f;
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        print("Exiting");
+        if (tempCardDisplaying != null && placeholder == null)
+        {
+            this.transform.localScale = defaultScale;
+            Destroy(tempCardDisplaying);
+            cardSystem.cardDisplayPanel.SetActive(false);
+        }
+    }
+
 }

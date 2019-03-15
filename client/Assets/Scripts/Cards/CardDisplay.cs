@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,16 +9,14 @@ using UnityEngine.UI;
 public class CardDisplay : MonoBehaviour {
     public Card card;
 
-    public Text nameText;
+    public TextMeshProUGUI nameText;
 
-    public Text effectText;
-    public Text descriptionText;
+    public TextMeshProUGUI effectText;
+    public TextMeshProUGUI descriptionText;
 
     public Image artworkImage;
 
-    public Text cardCostText;
-    public Text attackText;
-    public Text healthText;
+    public TextMeshProUGUI cardCostText;
 
     private Vector3 scale;
     private int layer;
@@ -53,4 +52,6 @@ public class CardDisplay : MonoBehaviour {
         this.transform.rotation = this.transform.rotation;
         this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, 0);
     }
+
+
 }
