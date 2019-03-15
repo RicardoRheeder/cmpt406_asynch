@@ -96,7 +96,6 @@ public class GameManager : MonoBehaviour {
         this.isPlacing = false;
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
-
         
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
@@ -126,10 +125,10 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, isPlacing);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing);
 
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
-        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition()));
+        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
 
         cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
         List<CardFunction> hand = new List<CardFunction>();
@@ -183,7 +182,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
         cameraRig.SnapToPosition(boardController.CellToWorld(boardController.GetCenterSpawnTile(spawnPoint)));
@@ -241,12 +240,12 @@ public class GameManager : MonoBehaviour {
     }
 
     // Returns first general position, or position of last unit
-    private Vector2Int GetGeneralPosition() {
+    private Vector2Int GetGeneralPosition(string username) {
         Vector2Int lastPosition = Vector2Int.zero;
         foreach(Vector2Int position in unitPositions.Keys) {
             lastPosition = position;
             UnitStats general = unitPositions[position];
-            if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
+            if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD && general.Owner == username) {
                 return position;
             }
         }

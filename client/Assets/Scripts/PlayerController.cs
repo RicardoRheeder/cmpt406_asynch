@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour {
     private CardController deck;
     private GameManager manager;
     private BoardController boardController;
+    private FogOfWarController fogOfWarController;
     private GameBuilder builder;
     private GameState gamestate;
     private AudioManager audioManager;
@@ -93,10 +94,11 @@ public class PlayerController : MonoBehaviour {
 
     private List<Vector2Int> highlightedTiles;
 
-    public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
+    public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, FogOfWarController fogOfWarController, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
+        this.fogOfWarController = fogOfWarController;
         this.builder = builder;
         this.spawnPoint = spawnPoint;
         this.isPlacing = isPlacing;
@@ -218,11 +220,13 @@ public class PlayerController : MonoBehaviour {
                                     interactionState = InteractionState.none;
                                 break;
                             case (InteractionState.none):
-                                if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
-                                    if (selectedUnit != null) {
-                                        selectedUnit.MyUnit.rend.material.color = tempColor;
+                                if(!fogOfWarController.CheckIfTileHasFog(tilePos)) {
+                                    if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                                        if (selectedUnit != null) {
+                                            selectedUnit.MyUnit.rend.material.color = tempColor;
+                                        }
+                                        selectedUnit = unit;
                                     }
-                                    selectedUnit = unit;
                                 }
                                 break;
                             default:

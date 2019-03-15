@@ -154,7 +154,7 @@ public class GameBuilder : MonoBehaviour {
         unitComponent.PlaceAt(pos, ref board);
         unitComponent.SnapToDirection(unit.Direction);
         unit.SetUnit(unitObject.GetComponent<Unit>());
-        unit.Move(pos, ref board, true);
+        unit.Place(pos, ref board);
         unit.Owner = username;
         if(username == this.username) {
             FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
