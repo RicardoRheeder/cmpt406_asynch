@@ -281,7 +281,7 @@ public class ArmyBuilderUI : MonoBehaviour {
 
     public void SaveArmy() {
         string armyName = GameObject.Find("ABNameInput").GetComponent< TMP_InputField>().text;
-        if (!StringValidation.ValidateGameName(armyName)) {
+        if (!StringValidation.ValidateArmyName(armyName)) {
             audioManager.Play("ButtonError");
             Debug.Log("invalid army name");
             //Something has to inform the user here
@@ -398,7 +398,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = adren.colors;
         colors.normalColor = highlight;
         adren.colors = colors;
-
     }
     
     public void FilterPiercing() {
@@ -413,7 +412,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = tungsten.colors;
         colors.normalColor = highlight;
         tungsten.colors = colors;
-        
     }
     
     public void FilterHeavy() {
@@ -428,7 +426,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = albarn.colors;
         colors.normalColor = highlight;
         albarn.colors = colors;
-        
     }
     
     public void FilterSupport() {
@@ -447,7 +444,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = sandman.colors;
         colors.normalColor = highlight;
         sandman.colors = colors;
-        
     }
     
     public void FilterGeneral() {
@@ -466,7 +462,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = sandman.colors;
         colors.normalColor = highlight;
         sandman.colors = colors;
-        
     }
     
 }

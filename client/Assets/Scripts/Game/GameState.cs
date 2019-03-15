@@ -145,7 +145,7 @@ public class CreatePrivateGameState {
     private int boardId;
 
     public CreatePrivateGameState(string name, int forfeitTime, List<string> opponents, int boardId) {
-        this.gameName = name;
+        this.gameName = name.Trim();
         this.forfeitTime = forfeitTime;
         this.opponentUsernames = opponents;
         this.boardId = boardId;
@@ -168,7 +168,7 @@ public class CreatePublicGameState {
     private int boardId;
 
     public CreatePublicGameState(string name, int forfeitTime, int maxPlayers, int boardId) {
-        this.gameName = name;
+        this.gameName = name.Trim();
         this.forfeitTime = forfeitTime;
         this.maxUsers = maxPlayers;
         this.boardId = boardId;

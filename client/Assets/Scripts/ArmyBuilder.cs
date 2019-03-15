@@ -92,14 +92,6 @@ public static class ArmyBuilder {
         },
         (int)UnitType.light_adren
     );
-    private static readonly string presetFourName = "Trash";
-    private static readonly ArmyPreset presetFour = new ArmyPreset(
-        presetFourName,
-        new List<int>() {
-            (int)UnitType.trooper,
-        },
-        (int)UnitType.light_adren
-    );
     //Method used to create the default presets and add them to the dictionary
     public static void InsertDefaultPresets() {
         if (!ARMY_PRESETS.ContainsKey(presetOneName)) {
@@ -113,10 +105,6 @@ public static class ArmyBuilder {
         if (!ARMY_PRESETS.ContainsKey(presetThreeName)) {
             presetThree.Cost = UnitFactory.CalculateCost(presetThree.Units);
             AddPreset(presetThreeName, presetThree);
-        }
-        if (!ARMY_PRESETS.ContainsKey(presetFourName)) {
-            presetThree.Cost = UnitFactory.CalculateCost(presetFour.Units);
-            AddPreset(presetFourName, presetFour);
         }
     }
 }
@@ -141,7 +129,7 @@ public class ArmyPreset {
 
     public ArmyPreset(string presetName, List<int> units, int general) {
         Id = "";
-        this.Name = presetName;
+        this.Name = presetName.Trim();
         this.Units = units;
         this.General = general;
     }
