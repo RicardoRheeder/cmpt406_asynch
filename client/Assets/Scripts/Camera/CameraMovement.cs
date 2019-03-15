@@ -63,6 +63,25 @@ public class CameraMovement : MonoBehaviour {
         }
     }
 
+    public void SnapToPosition(Vector2 position) {
+        transform.position = position;
+    }
+
+    public void MoveToPosition(Vector2 position) {
+        StartCoroutine(TransitionPosition(position));
+    }
+
+    IEnumerator TransitionPosition(Vector2 position) {
+        float step = Time.fixedDeltaTime;
+        float t = 0;
+        Vector3 prevPos = transform.position;
+        while (t <= 1.0f) {
+            t += step;
+            transform.position = Vector3.Lerp(prevPos, position, t);
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
     void HandlePan() {
         if (useCursor) {
             float percentOutsideScrollZone = 0f;
