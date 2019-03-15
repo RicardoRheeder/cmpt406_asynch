@@ -239,19 +239,6 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    // Returns first general position, or position of last unit
-    private Vector2Int GetGeneralPosition(string username) {
-        Vector2Int lastPosition = Vector2Int.zero;
-        foreach(Vector2Int position in unitPositions.Keys) {
-            lastPosition = position;
-            UnitStats general = unitPositions[position];
-            if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD && general.Owner == username) {
-                return position;
-            }
-        }
-        return lastPosition;
-    }
-
     //Deal with persistant cards
     private void PreprocessCards() {
         List<Action> reverseActions = new List<Action>(state.Actions);
@@ -327,6 +314,19 @@ public class GameManager : MonoBehaviour {
 
     public bool TileContainsUnit(Vector2Int tile) {
         return unitPositions.ContainsKey(tile);
+    }
+
+    // Returns first general position, or position of last unit
+    private Vector2Int GetGeneralPosition(string username) {
+        Vector2Int lastPosition = Vector2Int.zero;
+        foreach (Vector2Int position in unitPositions.Keys) {
+            UnitStats general = unitPositions[position];
+            if ((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD && general.Owner == username) {
+                lastPosition = position;
+                return position;
+            }
+        }
+        return lastPosition;
     }
 
     //If the following conditions are true:
