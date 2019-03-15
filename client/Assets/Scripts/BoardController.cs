@@ -106,6 +106,20 @@ public class BoardController {
         return tile != null ? tile.elevation : Elevation.Low;
     }
 
+    public Vector2Int GetCenterSpawnTile(SpawnPoint player) {
+        if (tilemap == null) {   // throw exception if tilemap is null
+            throw new MissingComponentException("Tilemap is missing");
+        }
+        List<Vector2Int> spawnTileList = new List<Vector2Int>();
+        foreach(Vector2Int tilePos in tilemap.cellBounds.allPositionsWithin) {
+            HexTile tile = tilemap.GetTile((Vector3Int)tilePos) as HexTile;
+            if (tile != null && tile.spawnPoint == player) {
+                spawnTileList.Add(tilePos);
+            }
+        }
+        return spawnTileList.Count > 0 ? spawnTileList[spawnTileList.Count / 2] : Vector2Int.zero;
+    }
+
     public void HighlightSpawnZone(SpawnPoint player) {
         if (tilemap == null) {   // throw exception if tilemap is null
             throw new MissingComponentException("Tilemap is missing");

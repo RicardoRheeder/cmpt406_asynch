@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour {
     private BoardController boardController;
     private FogOfWarController fogOfWarController;
 
+    private CameraMovement cameraRig;
+
     private InGameMenu inGameMenu;
 
     private AudioManager audioManager;
@@ -126,6 +128,9 @@ public class GameManager : MonoBehaviour {
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, isPlacing);
 
+        cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
+        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition()));
+
         cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
         List<CardFunction> hand = new List<CardFunction>();
         if (state.UserCardsMap.ContainsKey(user.Username)) {
@@ -179,6 +184,9 @@ public class GameManager : MonoBehaviour {
         playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
+        cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
+        cameraRig.SnapToPosition(boardController.CellToWorld(boardController.GetCenterSpawnTile(spawnPoint)));
+
         inGameMenu.SetupPanels(isPlacing: true);
         GameObject.Find("Tabletop").SetActive(false);
 
@@ -228,6 +236,19 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
+    }
+
+    // Returns first general position, or position of last unit
+    private Vector2Int GetGeneralPosition() {
+        Vector2Int lastPosition = Vector2Int.zero;
+        foreach(Vector2Int position in unitPositions.Keys) {
+            lastPosition = position;
+            UnitStats general = unitPositions[position];
+            if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
+                return position;
+            }
+        }
+        return lastPosition;
     }
 
     //Deal with persistant cards
