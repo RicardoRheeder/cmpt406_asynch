@@ -382,11 +382,11 @@ public class GameManager : MonoBehaviour {
         UnitStats general = unitPositions[source];
         if (general.Ability1 == ability) {
             if (general.Ability1Cooldown == 0) {
-                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
+                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
                     if(GetUnitOnTile(target, out UnitStats targetUnit)) {
                         general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                        abilityFunction(ref targetUnit, unitPositions, user.Username);
+                        abilityFunction(ref targetUnit, unitPositions, user.Username, true);
                     }
                     else {
                         return false; //don't put the ability on cooldown
@@ -394,17 +394,17 @@ public class GameManager : MonoBehaviour {
                 }
                 else {
                     general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                    abilityFunction(ref general, unitPositions, user.Username);
+                    abilityFunction(ref general, unitPositions, user.Username, true);
                 }
             }
         }
         else if(general.Ability2 == ability) {
             if (general.Ability2Cooldown == 0) {
-                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
+                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
                     if (GetUnitOnTile(target, out UnitStats targetUnit)) {
                         general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                        abilityFunction(ref targetUnit, unitPositions, user.Username);
+                        abilityFunction(ref targetUnit, unitPositions, user.Username, true);
                     }
                     else {
                         return false; //don't put the ability on cooldown
@@ -412,7 +412,7 @@ public class GameManager : MonoBehaviour {
                 }
                 else {
                     general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                    abilityFunction(ref general, unitPositions, user.Username);
+                    abilityFunction(ref general, unitPositions, user.Username, true);
                 }
             }
         }
