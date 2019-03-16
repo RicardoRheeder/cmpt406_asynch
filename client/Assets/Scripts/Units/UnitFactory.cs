@@ -32,7 +32,7 @@ public static class UnitFactory {
     private readonly static int STEAMER_DAMAGE = 30;
     private readonly static int STEAMER_PIERCE = 0;
     private readonly static int STEAMER_AOE = 0;
-    private readonly static int STEAMER_SPEED = 6;
+    private readonly static int STEAMER_SPEED = 3;
     private readonly static int STEAMER_VISION = 5;
     private readonly static int STEAMER_COST = 2;
     private readonly static IAttackStrategy STEAMER_ATTACK_STRATEGY = new AreaStrategy();

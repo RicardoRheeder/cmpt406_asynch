@@ -219,8 +219,12 @@ public class GameManager : MonoBehaviour {
                     GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability1](
                         ref general,
                         unitPositions,
-                        general.Owner
+                        general.Owner,
+                        user.Username == general.Owner
                     );
+                }
+                if (general.Ability1Cooldown > 0 && general.Owner == user.Username) {
+                    general.Ability1Cooldown--;
                 }
                 if (general.Ability2Duration > 0) {
                     if (general.Owner == user.Username) {
@@ -229,8 +233,12 @@ public class GameManager : MonoBehaviour {
                     GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability2](
                         ref general,
                         unitPositions,
-                        general.Owner
+                        general.Owner,
+                        user.Username == general.Owner
                     );
+                }
+                if (general.Ability2Cooldown > 0 && general.Owner == user.Username) {
+                    general.Ability2Cooldown--;
                 }
             }
         }
