@@ -124,7 +124,7 @@ public static class GeneralMetadata {
     private static void StickAndPoke(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         foreach(var key in allUnits.Keys) {
             UnitStats unit = allUnits[key];
-            if(unit.UnitClass == UnitClass.light && unit.Owner == username) {
+            if(unit.Owner == username) {
                 unit.MovementActions += 1;
                 unit.AlterSpeed(3);
             }

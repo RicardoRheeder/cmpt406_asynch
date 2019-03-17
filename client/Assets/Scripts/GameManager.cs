@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
     private GameObject playerControllerPrefab;
     private GameObject playerControllerObject;
     private PlayerController playerController;
+
     private CardSystemManager cardSystem;
     private BoardController boardController;
     private FogOfWarController fogOfWarController;
@@ -145,6 +146,8 @@ public class GameManager : MonoBehaviour {
         PreprocessGenerals();
         PreprocessCards();
 
+        fogOfWarController.UpdateAllFog();
+
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
@@ -196,6 +199,12 @@ public class GameManager : MonoBehaviour {
     private void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
         SceneManager.sceneLoaded -= OnMenuLoaded;
         state = null; //Verify that the state is destroyed;
+        gameBuilder = null;
+        playerController = null;
+        boardController = null;
+        fogOfWarController = null;
+        Destroy(gameBuilderObject);
+        Destroy(playerControllerObject);
         unitPositions.Clear();
         turnActions.Clear();
     }
@@ -270,13 +279,13 @@ public class GameManager : MonoBehaviour {
 
     //===================== In game button functionality ===================
     public void EndTurn() {
-        //This function will need to figure out how to send the updated gamestate to the server
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         string path = CardMetadata.FILE_PATH_BASE + "/." + state.id;
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }
         audioManager.Play("ButtonPress");
+        SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
 

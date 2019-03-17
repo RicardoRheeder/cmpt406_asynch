@@ -301,6 +301,8 @@ public class CardSystemManager : MonoBehaviour {
         foreach(var card in currentHand) {
             returnList.Add(card.func);
         }
+        currentHand = null;
+        currentCard = null;
         return returnList;
     }
 

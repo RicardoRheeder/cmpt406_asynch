@@ -15,7 +15,7 @@ public static class ArmyBuilder {
     public static List<ArmyPreset> GetPresetsUnderCost(int cost) {
         List<ArmyPreset> presets = new List<ArmyPreset>();
         foreach (var pair in ARMY_PRESETS) {
-            if(pair.Value.Cost < cost) {
+            if(pair.Value.Cost <= cost) {
                 presets.Add(pair.Value);
             }
         }
@@ -38,7 +38,6 @@ public static class ArmyBuilder {
         ARMY_PRESETS.Clear();
     }
 
-
     private static readonly string presetOneName = "Steamy Ray Vaughn";
     private static readonly ArmyPreset presetOne = new ArmyPreset(
         presetOneName,
@@ -53,8 +52,6 @@ public static class ArmyBuilder {
             (int)UnitType.powerSurge,
             (int)UnitType.trooper,
             (int)UnitType.trooper,
-            
-            
         },
         (int)UnitType.heavy_albarn
     );

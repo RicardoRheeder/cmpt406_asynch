@@ -75,6 +75,7 @@ public class GameState {
         if (Users == null) Users = new List<string>();
         if (AcceptedUsers == null) AcceptedUsers = new List<string>();
         if (ReadyUsers == null) ReadyUsers = new List<string>();
+        if (AliveUsers == null) AliveUsers = new List<string>();
         if (cards == null) cards = new List<CardController>();
         if (Actions == null) Actions = new List<Action>();
         UserUnitsMap = new Dictionary<string, List<UnitStats>>();
@@ -83,10 +84,6 @@ public class GameState {
                 UserUnitsMap[unit.Owner].Add(unit);
             else
                 UserUnitsMap.Add(unit.Owner, new List<UnitStats>() { unit });
-        }
-        foreach(var user in AliveUsers) {
-            if (!UserUnitsMap.ContainsKey(user))
-                UserUnitsMap[user] = new List<UnitStats>();
         }
 
         if (generals == null) generals = new List<UnitStats>();
@@ -101,6 +98,15 @@ public class GameState {
         UserCardsMap = new Dictionary<string, CardController>();
         foreach(CardController card in cards) {
             UserCardsMap.Add(card.owner, card);
+        }
+
+        foreach (var user in AliveUsers) {
+            if (!UserUnitsMap.ContainsKey(user))
+                UserUnitsMap[user] = new List<UnitStats>();
+            if (!UserCardsMap.ContainsKey(user))
+                UserCardsMap[user] = new CardController(user, new List<CardFunction>());
+            if (!UserGeneralsMap.ContainsKey(user))
+                UserUnitsMap[user] = new List<UnitStats>();
         }
     }
 }

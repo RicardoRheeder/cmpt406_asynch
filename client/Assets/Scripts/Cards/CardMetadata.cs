@@ -737,8 +737,7 @@ public static class CardMetadata {
     private static bool EndlessRunner(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
-                unit.AttackActions = 0;
-                unit.DoubleSpeed();
+                unit.MovementActions++;
             }
             else {
                 return false;

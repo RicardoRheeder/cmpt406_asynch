@@ -20,6 +20,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     //References to the in game panel we populate with unit names
     public GameObject armyContent;
     public GameObject friendsListCellPrefab; //Note: this can be a button where we apply a dynamic listener that removes it from the army
+    public TMP_InputField armyName;
 
     //References to texts we update
     private TMP_Text stockNum;
@@ -51,6 +52,8 @@ public class ArmyBuilderUI : MonoBehaviour {
     private Button adren;
     private Color highlight;
     private Color fade;
+
+    private GameObject addUnitButton;
     
     public new Sprite light;
     public Sprite piercing;
@@ -63,6 +66,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
         armyContent = GameObject.Find("ABListViewport");
+        armyName = GameObject.Find("ABNameInput").GetComponent<TMP_InputField>();
         stockNum = GameObject.Find("CostNum").GetComponent<TMP_Text>();
         healthNum = GameObject.Find("HealthNum").GetComponent<TMP_Text>();
         attackNum = GameObject.Find("AttackNum").GetComponent<TMP_Text>();
@@ -92,6 +96,8 @@ public class ArmyBuilderUI : MonoBehaviour {
         sandman = GameObject.Find("General4").GetComponent<Button>();
         highlight = Color.yellow;
         fade = Color.grey;
+        addUnitButton = GameObject.Find("SelectUnitButton");
+        addUnitButton.SetActive(false);
 
         ConfigureOnClick(trooper, UnitType.trooper);
         ConfigureOnClick(recon, UnitType.recon);
@@ -114,10 +120,12 @@ public class ArmyBuilderUI : MonoBehaviour {
             selectedUnit = type;
             UpdateDisplay();
             audioManager.Play("ButtonPress");
+            addUnitButton.SetActive(true);
         });
     }
 
     public void CreateArmy() {
+        addUnitButton.SetActive(false);
         string newArmyName = "Name Army";
         ArmyPreset newPreset = new ArmyPreset(
             newArmyName,
@@ -125,6 +133,7 @@ public class ArmyBuilderUI : MonoBehaviour {
             (int)UnitType.piercing_tungsten
         );
 
+        armyName.text = "";
         selectedArmy = newPreset;
         GetCost();
         DeleteUnitsHelper();
@@ -143,7 +152,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         movementNum.SetText(baseUnit.MovementSpeed.ToString());
 
         switch (baseUnit.UnitType){
-            
             case UnitType.claymore:
                 cardName1.text = ("Oil Slick");
                 cardEffects1.text = ("+1 Movement Action" + Environment.NewLine + "Enemies within 1 range of the Claymore cannot move until your next turn");
