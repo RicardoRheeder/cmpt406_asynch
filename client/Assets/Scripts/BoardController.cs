@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
+using System.Linq;
 
 public class BoardController {
 
@@ -10,6 +11,7 @@ public class BoardController {
     public float elevationHeight = 2.4f; // the difference between each elevation level. used to calculate the y world position
     Tilemap tilemap; // the tilemap instance
     Plane plane;
+    LineRenderer pathLine;
 
     private List<GameObject> hightlightedTiles;
     private GameObject hoverHighlightedTile;
@@ -28,6 +30,7 @@ public class BoardController {
             plane = new Plane(tilemap.transform.forward, tilemap.transform.position); // creates a flat horizontal plane at y = 0
         }
         this.hightlightedTiles = new List<GameObject>();
+        this.pathLine = GameObject.Instantiate(Resources.Load<LineRenderer>("PathLine"));
     }
 
     // Getter for direct access to the tilemap. Use other board controller methods unless otherwise needed
@@ -78,6 +81,20 @@ public class BoardController {
         HexTile tile = tilemap.GetTile((Vector3Int)position) as HexTile;
         if(tile != null) { // if tile exists, add elevation to world position
             return new Vector3(worldPosition.x,worldPosition.y,worldPosition.z-(tileHeight+((int)tile.elevation*elevationHeight)));
+        }
+        return worldPosition;
+    }
+
+    // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position
+    public Vector3 CellToWorld(Vector2Int position, float zOffset) {
+        if(tilemap == null) {   // throw exception if tilemap is null
+            throw new MissingComponentException("Tilemap is missing");
+        }
+
+        Vector3 worldPosition = tilemap.CellToWorld((Vector3Int)position);
+        HexTile tile = tilemap.GetTile((Vector3Int)position) as HexTile;
+        if(tile != null) { // if tile exists, add elevation to world position
+            return new Vector3(worldPosition.x,worldPosition.y,worldPosition.z-(tileHeight+((int)tile.elevation*elevationHeight)+zOffset));
         }
         return worldPosition;
     }
@@ -356,5 +373,22 @@ public class BoardController {
 
     public List<Vector2Int> GetTilesWithinMovementRange(Vector2Int startingPos, int movementSpeed) {
         return HexUtility.HexReachable(startingPos, movementSpeed, tilemap, false);
+    }
+
+    public void RenderPath(Vector2Int startingPos, Vector2Int endPos) {
+        Debug.Log("renderPath");
+        List<Vector2Int> path = HexUtility.Pathfinding(startingPos,endPos,this.tilemap,false);
+        List<Vector3> worldPosPath = new List<Vector3>();
+        worldPosPath.Add(CellToWorld(startingPos,1f));
+        foreach(Vector2Int pos in path) {
+            worldPosPath.Add(CellToWorld(pos,1f));
+        }
+        pathLine.positionCount = worldPosPath.Count;
+        pathLine.SetPositions(worldPosPath.ToArray());
+    }
+
+    public void ClearRenderedPath() {
+        pathLine.positionCount = 0;
+        pathLine.SetPositions(new Vector3[0]);
     }
 }
