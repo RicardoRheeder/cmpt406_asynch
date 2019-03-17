@@ -335,9 +335,14 @@ public class GameManager : MonoBehaviour {
         Vector2Int lastPosition = Vector2Int.zero;
         foreach (Vector2Int position in unitPositions.Keys) {
             UnitStats general = unitPositions[position];
-            if ((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD && general.Owner == username) {
-                lastPosition = position;
-                return position;
+            if(general.Owner == username) {
+                if ((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
+                    lastPosition = position;
+                    return position;
+                }
+                else if (lastPosition.Equals(Vector2Int.zero)) {
+                    lastPosition = position;
+                }
             }
         }
         return lastPosition;
