@@ -34,7 +34,7 @@ public static class UnitFactory {
     private readonly static int STEAMER_AOE = 0;
     private readonly static int STEAMER_SPEED = 3;
     private readonly static int STEAMER_VISION = 5;
-    private readonly static int STEAMER_COST = 2;
+    private readonly static int STEAMER_COST = 3;
     private readonly static IAttackStrategy STEAMER_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int PEWPEW_HP = 150;
@@ -67,7 +67,7 @@ public static class UnitFactory {
     private readonly static int FOUNDATION_AOE = 0;
     private readonly static int FOUNDATION_SPEED = 6;
     private readonly static int FOUNDATION_VISION = 5;
-    private readonly static int FOUNDATION_COST = 2;
+    private readonly static int FOUNDATION_COST = 4;
     private readonly static IAttackStrategy FOUNDATION_ATTACK_STRATEGY = new AreaStrategy();
 
     private readonly static int POWER_SURGE_HP = 80;

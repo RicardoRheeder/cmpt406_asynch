@@ -233,7 +233,7 @@ public static class CardMetadata {
     private static bool MassEffect(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
         foreach (var pos in positions) {
-            if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (allUnits.TryGetValue(pos, out UnitStats unit)) {
                 if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
                     if(!isReplay)
                         unit.Heal(5);
@@ -373,7 +373,7 @@ public static class CardMetadata {
     private static bool WeShouldRunRightFuckingNow(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
         foreach (var pos in positions) {
-            if (allUnits.TryGetValue(source, out UnitStats unit)) {
+            if (allUnits.TryGetValue(pos, out UnitStats unit)) {
                 if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
                     unit.AlterSpeed(2);
                 }

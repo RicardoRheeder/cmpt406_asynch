@@ -31,6 +31,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     private TMP_Text pierceNum;
     private TMP_Text aoeNum;
     private TMP_Text movementNum;
+    private TMP_Text unitCostNum;
     private TMP_Text unitName;
     private Text cardName1;
     private Text cardEffects1;
@@ -75,6 +76,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         pierceNum = GameObject.Find("PierceNum").GetComponent<TMP_Text>();
         aoeNum = GameObject.Find("AOENum").GetComponent<TMP_Text>();
         movementNum = GameObject.Find("MovementNum").GetComponent<TMP_Text>();
+        unitCostNum = GameObject.Find("UnitCostNum").GetComponent<TMP_Text>();
         unitName = GameObject.Find("UnitName").GetComponent<TMP_Text>();
         cardName1 = GameObject.Find("cardName1").GetComponent<Text>();
         cardEffects1 = GameObject.Find("cardEffects1").GetComponent<Text>();
@@ -150,6 +152,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         pierceNum.SetText(baseUnit.Pierce.ToString());
         aoeNum.SetText(baseUnit.Aoe.ToString());
         movementNum.SetText(baseUnit.MovementSpeed.ToString());
+        unitCostNum.SetText(baseUnit.Cost.ToString());
 
         switch (baseUnit.UnitType){
             case UnitType.claymore:
