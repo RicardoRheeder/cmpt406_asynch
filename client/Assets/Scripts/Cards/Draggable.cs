@@ -33,8 +33,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public void OnBeginDrag(PointerEventData eventData) {
         tableTop.SetActive(true);
 
-        if (eventData.pointerDrag.transform.parent.name == "Hand" ||
-            eventData.pointerDrag.transform.parent.name == "Tabletop") {
+        // The following makes sure that you are only able to drag cards that belong to your hand
+        if (eventData.pointerDrag.transform.parent.name == "Hand" ) {
             allowDrag = true;
         }
 
@@ -58,8 +58,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     }
     
-    public void OnDrag(PointerEventData eventData)
-    {
+    public void OnDrag(PointerEventData eventData){
         cardSystem.cardBeingDragged = true;
         if (allowDrag == true) {
 
@@ -91,10 +90,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
     }
     
-    public void OnEndDrag(PointerEventData eventData)
-    {
+    public void OnEndDrag(PointerEventData eventData){
         cardSystem.cardBeingDragged = false;
-        tableTop.SetActive(false);
         if (allowDrag == true) {
             this.transform.SetParent(parentToReturnTo);
             this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
@@ -103,18 +100,18 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             Destroy(placeholder);
         }
 
-        if (tempCardDisplaying != null)
-        {
+        // Deals with the enlarged dummy display of the card
+        if (tempCardDisplaying != null){
             this.transform.localScale = defaultScale;
             Destroy(tempCardDisplaying);
             cardSystem.cardDisplayPanel.SetActive(false);
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (!cardSystem.cardBeingDragged)
-        {
+
+
+    public void OnPointerEnter(PointerEventData eventData){
+        if (!cardSystem.cardBeingDragged){
             defaultScale = this.transform.localScale;
             this.transform.localScale *= 1.2f;
 
@@ -127,9 +124,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        print("Exiting");
-        if (tempCardDisplaying != null && placeholder == null)
-        {
+//        print("Exiting");
+        if (tempCardDisplaying != null && placeholder == null){
             this.transform.localScale = defaultScale;
             Destroy(tempCardDisplaying);
             cardSystem.cardDisplayPanel.SetActive(false);
