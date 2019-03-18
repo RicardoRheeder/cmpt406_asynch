@@ -21,7 +21,7 @@ public class CardSystemManager : MonoBehaviour {
     public int discardRegainPointsAmount = 1;
     public TextMeshProUGUI CardPointsText;
 
-   [SerializeField]
+    [SerializeField]
     private Deck genericDeck;
     [SerializeField]
     private Deck compensatorDeck;
@@ -240,7 +240,7 @@ public class CardSystemManager : MonoBehaviour {
         };
     }
 
-    void Start(){
+    void Start() {
         this.remainingCardPoints = totalCardPoints;
         CardPointsText.text = "Card Points: " + this.remainingCardPoints;
     }
@@ -367,20 +367,17 @@ public class CardSystemManager : MonoBehaviour {
         }
     }
 
-    public void deductCardPoints(int points)
-    {
+    public void DeductCardPoints(int points) {
         this.remainingCardPoints -= points;
         CardPointsText.text = "Card Points: " + this.remainingCardPoints;
     }
 
-    public void incrementCardPoints(int points)
-    {
+    public void IncrementCardPoints(int points) {
         this.remainingCardPoints += points;
         CardPointsText.text = "Card Points: " + this.remainingCardPoints;
     }
 
-    public int getRemainingCardPoints()
-    {
+    public int GetRemainingCardPoints() {
         return remainingCardPoints;
     }
 }

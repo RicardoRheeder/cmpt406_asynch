@@ -3,8 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
-{
+public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler {
     private CardSystemManager cardSystem;
 
     public Transform parentToReturnTo = null;
@@ -18,11 +17,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     private Vector3 defaultScale;
 
-//    private GameObject cardDisplayPanel;
     private GameObject tempCardDisplaying;
 
-    void Start()
-    {
+    void Start() {
         cardSystem = FindObjectOfType<CardSystemManager>();
     }
 
@@ -55,7 +52,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
             GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
-
     }
     
     public void OnDrag(PointerEventData eventData){
@@ -85,7 +81,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                     break;
                 }
             }
-
             placeholder.transform.SetSiblingIndex(newSiblingIndex);
         }
     }
@@ -108,8 +103,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
     }
 
-
-
     public void OnPointerEnter(PointerEventData eventData){
         if (!cardSystem.cardBeingDragged){
             defaultScale = this.transform.localScale;
@@ -122,14 +115,11 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
     }
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-//        print("Exiting");
-        if (tempCardDisplaying != null && placeholder == null){
+    public void OnPointerExit(PointerEventData eventData) {
+        if (tempCardDisplaying != null && placeholder == null) {
             this.transform.localScale = defaultScale;
             Destroy(tempCardDisplaying);
             cardSystem.cardDisplayPanel.SetActive(false);
         }
     }
-
 }

@@ -17,7 +17,7 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     private GameObject cardOnTableTop;
 
-    void Start(){
+    void Start() {
         PlayCardPanel.SetActive(false);
         cardOnTableTop = null;
     }
@@ -54,57 +54,50 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     
     public void OnDrop(PointerEventData eventData) {
         GameObject droppedCard = eventData.pointerDrag.gameObject;
-        if (manager == null)
-        {
+        if (manager == null) {
             manager = GameObject.FindObjectOfType<CardSystemManager>();
         }
 
-        if (droppedCard.GetComponent<Draggable>().allowDrag == true)
-        {
+        if (droppedCard.GetComponent<Draggable>().allowDrag == true) {
             Draggable d = droppedCard.GetComponent<Draggable>();
             if (d != null){
                 d.parentToReturnTo = this.transform;
             }
 
-            if (this.gameObject.name == "Tabletop"){
+            if (this.gameObject.name == "Tabletop") {
                 cardOnTableTop = droppedCard;
                 PlayCardPanel.SetActive(true);
                 
             }
 
-            if (this.gameObject.name == "DiscardPanel")
-            {
+            if (this.gameObject.name == "DiscardPanel") {
                 Card card = eventData.pointerDrag.gameObject.GetComponent<CardDisplay>().card;
                 print("Card: " + card);
 
-                if (manager != null)
-                {
+                if (manager != null) {
                     manager.PlayCard(card);
-//                    Destroy(droppedCard);
 
                     //TODO: Get better way of hiding tabletop after discarding a card
                     GameObject TableTopPanel = GameObject.Find("Tabletop");
                     TableTopPanel.SetActive(false);
-                    manager.incrementCardPoints(manager.discardRegainPointsAmount); //Regain points based on discarded card
-                    StartCoroutine(destroyCardAfterDelay(droppedCard));
+                    manager.IncrementCardPoints(manager.discardRegainPointsAmount); //Regain points based on discarded card
+                    StartCoroutine(DestroyCardAfterDelay(droppedCard));
                 }
             }
         }
     }
 
-    IEnumerator destroyCardAfterDelay(GameObject cardToDestroy)
-    {
+    IEnumerator DestroyCardAfterDelay(GameObject cardToDestroy) {
         yield return new WaitForSeconds(0.5f);
         Destroy(cardToDestroy);
     }
 
     // ConfirmPlayCardButton calls this
-    public void confirmPlayCard(){
+    public void ConfirmPlayCard() {
         if (this.gameObject.name == "Tabletop" && cardOnTableTop != null){
             Card card = cardOnTableTop.GetComponent<CardDisplay>().card;
 
-            if (card.cardCost <= manager.getRemainingCardPoints())
-            {
+            if (card.cardCost <= manager.GetRemainingCardPoints()) {
                 PlayCardPanel.SetActive(false);
 
                 // Deals with dissolving
@@ -113,26 +106,23 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
                 cardOnTableTop.BroadcastMessage("Dissolve");
                 Destroy(cardOnTableTop, 3f);
-                StartCoroutine(hideTableTop(2.9f));
+                StartCoroutine(HideTableTop(2.9f));
 
                 controller.PlayCard(card);
                 manager.PlayCard(card);
 
-                manager.deductCardPoints(card.cardCost);
+                manager.DeductCardPoints(card.cardCost);
             }
-            else
-            {
-                print("Not enough Card Points");
-                displayNotEnoughCardPoints();
-                cancelPlayCard();
+            else {
+                DisplayNotEnoughCardPoints();
+                CancelPlayCard();
             }
 
             
         }
     }
 
-    void displayNotEnoughCardPoints()
-    {
+    void DisplayNotEnoughCardPoints()  {
         GameObject NoCardPointsText = Instantiate(NotEnoughCardPointsText, cardOnTableTop.transform.position, Quaternion.identity);
         GameObject gameHUD = GameObject.Find("GameHUDCanvas");
         NoCardPointsText.transform.SetParent(gameHUD.transform);
@@ -140,13 +130,13 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         Destroy(NoCardPointsText, 2);
     }
 
-    IEnumerator hideTableTop(float seconds){
+    IEnumerator HideTableTop(float seconds){
         yield return new WaitForSeconds(seconds);
         this.gameObject.SetActive(false);
     }
 
     // CancelPlayCardButton calls this
-    public void cancelPlayCard(){
+    public void CancelPlayCard(){
         if (this.gameObject.name == "Tabletop" && cardOnTableTop != null) {
             GameObject HandPanel = GameObject.Find("Hand");
             this.transform.GetChild(0).transform.SetParent(HandPanel.transform);
@@ -155,7 +145,7 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             PlayCardPanel.SetActive(false);
             cardOnTableTop = null;
 
-            StartCoroutine(hideTableTop(0.3f));
+            StartCoroutine(HideTableTop(0.3f));
         }
     }
 

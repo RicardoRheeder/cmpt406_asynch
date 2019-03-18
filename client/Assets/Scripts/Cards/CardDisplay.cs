@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+#pragma warning disable 649
 public class CardDisplay : MonoBehaviour {
     public Card card;
 
@@ -59,50 +60,39 @@ public class CardDisplay : MonoBehaviour {
         }
         cardCostText.text = card.cardCost.ToString();
 
-        print("Card Type: " + card.type);
-        if (card.type.Equals(UnitType.trooper) || card.type.Equals(UnitType.recon) || card.type.Equals(UnitType.light_adren))
-        {
+        if (card.type.Equals(UnitType.trooper) || card.type.Equals(UnitType.recon) || card.type.Equals(UnitType.light_adren)) {
             standardMaterial = standardMaterial_Yellow;
             dissolveMaterial = dissolveMaterial_Yellow;
         }
-        else if (card.type.Equals(UnitType.steamer) || card.type.Equals(UnitType.pewpew) || card.type.Equals(UnitType.heavy_albarn))
-        {
+        else if (card.type.Equals(UnitType.steamer) || card.type.Equals(UnitType.pewpew) || card.type.Equals(UnitType.heavy_albarn)) {
             standardMaterial = standardMaterial_Blue;
             dissolveMaterial = dissolveMaterial_Blue;
         }
-        else if (card.type.Equals(UnitType.compensator) || card.type.Equals(UnitType.foundation) || card.type.Equals(UnitType.piercing_tungsten))
-        {
+        else if (card.type.Equals(UnitType.compensator) || card.type.Equals(UnitType.foundation) || card.type.Equals(UnitType.piercing_tungsten)) {
             standardMaterial = standardMaterial_Red;
             dissolveMaterial = dissolveMaterial_Red;
         }
-        else if (card.type.Equals(UnitType.powerSurge) || card.type.Equals(UnitType.claymore) || card.type.Equals(UnitType.midas) || card.type.Equals(UnitType.support_sandman))
-        {
+        else if (card.type.Equals(UnitType.powerSurge) || card.type.Equals(UnitType.claymore) || card.type.Equals(UnitType.midas) || card.type.Equals(UnitType.support_sandman)) {
             standardMaterial = standardMaterial_Green;
             dissolveMaterial = dissolveMaterial_Green;
         }
-        else
-        {
+        else {
             standardMaterial = standardMaterial_Grey;
             dissolveMaterial = dissolveMaterial_Grey;
         }
 
-        if (cardsArtObject == null)
-        {
+        if (cardsArtObject == null) {
             cardsArtObject = this.transform.Find("CardTemplate");
         }
         cardsArtObject.GetComponent<Image>().material = standardMaterial;
     }
 
-    void Start()
-    {
+    void Start() {
         cardsArtObject = this.transform.Find("CardTemplate");
-//        cardsArtObject.GetComponent<Image>().material = standardMaterial_Grey;
     }
 
     void OnMouseUp() {
         this.transform.rotation = this.transform.rotation;
         this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, 0);
     }
-
-
 }
