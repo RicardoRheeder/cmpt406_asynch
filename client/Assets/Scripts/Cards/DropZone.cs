@@ -72,7 +72,6 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
             if (this.gameObject.name == "DiscardPanel") {
                 Card card = eventData.pointerDrag.gameObject.GetComponent<CardDisplay>().card;
-                print("Card: " + card);
 
                 if (manager != null) {
                     manager.PlayCard(card);
@@ -150,7 +149,6 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             PlayCardPanel.SetActive(false);
             cardOnTableTop = null;
 
-            StartCoroutine(HideTableTop(0.3f));
         }
     }
 
