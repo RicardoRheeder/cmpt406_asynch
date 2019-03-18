@@ -290,19 +290,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         stockNum.SetText(UnitFactory.CalculateCost(selectedArmy.Units).ToString());
     }
 
-    public void SaveArmy() {
-        string armyName = GameObject.Find("ABNameInput").GetComponent< TMP_InputField>().text;
-        if (!StringValidation.ValidateArmyName(armyName)) {
-            audioManager.Play(SoundName.ButtonError);
-            Debug.Log("invalid army name");
-            //Something has to inform the user here
-            return;
-        }
-        selectedArmy.Name = armyName;
-        client.RegisterArmyPreset(selectedArmy);
-        audioManager.Play(SoundName.ButtonPress);
-    }
-
     public void DeleteArmy() {
         client.RemoveArmyPreset(selectedArmy.Id);
     }

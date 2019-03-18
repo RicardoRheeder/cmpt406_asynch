@@ -75,6 +75,7 @@ public class MainMenu : MonoBehaviour {
     private TMP_Text midasNum;
     private TMP_Text claymoreNum;
     private TMP_Text powerSurgeNum;
+    private GameState storedState = null;
 
     //Stuff for Map Preview
     private TMP_Text sizeText;
@@ -325,10 +326,25 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuArmyBuilderSave() {
+        string armyName = GameObject.Find("ABNameInput").GetComponent<TMP_InputField>().text;
+        if (!StringValidation.ValidateArmyName(armyName)) {
+            audioManager.Play(SoundName.ButtonError);
+            Debug.Log("invalid army name");
+            //Something has to inform the user here
+            return;
+        }
+        ArmyPreset createdPreset = this.GetComponent<ArmyBuilderUI>().selectedArmy;
+        createdPreset.Name = armyName;
+        networkApi.RegisterArmyPreset(createdPreset);
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, false, true, false);
         armyBuilderPanel.SetActive(false);
-        SetupArmySelector(10000, null);
+        if(storedState == null) {
+            SetupArmySelector(10000, null);
+        }
+        else {
+            SetupArmySelector(BoardMetadata.CostDict[storedState.boardId], storedState);
+        }
     }
 
     public void MainMenuArmySelectorButton() {
@@ -343,9 +359,13 @@ public class MainMenu : MonoBehaviour {
         audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(true);
         SetMenuState(false, false, false, false, false, false);
+        storedState = null;
     }
 
     private void SetupArmySelector(int maxCost, GameState state) {
+        if(state != null) {
+            storedState = state;
+        }
         networkApi.RefreshUserData();
         int childrenCount = armyChooserViewport.transform.childCount;
         for (int i = 1; i < childrenCount; i++) {
