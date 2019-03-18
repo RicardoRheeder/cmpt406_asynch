@@ -286,20 +286,20 @@ public class GameManager : MonoBehaviour {
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
 
     public void Forfeit() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
     }
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 

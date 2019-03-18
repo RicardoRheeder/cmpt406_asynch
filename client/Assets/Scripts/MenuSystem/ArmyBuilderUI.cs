@@ -121,8 +121,8 @@ public class ArmyBuilderUI : MonoBehaviour {
         button.onClick.AddListener(() => {
             selectedUnit = type;
             UpdateDisplay();
-            audioManager.Play("ButtonPress");
             addUnitButton.SetActive(true);
+            audioManager.Play(SoundName.ButtonPress);
         });
     }
 
@@ -293,14 +293,14 @@ public class ArmyBuilderUI : MonoBehaviour {
     public void SaveArmy() {
         string armyName = GameObject.Find("ABNameInput").GetComponent< TMP_InputField>().text;
         if (!StringValidation.ValidateArmyName(armyName)) {
-            audioManager.Play("ButtonError");
+            audioManager.Play(SoundName.ButtonError);
             Debug.Log("invalid army name");
             //Something has to inform the user here
             return;
         }
         selectedArmy.Name = armyName;
         client.RegisterArmyPreset(selectedArmy);
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
     }
 
     public void DeleteArmy() {
@@ -474,5 +474,4 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors.normalColor = highlight;
         sandman.colors = colors;
     }
-    
 }

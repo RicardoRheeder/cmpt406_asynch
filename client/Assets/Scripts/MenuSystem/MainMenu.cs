@@ -214,7 +214,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void GameInviteButton(GameState state, bool needToAccept) {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         //Set up the display information
         gameInviteMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         gameInviteCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -260,7 +260,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void ActiveGameCellDetailsButton(GameState state) {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         //Set up the display information
         activeMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         activeCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -273,7 +273,7 @@ public class MainMenu : MonoBehaviour {
 
     //========================Public Games Functionality========================
     public void MainMenuJoinGameButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, true, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
@@ -304,35 +304,35 @@ public class MainMenu : MonoBehaviour {
     //========================Create Game Functionality========================
     //Note: most of this logic is in the CreateGame script
     public void MainMenuCreateGameButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, true, false, false, false);
     }
 
     //========================Army Builder/Selector Functionality========================
     //Note: the actual army builder logic is in the ArmyBuilderUI script
     public void MainMenuArmyBuilderButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(false);
         SetMenuState(false, false, false, false, false, false);
         armyBuilderPanel.SetActive(true);
     }
 
     public void MainMenuArmyBuilderBack() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, false, true, false);
         armyBuilderPanel.SetActive(false);
         SetupArmySelector(10000, null);
     }
 
     public void MainMenuArmyBuilderSave() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, false, true, false);
         armyBuilderPanel.SetActive(false);
         SetupArmySelector(10000, null);
     }
 
     public void MainMenuArmySelectorButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(false);
         SetMenuState(false, false, false, false, true, false);
         armySelectorDelete.onClick.RemoveAllListeners();
@@ -340,7 +340,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuArmySelectorBack() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(true);
         SetMenuState(false, false, false, false, false, false);
     }
@@ -425,7 +425,7 @@ public class MainMenu : MonoBehaviour {
 
         armySelectorDelete.onClick.RemoveAllListeners();
         armySelectorDelete.onClick.AddListener(() => {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             networkApi.RemoveArmyPreset(preset.Id);
             Destroy(ownerObject);
         });
@@ -434,7 +434,7 @@ public class MainMenu : MonoBehaviour {
             armySelectorPlaceObject.SetActive(true);
             armySelectorPlaceButton.onClick.RemoveAllListeners();
             armySelectorPlaceButton.onClick.AddListener(() => {
-                audioManager.Play("ButtonPress");
+                audioManager.Play(SoundName.ButtonPress);
                 manager.PlaceUnits(state, preset);
             });
         }
@@ -445,13 +445,13 @@ public class MainMenu : MonoBehaviour {
         //Here we need to somehow get the string of the username we would like to add
         string userToAdd = friendsListInputField.text;
         if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             AddFriendHelper(userToAdd);
             friendsListInputField.text = "";
         }
         else {
             //adding a user failed
-            audioManager.Play("ButtonError");
+            audioManager.Play(SoundName.ButtonError);
         }
     }
 
@@ -465,7 +465,7 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuRemoveUserButton() {
         string userToRemove = friendsListInputField.text;
         if (networkApi.RemoveFriend(userToRemove)) {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             Destroy(friendsListDict[userToRemove]);
             friendsListDict.Remove(userToRemove);
         }
@@ -473,14 +473,14 @@ public class MainMenu : MonoBehaviour {
 
     //========================Logout Functionality========================
     public void MainMenuLogoutButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         networkApi.LogoutUser();
         SceneManager.LoadScene("LoginScreen");
     }
 
     //========================Map Screen Functionality========================
     public void MainMenuMapsButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, false, false, true);
         MapSelection();
     }
@@ -534,7 +534,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MapsBackButton () {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(true);
         SetMenuState(false, false, false, false, false, false);
     }
