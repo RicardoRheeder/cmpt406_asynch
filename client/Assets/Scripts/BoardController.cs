@@ -15,11 +15,16 @@ public class BoardController {
 
     private List<GameObject> hightlightedTiles;
     private GameObject hoverHighlightedTile;
+    private List<GameObject> hoverHighlightedTiles = new List<GameObject>();
     private GameObject alreadyHighlightedTile;
     private GameObject singleHighlitedTile;
     private int alreadyHighlightedTileColor; 
     private Vector2Int previousHoverTilePos;
+    private List<Tuple<GameObject,int>> prevHoverTiles = new List<Tuple<GameObject,int>>();
     private Tuple<Vector2Int,Vector2Int> renderPathCache;
+
+    private enum HoverHighlightState { None, Single, Multiple };
+    private HoverHighlightState hoverHighlightState = HoverHighlightState.None; 
     
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
@@ -241,6 +246,10 @@ public class BoardController {
     //This function highlights tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
     //should should the mouse over effect on already highligted tiles
     public void HoverHighlight(Vector2Int tilePosition) {
+        if(hoverHighlightState != HoverHighlightState.Single) {
+            return;
+        }
+
         //this is to check if cursor is moved, we dont want to keep checking if its in the same position
         if (IsMousePositionChanged(tilePosition)) {
             if (hoverHighlightedTile != null) {//the first time this is false
@@ -254,7 +263,6 @@ public class BoardController {
                 alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color = alreadyHighlightedTileColor;
             }
 
-            //previousHoverTile = tilePosition;
             GameObject tileObject;
 
             if (this.HasHexTile(tilePosition)) {
@@ -290,6 +298,72 @@ public class BoardController {
                 }
             }
         }
+    }
+
+    public void HoverHighlight(List<Vector2Int> tilePositions, Vector2Int centerTile) {
+        if(hoverHighlightState != HoverHighlightState.Multiple) {
+            return;
+        }
+
+        //this is to check if cursor is moved, we dont want to keep checking if its in the same position
+        // if (IsMousePositionChanged(centerTile)) {
+            // if (hoverHighlightedTiles[0] != null) {//the first time this is false
+            //     if (hoverHighlightedTiles[0].GetComponent<cakeslice.Outline>().color != 2) {
+            //         hoverHighlightedTiles[0].GetComponent<cakeslice.Outline>().enabled = false;
+            //         hoverHighlightedTiles[0].GetComponent<cakeslice.Outline>().color = 0;
+            //     }
+            // }
+
+            if (alreadyHighlightedTile != null) {
+                // alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color = alreadyHighlightedTileColor;
+            }
+            for(int i=0;i<prevHoverTiles.Count;i++) {
+                prevHoverTiles[i].First.GetComponent<cakeslice.Outline>().color = prevHoverTiles[i].Second;
+            }
+
+            GameObject tileObject;
+            hoverHighlightedTiles.Clear();
+            Debug.Log("hoverHighlight tiles: " + tilePositions.Count);
+
+            for(int i=0; i<tilePositions.Count;i++) {
+                if (this.HasHexTile(tilePositions[i])) {
+                    HexTile tile = this.GetHexTile(tilePositions[i]); //get the Hex tile using Vector2Int position
+                    tileObject = tile.GetTileObject(); //get the tile game object 
+
+                    //this checks for tiles that are already highlited 
+                    if (IsOutlineComponentAttached(tileObject)) {
+                        // if (IsOutlineComponentEnabled(tileObject)) {
+                        //     alreadyHighlightedTile = tileObject;
+                        //     alreadyHighlightedTileColor = alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color;
+                        //     alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color = 1;
+                        //     return; //if they are highlighted than return
+                        // }
+                        if (IsOutlineComponentEnabled(tileObject)) {
+                            Tuple<GameObject,int> prevHoverTile = new Tuple<GameObject, int>(tileObject,tileObject.GetComponent<cakeslice.Outline>().color);
+                            prevHoverTiles.Add(prevHoverTile);
+                        }
+
+                        //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
+                        hoverHighlightedTiles.Add(tileObject);
+                        //only change the color if the tile color is not 2 otherwise leave tile color as is for the unit selected on that tile
+                        if (tileObject.GetComponent<cakeslice.Outline>().color != 2) {
+                            EnableOutlineComponentAndChangeColor(tileObject, 1);
+                        }
+                    }
+                    //this is for if its a tile that is not already higlighted and does not have the outline component
+                    else {
+                        hoverHighlightedTiles.Add(tileObject);
+                        if (!IsOutlineComponentAttached(tileObject)) {//outline component not attached then attach it
+                            AttachOutlineComponent(tileObject);
+                        }
+                        //only change the color if the tile color is not 2 otherwise leave tile color as is for the unit selected on that tile
+                        if (tileObject.GetComponent<cakeslice.Outline>().color != 2) {
+                            EnableOutlineComponentAndChangeColor(tileObject, 1);
+                        }
+                    }
+                }
+            }
+        // }
     }
 
     //leave this here for now
@@ -396,5 +470,13 @@ public class BoardController {
         pathLine.positionCount = 0;
         pathLine.SetPositions(new Vector3[0]);
         renderPathCache = null;
+    }
+
+    public void SetHoverHighlighterStateSingle() {
+        hoverHighlightState = HoverHighlightState.Single;
+    }
+
+    public void SetHoverHighlighterStateMultiple() {
+        hoverHighlightState = HoverHighlightState.Multiple;
     }
 }

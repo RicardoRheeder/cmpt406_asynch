@@ -176,14 +176,17 @@ public class PlayerController : MonoBehaviour {
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
-        boardController.HoverHighlight(tilePos);
+        // boardController.HoverHighlight(tilePos);
 
         switch(controllerState) {
             case (PlayerState.playing):
                 if(Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) {
                     if(interactionState == InteractionState.moving) {
                         if (selectedUnit != null) {
+                            boardController.SetHoverHighlighterStateMultiple();
                             boardController.RenderPath(selectedUnit.Position,tilePos);
+                            List<Vector2Int> attackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
+                            boardController.HoverHighlight(attackRange,tilePos);
                         }
                     }
                 } 
@@ -192,7 +195,9 @@ public class PlayerController : MonoBehaviour {
                         if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
                             manager.MoveUnit(selectedUnit.Position, tilePos);
                             boardController.ClearHighlighting();
+                            boardController.ClearRenderedPath();
                             interactionState = InteractionState.none;
+                            boardController.SetHoverHighlighterStateSingle();
                         }
                     }
                 }
@@ -264,7 +269,9 @@ public class PlayerController : MonoBehaviour {
                 }
                 break;
             default:
-                Debug.Log("Player controller is in an invalid state");
+                if(interactionState != InteractionState.moving) {
+                    Debug.Log("Player controller is in an invalid state");
+                }
                 break;
         }
     }
