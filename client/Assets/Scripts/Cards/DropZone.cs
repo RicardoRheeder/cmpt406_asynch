@@ -80,6 +80,11 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     //TODO: Get better way of hiding tabletop after discarding a card
                     GameObject TableTopPanel = GameObject.Find("Tabletop");
                     TableTopPanel.SetActive(false);
+                    if (droppedCard.GetComponent<Draggable>().tempCardDisplaying != null)
+                    {
+                        Destroy(droppedCard.GetComponent<Draggable>().tempCardDisplaying);
+                    }
+
                     manager.IncrementCardPoints(manager.discardRegainPointsAmount); //Regain points based on discarded card
                     StartCoroutine(DestroyCardAfterDelay(droppedCard));
                 }

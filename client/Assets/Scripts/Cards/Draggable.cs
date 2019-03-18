@@ -17,7 +17,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     private Vector3 defaultScale;
 
-    private GameObject tempCardDisplaying;
+    public GameObject tempCardDisplaying;
 
     void Start() {
         cardSystem = FindObjectOfType<CardSystemManager>();
@@ -104,7 +104,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     }
 
     public void OnPointerEnter(PointerEventData eventData){
-        if (!cardSystem.cardBeingDragged){
+        GameObject discardPanel = GameObject.Find("DiscardPanel");
+        if (!cardSystem.cardBeingDragged && this.transform.parent != discardPanel.transform){
             defaultScale = this.transform.localScale;
             this.transform.localScale *= 1.2f;
 
