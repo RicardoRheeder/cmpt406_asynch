@@ -19,6 +19,7 @@ public class BoardController {
     private GameObject singleHighlitedTile;
     private int alreadyHighlightedTileColor; 
     private Vector2Int previousHoverTilePos;
+    private Tuple<Vector2Int,Vector2Int> renderPathCache;
     
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
@@ -376,7 +377,10 @@ public class BoardController {
     }
 
     public void RenderPath(Vector2Int startingPos, Vector2Int endPos) {
-        Debug.Log("renderPath");
+        Tuple<Vector2Int,Vector2Int> pathEndPositions = new Tuple<Vector2Int, Vector2Int>(startingPos,endPos);
+        if(renderPathCache != null && renderPathCache.Equals(pathEndPositions)) {
+            return;
+        }
         List<Vector2Int> path = HexUtility.Pathfinding(startingPos,endPos,this.tilemap,false);
         List<Vector3> worldPosPath = new List<Vector3>();
         worldPosPath.Add(CellToWorld(startingPos,1f));
@@ -385,10 +389,12 @@ public class BoardController {
         }
         pathLine.positionCount = worldPosPath.Count;
         pathLine.SetPositions(worldPosPath.ToArray());
+        renderPathCache = pathEndPositions;
     }
 
     public void ClearRenderedPath() {
         pathLine.positionCount = 0;
         pathLine.SetPositions(new Vector3[0]);
+        renderPathCache = null;
     }
 }

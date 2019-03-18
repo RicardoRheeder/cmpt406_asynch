@@ -180,14 +180,14 @@ public class PlayerController : MonoBehaviour {
 
         switch(controllerState) {
             case (PlayerState.playing):
-                if(Input.GetMouseButton(0)) {
+                if(Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) {
                     if(interactionState == InteractionState.moving) {
-                        if (!EventSystem.current.IsPointerOverGameObject() && selectedUnit != null) {
+                        if (selectedUnit != null) {
                             boardController.RenderPath(selectedUnit.Position,tilePos);
                         }
                     }
                 } 
-                if(Input.GetMouseButtonUp(0)) {
+                if(Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
                     if(interactionState == InteractionState.moving) {
                         if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
                             manager.MoveUnit(selectedUnit.Position, tilePos);
@@ -199,13 +199,6 @@ public class PlayerController : MonoBehaviour {
                 if (Input.GetMouseButtonDown(0)) {
                     if (!EventSystem.current.IsPointerOverGameObject()) {
                         switch (interactionState) {
-                            case (InteractionState.moving):
-                                // if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                //     manager.MoveUnit(selectedUnit.Position, tilePos);
-                                //     boardController.ClearHighlighting();
-                                //     interactionState = InteractionState.none;
-                                // }
-                                break;
                             case (InteractionState.attacking):
                                 if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
                                     manager.AttackUnit(selectedUnit.Position, tilePos);
