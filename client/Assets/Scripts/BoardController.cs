@@ -22,9 +22,6 @@ public class BoardController {
     private Vector2Int previousHoverTilePos;
     private List<Tuple<GameObject,int>> prevHoverTiles = new List<Tuple<GameObject,int>>();
     private Tuple<Vector2Int,Vector2Int> renderPathCache;
-
-    private enum HoverHighlightState { None, Single, Multiple };
-    private HoverHighlightState hoverHighlightState = HoverHighlightState.None; 
     
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
@@ -244,12 +241,8 @@ public class BoardController {
    }
 
     //This function highlights tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
-    //should should the mouse over effect on already highligted tiles
+    // //should should the mouse over effect on already highligted tiles
     public void HoverHighlight(Vector2Int tilePosition) {
-        if(hoverHighlightState != HoverHighlightState.Single) {
-            return;
-        }
-
         //this is to check if cursor is moved, we dont want to keep checking if its in the same position
         if (IsMousePositionChanged(tilePosition)) {
             if (hoverHighlightedTile != null) {//the first time this is false
@@ -301,12 +294,8 @@ public class BoardController {
     }
 
     public void HoverHighlight(List<Vector2Int> tilePositions, Vector2Int centerTile) {
-        if(hoverHighlightState != HoverHighlightState.Multiple) {
-            return;
-        }
-
         //this is to check if cursor is moved, we dont want to keep checking if its in the same position
-        // if (IsMousePositionChanged(centerTile)) {
+        if (IsMousePositionChanged(centerTile) || true) {
             // if (hoverHighlightedTiles[0] != null) {//the first time this is false
             //     if (hoverHighlightedTiles[0].GetComponent<cakeslice.Outline>().color != 2) {
             //         hoverHighlightedTiles[0].GetComponent<cakeslice.Outline>().enabled = false;
@@ -314,12 +303,10 @@ public class BoardController {
             //     }
             // }
 
-            if (alreadyHighlightedTile != null) {
-                // alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color = alreadyHighlightedTileColor;
-            }
             for(int i=0;i<prevHoverTiles.Count;i++) {
                 prevHoverTiles[i].First.GetComponent<cakeslice.Outline>().color = prevHoverTiles[i].Second;
             }
+            prevHoverTiles.Clear();
 
             GameObject tileObject;
             hoverHighlightedTiles.Clear();
@@ -363,7 +350,7 @@ public class BoardController {
                     }
                 }
             }
-        // }
+        }
     }
 
     //leave this here for now
@@ -470,13 +457,5 @@ public class BoardController {
         pathLine.positionCount = 0;
         pathLine.SetPositions(new Vector3[0]);
         renderPathCache = null;
-    }
-
-    public void SetHoverHighlighterStateSingle() {
-        hoverHighlightState = HoverHighlightState.Single;
-    }
-
-    public void SetHoverHighlighterStateMultiple() {
-        hoverHighlightState = HoverHighlightState.Multiple;
     }
 }
