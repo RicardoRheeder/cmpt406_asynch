@@ -190,7 +190,7 @@ public class MainMenu : MonoBehaviour {
 
     //========================Game Invites Functionality========================
     public void MainMenuGamesInvitesButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(true, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         int childrenCount = gameInviteGamesViewContent.transform.childCount;
@@ -227,7 +227,7 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuJoinPendingGame(GameState state, bool needToAccept) {
         if (needToAccept) {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             networkApi.AcceptGame(state.id);
         }
         MainMenuArmySelectorButton();
@@ -236,7 +236,7 @@ public class MainMenu : MonoBehaviour {
 
     //========================Active Games Functionality========================
     public void MainMenuActiveGamesButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, true, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         int childrenCount = activeGamesViewContent.transform.childCount;
@@ -294,7 +294,7 @@ public class MainMenu : MonoBehaviour {
 
     public void PublicGameCellDetailsButton(GameState state, bool needToAccept) {
         if (needToAccept) {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             networkApi.AcceptGame(state.id);
         }
         MainMenuArmySelectorButton();
