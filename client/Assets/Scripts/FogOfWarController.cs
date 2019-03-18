@@ -193,4 +193,8 @@ public class FogOfWarController {
         fogTilemap.ClearAllTiles();
     }
 
+    public bool CheckIfTileHasFog(Vector2Int pos) {
+        return !clearedTiles.ContainsKey(pos);
+    }
+
 }

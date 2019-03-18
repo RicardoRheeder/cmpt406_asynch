@@ -3,23 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class ToPsEcReT : MonoBehaviour
-{
-    
+public class ToPsEcReT : MonoBehaviour {
     int code = 0;
     GameObject i;
     TMP_Text title;
     
-    
-    void Start(){
+    void Start() {
         i = GameObject.Find("Secret");
         title = GameObject.Find("GameTitle").GetComponent<TMP_Text>();
     }
     
     
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         if(Input.GetKeyUp(KeyCode.UpArrow) && code < 2){
             code++;
         }

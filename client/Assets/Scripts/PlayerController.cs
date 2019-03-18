@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour {
     private CardController deck;
     private GameManager manager;
     private BoardController boardController;
+    private FogOfWarController fogOfWarController;
     private GameBuilder builder;
     private GameState gamestate;
     private AudioManager audioManager;
@@ -93,10 +94,11 @@ public class PlayerController : MonoBehaviour {
 
     private List<Vector2Int> highlightedTiles;
 
-    public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
+    public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, FogOfWarController fogOfWarController, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
+        this.fogOfWarController = fogOfWarController;
         this.builder = builder;
         this.spawnPoint = spawnPoint;
         this.isPlacing = isPlacing;
@@ -123,7 +125,6 @@ public class PlayerController : MonoBehaviour {
             unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
             unitDisplayName = GameObject.Find("unitName").GetComponent<TMP_Text>();
             userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
-            turnText = GameObject.Find("GameTurnsText").GetComponent<TMP_Text>();
 
             actionsName = GameObject.Find("ActionName");
             attackButtonObject = GameObject.Find("AttackButton");
@@ -133,7 +134,6 @@ public class PlayerController : MonoBehaviour {
             movementButton = movementButtonObject.GetComponent<Button>();
             movementButton.onClick.AddListener(MovementButton);
             
-            turnText.text = "Turn " + gamestate.TurnNumber;
             userTurnText.text = gamestate.UsersTurn + "'s Turn";
 
             generalName = GameObject.Find("GeneralName");
@@ -218,11 +218,13 @@ public class PlayerController : MonoBehaviour {
                                     interactionState = InteractionState.none;
                                 break;
                             case (InteractionState.none):
-                                if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
-                                    if (selectedUnit != null) {
-                                        selectedUnit.MyUnit.rend.material.color = tempColor;
+                                if(!fogOfWarController.CheckIfTileHasFog(tilePos)) {
+                                    if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                                        if (selectedUnit != null) {
+                                            selectedUnit.MyUnit.rend.material.color = tempColor;
+                                        }
+                                        selectedUnit = unit;
                                     }
-                                    selectedUnit = unit;
                                 }
                                 break;
                             default:
@@ -269,7 +271,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.moving;
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
-                audioManager.Play("ButtonPress");
+                audioManager.Play(SoundName.ButtonPress);
             }
         }
     }
@@ -284,7 +286,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.attacking;
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
-                audioManager.Play("ButtonPress");
+                audioManager.Play(SoundName.ButtonPress);
             }
         }
     }
@@ -298,7 +300,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.ability1;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability1]);
             boardController.HighlightTiles(this.highlightedTiles);
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
         }
     }
 
@@ -311,7 +313,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.ability2;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
             boardController.HighlightTiles(this.highlightedTiles);
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
         }
     }
 
@@ -355,7 +357,7 @@ public class PlayerController : MonoBehaviour {
                 attackButton.GetComponent<Image>().color = BUTTON_INACTIVE;
                 attackButton.onClick.RemoveAllListeners();
             }
-            if (unit.MovementActions != 0 && unit.MovementSpeed != 0) {
+            if (unit.MovementSpeed != 0) {
                 movementButton.GetComponent<Image>().color = BUTTON_ACTIVE;
                 movementButton.onClick.RemoveAllListeners();
                 movementButton.onClick.AddListener(MovementButton);

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,8 +11,8 @@ public class DissolveAttributes : MonoBehaviour {
         if (this.GetComponent<Image>() != null) {
             this.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         }
-        if (this.GetComponent<Text>() != null) {
-            this.GetComponent<Text>().color = new Color(1, 1, 1, 1);
+        if (this.GetComponent<TextMeshProUGUI>() != null) {
+            this.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 1);
         }
         StartCoroutine(FadeTo(0.0f, dissolveDuration));
     }
@@ -25,11 +26,11 @@ public class DissolveAttributes : MonoBehaviour {
                 yield return null;
             }
         }
-        if (this.GetComponent<Text>() != null) {
-            float alpha = this.GetComponent<Text>().color.a;
+        if (this.GetComponent<TextMeshProUGUI>() != null) {
+            float alpha = this.GetComponent<TextMeshProUGUI>().color.a;
             for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime) {
                 Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, aValue, t));
-                this.GetComponent<Text>().color = newColor;
+                this.GetComponent<TextMeshProUGUI>().color = newColor;
                 yield return null;
             }
         }
@@ -39,8 +40,8 @@ public class DissolveAttributes : MonoBehaviour {
         if (this.GetComponent<Image>() != null) {
             this.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         }
-        if (this.GetComponent<Text>() != null) {
-            this.GetComponent<Text>().color = new Color(1, 1, 1, 1);
+        if (this.GetComponent<TextMeshProUGUI>() != null) {
+            this.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 1);
         }
     }
 }

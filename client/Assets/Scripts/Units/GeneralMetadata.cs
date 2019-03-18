@@ -78,75 +78,79 @@ public static class GeneralMetadata {
     };
 
     //Note: to work with function pointers all of these functions have to take the same arguments, even if they don't require them all
-    private static void TrojanShot(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static void TrojanShot(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         source.attackStrategy = new LineStrategy();
         source.AlterRange(20);
     }
 
-    private static void ArmourPiercingAmmo(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static void ArmourPiercingAmmo(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         source.AlterPierce(10);
     }
 
-    private static void SteamOverload(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
-        if (source.TakeDamage(30, 10000)) {
-            source.Kill();
-            allUnits.Remove(source.Position);
-        }
-        List<Vector2Int> unitsInRange = HexUtility.GetTilePositionsInRangeWithoutMapWithoutStarting(source.Position, 2);
-        for(int i = 0; i < 6; i++) {
-            Vector2Int unitPos = unitsInRange[i];
-            if(allUnits.ContainsKey(unitPos)) {
-                UnitStats targetUnit = allUnits[unitPos];
-                if (targetUnit.TakeDamage(20, 10000)) {
-                    targetUnit.Kill();
-                    allUnits.Remove(unitPos);
+    private static void SteamOverload(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
+        if (isOwner) {
+            if (source.TakeDamage(30, 10000)) {
+                source.Kill();
+                allUnits.Remove(source.Position);
+            }
+            List<Vector2Int> unitsInRange = HexUtility.GetTilePositionsInRangeWithoutMapWithoutStarting(source.Position, 2);
+            for (int i = 0; i < 6; i++) {
+                Vector2Int unitPos = unitsInRange[i];
+                if (allUnits.ContainsKey(unitPos)) {
+                    UnitStats targetUnit = allUnits[unitPos];
+                    if (targetUnit.TakeDamage(20, 10000)) {
+                        targetUnit.Kill();
+                        allUnits.Remove(unitPos);
+                    }
                 }
             }
-        }
-        for(int i = 6; i < 18; i++) {
-            Vector2Int unitPos = unitsInRange[i];
-            if (allUnits.ContainsKey(unitPos)) {
-                UnitStats targetUnit = allUnits[unitPos];
-                if (targetUnit.TakeDamage(10, 10000)) {
-                    targetUnit.Kill();
-                    allUnits.Remove(unitPos);
+            for (int i = 6; i < 18; i++) {
+                Vector2Int unitPos = unitsInRange[i];
+                if (allUnits.ContainsKey(unitPos)) {
+                    UnitStats targetUnit = allUnits[unitPos];
+                    if (targetUnit.TakeDamage(10, 10000)) {
+                        targetUnit.Kill();
+                        allUnits.Remove(unitPos);
+                    }
                 }
             }
         }
     }
 
-    private static void TheBestOffense(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static void TheBestOffense(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         source.AlterDamage(source.Armour);
     }
 
-    private static void StickAndPoke(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static void StickAndPoke(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         foreach(var key in allUnits.Keys) {
             UnitStats unit = allUnits[key];
-            if(unit.UnitClass == UnitClass.light && unit.Owner == username) {
-                unit.MovementActions += 1;
+            if(unit.Owner == username) {
+                unit.AlterSpeed(unit.DefaultSpeed);
                 unit.AlterSpeed(3);
             }
         }
     }
 
-    private static void DeepPenetration(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static void DeepPenetration(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         source.Armour = 0;
     }
 
-    private static void SaharaMine(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static void SaharaMine(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         List<Vector2Int> unitsInRange = HexUtility.GetTilePositionsInRangeWithoutMap(source.Position, 1);
         foreach(Vector2Int pos in unitsInRange) {
             if (allUnits.TryGetValue(pos, out UnitStats target)) {
                 target.AlterArmour(-10);
-                if (target.TakeDamage(10, 10000)) {
-                    target.Kill();
-                    allUnits.Remove(pos);
+                if (isOwner) {
+                    if (target.TakeDamage(10, 10000)) {
+                        target.Kill();
+                        allUnits.Remove(pos);
+                    }
                 }
             }
         }
     }
 
-    private static void Sandstorm(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username) {
+    private static void Sandstorm(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         List<Vector2Int> unitsInRange = HexUtility.GetTilePositionsInRangeWithoutMap(source.Position, 2);
         foreach (Vector2Int pos in unitsInRange) {
             if (allUnits.TryGetValue(pos, out UnitStats target)) {
@@ -156,7 +160,7 @@ public static class GeneralMetadata {
         }
     }
 
-    public static readonly Dictionary<GeneralAbility, AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string>> ActiveAbilityFunctionDictionary = new Dictionary<GeneralAbility, AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string>>() {
+    public static readonly Dictionary<GeneralAbility, AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool>> ActiveAbilityFunctionDictionary = new Dictionary<GeneralAbility, AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool>>() {
         {GeneralAbility.TROJAN_SHOT, TrojanShot },
         {GeneralAbility.ARMOUR_PIERCING_AMMO, ArmourPiercingAmmo },
         {GeneralAbility.STEAM_OVERLOAD, SteamOverload },

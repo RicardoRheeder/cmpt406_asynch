@@ -16,7 +16,6 @@ public enum BoardType {
     Wheel = 200,
 
     //Random test maps
-    SampleMap = 301,
     Sandbox = 420
 }
 
@@ -59,8 +58,6 @@ public static class BoardMetadata {
 
         { BoardType.Wheel, "Map_Large_Wheel" },
 
-
-        { BoardType.SampleMap, "SampleMap" },
         { BoardType.Sandbox, "Sandbox" },
     };
 

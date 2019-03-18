@@ -20,6 +20,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     //References to the in game panel we populate with unit names
     public GameObject armyContent;
     public GameObject friendsListCellPrefab; //Note: this can be a button where we apply a dynamic listener that removes it from the army
+    public TMP_InputField armyName;
 
     //References to texts we update
     private TMP_Text stockNum;
@@ -30,6 +31,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     private TMP_Text pierceNum;
     private TMP_Text aoeNum;
     private TMP_Text movementNum;
+    private TMP_Text unitCostNum;
     private TMP_Text unitName;
     private Text cardName1;
     private Text cardEffects1;
@@ -51,6 +53,8 @@ public class ArmyBuilderUI : MonoBehaviour {
     private Button adren;
     private Color highlight;
     private Color fade;
+
+    private GameObject addUnitButton;
     
     public new Sprite light;
     public Sprite piercing;
@@ -63,6 +67,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
         armyContent = GameObject.Find("ABListViewport");
+        armyName = GameObject.Find("ABNameInput").GetComponent<TMP_InputField>();
         stockNum = GameObject.Find("CostNum").GetComponent<TMP_Text>();
         healthNum = GameObject.Find("HealthNum").GetComponent<TMP_Text>();
         attackNum = GameObject.Find("AttackNum").GetComponent<TMP_Text>();
@@ -71,6 +76,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         pierceNum = GameObject.Find("PierceNum").GetComponent<TMP_Text>();
         aoeNum = GameObject.Find("AOENum").GetComponent<TMP_Text>();
         movementNum = GameObject.Find("MovementNum").GetComponent<TMP_Text>();
+        unitCostNum = GameObject.Find("UnitCostNum").GetComponent<TMP_Text>();
         unitName = GameObject.Find("UnitName").GetComponent<TMP_Text>();
         cardName1 = GameObject.Find("cardName1").GetComponent<Text>();
         cardEffects1 = GameObject.Find("cardEffects1").GetComponent<Text>();
@@ -92,6 +98,8 @@ public class ArmyBuilderUI : MonoBehaviour {
         sandman = GameObject.Find("General4").GetComponent<Button>();
         highlight = Color.yellow;
         fade = Color.grey;
+        addUnitButton = GameObject.Find("SelectUnitButton");
+        addUnitButton.SetActive(false);
 
         ConfigureOnClick(trooper, UnitType.trooper);
         ConfigureOnClick(recon, UnitType.recon);
@@ -113,11 +121,13 @@ public class ArmyBuilderUI : MonoBehaviour {
         button.onClick.AddListener(() => {
             selectedUnit = type;
             UpdateDisplay();
-            audioManager.Play("ButtonPress");
+            addUnitButton.SetActive(true);
+            audioManager.Play(SoundName.ButtonPress);
         });
     }
 
     public void CreateArmy() {
+        addUnitButton.SetActive(false);
         string newArmyName = "Name Army";
         ArmyPreset newPreset = new ArmyPreset(
             newArmyName,
@@ -125,6 +135,7 @@ public class ArmyBuilderUI : MonoBehaviour {
             (int)UnitType.piercing_tungsten
         );
 
+        armyName.text = "";
         selectedArmy = newPreset;
         GetCost();
         DeleteUnitsHelper();
@@ -141,9 +152,9 @@ public class ArmyBuilderUI : MonoBehaviour {
         pierceNum.SetText(baseUnit.Pierce.ToString());
         aoeNum.SetText(baseUnit.Aoe.ToString());
         movementNum.SetText(baseUnit.MovementSpeed.ToString());
+        unitCostNum.SetText(baseUnit.Cost.ToString());
 
         switch (baseUnit.UnitType){
-            
             case UnitType.claymore:
                 cardName1.text = ("Oil Slick");
                 cardEffects1.text = ("+1 Movement Action" + Environment.NewLine + "Enemies within 1 range of the Claymore cannot move until your next turn");
@@ -279,19 +290,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         stockNum.SetText(UnitFactory.CalculateCost(selectedArmy.Units).ToString());
     }
 
-    public void SaveArmy() {
-        string armyName = GameObject.Find("ABNameInput").GetComponent< TMP_InputField>().text;
-        if (!StringValidation.ValidateGameName(armyName)) {
-            audioManager.Play("ButtonError");
-            Debug.Log("invalid army name");
-            //Something has to inform the user here
-            return;
-        }
-        selectedArmy.Name = armyName;
-        client.RegisterArmyPreset(selectedArmy);
-        audioManager.Play("ButtonPress");
-    }
-
     public void DeleteArmy() {
         client.RemoveArmyPreset(selectedArmy.Id);
     }
@@ -398,7 +396,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = adren.colors;
         colors.normalColor = highlight;
         adren.colors = colors;
-
     }
     
     public void FilterPiercing() {
@@ -413,7 +410,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = tungsten.colors;
         colors.normalColor = highlight;
         tungsten.colors = colors;
-        
     }
     
     public void FilterHeavy() {
@@ -428,7 +424,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = albarn.colors;
         colors.normalColor = highlight;
         albarn.colors = colors;
-        
     }
     
     public void FilterSupport() {
@@ -447,7 +442,6 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = sandman.colors;
         colors.normalColor = highlight;
         sandman.colors = colors;
-        
     }
     
     public void FilterGeneral() {
@@ -466,7 +460,5 @@ public class ArmyBuilderUI : MonoBehaviour {
         colors = sandman.colors;
         colors.normalColor = highlight;
         sandman.colors = colors;
-        
     }
-    
 }

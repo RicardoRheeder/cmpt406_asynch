@@ -13,6 +13,7 @@ public class InGameMenu : MonoBehaviour {
     private GameObject unitImagePanel;
     private GameObject unitStatsPanel;
     private GameObject menuPanel;
+    private GameObject actionsPanel;
 
     // Start is called before the first frame update
     void Awake() {
@@ -25,6 +26,7 @@ public class InGameMenu : MonoBehaviour {
         placeUnitsPanel = GameObject.Find("PlaceUnitsPanel");
         settingsPanel = GameObject.Find("SettingsPanel");
         menuPanel = GameObject.Find("MenuPanel");
+        actionsPanel = GameObject.Find("ActionsPanel");
     }
 
     public void SetupPanels(bool isPlacing) {
@@ -33,6 +35,10 @@ public class InGameMenu : MonoBehaviour {
 
         if (isPlacing) {
             unitSnapPanel.SetActive(false);
+            cardPanel.SetActive(false);
+            unitStatsPanel.SetActive(false);
+            generalAbilitiesPanel.SetActive(false);
+            actionsPanel.SetActive(false);
         }
         else {
             placeUnitsPanel.SetActive(false);

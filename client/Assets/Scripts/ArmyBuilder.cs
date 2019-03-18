@@ -15,7 +15,7 @@ public static class ArmyBuilder {
     public static List<ArmyPreset> GetPresetsUnderCost(int cost) {
         List<ArmyPreset> presets = new List<ArmyPreset>();
         foreach (var pair in ARMY_PRESETS) {
-            if(pair.Value.Cost < cost) {
+            if(pair.Value.Cost <= cost) {
                 presets.Add(pair.Value);
             }
         }
@@ -38,7 +38,6 @@ public static class ArmyBuilder {
         ARMY_PRESETS.Clear();
     }
 
-
     private static readonly string presetOneName = "Steamy Ray Vaughn";
     private static readonly ArmyPreset presetOne = new ArmyPreset(
         presetOneName,
@@ -53,8 +52,6 @@ public static class ArmyBuilder {
             (int)UnitType.powerSurge,
             (int)UnitType.trooper,
             (int)UnitType.trooper,
-            
-            
         },
         (int)UnitType.heavy_albarn
     );
@@ -92,14 +89,6 @@ public static class ArmyBuilder {
         },
         (int)UnitType.light_adren
     );
-    private static readonly string presetFourName = "Trash";
-    private static readonly ArmyPreset presetFour = new ArmyPreset(
-        presetFourName,
-        new List<int>() {
-            (int)UnitType.trooper,
-        },
-        (int)UnitType.light_adren
-    );
     //Method used to create the default presets and add them to the dictionary
     public static void InsertDefaultPresets() {
         if (!ARMY_PRESETS.ContainsKey(presetOneName)) {
@@ -113,10 +102,6 @@ public static class ArmyBuilder {
         if (!ARMY_PRESETS.ContainsKey(presetThreeName)) {
             presetThree.Cost = UnitFactory.CalculateCost(presetThree.Units);
             AddPreset(presetThreeName, presetThree);
-        }
-        if (!ARMY_PRESETS.ContainsKey(presetFourName)) {
-            presetThree.Cost = UnitFactory.CalculateCost(presetFour.Units);
-            AddPreset(presetFourName, presetFour);
         }
     }
 }
@@ -141,7 +126,7 @@ public class ArmyPreset {
 
     public ArmyPreset(string presetName, List<int> units, int general) {
         Id = "";
-        this.Name = presetName;
+        this.Name = presetName.Trim();
         this.Units = units;
         this.General = general;
     }

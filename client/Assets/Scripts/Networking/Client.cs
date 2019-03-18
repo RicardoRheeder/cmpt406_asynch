@@ -108,6 +108,11 @@ public class Client : MonoBehaviour, INetwork {
 
     //Logs the specified user in
     //This function should cache the username within the client so that we can use it in future functions
+    public bool RefreshUserData() {
+        ArmyBuilder.Clear();
+        return LoginUser(user.username, user.password);
+    }
+
     public bool LoginUser(string username, string password, bool encryptPassword = false) {
         BeginRequest();
 
@@ -150,7 +155,7 @@ public class Client : MonoBehaviour, INetwork {
 
     //This method is used to get the summary of the games that are considered pending for the logged in user
     public Tuple<bool, GameStateCollection> GetPendingGamesInformation() {
-        if(this.LoginUser(user.username, user.password)) {
+        if(this.RefreshUserData()) {
             if ((UserInformation.PendingPrivateGames != null && UserInformation.PendingPrivateGames.Count > 0) ||
                 (UserInformation.PendingPublicGames != null && UserInformation.PendingPublicGames.Count > 0)) {
                 return GetGameStateCollectionHelper(new GameIds(UserInformation.PendingPublicGames, UserInformation.PendingPrivateGames));
@@ -163,7 +168,7 @@ public class Client : MonoBehaviour, INetwork {
     }
 
     public Tuple<bool, GameStateCollection> GetActiveGamesInformation() {
-        if(LoginUser(user.username, user.password)) {
+        if(RefreshUserData()) {
             if (UserInformation.ActiveGames.Count > 0) {
                 return GetGameStateCollectionHelper(new GameIds(UserInformation.ActiveGames));
             }
@@ -175,7 +180,7 @@ public class Client : MonoBehaviour, INetwork {
     }
 
     public Tuple<bool, GameStateCollection> GetCompletedGamesInformation() {
-        if (LoginUser(user.username, user.password)) {
+        if (RefreshUserData()) {
             if (UserInformation.CompletedGames.Count > 0) {
                 return GetGameStateCollectionHelper(new GameIds(UserInformation.CompletedGames));
             }

@@ -21,14 +21,13 @@ public class GameManager : MonoBehaviour {
     private GameObject playerControllerPrefab;
     private GameObject playerControllerObject;
     private PlayerController playerController;
+
     private CardSystemManager cardSystem;
     private BoardController boardController;
     private FogOfWarController fogOfWarController;
 
     private CameraMovement cameraRig;
-
     private InGameMenu inGameMenu;
-
     private AudioManager audioManager;
 
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
@@ -40,8 +39,9 @@ public class GameManager : MonoBehaviour {
     private PlayerMetadata user;
     private ArmyPreset selectedPreset;
 
-    //Dictionary used to store the units.
+    //Dictionary used to the game information
     private Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
+    private Dictionary<Vector2Int, Effect> effectPositions = new Dictionary<Vector2Int, Effect>();
 
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour {
     public void PlaceUnits(GameState state, ArmyPreset selectedPreset) {
         Tuple<bool, GameState> result = client.GetGamestate(state.id);
         if(result.First) {
-            this.state = client.GetGamestate(state.id).Second; //get the updated gamestate
+            this.state = result.Second; //get the updated gamestate
             this.user = client.GetUserInformation();
             this.selectedPreset = selectedPreset;
             this.isPlacing = true;
@@ -96,7 +96,6 @@ public class GameManager : MonoBehaviour {
         this.isPlacing = false;
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
-
         
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
@@ -126,10 +125,10 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, isPlacing);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing);
 
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
-        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition()));
+        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
 
         cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
         List<CardFunction> hand = new List<CardFunction>();
@@ -148,11 +147,14 @@ public class GameManager : MonoBehaviour {
         PreprocessGenerals();
         PreprocessCards();
 
+        fogOfWarController.UpdateAllFog();
+
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
     
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
+        SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
     }
 
@@ -182,13 +184,12 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, true, selectedPreset, gameBuilder.UnitDisplayTexts, spawnPoint);
 
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
         cameraRig.SnapToPosition(boardController.CellToWorld(boardController.GetCenterSpawnTile(spawnPoint)));
 
         inGameMenu.SetupPanels(isPlacing: true);
-        GameObject.Find("Tabletop").SetActive(false);
 
         fogOfWarController.DeleteFogAtSpawnPoint(spawnPoint, ref boardController);
 
@@ -197,13 +198,21 @@ public class GameManager : MonoBehaviour {
     }
 
     private void OnMenuLoaded(Scene scene, LoadSceneMode mode) {
+        SceneManager.sceneLoaded -= OnMenuLoaded;
         state = null; //Verify that the state is destroyed;
+        gameBuilder = null;
+        playerController = null;
+        boardController = null;
+        fogOfWarController = null;
+        Destroy(gameBuilderObject);
+        Destroy(playerControllerObject);
         unitPositions.Clear();
         turnActions.Clear();
-        //Anything else that the game manager has to reset needs to be done here
+        effectPositions.Clear();
     }
     
-    private void OnMenuSandbox(Scene scene, LoadSceneMode mode){
+    private void OnMenuSandbox(Scene scene, LoadSceneMode mode) {
+        SceneManager.sceneLoaded -= OnMenuSandbox;
         client = GameObject.Find("Networking").GetComponent<Client>();
         this.user = client.GetUserInformation();
     }
@@ -221,8 +230,12 @@ public class GameManager : MonoBehaviour {
                     GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability1](
                         ref general,
                         unitPositions,
-                        general.Owner
+                        general.Owner,
+                        user.Username == general.Owner
                     );
+                }
+                if (general.Ability1Cooldown > 0 && general.Owner == user.Username) {
+                    general.Ability1Cooldown--;
                 }
                 if (general.Ability2Duration > 0) {
                     if (general.Owner == user.Username) {
@@ -231,24 +244,15 @@ public class GameManager : MonoBehaviour {
                     GeneralMetadata.ActiveAbilityFunctionDictionary[general.Ability2](
                         ref general,
                         unitPositions,
-                        general.Owner
+                        general.Owner,
+                        user.Username == general.Owner
                     );
+                }
+                if (general.Ability2Cooldown > 0 && general.Owner == user.Username) {
+                    general.Ability2Cooldown--;
                 }
             }
         }
-    }
-
-    // Returns first general position, or position of last unit
-    private Vector2Int GetGeneralPosition() {
-        Vector2Int lastPosition = Vector2Int.zero;
-        foreach(Vector2Int position in unitPositions.Keys) {
-            lastPosition = position;
-            UnitStats general = unitPositions[position];
-            if((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
-                return position;
-            }
-        }
-        return lastPosition;
     }
 
     //Deal with persistant cards
@@ -277,25 +281,25 @@ public class GameManager : MonoBehaviour {
 
     //===================== In game button functionality ===================
     public void EndTurn() {
-        //This function will need to figure out how to send the updated gamestate to the server
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         string path = CardMetadata.FILE_PATH_BASE + "/." + state.id;
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
+        SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
 
     public void Forfeit() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
     }
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -328,12 +332,30 @@ public class GameManager : MonoBehaviour {
         return unitPositions.ContainsKey(tile);
     }
 
+    // Returns first general position, or position of last unit
+    private Vector2Int GetGeneralPosition(string username) {
+        Vector2Int lastPosition = Vector2Int.zero;
+        foreach (Vector2Int position in unitPositions.Keys) {
+            UnitStats general = unitPositions[position];
+            if(general.Owner == username) {
+                if ((int)general.UnitType > UnitMetadata.GENERAL_THRESHOLD) {
+                    lastPosition = position;
+                    return position;
+                }
+                else if (lastPosition.Equals(Vector2Int.zero)) {
+                    lastPosition = position;
+                }
+            }
+        }
+        return lastPosition;
+    }
+
     //If the following conditions are true:
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                if(unit.MovementActions > 0 && unit.Owner == user.Username) {
+                if(unit.MovementSpeed > 0 && unit.Owner == user.Username) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
                         unit.SandboxMove(endpoint, ref boardController);
@@ -376,11 +398,11 @@ public class GameManager : MonoBehaviour {
         UnitStats general = unitPositions[source];
         if (general.Ability1 == ability) {
             if (general.Ability1Cooldown == 0) {
-                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
+                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
                     if(GetUnitOnTile(target, out UnitStats targetUnit)) {
                         general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                        abilityFunction(ref targetUnit, unitPositions, user.Username);
+                        abilityFunction(ref targetUnit, unitPositions, user.Username, true);
                     }
                     else {
                         return false; //don't put the ability on cooldown
@@ -388,17 +410,17 @@ public class GameManager : MonoBehaviour {
                 }
                 else {
                     general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                    abilityFunction(ref general, unitPositions, user.Username);
+                    abilityFunction(ref general, unitPositions, user.Username, true);
                 }
             }
         }
         else if(general.Ability2 == ability) {
             if (general.Ability2Cooldown == 0) {
-                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
+                AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
                     if (GetUnitOnTile(target, out UnitStats targetUnit)) {
                         general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                        abilityFunction(ref targetUnit, unitPositions, user.Username);
+                        abilityFunction(ref targetUnit, unitPositions, user.Username, true);
                     }
                     else {
                         return false; //don't put the ability on cooldown
@@ -406,7 +428,7 @@ public class GameManager : MonoBehaviour {
                 }
                 else {
                     general.Ability2Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
-                    abilityFunction(ref general, unitPositions, user.Username);
+                    abilityFunction(ref general, unitPositions, user.Username, true);
                 }
             }
         }

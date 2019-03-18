@@ -8,6 +8,7 @@ public class GameBuilder : MonoBehaviour {
 
     //Variables for the game manager to access
     public Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
+    public Dictionary<Vector2Int, Effect> effectPositions = new Dictionary<Vector2Int, Effect>();
 
     //Reference to the menus
     public GameObject unitDisplayPrefab;
@@ -70,6 +71,7 @@ public class GameBuilder : MonoBehaviour {
 
         if(!isPlacing) {
             InstantiateUnits();
+            InstantiateEffects();
         }
     }
 
@@ -154,7 +156,7 @@ public class GameBuilder : MonoBehaviour {
         unitComponent.PlaceAt(pos, ref board);
         unitComponent.SnapToDirection(unit.Direction);
         unit.SetUnit(unitObject.GetComponent<Unit>());
-        unit.Move(pos, ref board, true);
+        unit.Place(pos, ref board);
         unit.Owner = username;
         if(username == this.username) {
             FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
@@ -166,5 +168,10 @@ public class GameBuilder : MonoBehaviour {
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
         }
         return unit;
+    }
+
+    //Methods to deal with effects
+    public void InstantiateEffects() {
+
     }
 }
