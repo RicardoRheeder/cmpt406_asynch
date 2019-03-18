@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 #pragma warning disable 649
 public class CardSystemManager : MonoBehaviour {
@@ -12,6 +16,10 @@ public class CardSystemManager : MonoBehaviour {
     [HideInInspector] public GameObject cardDisplayPanel;
     [HideInInspector] public bool cardBeingDragged = false;
 
+    public int totalCardPoints = 10;
+    private int remainingCardPoints;
+    public int discardRegainPointsAmount = 1;
+    public TextMeshProUGUI CardPointsText;
 
    [SerializeField]
     private Deck genericDeck;
@@ -232,6 +240,11 @@ public class CardSystemManager : MonoBehaviour {
         };
     }
 
+    void Start(){
+        this.remainingCardPoints = totalCardPoints;
+        CardPointsText.text = "Card Points: " + this.remainingCardPoints;
+    }
+
     public void Initialize(List<CardFunction> startingHand, List<UnitStats> playerUnits, string id) {
         TableTop = GameObject.Find("Tabletop");
         TableTop.SetActive(false);
@@ -349,6 +362,25 @@ public class CardSystemManager : MonoBehaviour {
     }
 
     public void PlayCard(Card card) {
-        currentHand.Remove(card);
+        if (currentHand.Contains(card)){
+            currentHand.Remove(card);
+        }
+    }
+
+    public void deductCardPoints(int points)
+    {
+        this.remainingCardPoints -= points;
+        CardPointsText.text = "Card Points: " + this.remainingCardPoints;
+    }
+
+    public void incrementCardPoints(int points)
+    {
+        this.remainingCardPoints += points;
+        CardPointsText.text = "Card Points: " + this.remainingCardPoints;
+    }
+
+    public int getRemainingCardPoints()
+    {
+        return remainingCardPoints;
     }
 }
