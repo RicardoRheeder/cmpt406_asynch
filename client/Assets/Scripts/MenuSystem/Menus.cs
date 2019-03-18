@@ -14,7 +14,7 @@ public class Menus : MonoBehaviour {
     }
 
     public void StartScreenStartButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("LoginScreen");
     }
 
@@ -26,16 +26,16 @@ public class Menus : MonoBehaviour {
         if (!StringValidation.ValidateUsernamePassword(username, password)) {
             //prompt this on the ui, and do nothing
             Debug.Log("username or password is invalid");
-            audioManager.Play("ButtonError");
+            audioManager.Play(SoundName.ButtonError);
             return;
         }
 
         if (!networkApi.LoginUser(username, password)) {
             //For some reason login failed, we have to figure out what to do here
-            audioManager.Play("ButtonError");
+            audioManager.Play(SoundName.ButtonError);
             return;
         }
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -47,7 +47,7 @@ public class Menus : MonoBehaviour {
         if(!StringValidation.ValidateUsernamePassword(username, password)) {
             //prompt this on the ui, and do nothing
             Debug.Log("username or password is invalid");
-            audioManager.Play("ButtonError");
+            audioManager.Play(SoundName.ButtonError);
             return;
         }
 
@@ -55,15 +55,15 @@ public class Menus : MonoBehaviour {
         //We need to figure out the reason and inform the user
         if (!networkApi.CreateUser(username, password)) {
             Debug.Log("Logging in failed, likely because of an invalid username or password");
-            audioManager.Play("ButtonError");
+            audioManager.Play(SoundName.ButtonError);
             return;
         }
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 
     public void LoginScreenQuitButton() {
-        audioManager.Play("ButtonQuit");
+        audioManager.Play(SoundName.ButtonQuit);
         Application.Quit();
     }
 }

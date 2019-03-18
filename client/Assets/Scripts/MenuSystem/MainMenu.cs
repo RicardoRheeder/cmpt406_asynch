@@ -118,7 +118,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void PendingGameCellDetailsButton(GameState state, bool needToAccept) {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         //Set up the display information
         pendingMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         pendingCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -131,7 +131,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void ActiveGameCellDetailsButton(GameState state) {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         //Set up the display information
         activeMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
         activeCurrentPlayers.SetText("" + (state.maxUsers - state.spotsAvailable));
@@ -144,34 +144,34 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void PublicGameCellDetailsButton(GameState state) {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
     }
 
     public void MainMenuCreateGameButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, true, false, false, false);
     }
 
     public void MainMenuArmyBuilderButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(false);
         SetMenuState(false, false, false, false, true, false);
     }
 
     public void MainMenuArmyBuilderBack() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(true);
         SetMenuState(false, false, false, false, false, false);
     }
 
     public void MainMenuArmySelectorButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(false);
         SetMenuState(false, false, false, false, false, true);
     }
 
     public void MainMenuJoinGameButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, true, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
@@ -191,7 +191,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuActiveGamesButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, true, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         if (response.First) {
@@ -211,7 +211,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuPendingGamesButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SetMenuState(true, false, false, false, false, false);
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         int childrenCount = pendingGamesViewContent.transform.childCount;
@@ -238,13 +238,13 @@ public class MainMenu : MonoBehaviour {
         //Here we need to somehow get the string of the username we would like to add
         string userToAdd = friendsListInputField.text;
         if (StringValidation.ValidateUsername(userToAdd) && networkApi.AddFriend(userToAdd)) {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             AddFriendHelper(userToAdd);
             friendsListInputField.text = "";
         }
         else {
             //adding a user failed
-            audioManager.Play("ButtonError");
+            audioManager.Play(SoundName.ButtonError);
         }
     }
 
@@ -259,21 +259,21 @@ public class MainMenu : MonoBehaviour {
         //Here we need to somehow get the string of the username we would like to add
         string userToRemove = friendsListInputField.text;
         if (networkApi.RemoveFriend(userToRemove)) {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             Destroy(friendsListDict[userToRemove]);
             friendsListDict.Remove(userToRemove);
         }
     }
 
     public void MainMenuLogoutButton() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         networkApi.LogoutUser();
         SceneManager.LoadScene("LoginScreen");
     }
 
     public void MainMenuJoinPendingGame(GameState state, bool needToAccept) {
         if(needToAccept) {
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
             networkApi.AcceptGame(state.id);
         }
         MainMenuArmySelectorButton();
@@ -289,7 +289,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void MainMenuArmySelectorBack() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         mainMenuContainer.SetActive(true);
         SetMenuState(true, false, false, false, false, false);
     }

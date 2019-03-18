@@ -244,19 +244,19 @@ public class GameManager : MonoBehaviour {
     public void EndTurn() {
         //This function will need to figure out how to send the updated gamestate to the server
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 
     public void Forfeit() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
     }
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
-        audioManager.Play("ButtonPress");
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 
