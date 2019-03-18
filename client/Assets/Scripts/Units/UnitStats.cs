@@ -32,7 +32,7 @@ public class UnitStats {
 
     //mobility
     public int MovementSpeed { get; set; }
-    private int defaultSpeed;
+    public int DefaultSpeed { get; set; }
     public Vector2Int Position { get; private set; }
     //xPos and yPos are the variables sent by the server, so we have to convert them to position
     [DataMember]
@@ -66,7 +66,6 @@ public class UnitStats {
 
     //Variables used to dictate how much movements/attacks can be done on each turn
     public int AttackActions { get; set; } = 1;
-    public int MovementActions { get; set; } = 1;
 
     //This constructor should mainly be used for testing purposes, so currentHp = maxHp
     public UnitStats(UnitType type, int maxHP, int armour, int range, int damage, int pierce, int aoe, int movementSpeed, int vision, int cost, int direction, IAttackStrategy attackStrategy) {
@@ -81,7 +80,7 @@ public class UnitStats {
         this.Pierce = pierce;
         this.Aoe = aoe;
         this.MovementSpeed = movementSpeed;
-        this.defaultSpeed = movementSpeed;
+        this.DefaultSpeed = movementSpeed;
         this.Cost = cost;
         this.attackStrategy = attackStrategy;
         this.UnitClass = UnitMetadata.UnitAssociations[UnitType];
@@ -101,7 +100,7 @@ public class UnitStats {
     public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, bool specialMove = false) {
         if (!specialMove) {
             if(!moveAfterAttack)
-                this.MovementActions = 0;
+                this.MovementSpeed = 0;
             this.AttackActions--;
         }
         int dir = HexUtility.FindDirection(this.Position,target);
@@ -151,7 +150,7 @@ public class UnitStats {
     }
 
     public void AlterSpeed(int change) {
-        if(this.defaultSpeed != 0) {
+        if(this.DefaultSpeed != 0) {
             this.MovementSpeed += change;
             this.MovementSpeed = this.MovementSpeed < 0 ? 0 : this.MovementSpeed;
         }
@@ -204,11 +203,9 @@ public class UnitStats {
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
-       if(!specialMove)
-            this.MovementActions--;
-		
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
+        this.MovementSpeed -= pathWithDirection.Count;
         this.Position = position;
         if(pathWithDirection.Count > 0) {
             this.Direction = pathWithDirection[pathWithDirection.Count - 1].Second;
@@ -245,7 +242,7 @@ public class UnitStats {
         this.Range = baseUnit.Range;
         this.Aoe = baseUnit.Aoe;
         this.MovementSpeed = baseUnit.MovementSpeed;
-        this.defaultSpeed = baseUnit.MovementSpeed;
+        this.DefaultSpeed = baseUnit.MovementSpeed;
     }
 
     //Note: the unit type will never change so we don't have to update the int value

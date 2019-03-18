@@ -39,8 +39,9 @@ public class GameManager : MonoBehaviour {
     private PlayerMetadata user;
     private ArmyPreset selectedPreset;
 
-    //Dictionary used to store the units.
+    //Dictionary used to the game information
     private Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
+    private Dictionary<Vector2Int, Effect> effectPositions = new Dictionary<Vector2Int, Effect>();
 
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
@@ -207,6 +208,7 @@ public class GameManager : MonoBehaviour {
         Destroy(playerControllerObject);
         unitPositions.Clear();
         turnActions.Clear();
+        effectPositions.Clear();
     }
     
     private void OnMenuSandbox(Scene scene, LoadSceneMode mode) {
@@ -353,7 +355,7 @@ public class GameManager : MonoBehaviour {
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                if(unit.MovementActions > 0 && unit.Owner == user.Username) {
+                if(unit.MovementSpeed > 0 && unit.Owner == user.Username) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
                         unit.SandboxMove(endpoint, ref boardController);

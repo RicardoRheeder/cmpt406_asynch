@@ -315,7 +315,7 @@ public static class CardMetadata {
     private static bool LeftForDead(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
-                unit.MovementActions = 0;
+                unit.AlterSpeed(-1000);
                 unit.AlterDamage(5);
             }
             else {
@@ -386,7 +386,7 @@ public static class CardMetadata {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
                 unit.AttackActions += 1;
-                unit.MovementActions += 1;
+                unit.AlterSpeed(unit.DefaultSpeed);
             }
             else {
                 return false;
@@ -568,7 +568,7 @@ public static class CardMetadata {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
                 unit.AlterArmour(1);
-                unit.MovementActions += 1;
+                unit.AlterSpeed(unit.DefaultSpeed);
             }
             else {
                 return false;
@@ -636,7 +636,7 @@ public static class CardMetadata {
     private static bool Snipershot(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
-                unit.MovementActions = 0;
+                unit.AlterSpeed(-1000);
                 unit.AlterDamage(3);
                 unit.AlterRange(2);
             }
@@ -737,7 +737,7 @@ public static class CardMetadata {
     private static bool EndlessRunner(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
-                unit.MovementActions++;
+                unit.AlterSpeed(unit.DefaultSpeed);
             }
             else {
                 return false;
@@ -982,7 +982,7 @@ public static class CardMetadata {
                     if (allUnits.TryGetValue(pos, out UnitStats friendly)) {
                         if (friendly.Owner == username) {
                             friendly.AlterDamage(10);
-                            friendly.MovementActions += 1;
+                            unit.AlterSpeed(unit.DefaultSpeed);
                             friendly.AttackActions += 1;
                         }
                     }
@@ -1033,12 +1033,12 @@ public static class CardMetadata {
     private static bool OilSlick(Vector2Int source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isReplay) {
         if (allUnits.TryGetValue(source, out UnitStats unit)) {
             if (unit.Owner == username && unit.UnitType == UnitType.claymore) {
-                unit.MovementActions += 1;
+                unit.AlterSpeed(unit.DefaultSpeed);
                 List<Vector2Int> positions = HexUtility.GetTilePositionsInRangeWithoutMap(source, 1);
                 foreach (var pos in positions) {
                     if (allUnits.TryGetValue(pos, out UnitStats enemy)) {
                         if (enemy.Owner != username) {
-                                enemy.MovementActions = 0;
+                            enemy.AlterSpeed(-1000);
                         }
                     }
                 }

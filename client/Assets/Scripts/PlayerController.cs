@@ -357,7 +357,7 @@ public class PlayerController : MonoBehaviour {
                 attackButton.GetComponent<Image>().color = BUTTON_INACTIVE;
                 attackButton.onClick.RemoveAllListeners();
             }
-            if (unit.MovementActions != 0 && unit.MovementSpeed != 0) {
+            if (unit.MovementSpeed != 0) {
                 movementButton.GetComponent<Image>().color = BUTTON_ACTIVE;
                 movementButton.onClick.RemoveAllListeners();
                 movementButton.onClick.AddListener(MovementButton);

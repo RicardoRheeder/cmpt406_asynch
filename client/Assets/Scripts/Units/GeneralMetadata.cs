@@ -125,7 +125,7 @@ public static class GeneralMetadata {
         foreach(var key in allUnits.Keys) {
             UnitStats unit = allUnits[key];
             if(unit.Owner == username) {
-                unit.MovementActions += 1;
+                unit.AlterSpeed(unit.DefaultSpeed);
                 unit.AlterSpeed(3);
             }
         }

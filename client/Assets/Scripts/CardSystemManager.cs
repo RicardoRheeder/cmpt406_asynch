@@ -281,7 +281,7 @@ public class CardSystemManager : MonoBehaviour {
                 DrawCard();
                 genericCards++;
             }
-            while (uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT) {
+            while (uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT && types.Count > 0) {
                 DrawCard(types[Random.Range(0, types.Count)]);
                 uniqueCards++;
             }
