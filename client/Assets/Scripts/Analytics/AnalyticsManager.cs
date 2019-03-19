@@ -51,6 +51,7 @@ public class AnalyticsManager : MonoBehaviour
             Debug.Log("There are no completed games");
             return;
         }
+        Debug.Log("Recieved " + response.Second.states.Count + " Completed Games.");
 
         unitDamageStats = new Dictionary<UnitType, UnitAnalyticsValue>();
         gamesPlayed = new Dictionary<UnitType, int>();
@@ -91,6 +92,29 @@ public class AnalyticsManager : MonoBehaviour
                     timesPurchased.Add(unit.UnitType, 1);
                 } else {
                     timesPurchased[unit.UnitType] = (timesPurchased[unit.UnitType] + 1);
+                }
+            }
+            if (gameState.InitGenerals != null && gameState.InitGenerals.Count > 0) {
+                /* this is a copy paste of the above loop cuz im lazy and it's a dev scene */
+                foreach(UnitStats unit in gameState.InitGenerals) {
+                    localBoard[unit.Position] = UnitFactory.GetBaseUnit(unit.UnitType);
+
+                    /* Add unit to GamesPlayed for Damage Averages */
+                    if (!gamesPlayedChecker.ContainsKey(unit.UnitType)) {
+                        gamesPlayedChecker.Add(unit.UnitType, true);
+                        if (gamesPlayed.ContainsKey(unit.UnitType)) {
+                            gamesPlayed[unit.UnitType] = gamesPlayed[unit.UnitType] + 1;
+                        }
+                        else {
+                            gamesPlayed[unit.UnitType] = 1;
+                        }
+                    }
+                    /* Increment unit in Times Purchased Dict */
+                    if (!timesPurchased.ContainsKey(unit.UnitType)) {
+                        timesPurchased.Add(unit.UnitType, 1);
+                    } else {
+                        timesPurchased[unit.UnitType] = (timesPurchased[unit.UnitType] + 1);
+                    }
                 }
             }
 
