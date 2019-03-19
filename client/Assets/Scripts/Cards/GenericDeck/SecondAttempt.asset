@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Second Attempt
   effects:
-  - Unit gains additional attack
+  - Attack an additional target
   description: 
   artwork: {fileID: 0}
   func: 36

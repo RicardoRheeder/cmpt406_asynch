@@ -157,7 +157,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         switch (baseUnit.UnitType){
             case UnitType.claymore:
                 cardName1.text = ("Oil Slick");
-                cardEffects1.text = ("+1 Movement Action" + Environment.NewLine + "Enemies within 1 range of the Claymore cannot move until your next turn");
+                cardEffects1.text = ("+1 Movement Action\nEnemies within 1 range of the Claymore cannot move until your next turn");
                 cardName2.text = ("Poppin' Smoke");
                 cardEffects2.text = ("Enemies within 2 range of the Claymore have their vision reduced to 0 until your next turn");
                 typeImage.sprite = support;
@@ -165,17 +165,17 @@ public class ArmyBuilderUI : MonoBehaviour {
                 
             case UnitType.compensator:
                 cardName1.text = ("Over Compensation");
-                cardEffects1.text = ("+30 Armor Penetration" + Environment.NewLine + "+2 Movement Speed" + Environment.NewLine + "+10 Attack Damage");
+                cardEffects1.text = ("+30 Armor Penetration\n+2 Movement Speed\n+10 Attack Damage");
                 cardName2.text = ("Size Matters");
-                cardEffects2.text = ("+40 Armor Penetration" + Environment.NewLine + "+2 Range");
+                cardEffects2.text = ("+40 Armor Penetration\n+2 Range");
                 typeImage.sprite = piercing;
                 break;
                 
             case UnitType.foundation:
                 cardName1.text = ("Both Barrels");
-                cardEffects1.text = ("Double Armor Penetration" + Environment.NewLine + "Double Attack Damage");
+                cardEffects1.text = ("Double Armor Penetration\nDouble Attack Damage");
                 cardName2.text = ("To The Skies");
-                cardEffects2.text = ("+8 Range" + Environment.NewLine + "Your Foundations attacks deal area damage within one tile of your target for this turn");
+                cardEffects2.text = ("+8 Range\nYour Foundations attacks deal area damage within one tile of your target for this turn");
                 typeImage.sprite = piercing;
                 break;
                 
@@ -191,29 +191,29 @@ public class ArmyBuilderUI : MonoBehaviour {
                 cardName1.text = ("Anti-Ballistic Shield Matrix");
                 cardEffects1.text = ("+10 armor for adjacent allies");
                 cardName2.text = ("PewPew's Revenge");
-                cardEffects2.text = ("+2 Movement Speed" + Environment.NewLine + "+10 Attack Damage" + Environment.NewLine + "+1 Attack Action");
+                cardEffects2.text = ("+2 Movement Speed\n+10 Attack Damage\n+1 Attack Action");
                 typeImage.sprite = heavy;
                 break;
                 
             case UnitType.powerSurge:
                 cardName1.text = ("Death Ball");
-                cardEffects1.text = ("+10 Armor to allies within 2 range" + Environment.NewLine + "+10 Attack Damage to allies within 2 range");
+                cardEffects1.text = ("+10 Armor to allies within 2 range\n+10 Attack Damage to allies within 2 range");
                 cardName2.text = ("High Ground Simulator");
-                cardEffects2.text = ("+10 Attack Damage to adjacent allies" + Environment.NewLine + "+1 Movement Speed to adjacent allies" + Environment.NewLine + "+1 Range to adjacent allies");
+                cardEffects2.text = ("+10 Attack Damage to adjacent allies\n+1 Movement Speed to adjacent allie\n+1 Range to adjacent allies");
                 typeImage.sprite = support;
                 break;
                 
             case UnitType.recon:
                 cardName1.text = ("Eagle Aspect");
-                cardEffects1.text = ("+3 Range" + Environment.NewLine + "+2 Movement Speed");
+                cardEffects1.text = ("+3 Range\n+2 Movement Speed");
                 cardName2.text = ("Noob Tube");
-                cardEffects2.text = ("+15 Attack Damage" + Environment.NewLine + "The Recon's attacks deal area damage within 1 range of your target for this turn");
+                cardEffects2.text = ("+15 Attack Damage\nThe Recon's attacks deal area damage within 1 range of your target for this turn");
                 typeImage.sprite = light;
                 break;
                 
             case UnitType.steamer:
                 cardName1.text = ("Real Steel");
-                cardEffects1.text = ("+20 Armor" + Environment.NewLine + "-1 Movement Speed");
+                cardEffects1.text = ("+20 Armor\n-1 Movement Speed");
                 cardName2.text = ("We Get It... You Vape");
                 cardEffects2.text = ("The Steamer's attacks deal damage in a 3 tile cone for this turn");
                 typeImage.sprite = heavy;
@@ -221,41 +221,41 @@ public class ArmyBuilderUI : MonoBehaviour {
                 
             case UnitType.trooper:
                 cardName1.text = ("On The Juice");
-                cardEffects1.text = ("+10 Attack Damage" + Environment.NewLine + "+10 Armor Penetration");
+                cardEffects1.text = ("+10 Attack Damage\n+10 Armor Penetration");
                 cardName2.text = ("Run'n'Gun");
-                cardEffects2.text = ("+2 Movement Speed" + Environment.NewLine + "+1 Movement Action" + Environment.NewLine + "+15 Attack Damage");
+                cardEffects2.text = ("+2 Movement Speed\n+1 Movement Action\n+15 Attack Damage");
                 typeImage.sprite = light;
                 break;
             
             case UnitType.light_adren:
                 cardName1.text = ("Stick and Poke");
-                cardEffects1.text = ("Cooldown: 5 turns" + Environment.NewLine + "Your units gain 3 Movement Speed and 1 Movement Action for 2 turns");
+                cardEffects1.text = ("Cooldown: 5 turns\nYour units gain 3 Movement Speed and units add their default speed for 2 turns");
                 cardName2.text = ("Deep Penetration");
-                cardEffects2.text = ("Cooldown: 3 turns" + Environment.NewLine + "Choose a unit. The unit's Armor is set to 0 for this turn");
+                cardEffects2.text = ("Cooldown: 3 turns\nChoose a unit. The unit's Armor is set to 0 for this turn");
                 typeImage.sprite = general;
                 break;
                 
             case UnitType.piercing_tungsten:
                 cardName1.text = ("Trojan Shot");
-                cardEffects1.text = ("Cooldown: 6 turns" + Environment.NewLine + "For this turn Tungsten's Range becomes 20 and his attack hits all units between him and his target");
+                cardEffects1.text = ("Cooldown: 6 turns\nFor this turn Tungsten's Range becomes 20 and his attack hits all units between him and his target");
                 cardName2.text = ("Armor Piercing Ammo");
-                cardEffects2.text = ("Cooldown: 6 turns" + Environment.NewLine + "Select a unit within 10 range of Tungsten. This unit gains 10 Armor Penetration for 4 turns");
+                cardEffects2.text = ("Cooldown: 6 turns\nSelect a unit within 10 range of Tungsten. This unit gains 10 Armor Penetration for 4 turns");
                 typeImage.sprite = general;
                 break;
             
             case UnitType.heavy_albarn:
                 cardName1.text = ("The Best Offense");
-                cardEffects1.text = ("Cooldown: 2 turns" + Environment.NewLine + "Choose a unit. The unit's Armor is added to its Attack Damage");
+                cardEffects1.text = ("Cooldown: 2 turns\nChoose a unit. The unit's Armor is added to its Attack Damage");
                 cardName2.text = ("Steam Overload");
-                cardEffects2.text = ("Cooldown: 3 turns" + Environment.NewLine + "Choose a location within 10 Range of Albarn. The target takes 30 damage, units within 1 range take 20, units within 2 range take 10");
+                cardEffects2.text = ("Cooldown: 3 turns\nChoose a location within 10 Range of Albarn. The target takes 30 damage, units within 1 range take 20, units within 2 range take 10");
                 typeImage.sprite = general;
                 break;
             
             case UnitType.support_sandman:
                 cardName1.text = ("Sahara Mine");
-                cardEffects1.text = ("Cooldown: 4 turns" + Environment.NewLine + "Choose a target within 2 Range of Sandman. All units within 1 range of the target take 10 damage and lose 10 Armor for this turn");
+                cardEffects1.text = ("Cooldown: 4 turns\nChoose a target within 2 Range of Sandman. All units within 1 range of the target take 10 damage and lose 10 Armor for this turn");
                 cardName2.text = ("Sandstorm");
-                cardEffects2.text = ("Cooldown: 4 turns" + Environment.NewLine + "All units within 2 range of Sandman have their Vision and Movement Speed reduced by 3. The sandstorm lasts for 2 turns");
+                cardEffects2.text = ("Cooldown: 4 turns\nAll units within 2 range of Sandman have their Vision and Movement Speed reduced by 3. The sandstorm lasts for 2 turns");
                 typeImage.sprite = general;
                 break;
         }

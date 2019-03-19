@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: We Should Run
   effects:
-  - Effects two units
-  - +2 Movement
+  - +2 Movement to all units within 1 tile of target
   description: 
   artwork: {fileID: 0}
   func: 12

@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: The Girl Next Door
   effects:
   - +30 Attack
-  - Range = 1
+  - Set Range to 1
   description: 
   artwork: {fileID: 0}
   func: 39

@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: Reinforcements
   effects:
   - +1 Armor
-  - Addtional Movement Phase
+  - Increase movement speed by default movement speed
   description: 
   artwork: {fileID: 0}
   func: 30

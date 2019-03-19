@@ -375,7 +375,7 @@ public static class CardMetadata {
         foreach (var pos in positions) {
             if (allUnits.TryGetValue(pos, out UnitStats unit)) {
                 if (unit.Owner == username && unit.UnitClass != UnitClass.general) {
-                    unit.AlterSpeed(2);
+                    unit.AlterSpeed(4);
                 }
             }
         }

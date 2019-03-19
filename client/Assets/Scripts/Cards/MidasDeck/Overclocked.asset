@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Overclocked
   effects:
-  - The M.I.D.A.S gains 3 additional attacks for this turn
+  - The M.I.D.A.S can heal 3 additional times
   description: 
   artwork: {fileID: 0}
   func: 171

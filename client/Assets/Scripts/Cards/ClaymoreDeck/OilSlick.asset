@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Oil Slick
   effects:
-  - +1 Movement Action
+  - Increase movement speed by default movement speed
   - Enemies within 1 range of the Claymore cannot move until your next turn
   description: 
   artwork: {fileID: 0}

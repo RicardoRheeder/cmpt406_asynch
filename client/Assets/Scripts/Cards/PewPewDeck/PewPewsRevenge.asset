@@ -16,7 +16,7 @@ MonoBehaviour:
   effects:
   - +2 Movement Speed
   - +10 Attack Damage
-  - +1 Attack Action
+  - Attack an additional target
   description: 
   artwork: {fileID: 0}
   func: 131

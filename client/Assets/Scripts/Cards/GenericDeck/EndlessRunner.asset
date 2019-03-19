@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Endless Runner
   effects:
-  - Additional Movement Phase
+  - Increase movement speed by default movement speed
   description: 
   artwork: {fileID: 0}
   func: 41
