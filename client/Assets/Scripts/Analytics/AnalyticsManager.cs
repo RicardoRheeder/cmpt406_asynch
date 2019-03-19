@@ -60,12 +60,12 @@ public class AnalyticsManager : MonoBehaviour
         /* We now have a list of GameStates to loop over and build data with */
         foreach(GameState gameState in response.Second.states) {
             if (gameState.InitUnits == null || gameState.InitUnits.Count <= 0) {
-                Debug.LogError("There are no units for this game??");
+                Debug.LogError("There are no units for this game?? : " + gameState.id);
                 continue;
             }
 
             if (gameState.Actions.Count <= 0) {
-                Debug.LogError("There are no actions for this game??");
+                Debug.LogError("There are no actions for this game?? : " + gameState.id);
                 continue;
             }
             
@@ -99,10 +99,10 @@ public class AnalyticsManager : MonoBehaviour
                 switch (action.Type)
                 {
                     case ActionType.Movement:
-                        movementAction(action.OriginXPos, action.OriginXPos, action.TargetXPos, action.TargetYPos);
+                        movementAction(action.OriginXPos, action.OriginYPos, action.TargetXPos, action.TargetYPos);
                         break;
                     case ActionType.Attack:
-                        attackAction(action.OriginXPos, action.OriginXPos, action.TargetXPos, action.TargetYPos);
+                        attackAction(action.OriginXPos, action.OriginYPos, action.TargetXPos, action.TargetYPos);
                         break;
                     default:
                         Debug.Log("Unhandled Action: " + action.Type);
@@ -161,7 +161,7 @@ public class AnalyticsManager : MonoBehaviour
 
         /* Error checks */
         if (!localBoard.TryGetValue(source, out unitThatMoved)){
-            Debug.LogError("No unit with this source");
+            Debug.LogError("No unit with this movement source. X:" + source.x + ", Y:" + source.y);
             return;
         }
         if (localBoard.ContainsKey(target)) {
@@ -194,7 +194,7 @@ public class AnalyticsManager : MonoBehaviour
 
         /* Get the units that are involved */
         if (!localBoard.TryGetValue(source, out sourceUnit)){
-            Debug.LogError("No unit with this source");
+            Debug.LogError("No unit with this attack source. X:" + source.x + ", Y:" + source.y);
             return;
         }
 

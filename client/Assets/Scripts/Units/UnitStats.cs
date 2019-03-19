@@ -104,7 +104,7 @@ public class UnitStats {
             this.AttackActions--;
         }
         int dir = HexUtility.FindDirection(this.Position,target);
-        MyUnit.Attack(dir);
+        if (MyUnit != null) {MyUnit.Attack(dir);} else {Debug.LogError("MyUnit is NULL!");}
         return attackStrategy.Attack(this, target);
     }
 
