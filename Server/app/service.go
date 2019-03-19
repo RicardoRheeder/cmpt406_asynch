@@ -844,6 +844,7 @@ func readyUnits(username string, units []gamestate.Unit, general gamestate.Unit)
 		gs.InitUnits = append(gs.InitUnits, units...)
 		/* add the provided general */
 		gs.Generals = append(gs.Generals, general)
+		gs.InitGenerals = append(gs.Generals, general)
 
 		/* If it's the last person that needed to ready up */
 		if gs.MaxUsers == len(gs.ReadyUsers) {
