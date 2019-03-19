@@ -176,8 +176,7 @@ public class PlayerController : MonoBehaviour {
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
-        // boardController.HoverHighlight(new List<Vector2Int>(){tilePos},tilePos);
-        boardController.HoverHighlight(tilePos);
+        bool highlightSingleTile = true;
 
         switch(controllerState) {
             case (PlayerState.playing):
@@ -187,6 +186,7 @@ public class PlayerController : MonoBehaviour {
                             boardController.RenderPath(selectedUnit.Position,tilePos);
                             List<Vector2Int> attackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
                             boardController.HoverHighlight(attackRange,tilePos);
+                            highlightSingleTile = false;
                         }
                     }
                 } 
@@ -241,7 +241,9 @@ public class PlayerController : MonoBehaviour {
                                 }
                                 break;
                             default:
-                                Debug.Log("Interaction state is in a weird place");
+                                if(interactionState != InteractionState.moving) {
+                                    Debug.Log("Interaction state is in a weird place");
+                                }
                                 break;
                         }
                         if(selectedUnit != null) {
@@ -268,10 +270,11 @@ public class PlayerController : MonoBehaviour {
                 }
                 break;
             default:
-                if(interactionState != InteractionState.moving) {
-                    Debug.Log("Player controller is in an invalid state");
-                }
+                Debug.Log("Player controller is in an invalid state");
                 break;
+        }
+        if(highlightSingleTile) {
+            boardController.HoverHighlight(new List<Vector2Int>(){tilePos},tilePos);
         }
     }
 
