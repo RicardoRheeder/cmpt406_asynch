@@ -73,16 +73,7 @@ public class BoardController {
 
     // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position
     public Vector3 CellToWorld(Vector2Int position) {
-        if(tilemap == null) {   // throw exception if tilemap is null
-            throw new MissingComponentException("Tilemap is missing");
-        }
-
-        Vector3 worldPosition = tilemap.CellToWorld((Vector3Int)position);
-        HexTile tile = tilemap.GetTile((Vector3Int)position) as HexTile;
-        if(tile != null) { // if tile exists, add elevation to world position
-            return new Vector3(worldPosition.x,worldPosition.y,worldPosition.z-(tileHeight+((int)tile.elevation*elevationHeight)));
-        }
-        return worldPosition;
+        return CellToWorld(position,0f);
     }
 
     // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position
