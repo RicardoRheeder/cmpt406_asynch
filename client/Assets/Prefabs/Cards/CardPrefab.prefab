@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7828ec484d938d141b144d0ff9ce6222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dissolveDuration: 2.8
+  dissolveDuration: 1.3
 --- !u!114 &864138309938873603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -581,7 +581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7828ec484d938d141b144d0ff9ce6222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dissolveDuration: 2.8
+  dissolveDuration: 1.3
 --- !u!1 &695489557729248509
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,7 +640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7828ec484d938d141b144d0ff9ce6222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dissolveDuration: 2.8
+  dissolveDuration: 1.3
 --- !u!114 &5626854297160765961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -814,7 +814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7828ec484d938d141b144d0ff9ce6222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dissolveDuration: 2.8
+  dissolveDuration: 1.3
 --- !u!114 &7163988256950590993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -989,7 +989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7828ec484d938d141b144d0ff9ce6222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dissolveDuration: 2.8
+  dissolveDuration: 1.3
 --- !u!33 &117114242619608937
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1171,7 +1171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7828ec484d938d141b144d0ff9ce6222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dissolveDuration: 2.8
+  dissolveDuration: 1.3
 --- !u!114 &7054253367035410110
 MonoBehaviour:
   m_ObjectHideFlags: 0

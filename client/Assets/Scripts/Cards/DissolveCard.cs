@@ -18,8 +18,8 @@ public class DissolveCard : MonoBehaviour {
 
     IEnumerator DissolveOverTime() {
         while (mat.GetFloat("_Progress") > 0) {
-            mat.SetFloat("_Progress", mat.GetFloat("_Progress") - 0.005f);
-            yield return new WaitForSeconds(0.01f);
+            mat.SetFloat("_Progress", mat.GetFloat("_Progress") - 0.025f);
+            yield return new WaitForSeconds(0.005f);
         }
         yield return null;
     }

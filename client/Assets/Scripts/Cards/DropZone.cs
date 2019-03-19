@@ -134,8 +134,8 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
                 
                 cardOnTableTop.BroadcastMessage("Dissolve");
-                Destroy(cardOnTableTop, 3f);
-                StartCoroutine(HideTableTop(2.9f));
+                Destroy(cardOnTableTop, 1f);
+                StartCoroutine(HideTableTop(0.9f));
 
                 controller.PlayCard(card);
                 manager.PlayCard(card);
