@@ -284,19 +284,27 @@ public class CardSystemManager : MonoBehaviour {
 
         if (!previouslyGeneratedCards) {
             List<UnitType> types = new List<UnitType>();
+            int cardsDrawn = 0;
             for (int i = 0; i < playerUnits.Count; i++) {
                 UnitStats unit = playerUnits[i];
                 if ((int)unit.UnitType < UnitMetadata.GENERAL_THRESHOLD) {
                     types.Add(unit.UnitType);
                 }
             }
-            while (genericCards < CardMetadata.GENERIC_CARD_LIMIT) {
-                DrawCard();
-                genericCards++;
-            }
-            while (uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT && types.Count > 0) {
+            if(uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT && types.Count > 0) {
                 DrawCard(types[Random.Range(0, types.Count)]);
                 uniqueCards++;
+                cardsDrawn++;
+            }
+            while (cardsDrawn < 3) {
+                if (genericCards < CardMetadata.GENERIC_CARD_LIMIT) {
+                    DrawCard();
+                    genericCards++;
+                    cardsDrawn++;
+                }
+                else {
+                    break;
+                }
             }
 
             StreamWriter writer = new StreamWriter(path);
