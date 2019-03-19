@@ -35,6 +35,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		Units:          []Unit{},
 		InitUnits:      []Unit{},
 		Generals:       []Unit{},
+		InitGenerals:   []Unit{},
 		CardIDs:        []string{},
 		ActiveEffects:  []Effect{},
 		Actions:        []Action{},
