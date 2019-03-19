@@ -105,7 +105,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerEnter(PointerEventData eventData){
         GameObject discardPanel = GameObject.Find("DiscardPanel");
-        if (!cardSystem.cardBeingDragged && this.transform.parent != discardPanel.transform){
+        if (!cardSystem.cardBeingDragged && this.transform.parent != discardPanel.transform && this.transform.parent != tableTop.transform)
+        {
             defaultScale = this.transform.localScale;
             this.transform.localScale *= 1.2f;
 
