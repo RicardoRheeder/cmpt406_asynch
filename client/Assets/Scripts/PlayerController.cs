@@ -289,7 +289,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.moving;
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
-                audioManager.Play("ButtonPress");
+                audioManager.Play(SoundName.ButtonPress);
             }
         }
     }
@@ -304,7 +304,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.attacking;
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
-                audioManager.Play("ButtonPress");
+                audioManager.Play(SoundName.ButtonPress);
             }
         }
     }
@@ -318,7 +318,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.ability1;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability1]);
             boardController.HighlightTiles(this.highlightedTiles);
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
         }
     }
 
@@ -331,7 +331,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.ability2;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
             boardController.HighlightTiles(this.highlightedTiles);
-            audioManager.Play("ButtonPress");
+            audioManager.Play(SoundName.ButtonPress);
         }
     }
 
@@ -375,7 +375,7 @@ public class PlayerController : MonoBehaviour {
                 attackButton.GetComponent<Image>().color = BUTTON_INACTIVE;
                 attackButton.onClick.RemoveAllListeners();
             }
-            if (unit.MovementActions != 0 && unit.MovementSpeed != 0) {
+            if (unit.MovementSpeed != 0) {
                 movementButton.GetComponent<Image>().color = BUTTON_ACTIVE;
                 movementButton.onClick.RemoveAllListeners();
                 movementButton.onClick.AddListener(MovementButton);

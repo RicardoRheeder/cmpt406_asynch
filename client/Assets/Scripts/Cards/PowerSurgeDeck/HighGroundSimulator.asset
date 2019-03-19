@@ -15,8 +15,8 @@ MonoBehaviour:
   displayName: High Ground Simulator
   effects:
   - +10 Attack Damage to adjacent allies
-  - +1 Movement Speed to adjacent allies
-  - +1 Range to adjacent allies
+  - Increase all adjacent allies movement speed by their default movement speed
+  - Adjacent allies Attack an additional target
   description: 
   artwork: {fileID: 0}
   func: 161

@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: 'Survival Rule #1'
   effects:
-  - Additional movement phase
+  - Increase movement speed by default movement speed
   - Additional attack phase
   description: 
   artwork: {fileID: 0}
   func: 18
   type: -2
-  cardCost: 0
+  cardCost: 1

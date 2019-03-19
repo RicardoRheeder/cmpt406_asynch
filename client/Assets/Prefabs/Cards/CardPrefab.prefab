@@ -64,8 +64,28 @@ MonoBehaviour:
   descriptionText: {fileID: 864138309938873603}
   artworkImage: {fileID: 695489557547915784}
   cardCostText: {fileID: 7163988256950590993}
-  standardMaterial: {fileID: 2100000, guid: 6b5e425f8f981094db313118e982715a, type: 2}
-  dissolveMaterial: {fileID: 2100000, guid: cfcae873bb2fa4e448e37fd17a4d751e, type: 2}
+  standardMaterial_Grey: {fileID: 2100000, guid: 6b5e425f8f981094db313118e982715a,
+    type: 2}
+  dissolveMaterial_Grey: {fileID: 2100000, guid: dc6625769232431478d6df05ef3150cd,
+    type: 2}
+  standardMaterial_Blue: {fileID: 2100000, guid: 4a7c68cb0bcbf134aa3165d971b62fe8,
+    type: 2}
+  dissolveMaterial_Blue: {fileID: 2100000, guid: 641123a27feeca64c89ba426fd4334b2,
+    type: 2}
+  standardMaterial_Red: {fileID: 2100000, guid: b35bff2f73d57d349a5299f9811be072,
+    type: 2}
+  dissolveMaterial_Red: {fileID: 2100000, guid: 6fe137082220feb46be78180955830fd,
+    type: 2}
+  standardMaterial_Yellow: {fileID: 2100000, guid: c029ef2ca5ee2db45b725b4e3ac9650a,
+    type: 2}
+  dissolveMaterial_Yellow: {fileID: 2100000, guid: 3489530ddde90cc4bb8214418720b0ea,
+    type: 2}
+  standardMaterial_Green: {fileID: 2100000, guid: b66fa4b3c58ecd34db1e8de5eb36d693,
+    type: 2}
+  dissolveMaterial_Green: {fileID: 2100000, guid: cfcae873bb2fa4e448e37fd17a4d751e,
+    type: 2}
+  standardMaterial: {fileID: 0}
+  dissolveMaterial: {fileID: 0}
 --- !u!222 &695489556233628860
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -353,7 +373,7 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 6b5e425f8f981094db313118e982715a, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:

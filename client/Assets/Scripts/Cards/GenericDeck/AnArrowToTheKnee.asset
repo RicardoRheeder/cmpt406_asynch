@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: An Arrow To The Knee
   effects:
   - -10 Attack
-  - Attack two targets
+  - Attack an additional target
   description: 
   artwork: {fileID: 0}
   func: 11

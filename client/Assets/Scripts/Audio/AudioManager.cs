@@ -7,6 +7,8 @@ public class AudioManager : MonoBehaviour {
     public AudioLibrary[] sounds;
     public static AudioManager instance = null;
 
+
+
     void Awake() {
         // Creates an a modifible element in the inspector of the audioManager for each audio clip.
         foreach (AudioLibrary sound in sounds) {
@@ -27,14 +29,15 @@ public class AudioManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
+
     // Starts the menu theme music
     void Start() {
-        Play("Theme");
+        Play(SoundName.Theme);
     }
 
     // Looks for sound used in the audioLibrary by name and plays that sound.
-    public void Play(string name) {
-        AudioLibrary s = Array.Find(sounds, sound => sound.name == name);
+    public void Play(SoundName soundName) {
+        AudioLibrary s = Array.Find(sounds, sound => sound.name == soundName);
         if (s == null) {
             Debug.LogWarning("Sound: " + name + " was not found. Check for any misspellings");
             return;
@@ -42,8 +45,8 @@ public class AudioManager : MonoBehaviour {
         s.audioSource.Play();
     }
 
-    public void Mute(string name) {
-        AudioLibrary s = Array.Find(sounds, sound => sound.name == name);
+    public void Mute(SoundName soundName) {
+        AudioLibrary s = Array.Find(sounds, sound => sound.name == soundName);
         if (s == null) {
             Debug.LogWarning("Sound: " + name + " was not found. Check for any misspellings");
         }
@@ -51,6 +54,7 @@ public class AudioManager : MonoBehaviour {
     }
 
     public void MuteTheme() {
-        Mute("Theme");
+        DontDestroyOnLoad(gameObject);
+        Mute(SoundName.Theme);
     }
 }

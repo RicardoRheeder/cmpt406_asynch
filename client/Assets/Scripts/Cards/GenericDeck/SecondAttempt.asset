@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Second Attempt
   effects:
-  - Unit gains additional attack
+  - Attack an additional target
   description: 
   artwork: {fileID: 0}
   func: 36
   type: -2
-  cardCost: 0
+  cardCost: 1

@@ -23,6 +23,7 @@ type GameState struct {
 	InitUnits      []Unit    `json:"initUnits,omitempty" datastore:",noindex,omitempty"`
 	Units          []Unit    `json:"units,omitempty" datastore:",noindex,omitempty"`
 	Generals       []Unit    `json:"generals,omitempty" datastore:",noindex,omitempty"`
+	InitGenerals   []Unit    `json:"initGenerals,omitempty" datastore:",noindex,omitempty"`
 	Cards          []Cards   `json:"cards,omitempty" datastore:"-"`
 	CardIDs        []string  `json:"-" datastore:",noindex,omitempty"`
 	ActiveEffects  []Effect  `json:"activeEffects,omitempty" datastore:",noindex,omitempty"`
