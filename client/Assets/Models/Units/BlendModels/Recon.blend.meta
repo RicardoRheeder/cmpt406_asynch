@@ -12,6 +12,31 @@ ModelImporter:
     100012: mesh05
     100014: mesh06
     100016: //RootNode
+    100018: 4Bar_L
+    100020: 4Bar_R_001
+    100022: Armature
+    100024: BackToe_R_001
+    100026: BackToeTarget_L
+    100028: Body
+    100030: Empty
+    100032: Empty_001
+    100034: Foot_L
+    100036: Foot_R_001
+    100038: FrontToe_L
+    100040: FrontToe_R_001
+    100042: Gun_L
+    100044: GunShoulder_L
+    100046: Hip_L
+    100048: Hip_R_001
+    100050: KneePlate_L
+    100052: KneePlate_R_001
+    100054: LeftToe_L
+    100056: LeftToe_R_001
+    100058: mesh11
+    100060: RightToe_L
+    100062: RightToe_R_001
+    100064: Tibia_L
+    100066: Tibia_R_001
     400000: cylinder01
     400002: cylinder02
     400004: cylinder03
@@ -21,7 +46,33 @@ ModelImporter:
     400012: mesh05
     400014: mesh06
     400016: //RootNode
+    400018: 4Bar_L
+    400020: 4Bar_R_001
+    400022: Armature
+    400024: BackToe_R_001
+    400026: BackToeTarget_L
+    400028: Body
+    400030: Empty
+    400032: Empty_001
+    400034: Foot_L
+    400036: Foot_R_001
+    400038: FrontToe_L
+    400040: FrontToe_R_001
+    400042: Gun_L
+    400044: GunShoulder_L
+    400046: Hip_L
+    400048: Hip_R_001
+    400050: KneePlate_L
+    400052: KneePlate_R_001
+    400054: LeftToe_L
+    400056: LeftToe_R_001
+    400058: mesh11
+    400060: RightToe_L
+    400062: RightToe_R_001
+    400064: Tibia_L
+    400066: Tibia_R_001
     2100000: ___default___
+    2100002: ___default____001
     2300000: cylinder01
     2300002: cylinder02
     2300004: cylinder03
@@ -46,8 +97,19 @@ ModelImporter:
     4300010: mesh02
     4300012: mesh06
     4300014: mesh03
+    4300016: mesh11
     7400000: Default Take
+    7400002: Attack_00
+    7400004: Death_00
+    7400006: Hit_00
+    7400008: Idle_00
+    7400010: Idle_01
+    7400012: Idle_02
+    7400014: JumpDown_00
+    7400016: JumpUp_00
+    7400018: Move_00
     9500000: //RootNode
+    13700000: mesh11
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:

@@ -4,13 +4,48 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Armature
+    100004: Bone
+    100006: Bone_001
+    100008: Bone_002
+    100010: Bone_006
+    100012: Compensator
+    100014: FD_Femer
+    100016: FD_Femer_001
+    100018: FD_Shin__001
+    100020: FD_Shin__002
+    100022: RD_Femer
+    100024: RD_Shin
+    100026: RP_Femer
+    100028: RP_Shin_
     400000: //RootNode
+    400002: Armature
+    400004: Bone
+    400006: Bone_001
+    400008: Bone_002
+    400010: Bone_006
+    400012: Compensator
+    400014: FD_Femer
+    400016: FD_Femer_001
+    400018: FD_Shin__001
+    400020: FD_Shin__002
+    400022: RD_Femer
+    400024: RD_Shin
+    400026: RP_Femer
+    400028: RP_Shin_
     2100000: ___default___
+    2100002: ___default____002
     2300000: //RootNode
     3300000: //RootNode
     4300000: mesh01
+    4300002: Compensator
     7400000: Default Take
+    7400002: Attack_00
+    7400004: Death_00
+    7400006: Hit_00
+    7400008: Idle_00
     9500000: //RootNode
+    13700000: Compensator
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:

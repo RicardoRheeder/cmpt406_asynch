@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fdcba27ac31374119a01708dfe10c604
+guid: 0622e3ba80c204044bd9f2cdc393a106
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -11,14 +11,39 @@ ModelImporter:
     100010: mesh07
     100012: mesh08
     100014: mesh09
-    100016: mesh22
-    100018: mesh23
-    100020: mesh24
-    100022: mesh25
-    100024: mesh26
-    100026: //RootNode
-    100028: Armature
-    100030: Bone
+    100016: mesh10
+    100018: //RootNode
+    100020: 4Bar_L
+    100022: 4Bar_R_001
+    100024: Armature
+    100026: BackToe_R_001
+    100028: BackToeTarget_L
+    100030: Body
+    100032: Empty
+    100034: Empty_001
+    100036: Empty_002
+    100038: Empty_003
+    100040: Foot_L
+    100042: Foot_R_001
+    100044: FrontToe_L
+    100046: FrontToe_R_001
+    100048: Gun_L
+    100050: Gun_R_001
+    100052: GunIK_L
+    100054: GunIK_R_001
+    100056: GunShoulder_L
+    100058: GunShoulder_R_001
+    100060: Hip_L
+    100062: Hip_R_001
+    100064: KneePlate_L
+    100066: KneePlate_R_001
+    100068: LeftToe_L
+    100070: LeftToe_R_001
+    100072: mesh01
+    100074: RightToe_L
+    100076: RightToe_R_001
+    100078: Tibia_L
+    100080: Tibia_R_001
     400000: mesh02
     400002: mesh03
     400004: mesh04
@@ -27,14 +52,39 @@ ModelImporter:
     400010: mesh07
     400012: mesh08
     400014: mesh09
-    400016: mesh22
-    400018: mesh23
-    400020: mesh24
-    400022: mesh25
-    400024: mesh26
-    400026: //RootNode
-    400028: Armature
-    400030: Bone
+    400016: mesh10
+    400018: //RootNode
+    400020: 4Bar_L
+    400022: 4Bar_R_001
+    400024: Armature
+    400026: BackToe_R_001
+    400028: BackToeTarget_L
+    400030: Body
+    400032: Empty
+    400034: Empty_001
+    400036: Empty_002
+    400038: Empty_003
+    400040: Foot_L
+    400042: Foot_R_001
+    400044: FrontToe_L
+    400046: FrontToe_R_001
+    400048: Gun_L
+    400050: Gun_R_001
+    400052: GunIK_L
+    400054: GunIK_R_001
+    400056: GunShoulder_L
+    400058: GunShoulder_R_001
+    400060: Hip_L
+    400062: Hip_R_001
+    400064: KneePlate_L
+    400066: KneePlate_R_001
+    400068: LeftToe_L
+    400070: LeftToe_R_001
+    400072: mesh01
+    400074: RightToe_L
+    400076: RightToe_R_001
+    400078: Tibia_L
+    400080: Tibia_R_001
     2100000: ___default___
     2300000: mesh02
     2300002: mesh03
@@ -44,11 +94,7 @@ ModelImporter:
     2300010: mesh07
     2300012: mesh08
     2300014: mesh09
-    2300016: mesh22
-    2300018: mesh23
-    2300020: mesh24
-    2300022: mesh25
-    2300024: mesh26
+    2300016: mesh10
     3300000: mesh02
     3300002: mesh03
     3300004: mesh04
@@ -57,32 +103,39 @@ ModelImporter:
     3300010: mesh07
     3300012: mesh08
     3300014: mesh09
-    3300016: mesh22
-    3300018: mesh23
-    3300020: mesh24
-    3300022: mesh25
-    3300024: mesh26
-    4300000: mesh22
-    4300002: mesh24
+    3300016: mesh10
+    4300000: mesh09
+    4300002: mesh04
     4300004: mesh05
-    4300006: mesh04
+    4300006: mesh10
     4300008: mesh02
-    4300010: mesh23
-    4300012: mesh26
-    4300014: mesh03
-    4300016: mesh06
-    4300018: mesh25
-    4300020: mesh07
-    4300022: mesh09
-    4300024: mesh08
+    4300010: mesh06
+    4300012: mesh03
+    4300014: mesh08
+    4300016: mesh07
+    4300018: mesh01
     7400000: Default Take
-    7400002: Attack_00
-    7400004: Death_00
-    7400006: Hit_00
-    7400008: Idle_00
-    7400010: Walk_00
+    7400002: ArmatureAction
+    7400004: Attack0
+    7400006: Defense0
+    7400008: Idle0
+    7400010: Idle1
+    7400012: Idle2
+    7400014: JumpDown
+    7400016: JumpUp
+    7400018: Move0
+    7400020: Attack_00
+    7400022: Death_00
+    7400024: Hit_00
+    7400026: Idle_00
+    7400028: Idle_01
+    7400030: Idle_02
+    7400032: JumpDown_00
+    7400034: JumpUp_00
+    7400036: Move_00
     9500000: //RootNode
-    13700000: mesh02
+    13700000: mesh01
+    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1

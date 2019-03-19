@@ -4,13 +4,26 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Armature
+    100004: Bone
+    100006: mesh01
     400000: //RootNode
+    400002: Armature
+    400004: Bone
+    400006: mesh01
     2100000: ___default___
     2300000: //RootNode
     3300000: //RootNode
     4300000: mesh01
     7400000: Default Take
+    7400002: Attack_00
+    7400004: Death_00
+    7400006: Hit_00
+    7400008: Idle_00
+    7400010: Walk_00
     9500000: //RootNode
+    13700000: mesh01
+    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1
