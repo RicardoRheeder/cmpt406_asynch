@@ -109,7 +109,7 @@ public class GameState {
             if (!UserCardsMap.ContainsKey(user))
                 UserCardsMap[user] = new CardController(user, new List<CardFunction>());
             if (!UserGeneralsMap.ContainsKey(user))
-                UserUnitsMap[user] = new List<UnitStats>();
+                UserGeneralsMap[user] = new List<UnitStats>();
         }
     }
 }
