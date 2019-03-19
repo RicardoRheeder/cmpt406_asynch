@@ -24,6 +24,10 @@ public class WindowGraph : MonoBehaviour {
 
     /* Given primary and secondary data to display, display the graph */
     public void ShowGraph(List<AnalyticsManager.UnitValuePair> valueList, Dictionary<UnitType, AnalyticsManager.UnitAnalyticsValue> breakDown, string graphTitle) {
+        if (valueList == null || valueList.Count <= 0) {
+            GraphTitle.GetComponent<Text>().text = "No data to show";
+            return;
+        }
 
         Func<float, string> getAxisLabelY = delegate (float _f) { return Mathf.RoundToInt(_f).ToString(); };
 

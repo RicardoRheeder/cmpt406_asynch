@@ -51,6 +51,7 @@ public class AnalyticsManager : MonoBehaviour
             Debug.Log("There are no completed games");
             return;
         }
+        Debug.Log("Recieved " + response.Second.states.Count + " Completed Games.");
 
         unitDamageStats = new Dictionary<UnitType, UnitAnalyticsValue>();
         gamesPlayed = new Dictionary<UnitType, int>();
@@ -60,12 +61,12 @@ public class AnalyticsManager : MonoBehaviour
         /* We now have a list of GameStates to loop over and build data with */
         foreach(GameState gameState in response.Second.states) {
             if (gameState.InitUnits == null || gameState.InitUnits.Count <= 0) {
-                Debug.LogError("There are no units for this game??");
+                Debug.LogError("There are no units for this game?? : " + gameState.id);
                 continue;
             }
 
             if (gameState.Actions.Count <= 0) {
-                Debug.LogError("There are no actions for this game??");
+                Debug.LogError("There are no actions for this game?? : " + gameState.id);
                 continue;
             }
             
@@ -93,16 +94,39 @@ public class AnalyticsManager : MonoBehaviour
                     timesPurchased[unit.UnitType] = (timesPurchased[unit.UnitType] + 1);
                 }
             }
+            if (gameState.InitGenerals != null && gameState.InitGenerals.Count > 0) {
+                /* this is a copy paste of the above loop cuz im lazy and it's a dev scene */
+                foreach(UnitStats unit in gameState.InitGenerals) {
+                    localBoard[unit.Position] = UnitFactory.GetBaseUnit(unit.UnitType);
+
+                    /* Add unit to GamesPlayed for Damage Averages */
+                    if (!gamesPlayedChecker.ContainsKey(unit.UnitType)) {
+                        gamesPlayedChecker.Add(unit.UnitType, true);
+                        if (gamesPlayed.ContainsKey(unit.UnitType)) {
+                            gamesPlayed[unit.UnitType] = gamesPlayed[unit.UnitType] + 1;
+                        }
+                        else {
+                            gamesPlayed[unit.UnitType] = 1;
+                        }
+                    }
+                    /* Increment unit in Times Purchased Dict */
+                    if (!timesPurchased.ContainsKey(unit.UnitType)) {
+                        timesPurchased.Add(unit.UnitType, 1);
+                    } else {
+                        timesPurchased[unit.UnitType] = (timesPurchased[unit.UnitType] + 1);
+                    }
+                }
+            }
 
             /* Loop over the actions and pool the data */
             foreach(Action action in gameState.Actions) {
                 switch (action.Type)
                 {
                     case ActionType.Movement:
-                        movementAction(action.OriginXPos, action.OriginXPos, action.TargetXPos, action.TargetYPos);
+                        movementAction(action.OriginXPos, action.OriginYPos, action.TargetXPos, action.TargetYPos);
                         break;
                     case ActionType.Attack:
-                        attackAction(action.OriginXPos, action.OriginXPos, action.TargetXPos, action.TargetYPos);
+                        attackAction(action.OriginXPos, action.OriginYPos, action.TargetXPos, action.TargetYPos);
                         break;
                     default:
                         Debug.Log("Unhandled Action: " + action.Type);
@@ -161,7 +185,7 @@ public class AnalyticsManager : MonoBehaviour
 
         /* Error checks */
         if (!localBoard.TryGetValue(source, out unitThatMoved)){
-            Debug.LogError("No unit with this source");
+            Debug.LogError("No unit with this movement source. X:" + source.x + ", Y:" + source.y);
             return;
         }
         if (localBoard.ContainsKey(target)) {
@@ -194,7 +218,7 @@ public class AnalyticsManager : MonoBehaviour
 
         /* Get the units that are involved */
         if (!localBoard.TryGetValue(source, out sourceUnit)){
-            Debug.LogError("No unit with this source");
+            Debug.LogError("No unit with this attack source. X:" + source.x + ", Y:" + source.y);
             return;
         }
 
