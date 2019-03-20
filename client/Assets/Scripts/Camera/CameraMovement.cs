@@ -45,12 +45,10 @@ public class CameraMovement : MonoBehaviour {
     private Vector3 minBound;
 
     private void Awake() {
-        if (Camera.main.orthographic)
-        {
+        if (Camera.main.orthographic) {
             zoom = Camera.main.orthographicSize;
         }
-        else
-        {
+        else {
             zoom = -15;
         }
 
@@ -98,7 +96,8 @@ public class CameraMovement : MonoBehaviour {
             if (Input.mousePosition.x < scrollZone) {   // pan left
                 percentOutsideScrollZone = scrollZone - Input.mousePosition.x;
                 transform.Translate(-transform.right*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
-            } else if (Input.mousePosition.x > Screen.width - scrollZone) { // pan right
+            }
+            else if (Input.mousePosition.x > Screen.width - scrollZone) { // pan right
                 percentOutsideScrollZone = Input.mousePosition.x - (Screen.width - scrollZone);
                 transform.Translate(transform.right*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
@@ -106,11 +105,13 @@ public class CameraMovement : MonoBehaviour {
             if (Input.mousePosition.y < scrollZone) {   // pan down
                 percentOutsideScrollZone = scrollZone - Input.mousePosition.y;
                 transform.Translate(-transform.up*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
-            } else if (Input.mousePosition.y > Screen.height - scrollZone) {    // pan up
+            }
+            else if (Input.mousePosition.y > Screen.height - scrollZone) {    // pan up
                 percentOutsideScrollZone = Input.mousePosition.y - (Screen.height - scrollZone);
                 transform.Translate(transform.up*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
-        } else {
+        }
+        else {
             transform.Translate(transform.right*Input.GetAxis("Horizontal")*inputSensitivity*Time.deltaTime,Space.World);
             transform.Translate(transform.up*Input.GetAxis("Vertical")*inputSensitivity*Time.deltaTime,Space.World);
         }
@@ -129,10 +130,12 @@ public class CameraMovement : MonoBehaviour {
 
             if (Input.mousePosition.x < rotationAnchorPoint.x) {
                 transform.Rotate(new Vector3(0,0,-rotationSpeed*Time.deltaTime*mouseSensitivity));
-            } else if (Input.mousePosition.x > rotationAnchorPoint.x) {
+            }
+            else if (Input.mousePosition.x > rotationAnchorPoint.x) {
                 transform.Rotate(new Vector3(0,0,rotationSpeed*Time.deltaTime*mouseSensitivity));
             }
-        } else {
+        }
+        else {
             transform.Rotate(new Vector3(0,0,Input.GetAxis("Rotate")*Time.deltaTime*inputSensitivity));
         }
     }
@@ -140,12 +143,10 @@ public class CameraMovement : MonoBehaviour {
     void HandleZoom() {
         
         if (Camera.main.orthographic) {
-            if (Input.mouseScrollDelta.y < 0)
-            {
+            if (Input.mouseScrollDelta.y < 0) {
                 zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
             }
-            if (Input.mouseScrollDelta.y > 0)
-            {
+            if (Input.mouseScrollDelta.y > 0)  {
                 zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
             }
 
@@ -154,20 +155,17 @@ public class CameraMovement : MonoBehaviour {
             zoom = Camera.main.orthographicSize;
         }
         else {
-            if (Input.mouseScrollDelta.y > 0)
-            {
+            if (Input.mouseScrollDelta.y > 0) {
                 zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
             }
-            if (Input.mouseScrollDelta.y < 0)
-            {
+            if (Input.mouseScrollDelta.y < 0) {
                 zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
             }
-            if (Time.timeSinceLevelLoad < 1f)
-            {
+            if (Time.timeSinceLevelLoad < 1f) {
                 zoom -= zoomSensitivity * Time.deltaTime * 0.2f;
             }
             zoom = Mathf.Lerp(zoom, Camera.main.transform.position.z, smoothFactor);
-            Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, zoom), Camera.main.transform.rotation);
+            Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Mathf.Clamp(zoom, -150, -50)), Camera.main.transform.rotation);
             zoom = Camera.main.transform.position.z;
         }
     }
