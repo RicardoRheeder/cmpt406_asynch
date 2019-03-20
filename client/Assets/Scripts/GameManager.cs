@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        
         DontDestroyOnLoad(this.gameObject);
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         client = GameObject.Find("Networking").GetComponent<Client>();
