@@ -226,7 +226,7 @@ MonoBehaviour:
   zoomSensitivity: 80
   smoothFactor: 0.2
   zoomLimits: {x: 10, y: 100}
-  useCursor: 0
+  useCursor: 1
   maxRotationSpeed: 100
 --- !u!1 &6525353359766537967
 GameObject:
