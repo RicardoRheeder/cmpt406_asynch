@@ -21,7 +21,7 @@ public class CameraMovement : MonoBehaviour {
     public float inputSensitivity = 50f;
 
     [Tooltip("Multiplier for camera zoom sensitivity.")]
-    [Range(0f, 80f)]
+    [Range(0f, 300f)]
     public float zoomSensitivity = 40f;
 
     [Tooltip("Smoothing factor.")]
@@ -45,7 +45,15 @@ public class CameraMovement : MonoBehaviour {
     private Vector3 minBound;
 
     private void Awake() {
-        zoom = Camera.main.orthographicSize;
+        if (Camera.main.orthographic)
+        {
+            zoom = Camera.main.orthographicSize;
+        }
+        else
+        {
+            zoom = -15;
+        }
+
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         if(tilemap != null) {
             maxBound = tilemap.CellToWorld(tilemap.cellBounds.max);
@@ -130,16 +138,37 @@ public class CameraMovement : MonoBehaviour {
     }
 
     void HandleZoom() {
-        if (Input.mouseScrollDelta.y < 0) {
-            zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
-        }
+        
+        if (Camera.main.orthographic) {
+            if (Input.mouseScrollDelta.y < 0)
+            {
+                zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
+            }
+            if (Input.mouseScrollDelta.y > 0)
+            {
+                zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
+            }
 
-        if (Input.mouseScrollDelta.y > 0) {
-            zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
+            zoom = Mathf.Lerp(zoom, Camera.main.orthographicSize, smoothFactor);
+            Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
+            zoom = Camera.main.orthographicSize;
         }
-
-        zoom = Mathf.Lerp(zoom,Camera.main.orthographicSize,smoothFactor);
-        Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
-        zoom = Camera.main.orthographicSize;
+        else {
+            if (Input.mouseScrollDelta.y > 0)
+            {
+                zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
+            }
+            if (Input.mouseScrollDelta.y < 0)
+            {
+                zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
+            }
+            if (Time.timeSinceLevelLoad < 1f)
+            {
+                zoom -= zoomSensitivity * Time.deltaTime * 0.2f;
+            }
+            zoom = Mathf.Lerp(zoom, Camera.main.transform.position.z, smoothFactor);
+            Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, zoom), Camera.main.transform.rotation);
+            zoom = Camera.main.transform.position.z;
+        }
     }
 }
