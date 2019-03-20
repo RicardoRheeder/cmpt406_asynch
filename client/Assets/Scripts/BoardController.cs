@@ -31,8 +31,7 @@ public class BoardController {
         }
         this.hightlightedTiles = new List<GameObject>();
         
-        if (UnityEngine.Random.Range(0, 2) == 1)
-        {
+        if (UnityEngine.Random.Range(0, 2) == 1) {
             GameObject.Find("RainParent").transform.GetChild(0).gameObject.SetActive(true);
         }
     }
