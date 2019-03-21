@@ -141,7 +141,20 @@ public class GameManager : MonoBehaviour {
         dropZone.SetPlayerController(playerController);
         dropZone.SetCardSystemManager(cardSystem);
 
-        cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
+        bool wasActions = false;
+        for(int i = 0; i < state.Actions.Count; i++) {
+            if (state.Actions[i].Username == user.Username) {
+                wasActions = true;
+                break;
+            }
+        }
+
+        if(wasActions) {
+            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
+        }
+        else {
+            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:7);
+        }
 
         inGameMenu.SetupPanels(isPlacing: false);
 

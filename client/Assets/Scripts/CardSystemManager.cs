@@ -245,7 +245,7 @@ public class CardSystemManager : MonoBehaviour {
         CardPointsText.text = "Card Points: " + this.remainingCardPoints;
     }
 
-    public void Initialize(List<CardFunction> startingHand, List<UnitStats> playerUnits, string id) {
+    public void Initialize(List<CardFunction> startingHand, List<UnitStats> playerUnits, string id, int drawLimit = 3) {
         TableTop = GameObject.Find("Tabletop");
         TableTop.SetActive(false);
         TableHand = GameObject.Find("Hand");
@@ -296,7 +296,7 @@ public class CardSystemManager : MonoBehaviour {
                 uniqueCards++;
                 cardsDrawn++;
             }
-            while (cardsDrawn < 3) {
+            while (cardsDrawn < drawLimit) {
                 if (genericCards < CardMetadata.GENERIC_CARD_LIMIT) {
                     DrawCard();
                     genericCards++;
