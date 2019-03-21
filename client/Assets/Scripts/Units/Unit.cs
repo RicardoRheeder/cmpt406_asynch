@@ -7,6 +7,7 @@ public class Unit : MonoBehaviour {
     
     public Renderer rend;
     public float moveSpeed = 5f;
+    Animator anim;
 
     Vector2Int currTilePosition;
     FogViewer fogViewer;
@@ -15,7 +16,9 @@ public class Unit : MonoBehaviour {
 
     
     void Awake() {
-        rend = this.GetComponent<Renderer>();
+        // rend = this.GetComponent<Renderer>();
+        rend = GetComponentInChildren<Renderer>();
+        anim = GetComponent<Animator>();
         fogViewer = new FogViewer();
         transform.rotation = Quaternion.Euler(-90,0,0); 
     }
@@ -23,6 +26,15 @@ public class Unit : MonoBehaviour {
     //Method used to handle the attack animation
     public void Attack(int dir) {
         TurnToDirection(dir);
+        if(this.anim != null) {
+            anim.SetTrigger("attack");
+        }
+    }
+
+    public void GetHit() {
+        if(this.anim != null) {
+            anim.SetTrigger("gothit");
+        }
     }
 
     public void SetMoveSpeed(float speed) {
@@ -54,6 +66,9 @@ public class Unit : MonoBehaviour {
     }
 
     IEnumerator PathMovement(List<Tuple<Vector2Int,int>> path, BoardController board) {
+        if(this.anim != null) {
+            anim.SetBool("walking",true);
+        }
          float step = moveSpeed * Time.fixedDeltaTime;
          float t = 0;
          Vector3 prevPos = transform.position;
@@ -79,10 +94,16 @@ public class Unit : MonoBehaviour {
             prevDir = currDirection;
             prevRotation = transform.rotation;
             transform.position = worldPos;
+            if(this.anim != null) {
+                anim.SetBool("walking",false);
+            }
         }
     }
 
     IEnumerator RotateToDirection(int dir) {
+        if(this.anim != null) {
+            anim.SetBool("walking",true);
+        }
         float step = moveSpeed * Time.fixedDeltaTime;
         float t = 0;
         int prevDir = currDirection;
@@ -95,9 +116,15 @@ public class Unit : MonoBehaviour {
             transform.rotation = Quaternion.Lerp(prevRotation, rot, t);
             yield return new WaitForFixedUpdate();
         }
+        if(this.anim != null) {
+            anim.SetBool("walking",false);
+        }
     }
 
     public void Kill() {
+        if(this.anim != null) {
+            anim.SetTrigger("death");
+        }
         Destroy(this.gameObject);
     }
 

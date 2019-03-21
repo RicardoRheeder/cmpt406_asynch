@@ -45,29 +45,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitDisplayPrefab: {fileID: 7918711945486396909, guid: d99b6cefa1a27e04f8cab8f667bde6e5,
     type: 3}
-  claymorePrefab: {fileID: 3661546736627439543, guid: a42220ca7f4fa408aa458436455480f8,
+  claymorePrefab: {fileID: 1364412091, guid: f8294f50b9dd14fab98a9b98818f4e9c, type: 3}
+  compensatorPrefab: {fileID: 1522284473, guid: 19b8636b8970a4ad682fce71dea39343,
     type: 3}
-  compensatorPrefab: {fileID: 3069374731066623444, guid: 798afdcebfafb9248beab8f67c219e1f,
+  trooperPrefab: {fileID: 931411258, guid: 1b5351f7914cf4c779a5ea10745da59e, type: 3}
+  reconPrefab: {fileID: 91914615, guid: 45b6e0323c42e4865b5fca76069473a8, type: 3}
+  steamerPrefab: {fileID: 7378538391732608622, guid: e21b8cf8ea5cf4e20ad8897b77fabef7,
     type: 3}
-  trooperPrefab: {fileID: 1984876666464690690, guid: 5d7b803ee6756435fb31a22528adcc75,
+  pewpewPrefab: {fileID: 1765606812, guid: 7ed9545a1924341688a696864b512e7f, type: 3}
+  foundationPrefab: {fileID: 2085746575, guid: 780e76ab48e5d45e2832d492ccffa96c, type: 3}
+  powerSurgePrefab: {fileID: 95310979, guid: 0de30e3d677d745c9b3799840f6de0b3, type: 3}
+  midasPrefab: {fileID: 1284673767, guid: 6200c66161e9048359b59dd759fd707f, type: 3}
+  heavyAlbarnPrefab: {fileID: 1925483578, guid: a998e8938c97d402fa291970fc34dd5c,
     type: 3}
-  reconPrefab: {fileID: 8621414826371495951, guid: 0000ea8501e0441129aa24f8ec3eaaf4,
+  piercingTungstenPrefab: {fileID: 116371725, guid: baacf76da6a10465088a20b8236f7669,
     type: 3}
-  steamerPrefab: {fileID: 9167907938664738838, guid: 86a3833a7affc41f4abd8cf44ce188dd,
-    type: 3}
-  pewpewPrefab: {fileID: 4919777667069319217, guid: 81aec7d2f2d004dd4abb9eb91e2ac69c,
-    type: 3}
-  foundationPrefab: {fileID: 6088415095556511026, guid: b0f594db5859d43349c7e82e43dae533,
-    type: 3}
-  powerSurgePrefab: {fileID: 8619645026413251908, guid: 6d563ebe0552b49e0b5d3562e98f7900,
-    type: 3}
-  midasPrefab: {fileID: 6445304330403168614, guid: 7c830741b3a2247748cad4e620b63fee,
-    type: 3}
-  heavyAlbarnPrefab: {fileID: 6396279381953640858, guid: 5b65bc59e7a6a4e31a710cdd9d312281,
-    type: 3}
-  piercingTungstenPrefab: {fileID: 5037938709512185577, guid: 70abdc17d951b4533a41346e131a1aac,
-    type: 3}
-  lightAdrenPrefab: {fileID: 1407151921584394377, guid: cdb356508a70946a18bce1afad087d8d,
-    type: 3}
-  supportSandmanPrefab: {fileID: 1205910381523156972, guid: a1df1964ca522470d959d428a6ad4a6d,
+  lightAdrenPrefab: {fileID: 1666500717, guid: 9c71359fe115f496c8a46a1b39ae72a6, type: 3}
+  supportSandmanPrefab: {fileID: 1998977252, guid: 8b8d33a6592c74d509ecee7dce7e68b4,
     type: 3}
