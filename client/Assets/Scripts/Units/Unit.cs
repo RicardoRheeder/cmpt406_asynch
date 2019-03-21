@@ -31,6 +31,12 @@ public class Unit : MonoBehaviour {
         }
     }
 
+    public void GetHit() {
+        if(this.anim != null) {
+            anim.SetTrigger("gothit");
+        }
+    }
+
     public void SetMoveSpeed(float speed) {
         moveSpeed = speed;
     }

@@ -110,6 +110,7 @@ public class UnitStats {
 
     //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
     public bool TakeDamage(int damage, int pierce) {
+        MyUnit.GetHit();
         int resistance = Armour - pierce;
         resistance = resistance < 0 ? 0 : resistance;
         damage -= resistance;
