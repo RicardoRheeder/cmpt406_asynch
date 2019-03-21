@@ -11,6 +11,7 @@ public class CardDisplay : MonoBehaviour {
     public Card card;
 
     public TextMeshProUGUI nameText;
+    public TextMeshProUGUI unitNameText;
 
     public TextMeshProUGUI effectText;
     public TextMeshProUGUI descriptionText;
@@ -48,14 +49,21 @@ public class CardDisplay : MonoBehaviour {
     // Use this for initialization
     public void SetCard(Card aCard) {
         card = aCard;
-
+        if (card.type != UnitType.none && card.type != UnitType.light_adren && card.type != UnitType.support_sandman && card.type != UnitType.heavy_albarn && card.type != UnitType.piercing_tungsten){
+            unitNameText.text = (UnitMetadata.ReadableNames[card.type]);
+        }
+        else if (card.type == UnitType.none){
+            unitNameText.text = "Any Unit";
+        }
+        else {
+            unitNameText.text = "Invalid Card Unit Name";
+        }
         nameText.text = card.displayName;
         descriptionText.text = card.description;
 
         artworkImage.sprite = card.artwork;
         effectText.text = "";
-        foreach (String effect in card.effects)
-        {
+        foreach (String effect in card.effects) {
             effectText.text += effect + '\n';
         }
         cardCostText.text = card.cardCost.ToString();

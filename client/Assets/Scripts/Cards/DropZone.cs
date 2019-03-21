@@ -12,17 +12,27 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     public GameObject PlayCardPanel;
     public GameObject NotEnoughCardPointsText;
 
+    public GameObject GameGUDCanvas;
+    public GameObject TableTop;
+
     private PlayerController controller;
     private CardSystemManager manager;
 
     private GameObject cardOnTableTop;
 
+
+
     void Start() {
         PlayCardPanel.SetActive(false);
         cardOnTableTop = null;
+        if (this.gameObject.name == "Tabletop")
+        {
+            this.transform.GetComponent<RectTransform>().sizeDelta =
+                GameGUDCanvas.GetComponent<RectTransform>().sizeDelta;
+        }
     }
 
-    public void SetPlayerController(PlayerController controller) {
+        public void SetPlayerController(PlayerController controller) {
         this.controller = controller;
     }
 
@@ -67,10 +77,9 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             if (this.gameObject.name == "Tabletop") {
                 cardOnTableTop = droppedCard;
                 PlayCardPanel.SetActive(true);
-                
-            }
+//                cardOnTableTop.GetComponent<Draggable>().enabled = false;
 
-            if (this.gameObject.name == "DiscardPanel") {
+            } else if (this.gameObject.name == "DiscardPanel") {
                 Card card = eventData.pointerDrag.gameObject.GetComponent<CardDisplay>().card;
 
                 if (manager != null) {
@@ -88,6 +97,12 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     StartCoroutine(DestroyCardAfterDelay(droppedCard));
                 }
             }
+            else if (this.gameObject.name == "Hand")
+            {
+                
+                 TableTop.SetActive(false);
+               
+            }
         }
     }
 
@@ -104,13 +119,22 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             if (card.cardCost <= manager.GetRemainingCardPoints()) {
                 PlayCardPanel.SetActive(false);
 
+                //TODO: Try fix resizing of TableTop
+//                this.transform.GetComponent<RectTransform>().sizeDelta =
+//                    cardOnTableTop.GetComponent<RectTransform>().sizeDelta;
+
+//                this.GetComponent<RectTransform>().position = cardOnTableTop.GetComponent<RectTransform>().position;
+//                this.GetComponent<HorizontalLayoutGroup>().enabled = true;
+//                cardOnTableTop.GetComponent<RectTransform>().position = new Vector3(0,0,0);
+                
                 // Deals with dissolving
                 Transform cardTemp = cardOnTableTop.transform.Find("CardTemplate");
                 cardTemp.gameObject.GetComponent<Image>().material = cardOnTableTop.GetComponent<CardDisplay>().dissolveMaterial;
 
+                
                 cardOnTableTop.BroadcastMessage("Dissolve");
-                Destroy(cardOnTableTop, 3f);
-                StartCoroutine(HideTableTop(2.9f));
+                Destroy(cardOnTableTop, 1f);
+                StartCoroutine(HideTableTop(0.9f));
 
                 controller.PlayCard(card);
                 manager.PlayCard(card);
@@ -142,6 +166,8 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     // CancelPlayCardButton calls this
     public void CancelPlayCard(){
         if (this.gameObject.name == "Tabletop" && cardOnTableTop != null) {
+//            cardOnTableTop.GetComponent<Draggable>().enabled = true;
+
             GameObject HandPanel = GameObject.Find("Hand");
             this.transform.GetChild(0).transform.SetParent(HandPanel.transform);
             // Return card to player's hand
@@ -154,5 +180,14 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public void SubtractCost(int costToSubtract)  {
         print(costToSubtract + " subtracted from available spending.");
+    }
+
+    void OnEnable()
+    {
+        if (this.gameObject.name == "Tabletop")
+        {
+            this.transform.GetComponent<RectTransform>().sizeDelta =
+                GameGUDCanvas.GetComponent<RectTransform>().sizeDelta;
+        }
     }
 }

@@ -19,4 +19,4 @@ MonoBehaviour:
   artwork: {fileID: 0}
   func: 170
   type: 8
-  cardCost: 0
+  cardCost: 3

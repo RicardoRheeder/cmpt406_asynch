@@ -22,6 +22,8 @@ public class BoardController {
     
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
+
+        
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         if(tilemap == null) {
             Debug.Log("Tilemap is null. This will result in problems");
@@ -31,6 +33,10 @@ public class BoardController {
         }
         this.hightlightedTiles = new List<GameObject>();
         this.pathLine = GameObject.Instantiate(Resources.Load<LineRenderer>("PathLine"));
+        
+        if (UnityEngine.Random.Range(0, 2) == 1) {
+            GameObject.Find("RainParent").transform.GetChild(0).gameObject.SetActive(true);
+        }
     }
 
     // Getter for direct access to the tilemap. Use other board controller methods unless otherwise needed

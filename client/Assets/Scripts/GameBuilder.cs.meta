@@ -6,8 +6,7 @@ MonoImporter:
   defaultReferences:
   - unitDisplayPrefab: {fileID: 5035031636144137726, guid: 21fe0a914b00366428bdc9d18a499096,
       type: 3}
-  - claymorePrefab: {fileID: 3661546736627439543, guid: a42220ca7f4fa408aa458436455480f8,
-      type: 3}
+  - claymorePrefab: {fileID: 1364412091, guid: f8294f50b9dd14fab98a9b98818f4e9c, type: 3}
   - compensatorPrefab: {fileID: 3069374731066623444, guid: 798afdcebfafb9248beab8f67c219e1f,
       type: 3}
   - trooperPrefab: {fileID: 1984876666464690690, guid: 5d7b803ee6756435fb31a22528adcc75,
