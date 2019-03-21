@@ -20,6 +20,8 @@ public class BoardController {
     
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
+
+        
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         if(tilemap == null) {
             Debug.Log("Tilemap is null. This will result in problems");
@@ -28,6 +30,10 @@ public class BoardController {
             plane = new Plane(tilemap.transform.forward, tilemap.transform.position); // creates a flat horizontal plane at y = 0
         }
         this.hightlightedTiles = new List<GameObject>();
+        
+        if (UnityEngine.Random.Range(0, 2) == 1) {
+            GameObject.Find("RainParent").transform.GetChild(0).gameObject.SetActive(true);
+        }
     }
 
     // Getter for direct access to the tilemap. Use other board controller methods unless otherwise needed
