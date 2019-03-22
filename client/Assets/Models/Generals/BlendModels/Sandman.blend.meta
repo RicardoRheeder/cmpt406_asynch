@@ -19,6 +19,13 @@ ModelImporter:
     100026: //RootNode
     100028: Armature
     100030: Bone
+    100032: mesh02_001
+    100034: mesh10
+    100036: mesh11
+    100038: mesh12
+    100040: mesh13
+    100042: mesh14
+    100044: mesh27
     400000: mesh02
     400002: mesh03
     400004: mesh04
@@ -35,7 +42,15 @@ ModelImporter:
     400026: //RootNode
     400028: Armature
     400030: Bone
+    400032: mesh02_001
+    400034: mesh10
+    400036: mesh11
+    400038: mesh12
+    400040: mesh13
+    400042: mesh14
+    400044: mesh27
     2100000: ___default___
+    2100002: ___default____001
     2300000: mesh02
     2300002: mesh03
     2300004: mesh04
@@ -75,6 +90,13 @@ ModelImporter:
     4300020: mesh07
     4300022: mesh09
     4300024: mesh08
+    4300026: mesh12
+    4300028: mesh27
+    4300030: mesh11
+    4300032: mesh13
+    4300034: mesh14
+    4300036: mesh02_001
+    4300038: mesh10
     7400000: Default Take
     7400002: Attack_00
     7400004: Death_00
@@ -83,6 +105,25 @@ ModelImporter:
     7400010: Walk_00
     9500000: //RootNode
     13700000: mesh02
+    13700002: mesh02_001
+    13700004: mesh03
+    13700006: mesh04
+    13700008: mesh05
+    13700010: mesh06
+    13700012: mesh07
+    13700014: mesh08
+    13700016: mesh09
+    13700018: mesh10
+    13700020: mesh11
+    13700022: mesh12
+    13700024: mesh13
+    13700026: mesh14
+    13700028: mesh22
+    13700030: mesh23
+    13700032: mesh24
+    13700034: mesh25
+    13700036: mesh26
+    13700038: mesh27
   externalObjects: {}
   materials:
     importMaterials: 1
