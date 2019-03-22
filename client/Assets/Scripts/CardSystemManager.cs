@@ -251,7 +251,7 @@ public class CardSystemManager : MonoBehaviour {
         TableHand = GameObject.Find("Hand");
 
         bool previouslyGeneratedCards = false;
-        string path = CardMetadata.FILE_PATH_BASE + "/." + id;
+        string path = CardMetadata.FILE_PATH_BASE + "/." + id + CardMetadata.FILE_EXTENSION;
         if(System.IO.File.Exists(path)) {
             previouslyGeneratedCards = true;
             StreamReader reader = new StreamReader(path);
