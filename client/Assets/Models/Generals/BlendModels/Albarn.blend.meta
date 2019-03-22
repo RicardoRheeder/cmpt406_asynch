@@ -27,6 +27,11 @@ ModelImporter:
     100042: mesh22
     100044: Armature
     100046: Bone
+    100048: mesh04
+    100050: mesh05_001
+    100052: mesh23
+    100054: mesh24
+    100056: mesh25
     400000: //RootNode
     400002: cylinder01
     400004: mesh02
@@ -51,7 +56,13 @@ ModelImporter:
     400042: mesh22
     400044: Armature
     400046: Bone
+    400048: mesh04
+    400050: mesh05_001
+    400052: mesh23
+    400054: mesh24
+    400056: mesh25
     2100000: ___default___
+    2100002: ___default____001
     2300000: cylinder01
     2300002: mesh02
     2300004: mesh03
@@ -115,6 +126,11 @@ ModelImporter:
     4300036: mesh08
     4300038: mesh12
     4300040: cylinder01
+    4300042: mesh23
+    4300044: mesh25
+    4300046: mesh05_001
+    4300048: mesh24
+    4300050: mesh04
     7400000: Default Take
     7400002: Attack_00
     7400004: Death_00
@@ -123,6 +139,30 @@ ModelImporter:
     7400010: Walk_00
     9500000: //RootNode
     13700000: mesh05
+    13700002: mesh02
+    13700004: mesh03
+    13700006: mesh04
+    13700008: mesh05_001
+    13700010: mesh06
+    13700012: mesh07
+    13700014: mesh08
+    13700016: mesh09
+    13700018: mesh10
+    13700020: mesh11
+    13700022: mesh12
+    13700024: mesh13
+    13700026: mesh14
+    13700028: mesh15
+    13700030: mesh16
+    13700032: mesh17
+    13700034: mesh18
+    13700036: mesh19
+    13700038: mesh20
+    13700040: mesh21
+    13700042: mesh22
+    13700044: mesh23
+    13700046: mesh24
+    13700048: mesh25
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:

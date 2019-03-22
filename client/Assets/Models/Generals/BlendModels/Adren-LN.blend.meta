@@ -7,14 +7,69 @@ ModelImporter:
     100002: Armature
     100004: Bone
     100006: mesh01
+    100008: mesh01_001
+    100010: mesh02
+    100012: mesh03
+    100014: mesh04
+    100016: mesh05
+    100018: mesh06
+    100020: mesh10
+    100022: mesh11
+    100024: mesh12
+    100026: mesh13
+    100028: mesh14
+    100030: mesh15
+    100032: mesh16
+    100034: mesh17
+    100036: mesh18
+    100038: mesh19
+    100040: mesh20
+    100042: mesh21
     400000: //RootNode
     400002: Armature
     400004: Bone
     400006: mesh01
+    400008: mesh01_001
+    400010: mesh02
+    400012: mesh03
+    400014: mesh04
+    400016: mesh05
+    400018: mesh06
+    400020: mesh10
+    400022: mesh11
+    400024: mesh12
+    400026: mesh13
+    400028: mesh14
+    400030: mesh15
+    400032: mesh16
+    400034: mesh17
+    400036: mesh18
+    400038: mesh19
+    400040: mesh20
+    400042: mesh21
     2100000: ___default___
+    2100002: ___default____001
     2300000: //RootNode
     3300000: //RootNode
     4300000: mesh01
+    4300002: mesh11
+    4300004: mesh13
+    4300006: mesh19
+    4300008: mesh18
+    4300010: mesh10
+    4300012: mesh12
+    4300014: mesh05
+    4300016: mesh14
+    4300018: mesh17
+    4300020: mesh03
+    4300022: mesh01_001
+    4300024: mesh02
+    4300026: mesh06
+    4300028: mesh15
+    4300030: mesh04
+    4300032: mesh16
+    4300034: mesh21
+    4300036: mesh20
     7400000: Default Take
     7400002: Attack_00
     7400004: Death_00
@@ -23,6 +78,24 @@ ModelImporter:
     7400010: Walk_00
     9500000: //RootNode
     13700000: mesh01
+    13700002: mesh01_001
+    13700004: mesh02
+    13700006: mesh03
+    13700008: mesh04
+    13700010: mesh05
+    13700012: mesh06
+    13700014: mesh10
+    13700016: mesh11
+    13700018: mesh12
+    13700020: mesh13
+    13700022: mesh14
+    13700024: mesh15
+    13700026: mesh16
+    13700028: mesh17
+    13700030: mesh18
+    13700032: mesh19
+    13700034: mesh20
+    13700036: mesh21
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
