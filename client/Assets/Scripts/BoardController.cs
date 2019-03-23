@@ -158,7 +158,7 @@ public class BoardController {
                 HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
                 tileObject = tile.GetTileObject(); //get the tile game object 
 
-                if(IsOutlineComponentAttached(tileObject)) {
+                if(!IsOutlineComponentAttached(tileObject)) {
                     AttachOutlineComponent(tileObject);
                 }
                 hightlightedTiles.Add(tileObject);
