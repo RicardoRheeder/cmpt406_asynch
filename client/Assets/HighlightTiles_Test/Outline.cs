@@ -26,6 +26,8 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
+public enum OutlineMode { None, Highlight, Hover, HoverOverHighlight }
+
 namespace cakeslice
 {
     [ExecuteInEditMode]
@@ -35,6 +37,7 @@ namespace cakeslice
         public Renderer Renderer { get; private set; }
 
         public int color;
+        public int hoverColor;
         public bool eraseRenderer;
 
         [HideInInspector]
@@ -42,31 +45,28 @@ namespace cakeslice
         [HideInInspector]
         public Material[] originalMaterials;
 
-        private void Awake()
-        {
+        public OutlineMode outlineMode = OutlineMode.None;
+
+        private void Awake(){
             Renderer = GetComponent<Renderer>();
         }
 
-        void OnEnable()
-        {
+        void OnEnable(){
             IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
                 .Select(c => c.GetComponent<OutlineEffect>())
                 .Where(e => e != null);
 
-            foreach (OutlineEffect effect in effects)
-            {
+            foreach (OutlineEffect effect in effects){
                 effect.AddOutline(this);
             }
         }
 
-        void OnDisable()
-        {
+        void OnDisable(){
             IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
                 .Select(c => c.GetComponent<OutlineEffect>())
                 .Where(e => e != null);
 
-            foreach (OutlineEffect effect in effects)
-            {
+            foreach (OutlineEffect effect in effects){
                 effect.RemoveOutline(this);
             }
         }

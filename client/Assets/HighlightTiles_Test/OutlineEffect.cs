@@ -191,7 +191,7 @@ namespace cakeslice
                                     {
                                         if(outline.eraseRenderer && g.color == outlineEraseMaterial.color)
                                             m = g;
-                                        else if(g.color == GetMaterialFromID(outline.color).color)
+                                        else if(g.color == GetMaterialFromID(GetOutlineColor(outline)).color)
                                             m = g;
                                     }
                                 }
@@ -201,7 +201,7 @@ namespace cakeslice
                                     if(outline.eraseRenderer)
                                         m = new Material(outlineEraseMaterial);
                                     else
-                                        m = new Material(GetMaterialFromID(outline.color));
+                                        m = new Material(GetMaterialFromID(GetOutlineColor(outline)));
                                     m.mainTexture = outline.Renderer.sharedMaterials[v].mainTexture;
                                     materialBuffer.Add(m);
                                 }
@@ -211,7 +211,7 @@ namespace cakeslice
                                 if(outline.eraseRenderer)
                                     m = outlineEraseMaterial;
                                 else
-                                    m = GetMaterialFromID(outline.color);
+                                    m = GetMaterialFromID(GetOutlineColor(outline));
                             }
 
                             if(backfaceCulling)
@@ -402,6 +402,13 @@ namespace cakeslice
         {
             if(outlines.Contains(outline))
                 outlines.Remove(outline);
+        }
+
+        public int GetOutlineColor(Outline outline) {
+            if(outline.outlineMode == OutlineMode.Hover || outline.outlineMode == OutlineMode.HoverOverHighlight) {
+                return outline.hoverColor;
+            }
+            return outline.color;
         }
     }
 }

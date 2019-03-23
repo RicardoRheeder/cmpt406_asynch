@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour {
     private Button closeGameButton;
     
     private UnitStats selectedUnit;
+    private List<Vector2Int> selectedUnitAttackRange = new List<Vector2Int>();
 
     private bool initialized = false;
 
@@ -166,6 +167,7 @@ public class PlayerController : MonoBehaviour {
         if(selectedUnit != null) {
             if (selectedUnit.CurrentHP <= 0) {
                 selectedUnit = null;
+                selectedUnitAttackRange.Clear();
             }
             else if (selectedUnit.MyUnit.rend.material.color != Color.white){
                 tempColor = selectedUnit.MyUnit.rend.material.color;
@@ -184,8 +186,6 @@ public class PlayerController : MonoBehaviour {
                     if(interactionState == InteractionState.moving) {
                         if (selectedUnit != null) {
                             boardController.RenderPath(selectedUnit.Position,tilePos);
-                            List<Vector2Int> attackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
-                            boardController.HoverHighlight(attackRange,tilePos);
                             highlightSingleTile = false;
                         }
                     }
@@ -237,6 +237,7 @@ public class PlayerController : MonoBehaviour {
                                             selectedUnit.MyUnit.rend.material.color = tempColor;
                                         }
                                         selectedUnit = unit;
+                                        selectedUnitAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
                                     }
                                 }
                                 break;
@@ -273,7 +274,9 @@ public class PlayerController : MonoBehaviour {
                 Debug.Log("Player controller is in an invalid state");
                 break;
         }
-        if(highlightSingleTile) {
+        if(selectedUnit != null) {
+            boardController.HoverHighlight(selectedUnitAttackRange,tilePos);
+        }else if(highlightSingleTile) {
             boardController.HoverHighlight(new List<Vector2Int>(){tilePos},tilePos);
         }
     }
