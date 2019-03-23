@@ -291,15 +291,15 @@ public class CardSystemManager : MonoBehaviour {
                     types.Add(unit.UnitType);
                 }
             }
-            if(uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT && types.Count > 0) {
-                DrawCard(types[Random.Range(0, types.Count)]);
-                uniqueCards++;
-                cardsDrawn++;
-            }
             while (cardsDrawn < drawLimit) {
                 if (genericCards < CardMetadata.GENERIC_CARD_LIMIT) {
                     DrawCard();
                     genericCards++;
+                    cardsDrawn++;
+                }
+                else if (uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT && types.Count > 0) {
+                    DrawCard(types[Random.Range(0, types.Count)]);
+                    uniqueCards++;
                     cardsDrawn++;
                 }
                 else {

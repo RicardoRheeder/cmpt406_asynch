@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour {
             cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
         }
         else {
-            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:7);
+            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT);
         }
 
         inGameMenu.SetupPanels(isPlacing: false);
