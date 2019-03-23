@@ -240,7 +240,9 @@ public class BoardController {
 
     public void ClearHighlighting() {
         foreach (var tile in hightlightedTiles) {
-            tile.GetComponent<TileOutline>().enabled = false;
+            TileOutline tileOutline = tile.GetComponent<TileOutline>();
+            tileOutline.enabled = false;
+            tileOutline.outlineMode = OutlineMode.None;
         }
         hightlightedTiles.Clear();
     }
