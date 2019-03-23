@@ -15,7 +15,6 @@ public class BoardController {
 
     private List<GameObject> hightlightedTiles;
     private List<GameObject> hoverHighlightedTiles = new List<GameObject>();
-    private GameObject singleHighlitedTile;
     private Tuple<Vector2Int,int> previousHoverTilePos;
     private Tuple<Vector2Int,Vector2Int> renderPathCache;
     
@@ -159,15 +158,16 @@ public class BoardController {
                 HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
                 tileObject = tile.GetTileObject(); //get the tile game object 
 
-                if (tileObject.GetComponent<TileOutline>() == null) {
-                    tileObject.AddComponent<TileOutline>();
+                if(IsOutlineComponentAttached(tileObject)) {
+                    AttachOutlineComponent(tileObject);
                 }
                 hightlightedTiles.Add(tileObject);
-                tileObject.GetComponent<TileOutline>().enabled = true;
-                if(tileObject.GetComponent<TileOutline>().outlineMode == OutlineMode.Hover) {
-                    tileObject.GetComponent<TileOutline>().outlineMode = OutlineMode.HoverOverHighlight;
+                TileOutline tileOutline = tileObject.GetComponent<TileOutline>();
+                tileOutline.enabled = true;
+                if(tileOutline.outlineMode == OutlineMode.Hover) {
+                    tileOutline.outlineMode = OutlineMode.HoverOverHighlight;
                 } else {
-                    tileObject.GetComponent<TileOutline>().outlineMode = OutlineMode.Highlight;
+                    tileOutline.outlineMode = OutlineMode.Highlight;
                 }
             }
         }
@@ -195,31 +195,6 @@ public class BoardController {
         }
     }
 
-    //Highlight the tile object selected unit is on and disable the previous one
-   public void HighlightSingleTile(Vector2Int tilePosition) {
-       if (this.HasHexTile(tilePosition)) {
-           GameObject tileObject;
-
-            if (singleHighlitedTile != null) {
-               singleHighlitedTile.GetComponent<TileOutline>().enabled = false;
-               singleHighlitedTile.GetComponent<TileOutline>().color = 0;
-            }
-
-           HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
-           tileObject = tile.GetTileObject(); //get the tile game object 
-
-            if(!IsOutlineComponentAttached(tileObject)) {
-               AttachOutlineComponent(tileObject);
-            }
-
-            TileOutline tileOutline = tileObject.GetComponent<TileOutline>();
-            tileOutline.enabled = true;
-            tileOutline.outlineMode = OutlineMode.Highlight;
-            tileOutline.color = 2;
-            singleHighlitedTile = tileObject;
-       }
-   }
-
     //This function highlights tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
     //should should the mouse over effect on already highligted tiles
     public void HoverHighlight(List<Vector2Int> tilePositions, Vector2Int centerTile) {
@@ -229,13 +204,12 @@ public class BoardController {
         //this is to check if cursor is moved, we dont want to keep checking if its in the same position
         if (IsMousePositionChanged(new Tuple<Vector2Int,int>(centerTile,tilePositions.Count))) {
             for(int i=0; i<hoverHighlightedTiles.Count; i++) {
-                TileOutline outline = hoverHighlightedTiles[i].GetComponent<TileOutline>();
-                if(outline.outlineMode == OutlineMode.Hover) {
-                    outline.enabled = false;
-                    outline.outlineMode = OutlineMode.None;
-                } else if (outline.outlineMode == OutlineMode.HoverOverHighlight) {
-                    outline.outlineMode = OutlineMode.Highlight;
-                    outline.enabled = true;
+                TileOutline tileOutline = hoverHighlightedTiles[i].GetComponent<TileOutline>();
+                if(tileOutline.outlineMode == OutlineMode.Hover) {
+                    tileOutline.enabled = false;
+                    tileOutline.outlineMode = OutlineMode.None;
+                } else if (tileOutline.outlineMode == OutlineMode.HoverOverHighlight) {
+                    tileOutline.outlineMode = OutlineMode.Highlight;
                 }
             }
 
@@ -251,12 +225,13 @@ public class BoardController {
                     }
                     //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
                     hoverHighlightedTiles.Add(tileObject);
-                    tileObject.GetComponent<TileOutline>().enabled = true;
-                    tileObject.GetComponent<TileOutline>().hoverColor = 2;
-                    if(tileObject.GetComponent<TileOutline>().outlineMode == OutlineMode.Highlight) {
-                        tileObject.GetComponent<TileOutline>().outlineMode = OutlineMode.HoverOverHighlight;
+                    TileOutline tileOutline = tileObject.GetComponent<TileOutline>();
+                    tileOutline.enabled = true;
+                    tileOutline.hoverColor = 2;
+                    if(tileOutline.outlineMode == OutlineMode.Highlight) {
+                        tileOutline.outlineMode = OutlineMode.HoverOverHighlight;
                     } else {
-                        tileObject.GetComponent<TileOutline>().outlineMode = OutlineMode.Hover;
+                        tileOutline.outlineMode = OutlineMode.Hover;
                     }
                 }
             }
