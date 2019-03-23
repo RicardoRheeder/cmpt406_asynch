@@ -93,6 +93,8 @@ public class PlayerController : MonoBehaviour {
     private Card cardBeingPlayed;
 
     private List<Vector2Int> highlightedTiles;
+    private Vector2Int prevMousePos;
+    private List<Vector2Int> hoverAttackRange = new List<Vector2Int>();
 
     public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, FogOfWarController fogOfWarController, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
         this.deck = deck;
@@ -177,7 +179,6 @@ public class PlayerController : MonoBehaviour {
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
-        bool highlightSingleTile = true;
 
         switch(controllerState) {
             case (PlayerState.playing):
@@ -185,7 +186,6 @@ public class PlayerController : MonoBehaviour {
                     if(interactionState == InteractionState.moving) {
                         if (selectedUnit != null) {
                             boardController.RenderPath(selectedUnit.Position,tilePos);
-                            highlightSingleTile = false;
                         }
                     }
                 } 
@@ -273,11 +273,15 @@ public class PlayerController : MonoBehaviour {
                 Debug.Log("Player controller is in an invalid state");
                 break;
         }
-        if(selectedUnit != null) {
-            boardController.HoverHighlight(selectedUnitAttackRange,tilePos);
-        }else if(highlightSingleTile) {
+        if(interactionState == InteractionState.moving && prevMousePos != tilePos) {
+            hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
+        }
+        if(selectedUnit != null && interactionState == InteractionState.moving) {
+            boardController.HoverHighlight(hoverAttackRange,tilePos);
+        }else {
             boardController.HoverHighlight(new List<Vector2Int>(){tilePos},tilePos);
         }
+        prevMousePos = tilePos;
     }
 
     private void MovementButton() {
