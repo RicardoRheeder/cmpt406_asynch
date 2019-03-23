@@ -36,6 +36,7 @@ public enum OutlineMode { None, Highlight, Hover, HoverOverHighlight }
 
         public int color;
         public int hoverColor;
+        public int hoverOverHighlightColor;
         public bool eraseRenderer;
 
         [HideInInspector]

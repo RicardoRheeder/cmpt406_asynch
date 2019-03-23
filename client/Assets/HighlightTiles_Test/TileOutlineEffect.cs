@@ -357,8 +357,10 @@ public class TileOutlineEffect : MonoBehaviour {
     }
 
     public int GetOutlineColor(TileOutline outline) {
-        if(outline.outlineMode == OutlineMode.Hover || outline.outlineMode == OutlineMode.HoverOverHighlight) {
+        if(outline.outlineMode == OutlineMode.Hover) {
             return outline.hoverColor;
+        } else if(outline.outlineMode == OutlineMode.HoverOverHighlight) {
+            return outline.hoverOverHighlightColor;
         }
         return outline.color;
     }

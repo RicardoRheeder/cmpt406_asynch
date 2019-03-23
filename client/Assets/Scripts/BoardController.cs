@@ -203,7 +203,6 @@ public class BoardController {
         }
         //this is to check if cursor is moved, we dont want to keep checking if its in the same position
         if (IsMousePositionChanged(new Tuple<Vector2Int,int>(centerTile,tilePositions.Count))) {
-            Debug.Log("mouse position changed");
             for(int i=0; i<hoverHighlightedTiles.Count; i++) {
                 TileOutline tileOutline = hoverHighlightedTiles[i].GetComponent<TileOutline>();
                 if(tileOutline.outlineMode == OutlineMode.Hover) {
@@ -229,6 +228,7 @@ public class BoardController {
                     TileOutline tileOutline = tileObject.GetComponent<TileOutline>();
                     tileOutline.enabled = true;
                     tileOutline.hoverColor = 2;
+                    tileOutline.hoverOverHighlightColor = 1;
                     if(tileOutline.outlineMode == OutlineMode.Highlight) {
                         tileOutline.outlineMode = OutlineMode.HoverOverHighlight;
                     } else {
