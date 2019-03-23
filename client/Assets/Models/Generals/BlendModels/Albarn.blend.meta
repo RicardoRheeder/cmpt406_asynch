@@ -27,6 +27,37 @@ ModelImporter:
     100042: mesh22
     100044: Armature
     100046: Bone
+    100048: BackLeg
+    100050: BackLeg_001
+    100052: BackLeg_002
+    100054: BaseSpine
+    100056: BigPiston_L
+    100058: BigPiston_R
+    100060: FrontLeg
+    100062: FrontLeg_001
+    100064: FrontLeg_002
+    100066: Head
+    100068: mesh25
+    100070: Shoulder_L
+    100072: Shoulder_L_001
+    100074: Shoulder_L_002
+    100076: Shoulder_R
+    100078: Shoulder_R_001
+    100080: Shoulder_R_002
+    100082: SideBackLeg_L
+    100084: SideBackLeg_L_001
+    100086: SideBackLeg_L_002
+    100088: SideBackLeg_L_003
+    100090: SideBackLeg_R
+    100092: SideBackLeg_R_001
+    100094: SideBackLeg_R_003
+    100096: SideFrontLeg_L
+    100098: SideFrontLeg_L_001
+    100100: SideFrontLeg_L_002
+    100102: SideFrontLeg_R
+    100104: SideFrontLeg_R_001
+    100106: SideFrontLeg_R_002
+    100108: TopPiston
     400000: //RootNode
     400002: cylinder01
     400004: mesh02
@@ -51,7 +82,39 @@ ModelImporter:
     400042: mesh22
     400044: Armature
     400046: Bone
+    400048: BackLeg
+    400050: BackLeg_001
+    400052: BackLeg_002
+    400054: BaseSpine
+    400056: BigPiston_L
+    400058: BigPiston_R
+    400060: FrontLeg
+    400062: FrontLeg_001
+    400064: FrontLeg_002
+    400066: Head
+    400068: mesh25
+    400070: Shoulder_L
+    400072: Shoulder_L_001
+    400074: Shoulder_L_002
+    400076: Shoulder_R
+    400078: Shoulder_R_001
+    400080: Shoulder_R_002
+    400082: SideBackLeg_L
+    400084: SideBackLeg_L_001
+    400086: SideBackLeg_L_002
+    400088: SideBackLeg_L_003
+    400090: SideBackLeg_R
+    400092: SideBackLeg_R_001
+    400094: SideBackLeg_R_003
+    400096: SideFrontLeg_L
+    400098: SideFrontLeg_L_001
+    400100: SideFrontLeg_L_002
+    400102: SideFrontLeg_R
+    400104: SideFrontLeg_R_001
+    400106: SideFrontLeg_R_002
+    400108: TopPiston
     2100000: ___default___
+    2100002: ___default____001
     2300000: cylinder01
     2300002: mesh02
     2300004: mesh03
@@ -115,6 +178,7 @@ ModelImporter:
     4300036: mesh08
     4300038: mesh12
     4300040: cylinder01
+    4300042: mesh25
     7400000: Default Take
     7400002: Attack_00
     7400004: Death_00
@@ -123,6 +187,7 @@ ModelImporter:
     7400010: Walk_00
     9500000: //RootNode
     13700000: mesh05
+    13700002: mesh25
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:

@@ -96,6 +96,7 @@ public static class CardMetadata {
 #else
     public static readonly string FILE_PATH_BASE = "Resources";
 #endif
+    public static readonly string FILE_EXTENSION = ".cards";
     public static readonly int GENERIC_CARD_LIMIT = 4;
     public static readonly int UNIQUE_CARD_LIMIT = 3;
 

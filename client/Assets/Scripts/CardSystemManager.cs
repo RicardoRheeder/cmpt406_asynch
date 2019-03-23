@@ -251,7 +251,7 @@ public class CardSystemManager : MonoBehaviour {
         TableHand = GameObject.Find("Hand");
 
         bool previouslyGeneratedCards = false;
-        string path = CardMetadata.FILE_PATH_BASE + "/." + id;
+        string path = CardMetadata.FILE_PATH_BASE + "/." + id + CardMetadata.FILE_EXTENSION;
         if(System.IO.File.Exists(path)) {
             previouslyGeneratedCards = true;
             StreamReader reader = new StreamReader(path);
@@ -291,15 +291,15 @@ public class CardSystemManager : MonoBehaviour {
                     types.Add(unit.UnitType);
                 }
             }
-            if(uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT && types.Count > 0) {
-                DrawCard(types[Random.Range(0, types.Count)]);
-                uniqueCards++;
-                cardsDrawn++;
-            }
             while (cardsDrawn < drawLimit) {
                 if (genericCards < CardMetadata.GENERIC_CARD_LIMIT) {
                     DrawCard();
                     genericCards++;
+                    cardsDrawn++;
+                }
+                else if (uniqueCards < CardMetadata.UNIQUE_CARD_LIMIT && types.Count > 0) {
+                    DrawCard(types[Random.Range(0, types.Count)]);
+                    uniqueCards++;
                     cardsDrawn++;
                 }
                 else {

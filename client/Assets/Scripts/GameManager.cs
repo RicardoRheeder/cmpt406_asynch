@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour {
             cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
         }
         else {
-            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:7);
+            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT);
         }
 
         inGameMenu.SetupPanels(isPlacing: false);
@@ -296,7 +296,7 @@ public class GameManager : MonoBehaviour {
     //===================== In game button functionality ===================
     public void EndTurn() {
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
-        string path = CardMetadata.FILE_PATH_BASE + "/." + state.id;
+        string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }

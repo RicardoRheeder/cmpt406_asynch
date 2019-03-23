@@ -7,14 +7,18 @@ ModelImporter:
     100002: Armature
     100004: Bone
     100006: mesh01
+    100008: mesh03
     400000: //RootNode
     400002: Armature
     400004: Bone
     400006: mesh01
+    400008: mesh03
     2100000: ___default___
+    2100002: ___default____001
     2300000: //RootNode
     3300000: //RootNode
     4300000: mesh01
+    4300002: mesh03
     7400000: Default Take
     7400002: Attack_00
     7400004: Death_00
@@ -23,6 +27,7 @@ ModelImporter:
     7400010: Walk_00
     9500000: //RootNode
     13700000: mesh01
+    13700002: mesh03
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
