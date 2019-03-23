@@ -28,12 +28,10 @@ using System.Collections.Generic;
 
 public enum OutlineMode { None, Highlight, Hover, HoverOverHighlight }
 
-namespace cakeslice
-{
+
     [ExecuteInEditMode]
     [RequireComponent(typeof(Renderer))]
-    public class Outline : MonoBehaviour
-    {
+    public class TileOutline : MonoBehaviour {
         public Renderer Renderer { get; private set; }
 
         public int color;
@@ -47,28 +45,27 @@ namespace cakeslice
 
         public OutlineMode outlineMode = OutlineMode.None;
 
-        private void Awake(){
+        private void Awake() {
             Renderer = GetComponent<Renderer>();
         }
 
-        void OnEnable(){
-            IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
-                .Select(c => c.GetComponent<OutlineEffect>())
+        void OnEnable() {
+            IEnumerable<TileOutlineEffect> effects = Camera.allCameras.AsEnumerable()
+                .Select(c => c.GetComponent<TileOutlineEffect>())
                 .Where(e => e != null);
 
-            foreach (OutlineEffect effect in effects){
+            foreach (TileOutlineEffect effect in effects) {
                 effect.AddOutline(this);
             }
         }
 
-        void OnDisable(){
-            IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
-                .Select(c => c.GetComponent<OutlineEffect>())
+        void OnDisable() {
+            IEnumerable<TileOutlineEffect> effects = Camera.allCameras.AsEnumerable()
+                .Select(c => c.GetComponent<TileOutlineEffect>())
                 .Where(e => e != null);
 
-            foreach (OutlineEffect effect in effects){
+            foreach (TileOutlineEffect effect in effects) {
                 effect.RemoveOutline(this);
             }
         }
     }
-}

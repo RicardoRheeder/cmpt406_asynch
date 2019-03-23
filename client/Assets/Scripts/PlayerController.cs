@@ -6,7 +6,6 @@ using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using System.Linq;
 
-using cakeslice; //for Outline effect package
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 

@@ -24,7 +24,7 @@
 //  THE SOFTWARE.
 */
 
-Shader "Hidden/OutlineEffect" 
+Shader "Hidden/TileOutlineEffect" 
 {
 	Properties 
 	{

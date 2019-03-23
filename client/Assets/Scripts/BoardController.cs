@@ -160,11 +160,11 @@ public class BoardController {
                 HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
                 tileObject = tile.GetTileObject(); //get the tile game object 
 
-                if (tileObject.GetComponent<cakeslice.Outline>() == null) {
-                    tileObject.AddComponent<cakeslice.Outline>();
+                if (tileObject.GetComponent<TileOutline>() == null) {
+                    tileObject.AddComponent<TileOutline>();
                 }
                 hightlightedTiles.Add(tileObject);
-                tileObject.GetComponent<cakeslice.Outline>().enabled = true;
+                tileObject.GetComponent<TileOutline>().enabled = true;
             }
         }
     }
@@ -181,34 +181,14 @@ public class BoardController {
 
    //Checks if the Outline script component is attached to the tile object
     private bool IsOutlineComponentAttached(GameObject tileObject) {
-        return tileObject.GetComponent<cakeslice.Outline>() != null;
-    }
-
-    //Checks if the Outline script component is enabled on the tile object
-    private bool IsOutlineComponentEnabled(GameObject tileObject) {
-        if (!IsOutlineComponentAttached(tileObject)) {
-            throw new MissingComponentException("Outline Component is missing");
-        }
-        return tileObject.GetComponent<cakeslice.Outline>().enabled;
+        return tileObject.GetComponent<TileOutline>() != null;
     }
 
     //Attatch the Outline script component to the tile object if it is not
     private void AttachOutlineComponent(GameObject tileObject) {
         if (!IsOutlineComponentAttached(tileObject)) {
-            tileObject.AddComponent<cakeslice.Outline>();
+            tileObject.AddComponent<TileOutline>();
         }
-    }
-
-    //Enables the Outline script component on the object and changes the color
-    private void EnableOutlineComponentAndChangeColor(GameObject tileObject, int colorNum) {
-        tileObject.GetComponent<cakeslice.Outline>().enabled = true;
-        tileObject.GetComponent<cakeslice.Outline>().color = colorNum; 
-    }
-
-    //Enables the Outline script component on the object and changes the hover color
-    private void EnableOutlineComponentAndChangeHoverColor(GameObject tileObject, int colorNum) {
-        tileObject.GetComponent<cakeslice.Outline>().enabled = true;
-        tileObject.GetComponent<cakeslice.Outline>().hoverColor = colorNum; 
     }
 
     //Highlight the tile object selected unit is on and disable the previous one
@@ -216,27 +196,23 @@ public class BoardController {
        if (this.HasHexTile(tilePosition)) {
            GameObject tileObject;
 
-           if (singleHighlitedTile != null) {
-               singleHighlitedTile.GetComponent<cakeslice.Outline>().enabled = false;
-               singleHighlitedTile.GetComponent<cakeslice.Outline>().color = 0;
-           }
+            if (singleHighlitedTile != null) {
+               singleHighlitedTile.GetComponent<TileOutline>().enabled = false;
+               singleHighlitedTile.GetComponent<TileOutline>().color = 0;
+            }
 
            HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
            tileObject = tile.GetTileObject(); //get the tile game object 
 
-           if (IsOutlineComponentAttached(tileObject)) {
-               if (IsOutlineComponentEnabled(tileObject)) {
-                   tileObject.GetComponent<cakeslice.Outline>().color = 2;
-               }
-               else {
-                   EnableOutlineComponentAndChangeColor(tileObject, 2);
-               }
-           }
-           else {
+            if(!IsOutlineComponentAttached(tileObject)) {
                AttachOutlineComponent(tileObject);
-               EnableOutlineComponentAndChangeColor(tileObject, 2);
-           }
-           singleHighlitedTile = tileObject;
+            }
+
+            TileOutline tileOutline = tileObject.GetComponent<TileOutline>();
+            tileOutline.enabled = true;
+            tileOutline.outlineMode = OutlineMode.Highlight;
+            tileOutline.color = 2;
+            singleHighlitedTile = tileObject;
        }
    }
 
@@ -249,7 +225,7 @@ public class BoardController {
         //this is to check if cursor is moved, we dont want to keep checking if its in the same position
         if (IsMousePositionChanged(new Tuple<Vector2Int,int>(centerTile,tilePositions.Count))) {
             for(int i=0; i<hoverHighlightedTiles.Count; i++) {
-                cakeslice.Outline outline = hoverHighlightedTiles[i].GetComponent<cakeslice.Outline>();
+                TileOutline outline = hoverHighlightedTiles[i].GetComponent<TileOutline>();
                 if(outline.outlineMode == OutlineMode.Hover) {
                     outline.enabled = false;
                     outline.outlineMode = OutlineMode.None;
@@ -271,12 +247,12 @@ public class BoardController {
                     }
                     //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
                     hoverHighlightedTiles.Add(tileObject);
-                    tileObject.GetComponent<cakeslice.Outline>().enabled = true;
-                    tileObject.GetComponent<cakeslice.Outline>().hoverColor = 2;
-                    if(tileObject.GetComponent<cakeslice.Outline>().outlineMode == OutlineMode.Highlight) {
-                        tileObject.GetComponent<cakeslice.Outline>().outlineMode = OutlineMode.HoverOverHighlight;
+                    tileObject.GetComponent<TileOutline>().enabled = true;
+                    tileObject.GetComponent<TileOutline>().hoverColor = 2;
+                    if(tileObject.GetComponent<TileOutline>().outlineMode == OutlineMode.Highlight) {
+                        tileObject.GetComponent<TileOutline>().outlineMode = OutlineMode.HoverOverHighlight;
                     } else {
-                        tileObject.GetComponent<cakeslice.Outline>().outlineMode = OutlineMode.Hover;
+                        tileObject.GetComponent<TileOutline>().outlineMode = OutlineMode.Hover;
                     }
                 }
             }
@@ -327,7 +303,7 @@ public class BoardController {
 
     public void ClearHighlighting() {
         foreach (var tile in hightlightedTiles) {
-            tile.GetComponent<cakeslice.Outline>().enabled = false;
+            tile.GetComponent<TileOutline>().enabled = false;
         }
         hightlightedTiles.Clear();
     }
