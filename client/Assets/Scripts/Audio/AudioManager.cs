@@ -6,6 +6,7 @@ public class AudioManager : MonoBehaviour {
 
     public AudioLibrary[] sounds;
     public static AudioManager instance = null;
+    public AudioMixer masterMixer;
 
 
 
@@ -17,6 +18,7 @@ public class AudioManager : MonoBehaviour {
             sound.audioSource.volume = sound.volume;
             sound.audioSource.pitch = sound.pitch;
             sound.audioSource.loop = sound.loop;
+            sound.audioSource.outputAudioMixerGroup = sound.audioMixerGroup;
         }
 
         // Instaniate the object. If one already exists, destroy it.
@@ -38,23 +40,22 @@ public class AudioManager : MonoBehaviour {
     // Looks for sound used in the audioLibrary by name and plays that sound.
     public void Play(SoundName soundName) {
         AudioLibrary s = Array.Find(sounds, sound => sound.name == soundName);
-        if (s == null) {
-            Debug.LogWarning("Sound: " + name + " was not found. Check for any misspellings");
-            return;
-        }
         s.audioSource.Play();
     }
 
+    // Looks for sound used in the audioLibrary by name and mutes it.
     public void Mute(SoundName soundName) {
         AudioLibrary s = Array.Find(sounds, sound => sound.name == soundName);
-        if (s == null) {
-            Debug.LogWarning("Sound: " + name + " was not found. Check for any misspellings");
-        }
         s.audioSource.mute = !s.audioSource.mute;
     }
 
-    public void MuteTheme() {
-        DontDestroyOnLoad(gameObject);
-        Mute(SoundName.Theme);
+    public void setVolume(float masterVolume) {
+        masterMixer.SetFloat("masterVolume", masterVolume);
+    }
+
+    public void Play(UnitType unit, SoundType type) {
+        string soundName = unit.ToString() + "_" + type.ToString();
+        AudioLibrary s = Array.Find(sounds, sound => sound.name.ToString() == soundName);
+        s.audioSource.Play();
     }
 }

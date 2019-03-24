@@ -16,7 +16,7 @@ public class AudioLibrary {
 
     public bool loop;
 
-    public AudioMixer audioMixer;
+    public AudioMixerGroup audioMixerGroup;
 
     [HideInInspector]
     public AudioSource audioSource;
