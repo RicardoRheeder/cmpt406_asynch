@@ -35,6 +35,9 @@ public class AnalyticsManager : MonoBehaviour
     private List<UnitValuePair> timesPurchasedInput;
     private List<UnitValuePair> avgTimesPurchased;
 
+    private Dictionary<UnitType, int> winTotal;
+    private List<UnitValuePair> winPercentageInput;
+
     void Start()
     {
         if (!client.LoginUser("ParkerReese1", "5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8")) {
@@ -59,6 +62,7 @@ public class AnalyticsManager : MonoBehaviour
         unitDamageStats = new Dictionary<UnitType, UnitAnalyticsValue>();
         gamesPlayed = new Dictionary<UnitType, int>();
         timesPurchased = new Dictionary<UnitType, int>();
+        winTotal = new Dictionary<UnitType, int>();
         unitTotalMovementStats = new Dictionary<UnitType, int>();
         
         /* We now have a list of GameStates to loop over and build data with */
@@ -96,6 +100,14 @@ public class AnalyticsManager : MonoBehaviour
                 } else {
                     timesPurchased[unit.UnitType] = (timesPurchased[unit.UnitType] + 1);
                 }
+                /* Increment unit in Times Won Dict */
+                if (gameState.AliveUsers[0] == unit.Owner) {
+                    if (!winTotal.ContainsKey(unit.UnitType)) {
+                        winTotal.Add(unit.UnitType, 1);
+                    } else {
+                        winTotal[unit.UnitType] = (winTotal[unit.UnitType] + 1);
+                    }
+                }
             }
             if (gameState.InitGenerals != null && gameState.InitGenerals.Count > 0) {
                 /* this is a copy paste of the above loop cuz im lazy and it's a dev scene */
@@ -117,6 +129,14 @@ public class AnalyticsManager : MonoBehaviour
                         timesPurchased.Add(unit.UnitType, 1);
                     } else {
                         timesPurchased[unit.UnitType] = (timesPurchased[unit.UnitType] + 1);
+                    }
+                    /* Increment unit in Times Won Dict */
+                    if (gameState.AliveUsers[0] == unit.Owner) {
+                        if (!winTotal.ContainsKey(unit.UnitType)) {
+                            winTotal.Add(unit.UnitType, 1);
+                        } else {
+                            winTotal[unit.UnitType] = (winTotal[unit.UnitType] + 1);
+                        }
                     }
                 }
             }
@@ -192,11 +212,21 @@ public class AnalyticsManager : MonoBehaviour
             avgTimesPurchased.Add(sd);
         }
         for(int i =0; i < avgTimesPurchased.Count; i++) {
-            float percentage = (avgTimesPurchased[i].value / totalRatio) * 100;
+            float percentage = (avgTimesPurchased[i].value / totalRatio) * 100f;
             UnitValuePair sd = new UnitValuePair();
             sd.value = percentage;
             sd.unitType = avgTimesPurchased[i].unitType;
             avgTimesPurchased[i] = sd;
+        }
+
+        /* Compile win percentages per unit */
+        winPercentageInput = new List<UnitValuePair>();
+        foreach(KeyValuePair<UnitType, int> pair in winTotal) {
+            UnitValuePair sd = new UnitValuePair();
+            sd.unitType = pair.Key;
+            int unitTotalGames = timesPurchased[pair.Key];
+            sd.value = unitTotalGames <= 1 ? 100f : ( (float)pair.Value / (float) unitTotalGames) * 100f;
+            winPercentageInput.Add(sd);
         }
     }
 
@@ -327,6 +357,10 @@ public class AnalyticsManager : MonoBehaviour
 
     public void setToAvgArmyComposition() {
         wg.ShowGraph(avgTimesPurchased, null, "Average Army Composition (ratio : 100%)");
+    }
+    
+    public void setUnitWinPercentage() {
+        wg.ShowGraph(winPercentageInput, null, "Unit Win Percentage");
     }
 }
 
