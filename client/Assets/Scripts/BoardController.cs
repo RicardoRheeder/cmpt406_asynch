@@ -32,8 +32,21 @@ public class BoardController {
         this.hightlightedTiles = new List<GameObject>();
         this.pathLine = GameObject.Instantiate(Resources.Load<LineRenderer>("PathLine"));
         
-        if (UnityEngine.Random.Range(0, 2) == 1) {
+        GameObject fogPlane = GameObject.Find("Fog Plane");
+        int randInt = UnityEngine.Random.Range(0, 2);
+
+        if (randInt == 1) {
             GameObject.Find("RainParent").transform.GetChild(0).gameObject.SetActive(true);
+            fogPlane.SetActive(true);
+            fogPlane.GetComponent<FogSystem>().setMistColor(2);
+        } else if (randInt == 2)
+        {
+            fogPlane.SetActive(true);
+            fogPlane.GetComponent<FogSystem>().setMistColor((int)UnityEngine.Random.Range(0,1));
+        }
+        else
+        {
+            fogPlane.SetActive(false);
         }
     }
 
