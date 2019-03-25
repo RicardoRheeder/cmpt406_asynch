@@ -58,6 +58,10 @@ ModelImporter:
     100104: SideFrontLeg_R_001
     100106: SideFrontLeg_R_002
     100108: TopPiston
+    100110: mesh04
+    100112: mesh05_001
+    100114: mesh23
+    100116: mesh24
     400000: //RootNode
     400002: cylinder01
     400004: mesh02
@@ -113,6 +117,10 @@ ModelImporter:
     400104: SideFrontLeg_R_001
     400106: SideFrontLeg_R_002
     400108: TopPiston
+    400110: mesh04
+    400112: mesh05_001
+    400114: mesh23
+    400116: mesh24
     2100000: ___default___
     2100002: ___default____001
     2300000: cylinder01
@@ -179,6 +187,10 @@ ModelImporter:
     4300038: mesh12
     4300040: cylinder01
     4300042: mesh25
+    4300044: mesh23
+    4300046: mesh05_001
+    4300048: mesh24
+    4300050: mesh04
     7400000: Default Take
     7400002: Attack_00
     7400004: Death_00
@@ -188,6 +200,29 @@ ModelImporter:
     9500000: //RootNode
     13700000: mesh05
     13700002: mesh25
+    13700004: mesh02
+    13700006: mesh03
+    13700008: mesh04
+    13700010: mesh05_001
+    13700012: mesh06
+    13700014: mesh07
+    13700016: mesh08
+    13700018: mesh09
+    13700020: mesh10
+    13700022: mesh11
+    13700024: mesh12
+    13700026: mesh13
+    13700028: mesh14
+    13700030: mesh15
+    13700032: mesh16
+    13700034: mesh17
+    13700036: mesh18
+    13700038: mesh19
+    13700040: mesh20
+    13700042: mesh21
+    13700044: mesh22
+    13700046: mesh23
+    13700048: mesh24
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
