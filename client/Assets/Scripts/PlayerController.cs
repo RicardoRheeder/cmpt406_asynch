@@ -173,71 +173,82 @@ public class PlayerController : MonoBehaviour {
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
+        boardController.HoverHighlight(new List<Vector2Int>() { tilePos }, tilePos);
 
-        switch(controllerState) {
+        switch (controllerState) {
             case (PlayerState.playing):
-                if(Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                    if(interactionState == InteractionState.moving) {
-                        if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                            manager.MoveUnit(selectedUnit.Position, tilePos);
-                            boardController.ClearHighlighting();
-                            boardController.ClearRenderedPath();
+                switch (interactionState) {
+                    case (InteractionState.moving):
+                        if (prevMousePos != tilePos) {
+                            hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
+                            boardController.RenderPath(selectedUnit.Position, tilePos);
+                        }
+                        if (selectedUnit != null) {
+                            boardController.HoverHighlight(hoverAttackRange, tilePos);
+                        }
+                        if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                manager.MoveUnit(selectedUnit.Position, tilePos);
+                                interactionState = InteractionState.none;
+                            }
+                        }
+                        break;
+                    case (InteractionState.attacking):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                manager.AttackUnit(selectedUnit.Position, tilePos);
+                                boardController.ClearHighlighting();
+                                interactionState = InteractionState.none;
+                            }
+                        }
+                        break;
+                    case (InteractionState.ability1):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
                             interactionState = InteractionState.none;
+                            if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability1)) {
+                                Ability1Button.onClick.RemoveAllListeners();
+                                Ability1Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+                            }
                         }
-                    }
-                }
-                if (Input.GetMouseButtonDown(0)) {
-                    if (!EventSystem.current.IsPointerOverGameObject()) {
-                        switch (interactionState) {
-                            case (InteractionState.attacking):
-                                if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                    manager.AttackUnit(selectedUnit.Position, tilePos);
-                                    boardController.ClearHighlighting();
-                                    interactionState = InteractionState.none;
-                                }
-                                break;
-                            case (InteractionState.ability1):
+                        break;
+                    case (InteractionState.ability2):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            interactionState = InteractionState.none;
+                            if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability2)) {
+                                Ability2Button.onClick.RemoveAllListeners();
+                                Ability2Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+                            }
+                        }
+                        break;
+                    case (InteractionState.playingCard):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (manager.UseCard(tilePos, cardBeingPlayed)) {
                                 interactionState = InteractionState.none;
-                                if(manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability1)) {
-                                    Ability1Button.onClick.RemoveAllListeners();
-                                    Ability1Button.GetComponent<Image>().color = BUTTON_INACTIVE;
-                                }
-                                boardController.ClearHighlighting();
-                                break;
-                            case (InteractionState.ability2):
-                                interactionState = InteractionState.none;
-                                if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability2)) {
-                                    Ability2Button.onClick.RemoveAllListeners();
-                                    Ability2Button.GetComponent<Image>().color = BUTTON_INACTIVE;
-                                }
-                                boardController.ClearHighlighting();
-                                break;
-                            case (InteractionState.playingCard):
-                                if(manager.UseCard(tilePos, cardBeingPlayed))
-                                    interactionState = InteractionState.none;
-                                break;
-                            case (InteractionState.none):
-                                if(!fogOfWarController.CheckIfTileHasFog(tilePos)) {
-                                    if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
-                                        if (selectedUnit != null) {
-                                            selectedUnit.MyUnit.rend.material.color = tempColor;
-                                            selectedUnit.MyUnit.HideUnitOutline();
-                                        }
-                                        selectedUnit = unit;
-                                        selectedUnit.MyUnit.OutlineUnit();
+                            }
+                        }
+                        break;
+                    case (InteractionState.none):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (!fogOfWarController.CheckIfTileHasFog(tilePos)) {
+                                if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                                    if (selectedUnit != null) {
+                                        selectedUnit.MyUnit.rend.material.color = tempColor;
+                                        selectedUnit.MyUnit.HideUnitOutline();
                                     }
+                                    selectedUnit = unit;
+                                    selectedUnit.MyUnit.OutlineUnit();
                                 }
-                                break;
-                            default:
-                                if(interactionState != InteractionState.moving) {
-                                    Debug.Log("Interaction state is in a weird place");
-                                }
-                                break;
+                            }
                         }
-                        if(selectedUnit != null) {
-                            UpdateUnitDisplay(selectedUnit);
-                        }   
-                    }
+                        boardController.ClearRenderedPath();
+                        boardController.ClearHighlighting();
+                        break;
+                    default:
+                        Debug.Log("Interaction state is in a weird place");
+                        break;
+                }
+                if(selectedUnit != null) {
+                    UpdateUnitDisplay(selectedUnit);
                 }
                 break;
             case (PlayerState.placing):
@@ -260,15 +271,6 @@ public class PlayerController : MonoBehaviour {
             default:
                 Debug.Log("Player controller is in an invalid state");
                 break;
-        }
-        if(interactionState == InteractionState.moving && prevMousePos != tilePos) {
-            hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
-            boardController.RenderPath(selectedUnit.Position, tilePos);
-        }
-        if(selectedUnit != null && interactionState == InteractionState.moving) {
-            boardController.HoverHighlight(hoverAttackRange,tilePos);
-        }else {
-            boardController.HoverHighlight(new List<Vector2Int>(){tilePos},tilePos);
         }
         prevMousePos = tilePos;
     }
