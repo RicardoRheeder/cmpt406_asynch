@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        
         DontDestroyOnLoad(this.gameObject);
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         client = GameObject.Find("Networking").GetComponent<Client>();
@@ -459,5 +458,21 @@ public class GameManager : MonoBehaviour {
         else {
             return false;
         }
+    }
+
+    //===================== Functions used to get unit positions ===================
+    public List<Vector2Int> GetUnitPositions(UnitType type = UnitType.none) {
+        List<Vector2Int> retList = new List<Vector2Int>();
+        foreach (Vector2Int pos in unitPositions.Keys) {
+            UnitStats unit = unitPositions[pos];
+            if((int)unit.UnitType < UnitMetadata.GENERAL_THRESHOLD) {
+                if (unit.Owner == user.Username) {
+                    if (type == UnitType.none || unit.UnitType == type) {
+                        retList.Add(pos);
+                    }
+                }
+            }
+        }
+        return retList;
     }
 }

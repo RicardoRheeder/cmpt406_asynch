@@ -197,7 +197,6 @@ public class PlayerController : MonoBehaviour {
                         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
                             if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
                                 manager.AttackUnit(selectedUnit.Position, tilePos);
-                                boardController.ClearHighlighting();
                                 interactionState = InteractionState.none;
                             }
                         }
@@ -335,7 +334,11 @@ public class PlayerController : MonoBehaviour {
         this.cardBeingPlayed = card;
         this.interactionState = InteractionState.playingCard;
 
-        //Note: here we have to highlight the appropriate tiles if the card is unique to a unit
+        if(selectedUnit != null)
+            selectedUnit.MyUnit.HideUnitOutline();
+        selectedUnit = null;
+        this.highlightedTiles = manager.GetUnitPositions(card.type);
+        boardController.HighlightTiles(this.highlightedTiles);
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {
