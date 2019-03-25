@@ -26,6 +26,24 @@ ModelImporter:
     100040: mesh13
     100042: mesh14
     100044: mesh27
+    100046: Cannon
+    100048: Driver_B_Wheel
+    100050: Driver_F_wheel
+    100052: Driver_Hatch_Femer
+    100054: Driver_Hatch_shin
+    100056: Driver_L_Flap
+    100058: Driver_M_Wheel
+    100060: Driver_R_Flap
+    100062: Passenger_F_Wheel
+    100064: Passenger_Hatch_Femer
+    100066: Passenger_Hatch_shin
+    100068: Passenger_L_Flap
+    100070: Passenger_M_Wheel
+    100072: Passenger_R_Flap
+    100074: Passenger_R_Wheel
+    100076: SpineCenter
+    100078: spineFront
+    100080: spineRear
     400000: mesh02
     400002: mesh03
     400004: mesh04
@@ -49,8 +67,27 @@ ModelImporter:
     400040: mesh13
     400042: mesh14
     400044: mesh27
+    400046: Cannon
+    400048: Driver_B_Wheel
+    400050: Driver_F_wheel
+    400052: Driver_Hatch_Femer
+    400054: Driver_Hatch_shin
+    400056: Driver_L_Flap
+    400058: Driver_M_Wheel
+    400060: Driver_R_Flap
+    400062: Passenger_F_Wheel
+    400064: Passenger_Hatch_Femer
+    400066: Passenger_Hatch_shin
+    400068: Passenger_L_Flap
+    400070: Passenger_M_Wheel
+    400072: Passenger_R_Flap
+    400074: Passenger_R_Wheel
+    400076: SpineCenter
+    400078: spineFront
+    400080: spineRear
     2100000: ___default___
     2100002: ___default____001
+    2100004: ___default____001__Sandman_UV_Painted_Albedo_00
     2300000: mesh02
     2300002: mesh03
     2300004: mesh04
@@ -64,6 +101,7 @@ ModelImporter:
     2300020: mesh24
     2300022: mesh25
     2300024: mesh26
+    2300026: //RootNode
     3300000: mesh02
     3300002: mesh03
     3300004: mesh04
@@ -77,6 +115,7 @@ ModelImporter:
     3300020: mesh24
     3300022: mesh25
     3300024: mesh26
+    3300026: //RootNode
     4300000: mesh22
     4300002: mesh24
     4300004: mesh05
