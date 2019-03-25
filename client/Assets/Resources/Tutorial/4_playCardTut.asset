@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea92d10f26517bf489b1bd1e4f2ad8a0, type: 3}
-  m_Name: new Tutorial
+  m_Name: 4_playCardTut
   m_EditorClassIdentifier: 
-  prefabImage: {fileID: 21300000, guid: e34cfc5d0fa3d004b96adf9c9bbacb28, type: 3}
-  prefabText: test 2
-  buttonText: test 2 button
+  prefabImage: {fileID: 21300000, guid: b1f1bc02a44b46e41929c22041c9c470, type: 3}
+  prefabText: If you want to play a card simply drag the card onto the battlefield.
+    When you do so, the game will ask to confrim your selection. After playing a card
+    the selected unit will be given the cards effect.
+  buttonText: Play Card

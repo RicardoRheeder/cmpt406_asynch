@@ -27,7 +27,7 @@ public class TutorialUI : MonoBehaviour
             GameObject button = Instantiate(buttonPrefab) as GameObject;
             
             //set the button text to the prefab's button text
-            button.GetComponentInChildren<TextMeshProUGUI>().text = t.prefabText;
+            button.GetComponentInChildren<TextMeshProUGUI>().text = t.buttonText;
 
             //set the onClick()
             button.GetComponent<Button>().onClick.AddListener(() => changeTut(t));
