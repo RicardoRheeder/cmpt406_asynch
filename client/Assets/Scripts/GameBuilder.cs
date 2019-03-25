@@ -106,11 +106,11 @@ public class GameBuilder : MonoBehaviour {
             }
             foreach (var general in userGeneralList.Value) {
                 UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
-                float incrementH = SpawnMetadata.SpawnColours[spawnPoint];
-                Color.RGBToHSV(newUnit.MyUnit.rend.material.GetColor("_Color"), out float h, out float s, out float v);
-                newUnit.MyUnit.rend.material.SetColor("_Color", Color.HSVToRGB(h + incrementH, s, v));
-                Color.RGBToHSV(newUnit.MyUnit.rend.material.GetColor("_EmissionColor"), out h, out s, out v);
-                newUnit.MyUnit.rend.material.SetColor("_EmissionColor", Color.HSVToRGB(h + incrementH, s, v));
+                float h = SpawnMetadata.SpawnColours[spawnPoint];
+                Color.RGBToHSV(newUnit.MyUnit.rend.material.GetColor("_Color"), out float oldH, out float s, out float v);
+                newUnit.MyUnit.rend.material.SetColor("_Color", Color.HSVToRGB(h, s, v));
+                Color.RGBToHSV(newUnit.MyUnit.rend.material.GetColor("_EmissionColor"), out oldH, out s, out v);
+                newUnit.MyUnit.rend.material.SetColor("_EmissionColor", Color.HSVToRGB(h, s, v));
                 unitPositions.Add(general.Position, newUnit);
             }
         }
@@ -128,7 +128,7 @@ public class GameBuilder : MonoBehaviour {
                 Color.RGBToHSV(newUnit.MyUnit.rend.material.GetColor("_Color"), out float h, out float s, out float v);
                 newUnit.MyUnit.rend.material.SetColor("_Color", Color.HSVToRGB(h + incrementH, s, v));
                 Color.RGBToHSV(newUnit.MyUnit.rend.material.GetColor("_EmissionColor"), out h, out s, out v);
-                newUnit.MyUnit.rend.material.SetColor("_EmissionColor", Color.HSVToRGB(h + incrementH, s, v));
+                newUnit.MyUnit.rend.material.SetColor("_EmissionColor", Color.HSVToRGB(h, s, v));
                 unitPositions.Add(unit.Position, newUnit);
             }
         }
