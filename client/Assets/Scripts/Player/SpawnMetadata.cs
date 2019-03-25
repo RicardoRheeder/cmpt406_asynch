@@ -4,12 +4,12 @@ using UnityEngine;
 
 public static class SpawnMetadata {
 
-    public static Dictionary<SpawnPoint, Color> SpawnColours = new Dictionary<SpawnPoint, Color>() {
-        {SpawnPoint.Player1, Color.red },
-        {SpawnPoint.Player2, Color.blue },
-        {SpawnPoint.Player3, Color.black },
-        {SpawnPoint.Player4, Color.yellow },
-        {SpawnPoint.Player5, Color.cyan },
-        {SpawnPoint.Player6, new Color(0.5f, 0, 0.5f) }
+    public static Dictionary<SpawnPoint, float> SpawnColours = new Dictionary<SpawnPoint, float>() {
+        {SpawnPoint.Player1, 0.15f },
+        {SpawnPoint.Player2, 0.0f },
+        {SpawnPoint.Player3, -0.15f },
+        {SpawnPoint.Player4, -0.3f },
+        {SpawnPoint.Player5, -0.45f },
+        {SpawnPoint.Player6, -0.6f }
     };
 }

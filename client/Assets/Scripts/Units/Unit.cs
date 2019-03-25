@@ -5,7 +5,7 @@ using UnityEngine;
 //The actual script on the unit that handles animations
 public class Unit : MonoBehaviour {
     
-    public Renderer rend;
+    public SkinnedMeshRenderer rend;
     public float moveSpeed = 5f;
     Animator anim;
 
@@ -16,8 +16,7 @@ public class Unit : MonoBehaviour {
 
     
     void Awake() {
-        // rend = this.GetComponent<Renderer>();
-        rend = GetComponentInChildren<Renderer>();
+        rend = GetComponentInChildren<SkinnedMeshRenderer>();
         anim = GetComponent<Animator>();
         fogViewer = new FogViewer();
         transform.rotation = Quaternion.Euler(-90,0,0); 
@@ -69,13 +68,13 @@ public class Unit : MonoBehaviour {
         if(this.anim != null) {
             anim.SetBool("walking",true);
         }
-         float step = moveSpeed * Time.fixedDeltaTime;
-         float t = 0;
-         Vector3 prevPos = transform.position;
-         Vector2Int prevTilePos = currTilePosition;
-         int prevDir = currDirection;
-         Quaternion prevRotation = transform.rotation;
-         for(int i = 0; i < path.Count; i++) {
+        float step = moveSpeed * Time.fixedDeltaTime;
+        float t = 0;
+        Vector3 prevPos = transform.position;
+        Vector2Int prevTilePos = currTilePosition;
+        int prevDir = currDirection;
+        Quaternion prevRotation = transform.rotation;
+        for(int i = 0; i < path.Count; i++) {
             currTilePosition = path[i].First;
             currDirection = path[i].Second;
             fogViewer.SetPosition(currTilePosition);

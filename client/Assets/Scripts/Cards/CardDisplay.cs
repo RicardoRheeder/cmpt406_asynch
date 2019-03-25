@@ -49,7 +49,7 @@ public class CardDisplay : MonoBehaviour {
     // Use this for initialization
     public void SetCard(Card aCard) {
         card = aCard;
-        if (card.type != UnitType.none && card.type != UnitType.light_adren && card.type != UnitType.support_sandman && card.type != UnitType.heavy_albarn && card.type != UnitType.piercing_tungsten){
+        if (card.type != UnitType.none && card.type != UnitType.light_adren && card.type != UnitType.support_sandman && card.type != UnitType.heavy_albarn && card.type != UnitType.piercing_tungsten) {
             unitNameText.text = (UnitMetadata.ReadableNames[card.type]);
         }
         else if (card.type == UnitType.none){
