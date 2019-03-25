@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9095137706837923985}
   - component: {fileID: 8157490345901532355}
   m_Layer: 0
-  m_Name: Adren-LN
+  m_Name: Adren-LNGeneral
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,4 +92,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
   moveSpeed: 5
-  direction: 0
