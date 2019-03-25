@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7760574659496381275}
   - component: {fileID: 1666500718}
   - component: {fileID: 8293816624907673172}
+  - component: {fileID: 2370828490217063547}
   m_Layer: 0
   m_Name: Adren-LN
   m_TagString: Untagged
@@ -65,6 +66,25 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!95 &2370828490217063547
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1666500717}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: b21da44267ec14305914173b40003fb5, type: 3}
+  m_Controller: {fileID: 22100000, guid: ebacfbb71284a412cba7bdbfb544a45b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &2218035707954469754
 PrefabInstance:
   m_ObjectHideFlags: 0
