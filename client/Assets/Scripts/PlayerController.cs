@@ -232,8 +232,10 @@ public class PlayerController : MonoBehaviour {
                                     if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
                                         if (selectedUnit != null) {
                                             selectedUnit.MyUnit.rend.material.color = tempColor;
+                                            selectedUnit.MyUnit.HideUnitOutline();
                                         }
                                         selectedUnit = unit;
+                                        selectedUnit.MyUnit.OutlineUnit();
                                     }
                                 }
                                 break;

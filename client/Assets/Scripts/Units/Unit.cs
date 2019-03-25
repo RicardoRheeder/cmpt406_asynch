@@ -11,6 +11,7 @@ public class Unit : MonoBehaviour {
 
     Vector2Int currTilePosition;
     FogViewer fogViewer;
+    UnitOutline unitOutline;
 
     private int currDirection = 0;
 
@@ -18,8 +19,13 @@ public class Unit : MonoBehaviour {
     void Awake() {
         rend = GetComponentInChildren<SkinnedMeshRenderer>();
         anim = GetComponent<Animator>();
+        unitOutline = GetComponent<UnitOutline>();
         fogViewer = new FogViewer();
         transform.rotation = Quaternion.Euler(-90,0,0); 
+
+        if(unitOutline != null) {
+            unitOutline.enabled = false;
+        }
     }
 
     //Method used to handle the attack animation
@@ -62,6 +68,18 @@ public class Unit : MonoBehaviour {
         currDirection = dir;
         int angle = HexUtility.DirectionToAngle(currDirection) - HexUtility.DirectionToAngle(prevDir);
         transform.rotation = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
+    }
+
+    public void OutlineUnit() {
+        if(unitOutline != null) {
+            unitOutline.enabled = true;
+        }
+    }
+
+    public void HideUnitOutline() {
+        if(unitOutline != null) {
+            unitOutline.enabled = false;
+        }
     }
 
     IEnumerator PathMovement(List<Tuple<Vector2Int,int>> path, BoardController board) {

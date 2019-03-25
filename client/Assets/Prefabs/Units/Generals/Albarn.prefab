@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8007152181489659797}
   - component: {fileID: 1925483579}
+  - component: {fileID: 2427192872437589962}
   m_Layer: 0
   m_Name: Albarn
   m_TagString: Untagged
@@ -46,6 +47,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
   moveSpeed: 5
+--- !u!114 &2427192872437589962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925483578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 6
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &631748475436330834
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57,10 +76,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Albarn
       objectReference: {fileID: 0}
-    - target: {fileID: 13700006, guid: 9d77517ecfcd64821957b4e9acaa52c1, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 73a417c60fbb98841904a3f2b929801f, type: 2}
     - target: {fileID: 400000, guid: 9d77517ecfcd64821957b4e9acaa52c1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -110,6 +125,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 22100000, guid: 1cb4098de8e7340b3ab4e20408b9cdc6,
         type: 2}
+    - target: {fileID: 13700006, guid: 9d77517ecfcd64821957b4e9acaa52c1, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 73a417c60fbb98841904a3f2b929801f, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d77517ecfcd64821957b4e9acaa52c1, type: 3}
 --- !u!4 &631748475435939282 stripped

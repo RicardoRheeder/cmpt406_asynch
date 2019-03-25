@@ -924,6 +924,7 @@ GameObject:
   - component: {fileID: 7400840424569526826}
   - component: {fileID: 7588779534220545837}
   - component: {fileID: 2212318922225716832}
+  - component: {fileID: 3147432183767387463}
   m_Layer: 0
   m_Name: Steamer
   m_TagString: Untagged
@@ -980,6 +981,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
   moveSpeed: 5
+--- !u!114 &3147432183767387463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7378538391732608622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 6
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &7709778681563745361
 GameObject:
   m_ObjectHideFlags: 0
