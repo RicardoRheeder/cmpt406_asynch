@@ -10,14 +10,14 @@ public class AnalyticsManager : MonoBehaviour
     /* We're gonna sum up the total damage each UnitType did */
     /* As well as the total damage it did to each individual other UnitType */
     public struct UnitAnalyticsValue {
-        public int Total;
-        public Dictionary<UnitType, int> TotalPerUnitType;
+        public float Total;
+        public Dictionary<UnitType, float> TotalPerUnitType;
     }
 
     private Dictionary<Vector2Int, UnitStats> localBoard;
     
     public struct UnitValuePair {
-        public int value;
+        public float value;
         public UnitType unitType;
     }
 
@@ -33,10 +33,11 @@ public class AnalyticsManager : MonoBehaviour
 
     private Dictionary<UnitType, int> timesPurchased;
     private List<UnitValuePair> timesPurchasedInput;
+    private List<UnitValuePair> avgTimesPurchased;
 
     void Start()
     {
-        if (!client.LoginUser("ParkerReese1", "password")) {
+        if (!client.LoginUser("ParkerReese1", "5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8")) {
             Debug.LogError("Failed to Login");
             return;
         }
@@ -47,11 +48,13 @@ public class AnalyticsManager : MonoBehaviour
             Debug.LogError("Failed to get completed games");
             return;
         }
-        if (response.Second.states.Count <= 0) {
+        int totalGames = response.Second.states.Count;
+        if (totalGames <= 0) {
             Debug.Log("There are no completed games");
             return;
         }
-        Debug.Log("Recieved " + response.Second.states.Count + " Completed Games.");
+        
+        Debug.Log("Recieved " + totalGames + " Completed Games.");
 
         unitDamageStats = new Dictionary<UnitType, UnitAnalyticsValue>();
         gamesPlayed = new Dictionary<UnitType, int>();
@@ -176,6 +179,25 @@ public class AnalyticsManager : MonoBehaviour
             sd.unitType = pair.Key;
             timesPurchasedInput.Add(sd);
         }
+
+        /* Compile data for average army composition */
+        avgTimesPurchased = new List<UnitValuePair>();
+        float totalRatio = 0;
+        foreach(KeyValuePair<UnitType, int> pair in timesPurchased) {
+            float ratio = (pair.Value / totalGames);
+            totalRatio += ratio;
+            UnitValuePair sd = new UnitValuePair();
+            sd.value = ratio;
+            sd.unitType = pair.Key;
+            avgTimesPurchased.Add(sd);
+        }
+        for(int i =0; i < avgTimesPurchased.Count; i++) {
+            float percentage = (avgTimesPurchased[i].value / totalRatio) * 100;
+            UnitValuePair sd = new UnitValuePair();
+            sd.value = percentage;
+            sd.unitType = avgTimesPurchased[i].unitType;
+            avgTimesPurchased[i] = sd;
+        }
     }
 
     private void movementAction(int sourceXPos, int sourceYPos, int targetXPos, int targetYPos) {
@@ -232,14 +254,14 @@ public class AnalyticsManager : MonoBehaviour
             if (!unitDamageStats.TryGetValue(sourceUnit.UnitType, out curUav)) {
                 // UnitType is not yet in Dict
                 curUav.Total = damage.value;
-                curUav.TotalPerUnitType = new Dictionary<UnitType, int>();
+                curUav.TotalPerUnitType = new Dictionary<UnitType, float>();
                 curUav.TotalPerUnitType[damage.unitType] = damage.value;
             } else {
                 /* UnitType is in the Dict already, don't erase values, increment them */
                 curUav.Total = curUav.Total + damage.value;
                 
                 /* Also increment the specific damage done to that UnitType */
-                int totalDamagePerUnitType;
+                float totalDamagePerUnitType;
                 if (!curUav.TotalPerUnitType.TryGetValue(damage.unitType, out totalDamagePerUnitType)) {
                     curUav.TotalPerUnitType[damage.unitType] = damage.value;
                 } else {
@@ -301,6 +323,10 @@ public class AnalyticsManager : MonoBehaviour
 
     public void setToTimesPurchased() {
         wg.ShowGraph(timesPurchasedInput, null, "Times Purchased");
+    }
+
+    public void setToAvgArmyComposition() {
+        wg.ShowGraph(avgTimesPurchased, null, "Average Army Composition (ratio : 100%)");
     }
 }
 
