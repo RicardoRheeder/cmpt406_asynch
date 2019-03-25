@@ -26,15 +26,17 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace cakeslice
-{
+public enum OutlineMode { None, Highlight, Hover, HoverOverHighlight }
+
+
     [ExecuteInEditMode]
     [RequireComponent(typeof(Renderer))]
-    public class Outline : MonoBehaviour
-    {
+    public class TileOutline : MonoBehaviour {
         public Renderer Renderer { get; private set; }
 
         public int color;
+        public int hoverColor;
+        public int hoverOverHighlightColor;
         public bool eraseRenderer;
 
         [HideInInspector]
@@ -42,33 +44,29 @@ namespace cakeslice
         [HideInInspector]
         public Material[] originalMaterials;
 
-        private void Awake()
-        {
+        public OutlineMode outlineMode = OutlineMode.None;
+
+        private void Awake() {
             Renderer = GetComponent<Renderer>();
         }
 
-        void OnEnable()
-        {
-            IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
-                .Select(c => c.GetComponent<OutlineEffect>())
+        void OnEnable() {
+            IEnumerable<TileOutlineEffect> effects = Camera.allCameras.AsEnumerable()
+                .Select(c => c.GetComponent<TileOutlineEffect>())
                 .Where(e => e != null);
 
-            foreach (OutlineEffect effect in effects)
-            {
+            foreach (TileOutlineEffect effect in effects) {
                 effect.AddOutline(this);
             }
         }
 
-        void OnDisable()
-        {
-            IEnumerable<OutlineEffect> effects = Camera.allCameras.AsEnumerable()
-                .Select(c => c.GetComponent<OutlineEffect>())
+        void OnDisable() {
+            IEnumerable<TileOutlineEffect> effects = Camera.allCameras.AsEnumerable()
+                .Select(c => c.GetComponent<TileOutlineEffect>())
                 .Where(e => e != null);
 
-            foreach (OutlineEffect effect in effects)
-            {
+            foreach (TileOutlineEffect effect in effects) {
                 effect.RemoveOutline(this);
             }
         }
     }
-}
