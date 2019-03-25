@@ -168,10 +168,6 @@ public class PlayerController : MonoBehaviour {
             if (selectedUnit.CurrentHP <= 0) {
                 selectedUnit = null;
             }
-            else if (selectedUnit.MyUnit.rend.material.color != Color.white){
-                tempColor = selectedUnit.MyUnit.rend.material.color;
-                selectedUnit.MyUnit.rend.material.color = Color.white;
-            }
         }
     }
 
@@ -180,13 +176,6 @@ public class PlayerController : MonoBehaviour {
 
         switch(controllerState) {
             case (PlayerState.playing):
-                if(Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                    if(interactionState == InteractionState.moving) {
-                        if (selectedUnit != null) {
-                            boardController.RenderPath(selectedUnit.Position,tilePos);
-                        }
-                    }
-                } 
                 if(Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
                     if(interactionState == InteractionState.moving) {
                         if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
@@ -274,6 +263,7 @@ public class PlayerController : MonoBehaviour {
         }
         if(interactionState == InteractionState.moving && prevMousePos != tilePos) {
             hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
+            boardController.RenderPath(selectedUnit.Position, tilePos);
         }
         if(selectedUnit != null && interactionState == InteractionState.moving) {
             boardController.HoverHighlight(hoverAttackRange,tilePos);
@@ -288,7 +278,6 @@ public class PlayerController : MonoBehaviour {
             if(interactionState == InteractionState.moving) {
                 interactionState = InteractionState.none;
                 boardController.ClearHighlighting();
-                
             }
             else {
                 interactionState = InteractionState.moving;
