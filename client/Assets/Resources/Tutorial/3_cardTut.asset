@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea92d10f26517bf489b1bd1e4f2ad8a0, type: 3}
+  m_Name: 3_cardTut
+  m_EditorClassIdentifier: 
+  prefabImage: {fileID: 21300000, guid: 9eeb6b365ad01f149bfd34450caf34ba, type: 3}
+  prefabText: When looking at a card you can see the cards name at the top and the
+    effect of the card is displayed at the bottom. The number on the left side indicates
+    the amount of points needed to play it. The unit name in the middle indicates
+    what unit this card will apply to.
+  buttonText: Card
