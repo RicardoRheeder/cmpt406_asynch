@@ -24,6 +24,8 @@ public class HexTile: TileBase {
     public SpawnPoint spawnPoint = SpawnPoint.none;
 
     GameObject tileObject;
+    Vector2Int tilePosition;
+    Vector3 worldPosition;
 
     const float ELEVATION_MULTIPLIER = 2.5f;
 
@@ -32,7 +34,10 @@ public class HexTile: TileBase {
             go.transform.rotation = Quaternion.Euler(-90,0,0);
             go.transform.position = new Vector3(go.transform.position.x,go.transform.position.y,(go.transform.position.z - (ELEVATION_MULTIPLIER) * (int)elevation));
             tileObject = go;
+            this.worldPosition = go.transform.position;
         }
+
+        this.tilePosition = (Vector2Int)position;
 
         #if UNITY_EDITOR
         if (go != null){
@@ -55,10 +60,19 @@ public class HexTile: TileBase {
         tileData.colliderType = Tile.ColliderType.Grid;
         tileData.flags = TileFlags.None;
         tileData.gameObject = tileModel;
+        this.tilePosition = (Vector2Int)position;
     }
 
     public GameObject GetTileObject() {
         return tileObject;
+    }
+
+    public Vector2Int GetTilePosition() {
+        return tilePosition;
+    }
+
+    public Vector3 GetWorldPosition() {
+        return worldPosition;
     }
 
     #if UNITY_EDITOR
