@@ -349,13 +349,17 @@ public class PlayerController : MonoBehaviour {
     private void SelectUnit(UnitStats unit = null) {
         if(selectedUnit != null) {
             selectedUnit.MyUnit.HideUnitOutline();
-            unitButtonReferences[selectedUnit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_DEFAULT;
-            selectedUnitButton = null;
+            if (selectedUnit.Owner == username) {
+                unitButtonReferences[selectedUnit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_DEFAULT;
+                selectedUnitButton = null;
+            }
         }
         if(unit != null) {
             unit.MyUnit.OutlineUnit();
-            unitButtonReferences[unit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_ACTIVE;
-            selectedUnitButton = unitButtonReferences[unit];
+            if (unit.Owner == username) {
+                unitButtonReferences[unit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                selectedUnitButton = unitButtonReferences[unit];
+            }
         }
         selectedUnit = unit;
     }
