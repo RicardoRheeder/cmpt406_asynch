@@ -75,6 +75,10 @@ public class HexTile: TileBase {
         return worldPosition;
     }
 
+    public float GetElevationMultiplier() {
+        return ELEVATION_MULTIPLIER;
+    }
+
     #if UNITY_EDITOR
     // The following is a helper that adds a menu item to create a HexTile Asset
     [MenuItem("Assets/Create/HexTile")]

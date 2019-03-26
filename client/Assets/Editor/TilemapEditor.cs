@@ -13,7 +13,8 @@ public class TilemapEditor : Editor {
         foreach(Vector3Int position in tilemap.cellBounds.allPositionsWithin) {
             HexTile tile = tilemap.GetTile(position) as HexTile;
             if(tile != null && tile.attributes.Contains(TileAttribute.Obstacle)) {
-                Handles.Label(tilemap.CellToWorld(position), "O", style);
+                Vector3 worldPosition = tilemap.CellToWorld(position);
+                Handles.Label(new Vector3(worldPosition.x,worldPosition.y,worldPosition.z - (tile.GetElevationMultiplier() * (int)tile.elevation)), "O", style);
             }
         }
     }
