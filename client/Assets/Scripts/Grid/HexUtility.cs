@@ -153,7 +153,8 @@ public static class HexUtility {
         List<Vector2Int> neighbors = new List<Vector2Int>();
         for(int i = 0; i<=5; i++){
             Vector2Int neighbor = NeighborTile(hex, i);
-            if((tilemap.HasTile((Vector3Int)neighbor) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap)))) {
+            HexTile tile = tilemap.GetTile((Vector3Int)neighbor) as HexTile;
+            if(tile != null && !tile.attributes.Contains(TileAttribute.Obstacle) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap))) {
                 neighbors.Add(neighbor);
             }
         }
