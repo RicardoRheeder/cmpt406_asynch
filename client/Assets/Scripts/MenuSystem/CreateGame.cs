@@ -49,7 +49,7 @@ public class CreateGame : MonoBehaviour {
         forfeitSlider = GameObject.Find("ForfeitTimeSlider").GetComponent<Slider>();
         invitePlayerInput = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
         mapSelection = GameObject.Find("MapDropdown").GetComponent<Dropdown>();
-        inviedPlayersViewContent = GameObject.Find("invitedFriendsViewport");
+        inviedPlayersViewContent = GameObject.Find("InvitedFriendsContent");
         privateToggle = GameObject.Find("PrivateToggle").GetComponent<Toggle>();
         gameNameInput = GameObject.Find("GameNameInputField").GetComponent<TMP_InputField>();
         maxPlayersContainer = GameObject.Find("maxPlayers");

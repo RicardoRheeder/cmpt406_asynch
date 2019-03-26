@@ -58,7 +58,6 @@ public class GameBuilder : MonoBehaviour {
             {UnitType.light_adren, lightAdrenPrefab },
             {UnitType.support_sandman, supportSandmanPrefab }
         };
-
     }
 
     //Method that takes in a game state, instantiates all of the objects and makes sure the scene is setup how it should be.
@@ -103,11 +102,11 @@ public class GameBuilder : MonoBehaviour {
 
         if (isPlacing) {
             prefabToUse = unitPlacementDisplayPrefab;
-            unitPlacementViewport = GameObject.Find("PlaceUnitsViewport");
+            unitPlacementViewport = GameObject.Find("PlaceUnitsPanelContent");
         }
         else {
             prefabToUse = unitSelectionDisplayPrefab;
-            unitPlacementViewport = GameObject.Find("UnitSnapViewport");
+            unitPlacementViewport = GameObject.Find("UnitSnapPanelContent");
         }
 
         GameObject generalText = Instantiate(prefabToUse);
