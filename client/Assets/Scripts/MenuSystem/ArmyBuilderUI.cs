@@ -66,7 +66,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         client = GameObject.Find("Networking").GetComponent<Client>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
-        armyContent = GameObject.Find("ABListContent");
+        armyContent = GameObject.Find("ABListViewport");
         armyName = GameObject.Find("ABNameInput").GetComponent<TMP_InputField>();
         stockNum = GameObject.Find("CostNum").GetComponent<TMP_Text>();
         healthNum = GameObject.Find("HealthNum").GetComponent<TMP_Text>();
