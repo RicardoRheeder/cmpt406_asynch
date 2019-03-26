@@ -43,7 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0782e1cfcec098a41af51cb3e4a69351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitDisplayPrefab: {fileID: 7918711945486396909, guid: d99b6cefa1a27e04f8cab8f667bde6e5,
+  unitPlacementDisplayPrefab: {fileID: 7918711945486396909, guid: d99b6cefa1a27e04f8cab8f667bde6e5,
+    type: 3}
+  unitSelectionDisplayPrefab: {fileID: 6261854098719739517, guid: bfb9de7b17ecee44b8ab38b29d6118ef,
     type: 3}
   claymorePrefab: {fileID: 1364412091, guid: f8294f50b9dd14fab98a9b98818f4e9c, type: 3}
   compensatorPrefab: {fileID: 1522284473, guid: 19b8636b8970a4ad682fce71dea39343,

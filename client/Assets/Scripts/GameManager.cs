@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts:gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
 
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
         cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
@@ -474,5 +474,10 @@ public class GameManager : MonoBehaviour {
             }
         }
         return retList;
+    }
+
+    //===================== Functions used to interact with the camera ===================
+    public void SnapToPosition(Vector2Int pos) {
+        cameraRig.SnapToPosition(boardController.CellToWorld(pos));
     }
 }
