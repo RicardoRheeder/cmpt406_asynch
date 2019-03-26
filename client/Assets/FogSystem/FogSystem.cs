@@ -39,13 +39,13 @@ public class FogSystem : MonoBehaviour
         }
         else if (dayCycle == 1)
         {
-            alphaAmount = Random.Range(0.15f, 0.3f);
+            alphaAmount = Random.Range(0.15f, 0.45f);
             this.GetComponent<MeshRenderer>().material.SetColor("_TintColor", new Color(0.5f, 0.5f, 0.5f, alphaAmount));
 
         }
         else
         {
-            alphaAmount = Random.Range(0.3f, 0.6f);
+            alphaAmount = Random.Range(0.45f, 0.7f);
             this.GetComponent<MeshRenderer>().material.SetColor("_TintColor", new Color(0.6f, 0.6f, 0.6f, alphaAmount));
 
         }
