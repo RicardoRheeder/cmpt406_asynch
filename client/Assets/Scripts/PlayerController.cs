@@ -105,12 +105,15 @@ public class PlayerController : MonoBehaviour {
         this.audioManager = audioManager;
         this.presetTexts = presetTexts;
 
+        userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
         if (isPlacing) {
             controllerState = PlayerState.placing;
             this.armyPreset = new List<int>() {
                 armyPreset.General,
             };
             this.armyPreset.AddRange(armyPreset.Units);
+
+            userTurnText.text = "Placing Units";
         }
         else {
             controllerState = PlayerState.playing;
@@ -126,7 +129,6 @@ public class PlayerController : MonoBehaviour {
             unitDisplayMovementSpeed = GameObject.Find("unitDisplayMove").GetComponent<TMP_Text>();
             unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
             unitDisplayName = GameObject.Find("unitName").GetComponent<TMP_Text>();
-            userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
 
             actionsName = GameObject.Find("ActionName");
             attackButtonObject = GameObject.Find("AttackButton");

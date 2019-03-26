@@ -118,7 +118,9 @@ public class GameBuilder : MonoBehaviour {
             UnitDisplayTexts.Add(unitText);
             unitText.transform.SetParent(unitPlacementViewport.transform, false);
             unitText.GetComponentInChildren<TMP_Text>().text = UnitMetadata.ReadableNames[(UnitType)unit];
-            this.unitTexts.Add(unitText);
+            if(!isPlacing) {
+                this.unitTexts.Add(unitText);
+            }
         }
     }
 
