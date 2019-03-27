@@ -291,12 +291,10 @@ public class BoardController {
 
     public List<Vector2Int> GetTilesWithinAttackRange(Vector2Int startingPos, int range) {
         return HexUtility.FindTilesInVision(startingPos,range,tilemap,false);
-        // return HexUtility.GetTilePositionsInRange(tilemap, startingPos, range);
     }
 
     public List<Vector2Int> GetTilesWithinMovementRange(Vector2Int startingPos, int movementSpeed) {
-        return HexUtility.FindTilesInVision(startingPos,movementSpeed,tilemap,false);
-        // return HexUtility.HexReachable(startingPos, movementSpeed, tilemap, false);
+        return HexUtility.HexReachable(startingPos, movementSpeed, tilemap, false);
     }
 
     public void RenderPath(Vector2Int startingPos, Vector2Int endPos) {
