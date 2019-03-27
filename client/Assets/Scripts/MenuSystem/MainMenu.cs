@@ -193,6 +193,8 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuGamesInvitesButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(true, false, false, false, false, false);
+        mainMenuContainer.SetActive(true);
+
         Tuple<bool, GameStateCollection> response = networkApi.GetPendingGamesInformation();
         int childrenCount = gameInviteGamesViewContent.transform.childCount;
         for (int i = 1; i < childrenCount; i++) {
@@ -239,6 +241,8 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuActiveGamesButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, true, false, false, false, false);
+        mainMenuContainer.SetActive(true);
+
         Tuple<bool, GameStateCollection> response = networkApi.GetActiveGamesInformation();
         int childrenCount = activeGamesViewContent.transform.childCount;
         for (int i = 1; i < childrenCount; i++) {
@@ -276,6 +280,8 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuJoinGameButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, true, false, false);
+        mainMenuContainer.SetActive(true);
+
         Tuple<bool, GameStateCollection> response = networkApi.GetPublicGames();
         if (response.First) {
             foreach (var state in response.Second.states) {
@@ -307,6 +313,7 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuCreateGameButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, true, false, false, false);
+        mainMenuContainer.SetActive(true);
     }
 
     //========================Army Builder/Selector Functionality========================
@@ -322,6 +329,7 @@ public class MainMenu : MonoBehaviour {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, false, true, false);
         armyBuilderPanel.SetActive(false);
+        mainMenuContainer.SetActive(true);
         SetupArmySelector(10000, null);
     }
 
@@ -339,7 +347,8 @@ public class MainMenu : MonoBehaviour {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, false, true, false);
         armyBuilderPanel.SetActive(false);
-        if(storedState == null) {
+        mainMenuContainer.SetActive(true);
+        if (storedState == null) {
             SetupArmySelector(10000, null);
         }
         else {
@@ -349,7 +358,7 @@ public class MainMenu : MonoBehaviour {
 
     public void MainMenuArmySelectorButton() {
         audioManager.Play(SoundName.ButtonPress);
-        mainMenuContainer.SetActive(false);
+        mainMenuContainer.SetActive(true);
         SetMenuState(false, false, false, false, true, false);
         armySelectorDelete.onClick.RemoveAllListeners();
         SetupArmySelector(10000, null);
@@ -502,6 +511,7 @@ public class MainMenu : MonoBehaviour {
     public void MainMenuMapsButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(false, false, false, false, false, true);
+        mainMenuContainer.SetActive(true);
         MapSelection();
     }
     
