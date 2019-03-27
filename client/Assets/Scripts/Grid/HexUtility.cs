@@ -311,7 +311,7 @@ public static class HexUtility {
         List<Vector2Int> outerRing = FindRing(position,range);
         HashSet<Vector2Int> visionTiles = new HashSet<Vector2Int>();
         for(int i=0; i<outerRing.Count; i++) {
-            List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap);
+            List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap, ignoreElevation);
             for(int k=0; k<line.Count; k++) {
                 visionTiles.Add(line[k]);
             }
@@ -320,7 +320,7 @@ public static class HexUtility {
         return visionTiles.ToList();
     }
 
-    public static List<Vector2Int> FindVisionLine(Vector2Int startPos, Vector2Int endPos, Tilemap tilemap) {
+    public static List<Vector2Int> FindVisionLine(Vector2Int startPos, Vector2Int endPos, Tilemap tilemap, bool ignoreElevation) {
         float distance = HexDistance( startPos, endPos );
         List<Vector2Int> visionLine = new List<Vector2Int>();
         Vector3 cubeStart = OddrToCube( startPos );
@@ -349,7 +349,7 @@ public static class HexUtility {
                     continue;
                 }
                 visionLine.Add(tilePosition);
-                if(tile.elevation > startTile.elevation) {
+                if(tile.elevation > startTile.elevation && !ignoreElevation) {
                     break;
                 }
             }
