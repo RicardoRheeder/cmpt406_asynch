@@ -107,10 +107,10 @@ public class MainMenu : MonoBehaviour {
 
         friendsListInputField = GameObject.Find("FriendsInputField").GetComponent<TMP_InputField>();
         friendsListDict = new Dictionary<string, GameObject> {};
-        joinGameViewContent = GameObject.Find("JoinPublicGameViewport");
-        activeGamesViewContent = GameObject.Find("ActiveGamesViewport");
-        gameInviteGamesViewContent = GameObject.Find("PendingGamesViewport");
-        friendsViewContent = GameObject.Find("FriendsListViewport");
+        joinGameViewContent = GameObject.Find("JoinPublicGameContent");
+        activeGamesViewContent = GameObject.Find("ActiveGamesContent");
+        gameInviteGamesViewContent = GameObject.Find("PendingGamesContent");
+        friendsViewContent = GameObject.Find("FriendsListContent");
 
         gameInviteMapName = GameObject.Find("PendingGameMap").GetComponent<TMP_Text>();
         gameInviteCurrentPlayers = GameObject.Find("PendingNumberPlayers").GetComponent<TMP_Text>();
@@ -126,7 +126,7 @@ public class MainMenu : MonoBehaviour {
         stockText = GameObject.Find("stockText").GetComponent<TMP_Text>();
         maxText = GameObject.Find("maxText").GetComponent<TMP_Text>();
 
-        armyChooserViewport = GameObject.Find("ArmyChooserViewport");
+        armyChooserViewport = GameObject.Find("ArmyChooserContent");
         armySelectorDelete = GameObject.Find("ASDeleteButton").GetComponent<Button>();
 
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
