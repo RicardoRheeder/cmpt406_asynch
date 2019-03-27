@@ -116,16 +116,18 @@ public class FogOfWarController {
         }
         viewer.SetAffectedTiles(newTiles);
 
-        // TODO: this is broken now
-        List<Vector2Int> edgePositions = HexUtility.FindRing(viewer.GetPosition(),viewer.GetRadius()+1);
+        // find neighbours of cleared tiles
         List<Vector2Int> edgeTiles = new List<Vector2Int>();
-        for(int i=0; i < edgePositions.Count; i++) {
-            clearedTiles.TryGetValue(edgePositions[i],out List<FogViewer> tileList);
-            FogTile tile = fogTilemap.GetTile((Vector3Int)edgePositions[i]) as FogTile;
-            if((tileList == null || tileList.Count == 0) && tile != null) {
-                tile.SetAsEdge();
-                fogTilemap.RefreshTile((Vector3Int)edgePositions[i]);
-                edgeTiles.Add(edgePositions[i]);
+        for(int i=0; i<viewer.GetAffectedTiles().Count;i++) {
+            List<Vector2Int> neighbours = HexUtility.GetNeighborPositions(viewer.GetAffectedTiles()[i]);
+            for(int k=0; k<neighbours.Count;k++) {
+                clearedTiles.TryGetValue(neighbours[k],out List<FogViewer> tileList);
+                FogTile tile = fogTilemap.GetTile((Vector3Int)neighbours[k]) as FogTile;
+                if((tileList == null || tileList.Count == 0) && tile != null) {
+                    tile.SetAsEdge();
+                    fogTilemap.RefreshTile((Vector3Int)neighbours[k]);
+                    edgeTiles.Add(neighbours[k]);
+                }
             }
         }
         viewer.SetEdgeTiles(edgeTiles);
