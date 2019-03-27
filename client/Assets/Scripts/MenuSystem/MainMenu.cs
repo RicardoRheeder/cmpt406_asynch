@@ -16,6 +16,7 @@ public class MainMenu : MonoBehaviour {
 
     //Main Menu panels
     private GameObject mainMenuContainer;
+    private GameObject playContainer;
     private GameObject pendingGamesPanel;
     private GameObject activeGamesPanel;
     private GameObject createGamePanel;
@@ -95,6 +96,7 @@ public class MainMenu : MonoBehaviour {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
 
         mainMenuContainer = GameObject.Find("MainMenuContainer");
+        playContainer = GameObject.Find("PlayContainer");
         pendingGamesPanel = GameObject.Find("PendingGamesPanel");
         activeGamesPanel = GameObject.Find("ActiveGamesPanel");
         createGamePanel = GameObject.Find("CreateGamePanel");
