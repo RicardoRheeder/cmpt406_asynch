@@ -8,6 +8,7 @@ public class FogOfWarController {
 
     GameObject fogObject;
     Tilemap fogTilemap;
+    Tilemap tilemap;
 
     Dictionary<Vector2Int,List<FogViewer>> clearedTiles = new Dictionary<Vector2Int, List<FogViewer>>();
     Dictionary<Vector2Int,FogTile> mapEdgeTiles = new Dictionary<Vector2Int, FogTile>();
@@ -19,6 +20,7 @@ public class FogOfWarController {
             return;
         }
 
+        this.tilemap = tilemap;
         fogObject = Resources.Load<GameObject>("Fog/FogTile");
 
         if(fogTilemap == null) {
@@ -95,7 +97,8 @@ public class FogOfWarController {
         }
 
         // clear new tiles
-        List<Vector2Int> tiles = HexUtility.GetTilePositionsInRange(fogTilemap,viewer.GetPosition(),viewer.GetRadius());
+        List<Vector2Int> tiles = HexUtility.FindTilesInVision(viewer.GetPosition(),viewer.GetRadius(),tilemap,false);
+        // List<Vector2Int> tiles = HexUtility.GetTilePositionsInRange(fogTilemap,viewer.GetPosition(),viewer.GetRadius());
         List<Vector2Int> newTiles = new List<Vector2Int>();
         for(int i=0; i < tiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)tiles[i]) as FogTile;
@@ -113,7 +116,8 @@ public class FogOfWarController {
         }
         viewer.SetAffectedTiles(newTiles);
 
-        List<Vector2Int> edgePositions = HexUtility.FindRing(viewer.GetPosition(),viewer.GetRadius()+1,1);
+        // TODO: this is broken now
+        List<Vector2Int> edgePositions = HexUtility.FindRing(viewer.GetPosition(),viewer.GetRadius()+1);
         List<Vector2Int> edgeTiles = new List<Vector2Int>();
         for(int i=0; i < edgePositions.Count; i++) {
             clearedTiles.TryGetValue(edgePositions[i],out List<FogViewer> tileList);
