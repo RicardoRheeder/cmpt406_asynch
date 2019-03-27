@@ -33,6 +33,10 @@ public class Unit : MonoBehaviour {
         TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
+            if (this.GetComponent<SpecialEffect>() != null)
+            {
+                this.GetComponent<SpecialEffect>().playAttackEffect();
+            }
         }
     }
 
