@@ -149,6 +149,14 @@ public class MainMenu : MonoBehaviour {
     [SerializeField]
     private Image mapPreview;
 
+    //Tutorial screen variables
+    [SerializeField]
+    private GameObject mapsContainerWindow;
+    [SerializeField]
+    private GameObject cardsContainerWindow;
+    [SerializeField]
+    private GameObject tutContainerWindow;
+
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -208,7 +216,7 @@ public class MainMenu : MonoBehaviour {
     //========================Master Button Functionality========================
     public void MasterArmiesButton() {
         audioManager.Play(SoundName.ButtonPress);
-        SetMenuState(armySelectorState: true);
+        SetMenuState(armySelectorState: true, mainMenuState: true);
         SetupArmySelector(10000, null);
     }
 
@@ -332,7 +340,7 @@ public class MainMenu : MonoBehaviour {
             audioManager.Play(SoundName.ButtonPress);
             networkApi.AcceptGame(state.id);
         }
-        SetMenuState(armySelectorState: true);
+        SetMenuState(armySelectorState: true, mainMenuState: true);
         SetupArmySelector(BoardMetadata.CostDict[state.boardId], state);
     }
 
@@ -508,9 +516,19 @@ public class MainMenu : MonoBehaviour {
     //========================Tutorial Functionality========================
     //Most of the tutorial functionality is in its own script: TutorialUI.cs
     //========================Map Screen Functionality========================
+
+    //Helper Functions while in the play menu
+    public void SetTutorialMenuState(bool tutWindowState = false, bool cardsWindowState = false, bool mapsWindowState = false)
+    {
+        mapsContainerWindow.SetActive(mapsWindowState);
+        cardsContainerWindow.SetActive(cardsWindowState);
+        tutContainerWindow.SetActive(tutWindowState);
+    }
+
     public void MapsButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(mapsContainerState: true, mainMenuState: true);
+        SetTutorialMenuState(mapsWindowState: true);
         MapSelection();
     }
     
