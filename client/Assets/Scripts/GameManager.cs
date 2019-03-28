@@ -296,7 +296,7 @@ public class GameManager : MonoBehaviour {
 
     //===================== In game button functionality ===================
     public void EndTurn() {
-        StartCoroutine("MainMenuNavigationCoundDown");
+        StartCoroutine("MainMenuNavigationCountDown");
         audioManager.Play(SoundName.ButtonPress);
 
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
@@ -308,7 +308,7 @@ public class GameManager : MonoBehaviour {
 
     private TextMeshProUGUI countDownText;
     private float startTime;
-    IEnumerator MainMenuNavigationCoundDown() {
+    IEnumerator MainMenuNavigationCountDown() {
         countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
         this.inGameMenu.returningToMainMenuPanel.SetActive(true);
         startTime = Time.time;
@@ -341,8 +341,8 @@ public class GameManager : MonoBehaviour {
         UnitStats general = placedUnits[0];
         placedUnits.RemoveAt(0);
         ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general);
+        StartCoroutine("MainMenuNavigationCountDown");
         client.ReadyUnits(readyState);
-        SceneManager.LoadScene("MainMenu");
     }
 
     //Used for unit placement
