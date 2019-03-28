@@ -5,100 +5,100 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+#pragma warning disable 649
 public class ArmyBuilderUI : MonoBehaviour {
 
     //References to the used APIs
     private Client client;
     private AudioManager audioManager;
 
-    //the current unit being looked at
-    public UnitType selectedUnit;
-
-    //The army we are creating/editing
+    private UnitType selectedUnit;
     public ArmyPreset selectedArmy;
 
     //References to the in game panel we populate with unit names
-    public GameObject armyContent;
-    public GameObject friendsListCellPrefab; //Note: this can be a button where we apply a dynamic listener that removes it from the army
-    public TMP_InputField armyName;
+    [SerializeField]
+    private GameObject armyListView;
+    [SerializeField]
+    private GameObject armyListCellPrefab; //Note: this can be a button where we apply a dynamic listener that removes it from the army
+    [SerializeField]
+    private TMP_InputField armyName;
 
     //References to texts we update
+    [SerializeField]
     private TMP_Text stockNum;
+    [SerializeField]
     private TMP_Text healthNum;
+    [SerializeField]
     private TMP_Text attackNum;
+    [SerializeField]
     private TMP_Text armourNum;
+    [SerializeField]
     private TMP_Text rangeNum;
+    [SerializeField]
     private TMP_Text pierceNum;
+    [SerializeField]
     private TMP_Text aoeNum;
+    [SerializeField]
     private TMP_Text movementNum;
+    [SerializeField]
     private TMP_Text unitCostNum;
+    [SerializeField]
     private TMP_Text unitName;
+    [SerializeField]
     private Text cardName1;
+    [SerializeField]
     private Text cardEffects1;
+    [SerializeField]
     private Text cardName2;
+    [SerializeField]
     private Text cardEffects2;
+    [SerializeField]
     private Image typeImage;
+    [SerializeField]
     private Button trooper;
+    [SerializeField]
     private Button recon;
+    [SerializeField]
     private Button steamer;
+    [SerializeField]
     private Button pewpew;
+    [SerializeField]
     private Button compensator;
+    [SerializeField]
     private Button foundation;
+    [SerializeField]
     private Button claymore;
+    [SerializeField]
     private Button midas;
+    [SerializeField]
     private Button powerSurge;
+    [SerializeField]
     private Button albarn;
+    [SerializeField]
     private Button tungsten;
+    [SerializeField]
     private Button sandman;
+    [SerializeField]
     private Button adren;
-    private Color highlight;
-    private Color fade;
 
+    [SerializeField]
     private GameObject addUnitButton;
-    
-    public new Sprite light;
-    public Sprite piercing;
-    public Sprite heavy;
-    public Sprite support;
-    public Sprite general;
+
+    [SerializeField]
+    private new Sprite light;
+    [SerializeField]
+    private Sprite piercing;
+    [SerializeField]
+    private Sprite heavy;
+    [SerializeField]
+    private Sprite support;
+    [SerializeField]
+    private Sprite general;
 
     public void Awake() {
         client = GameObject.Find("Networking").GetComponent<Client>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
-        armyContent = GameObject.Find("ABListContent");
-        armyName = GameObject.Find("ABNameInput").GetComponent<TMP_InputField>();
-        stockNum = GameObject.Find("CostNum").GetComponent<TMP_Text>();
-        healthNum = GameObject.Find("HealthNum").GetComponent<TMP_Text>();
-        attackNum = GameObject.Find("AttackNum").GetComponent<TMP_Text>();
-        armourNum = GameObject.Find("ArmorNum").GetComponent<TMP_Text>();
-        rangeNum = GameObject.Find("RangeNum").GetComponent<TMP_Text>();
-        pierceNum = GameObject.Find("PierceNum").GetComponent<TMP_Text>();
-        aoeNum = GameObject.Find("AOENum").GetComponent<TMP_Text>();
-        movementNum = GameObject.Find("MovementNum").GetComponent<TMP_Text>();
-        unitCostNum = GameObject.Find("UnitCostNum").GetComponent<TMP_Text>();
-        unitName = GameObject.Find("UnitName").GetComponent<TMP_Text>();
-        cardName1 = GameObject.Find("cardName1").GetComponent<Text>();
-        cardEffects1 = GameObject.Find("cardEffects1").GetComponent<Text>();
-        cardName2 = GameObject.Find("cardName2").GetComponent<Text>();
-        cardEffects2 = GameObject.Find("cardEffects2").GetComponent<Text>();
-        typeImage = GameObject.Find("TypeImage").GetComponent<Image>();
-        trooper = GameObject.Find("TrooperButton").GetComponent<Button>();
-        recon = GameObject.Find("ReconButton").GetComponent<Button>();
-        steamer = GameObject.Find("SteamerButton").GetComponent<Button>();
-        pewpew = GameObject.Find("PewpewButton").GetComponent<Button>();
-        compensator = GameObject.Find("CompensatorButton").GetComponent<Button>();
-        foundation = GameObject.Find("FoundationButton").GetComponent<Button>();
-        claymore = GameObject.Find("ClaymoreButton").GetComponent<Button>();
-        midas = GameObject.Find("MidasButton").GetComponent<Button>();
-        powerSurge = GameObject.Find("PowerSurgeButton").GetComponent<Button>();
-        albarn = GameObject.Find("General1").GetComponent<Button>();
-        tungsten =GameObject.Find("General2").GetComponent<Button>();
-        adren = GameObject.Find("General3").GetComponent<Button>();
-        sandman = GameObject.Find("General4").GetComponent<Button>();
-        highlight = Color.yellow;
-        fade = Color.grey;
-        addUnitButton = GameObject.Find("SelectUnitButton");
         addUnitButton.SetActive(false);
 
         ConfigureOnClick(trooper, UnitType.trooper);
@@ -295,14 +295,14 @@ public class ArmyBuilderUI : MonoBehaviour {
     }
 
     private void AddUnitHelper(UnitType type) {
-        GameObject unitText = Instantiate(friendsListCellPrefab);
+        GameObject unitText = Instantiate(armyListCellPrefab);
         unitText.GetComponent<TMP_Text>().SetText(UnitMetadata.ReadableNames[type]);
-        unitText.transform.SetParent(armyContent.transform, false);
+        unitText.transform.SetParent(armyListView.transform, false);
     }
 
     public void DeleteUnitHelper(UnitType unit) {
         string name = UnitMetadata.ReadableNames[unit];
-        foreach (Transform child in armyContent.transform) {
+        foreach (Transform child in armyListView.transform) {
             if (child.transform.name != "Content" && child.GetComponent<TextMeshProUGUI>().text == name){
                 Destroy(child.gameObject);
                 return;
@@ -311,7 +311,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     }
 
     public void DeleteGeneralHelper() {
-        foreach (Transform child in armyContent.transform) {
+        foreach (Transform child in armyListView.transform) {
             if (child.transform.name != "Content" &&
                 (child.GetComponent<TextMeshProUGUI>().text == "Albarn" ||
                 child.GetComponent<TextMeshProUGUI>().text == "Tungsten" ||
@@ -324,7 +324,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     }
 
     public void DeleteUnitsHelper() {
-        foreach (Transform child in armyContent.transform) {
+        foreach (Transform child in armyListView.transform) {
             if (child.transform.name != "Content")
                 Destroy(child.gameObject);   
         }
@@ -332,133 +332,133 @@ public class ArmyBuilderUI : MonoBehaviour {
     
     public void ChangeFilter() {
         var colors = recon.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         recon.colors = colors;
         
         colors = trooper.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         trooper.colors = colors;
         
         colors = steamer.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         steamer.colors = colors;
         
         colors = pewpew.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         pewpew.colors = colors;
         
         colors = compensator.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         compensator.colors = colors;
         
         colors = foundation.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         foundation.colors = colors;
         
         colors = claymore.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         claymore.colors = colors;
         
         colors = powerSurge.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         powerSurge.colors = colors;
         
         colors = midas.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         midas.colors = colors;
         
         colors = adren.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         adren.colors = colors;
         
         colors = albarn.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         albarn.colors = colors;
         
         colors = tungsten.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         tungsten.colors = colors;
         
         colors = sandman.colors;
-        colors.normalColor = fade;
+        colors.normalColor = ColourConstants.BUTTON_DEFAULT;
         sandman.colors = colors;
     }
     
     public void FilterLight() {
         var colors = recon.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         recon.colors = colors;
         
         colors = trooper.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         trooper.colors = colors;
         
         colors = adren.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         adren.colors = colors;
     }
     
     public void FilterPiercing() {
         var colors = compensator.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         compensator.colors = colors;
         
         colors = foundation.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         foundation.colors = colors;
         
         colors = tungsten.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         tungsten.colors = colors;
     }
     
     public void FilterHeavy() {
         var colors = steamer.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         steamer.colors = colors;
         
         colors = pewpew.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         pewpew.colors = colors;
         
         colors = albarn.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         albarn.colors = colors;
     }
     
     public void FilterSupport() {
         var colors = midas.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         midas.colors = colors;
         
         colors = claymore.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         claymore.colors = colors;
         
         colors = powerSurge.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         powerSurge.colors = colors;
         
         colors = sandman.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         sandman.colors = colors;
     }
     
     public void FilterGeneral() {
         var colors = albarn.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         albarn.colors = colors;
         
         colors = adren.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         adren.colors = colors;
         
         colors = tungsten.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         tungsten.colors = colors;
         
         colors = sandman.colors;
-        colors.normalColor = highlight;
+        colors.normalColor = ColourConstants.BUTTON_ACTIVE;
         sandman.colors = colors;
     }
 }
