@@ -342,8 +342,8 @@ public class MainMenu : MonoBehaviour {
         }
         else {
             storedState = null;
-            armySelectorObject.SetActive(false);
         }
+        armySelectorObject.SetActive(false);
         DestroyChildrenInList(armySelectorListViewContent);
 
         if (!networkApi.RefreshUserData()) {
