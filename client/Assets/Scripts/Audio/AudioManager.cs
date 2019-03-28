@@ -5,10 +5,7 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour {
 
     public AudioLibrary[] sounds;
-    public static AudioManager instance = null;
     public AudioMixer masterMixer;
-
-
 
     void Awake() {
         // Creates an a modifible element in the inspector of the audioManager for each audio clip.
@@ -20,15 +17,7 @@ public class AudioManager : MonoBehaviour {
             sound.audioSource.loop = sound.loop;
             sound.audioSource.outputAudioMixerGroup = sound.audioMixerGroup;
         }
-
-        // Instaniate the object. If one already exists, destroy it.
-        if (instance == null) {
-            instance = this;
-        }
-        else {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(this);
     }
 
 
