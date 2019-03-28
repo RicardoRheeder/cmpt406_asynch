@@ -306,12 +306,10 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private TextMeshProUGUI countDownText;
-    private float startTime;
     IEnumerator MainMenuNavigationCountDown() {
-        countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
         this.inGameMenu.returningToMainMenuPanel.SetActive(true);
-        startTime = Time.time;
+        float startTime = Time.time;
 
         int displayTime = 3;
         while (displayTime > 0) {
