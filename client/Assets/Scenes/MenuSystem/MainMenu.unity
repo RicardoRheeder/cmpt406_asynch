@@ -586,6 +586,8 @@ MonoBehaviour:
   gameInviteMaxPlayers: {fileID: 2081229483}
   gameInviteJoinButton: {fileID: 2089748334}
   armySelectorListViewContent: {fileID: 58265768}
+  armySelectorListViewPrefab: {fileID: 1412710373, guid: c1227b33ccf97a74b9fed1b3c8926a0a,
+    type: 3}
   armyName: {fileID: 1684636726}
   generalName: {fileID: 440718059}
   stockNum: {fileID: 1275245536}
@@ -13891,7 +13893,7 @@ PrefabInstance:
     - target: {fileID: 8099952579305707795, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -96.500046
+      value: -96.50003
       objectReference: {fileID: 0}
     - target: {fileID: 8099952579305707795, guid: 0ab91e7df990b8b4b94d79d4f72970a3,
         type: 3}
@@ -19008,7 +19010,7 @@ PrefabInstance:
     - target: {fileID: 6275898965009200511, guid: a00af467617f6af42903929e02484898,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.000035729394
+      value: -0.000036845868
       objectReference: {fileID: 0}
     - target: {fileID: 6275898965009200511, guid: a00af467617f6af42903929e02484898,
         type: 3}

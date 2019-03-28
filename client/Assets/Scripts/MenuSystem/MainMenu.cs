@@ -86,6 +86,8 @@ public class MainMenu : MonoBehaviour {
     [SerializeField]
     private GameObject armySelectorListViewContent;
     [SerializeField]
+    private GameObject armySelectorListViewPrefab;
+    [SerializeField]
     private TMP_Text armyName;
     [SerializeField]
     private TMP_Text generalName;
@@ -353,7 +355,7 @@ public class MainMenu : MonoBehaviour {
 
         List<ArmyPreset> presets = ArmyBuilder.GetPresetsUnderCost(maxCost);
         foreach (var preset in presets) {
-            GameObject armyCell = Instantiate(gameListCellPrefab);
+            GameObject armyCell = Instantiate(armySelectorListViewPrefab);
             Button armyButton = armyCell.GetComponent<Button>();
             armyButton.GetComponentsInChildren<TMP_Text>()[0].SetText(preset.GetDescription());
             armyButton.onClick.RemoveAllListeners();
