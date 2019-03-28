@@ -139,6 +139,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         selectedArmy = newPreset;
         GetCost();
         DeleteUnitsHelper();
+        ShowArmy();
     }
 
     public void UpdateDisplay() {
@@ -265,15 +266,12 @@ public class ArmyBuilderUI : MonoBehaviour {
         //if it is a unit, add it to the army
         if ((int)selectedUnit < UnitMetadata.GENERAL_THRESHOLD) {//generals are above 100
             selectedArmy.AddUnit(selectedUnit);
-            GetCost();
-            AddUnitHelper(selectedUnit);
         }
         else {
             selectedArmy.ReplaceGeneral((int)selectedUnit);
-            GetCost();
-            DeleteGeneralHelper();
-            AddUnitHelper(selectedUnit);
         }
+        GetCost();
+        ShowArmy();
     }
 
     public void DeleteUnit() {
@@ -282,7 +280,7 @@ public class ArmyBuilderUI : MonoBehaviour {
         if ((int)selectedUnit < UnitMetadata.GENERAL_THRESHOLD) {
             selectedArmy.RemoveUnit(selectedUnit);
             GetCost();
-            DeleteUnitHelper(selectedUnit);
+            ShowArmy();
         }
     }
 
@@ -294,32 +292,25 @@ public class ArmyBuilderUI : MonoBehaviour {
         client.RemoveArmyPreset(selectedArmy.Id);
     }
 
-    private void AddUnitHelper(UnitType type) {
-        GameObject unitText = Instantiate(armyListCellPrefab);
-        unitText.GetComponent<TMP_Text>().SetText(UnitMetadata.ReadableNames[type]);
-        unitText.transform.SetParent(armyListView.transform, false);
-    }
-
-    public void DeleteUnitHelper(UnitType unit) {
-        string name = UnitMetadata.ReadableNames[unit];
+    private void ShowArmy() {
+        //delete list first
         foreach (Transform child in armyListView.transform) {
-            if (child.transform.name != "Content" && child.GetComponent<TextMeshProUGUI>().text == name){
+            if (child.transform.name != "Content") {
                 Destroy(child.gameObject);
-                return;
             }
         }
-    }
 
-    public void DeleteGeneralHelper() {
-        foreach (Transform child in armyListView.transform) {
-            if (child.transform.name != "Content" &&
-                (child.GetComponent<TextMeshProUGUI>().text == "Albarn" ||
-                child.GetComponent<TextMeshProUGUI>().text == "Tungsten" ||
-                child.GetComponent<TextMeshProUGUI>().text == "Adren-LN" ||
-                child.GetComponent<TextMeshProUGUI>().text == "The Sandman")) {
-                Destroy(child.gameObject);
-                return;
-            }
+        //display the general
+        GameObject generalText = Instantiate(armyListCellPrefab);
+        generalText.GetComponent<TMP_Text>().SetText(UnitMetadata.ReadableNames[(UnitType)selectedArmy.General]);
+        generalText.transform.SetParent(armyListView.transform, false);
+
+        //display the army
+        for (int i = 0; i < selectedArmy.Units.Count; i++) {
+
+            GameObject unitText = Instantiate(armyListCellPrefab);
+            unitText.GetComponent<TMP_Text>().SetText(UnitMetadata.ReadableNames[(UnitType)selectedArmy.Units[i]]);
+            unitText.transform.SetParent(armyListView.transform, false);
         }
     }
 
