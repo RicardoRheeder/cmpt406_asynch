@@ -14,6 +14,8 @@ public class InGameMenu : MonoBehaviour {
     private GameObject unitStatsPanel;
     private GameObject menuPanel;
     private GameObject actionsPanel;
+    public GameObject returningToMainMenuPanel;
+
 
     // Start is called before the first frame update
     void Awake() {
@@ -27,11 +29,13 @@ public class InGameMenu : MonoBehaviour {
         settingsPanel = GameObject.Find("SettingsPanel");
         menuPanel = GameObject.Find("MenuPanel");
         actionsPanel = GameObject.Find("ActionsPanel");
+        returningToMainMenuPanel = GameObject.Find("ReturningToMainMenu");
     }
 
     public void SetupPanels(bool isPlacing) {
         menuPanel.SetActive(false);
         settingsPanel.SetActive(false);
+        returningToMainMenuPanel.SetActive(false);
 
         if (isPlacing) {
             unitSnapPanel.SetActive(false);

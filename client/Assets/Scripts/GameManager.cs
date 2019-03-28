@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 using CardsAndCarnage;
 
@@ -294,12 +296,29 @@ public class GameManager : MonoBehaviour {
 
     //===================== In game button functionality ===================
     public void EndTurn() {
+        StartCoroutine("MainMenuNavigationCoundDown");
+        audioManager.Play(SoundName.ButtonPress);
+
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }
-        audioManager.Play(SoundName.ButtonPress);
+    }
+
+    private TextMeshProUGUI countDownText;
+    private float startTime;
+    IEnumerator MainMenuNavigationCoundDown() {
+        countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
+        this.inGameMenu.returningToMainMenuPanel.SetActive(true);
+        startTime = Time.time;
+
+        int displayTime = 3;
+        while (displayTime > 0) {
+            countDownText.text = displayTime + "...";
+            displayTime = (int)(3 - (Time.time - startTime) + 1);
+            yield return null;
+        }
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
