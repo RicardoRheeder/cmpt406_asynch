@@ -15,8 +15,7 @@ public class AudioManager : MonoBehaviour {
 
     private void InitalizeAudio() {
         // Creates an a modifible element in the inspector of the audioManager for each audio clip.
-        foreach (AudioLibrary sound in sounds)
-        {
+        foreach (AudioLibrary sound in sounds) {
             sound.audioSource = gameObject.AddComponent<AudioSource>();
             sound.audioSource.clip = sound.audioClip;
             sound.audioSource.volume = sound.volume;
