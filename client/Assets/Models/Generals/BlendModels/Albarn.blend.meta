@@ -62,6 +62,31 @@ ModelImporter:
     100112: mesh05_001
     100114: mesh23
     100116: mesh24
+    100118: BackSideFemur_L
+    100120: BackSideFemur_L_001
+    100122: BackSideFoot_L
+    100124: BackSideFoot_L_001
+    100126: BackSideFootIK_L_002
+    100128: BackSideFootIK_L_003
+    100130: Base
+    100132: Cylinder_L
+    100134: Cylinder_R_001
+    100136: DrillShaft
+    100138: Empty
+    100140: FrontFemur
+    100142: FrontFoot
+    100144: FrontFootIK
+    100146: FrontSideBoot_L
+    100148: FrontSideBoot_L_001
+    100150: FrontSideBootIK_L_002
+    100152: FrontSideFemur_L
+    100154: FrontSideFemur_L_001
+    100156: FrontSideFootIK_L_003
+    100158: Piston_L
+    100160: Piston_R_001
+    100162: RearFemur
+    100164: RearFoot
+    100166: RearFootIK_001
     400000: //RootNode
     400002: cylinder01
     400004: mesh02
@@ -121,6 +146,31 @@ ModelImporter:
     400112: mesh05_001
     400114: mesh23
     400116: mesh24
+    400118: BackSideFemur_L
+    400120: BackSideFemur_L_001
+    400122: BackSideFoot_L
+    400124: BackSideFoot_L_001
+    400126: BackSideFootIK_L_002
+    400128: BackSideFootIK_L_003
+    400130: Base
+    400132: Cylinder_L
+    400134: Cylinder_R_001
+    400136: DrillShaft
+    400138: Empty
+    400140: FrontFemur
+    400142: FrontFoot
+    400144: FrontFootIK
+    400146: FrontSideBoot_L
+    400148: FrontSideBoot_L_001
+    400150: FrontSideBootIK_L_002
+    400152: FrontSideFemur_L
+    400154: FrontSideFemur_L_001
+    400156: FrontSideFootIK_L_003
+    400158: Piston_L
+    400160: Piston_R_001
+    400162: RearFemur
+    400164: RearFoot
+    400166: RearFootIK_001
     2100000: ___default___
     2100002: ___default____001
     2300000: cylinder01

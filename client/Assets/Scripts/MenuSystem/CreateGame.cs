@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,51 +11,54 @@ public class CreateGame : MonoBehaviour {
     private const int MINIMUM_TURN_TIME = 60; //1 minute in seconds
     private const int MINIMUM_FORFEIT_TIME = 6000; //10 minutes in seconds
 
-    //Storage of the network api persistant object
+    //Storage of the persistant object
     private Client networkApi;
-    private List<string> opponents;
+    GameManager manager;
+    AudioManager audioManager;
 
     //Cached ui elements
-    private TMP_Text turnDuration;
-    private Slider turnSlider;
+    [SerializeField]
     private TMP_Text forfeitDuration;
+    [SerializeField]
     private Slider forfeitSlider;
+    [SerializeField]
     private TMP_InputField invitePlayerInput;
+    [SerializeField]
     private Dropdown mapSelection;
+    [SerializeField]
     private Toggle privateToggle;
+    [SerializeField]
     private TMP_InputField gameNameInput;
+    [SerializeField]
     private Dropdown maxPlayersDropdown;
+    [SerializeField]
     private Button confirmButton;
-
+    [SerializeField]
     private GameObject maxPlayersContainer;
+    [SerializeField]
     private GameObject invitePlayersContainer;
+    [SerializeField]
     private GameObject invitedPlayersContainer;
+
+    //User Message object
+    [SerializeField]
+    private GameObject userMessagePanel;
+    [SerializeField]
+    private TMP_Text userMessageText;
+    [SerializeField]
+    private TMP_Text userPromptText;
 
     //Variables needed to populate the invited players list
     [SerializeField]
     private GameObject invitedPlayersTextPrefab;
-    private GameObject inviedPlayersViewContent;
-
-    GameManager manager;
-    AudioManager audioManager;
+    [SerializeField]
+    private GameObject invitedPlayersListViewContent;
+    private List<string> opponents;
+    Dictionary<string, GameObject> invitedPlayers = new Dictionary<string, GameObject>();
 
     //We need to find these on awake, since the "Menus.cs" file disables components on start
     public void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
-
-        forfeitDuration = GameObject.Find("ForfeitTimeDisplay").GetComponent<TMP_Text>();
-        forfeitSlider = GameObject.Find("ForfeitTimeSlider").GetComponent<Slider>();
-        invitePlayerInput = GameObject.Find("InvitePlayerInputField").GetComponent<TMP_InputField>();
-        mapSelection = GameObject.Find("MapDropdown").GetComponent<Dropdown>();
-        inviedPlayersViewContent = GameObject.Find("invitedFriendsViewport");
-        privateToggle = GameObject.Find("PrivateToggle").GetComponent<Toggle>();
-        gameNameInput = GameObject.Find("GameNameInputField").GetComponent<TMP_InputField>();
-        maxPlayersContainer = GameObject.Find("maxPlayers");
-        invitedPlayersContainer = GameObject.Find("invitePlayerDisplay");
-        invitePlayersContainer = GameObject.Find("invitePlayer");
-        maxPlayersDropdown = GameObject.Find("NumOfPlayersDropdown").GetComponent<Dropdown>();
-        confirmButton = GameObject.Find("ConfirmButton").GetComponent<Button>();
-
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
@@ -122,8 +123,7 @@ public class CreateGame : MonoBehaviour {
         string gameName = gameNameInput.text;
         if (!StringValidation.ValidateGameName(gameName)) {
             audioManager.Play(SoundName.ButtonError);
-            Debug.Log("invalid game name");
-            //Something has to inform the user here
+            DisplayUserMessage("Error", "Invalid game name.\nGame name must be between " + StringValidation.GAME_NAME_LOWER_LIMIT + " and " + StringValidation.GAME_NAME_UPPER_LIMIT + " characters long and contain no special characters.");
             return;
         }
 
@@ -148,22 +148,21 @@ public class CreateGame : MonoBehaviour {
             invitedPlayers.Clear();
             opponents.Clear();
             audioManager.Play(SoundName.ButtonPress);
-            GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
-            //Maybe pop up a game created message that fades out?
+            GameObject.Find("Canvas").GetComponent<MainMenu>().SetPlayMenuState();
+            DisplayUserMessage("Incoming Message...", "Game created successfully.");
         }
         else {
-            //Inform the user that it failed for some reason
-            audioManager.Play(SoundName.ButtonPress);
+            audioManager.Play(SoundName.ButtonError);
+            DisplayUserMessage("Error", "Could not create game.\nCheck your internet connection and try again.");
         }
     }
 
-    Dictionary<string, GameObject> invitedPlayers = new Dictionary<string, GameObject>();
     public void InvitePlayer() {
         string username = invitePlayerInput.text;
         if (StringValidation.ValidateUsername(username)) {
             GameObject invitedUser = Instantiate(invitedPlayersTextPrefab);
             invitedUser.GetComponent<TMP_Text>().text = username;
-            invitedUser.transform.SetParent(inviedPlayersViewContent.transform, false);
+            invitedUser.transform.SetParent(invitedPlayersListViewContent.transform, false);
             opponents.Add(username);
             invitedPlayers.Add(username, invitedUser);
             invitePlayerInput.text = "";
@@ -175,8 +174,7 @@ public class CreateGame : MonoBehaviour {
         //Check if we are creating a public or a private game
         string gameName = gameNameInput.text;
         if (!StringValidation.ValidateGameName(gameName)) {
-            Debug.Log("invalid game name");
-            //Something has to inform the user here
+            DisplayUserMessage("Error", "Invalid game name.\nGame name must be between " + StringValidation.GAME_NAME_LOWER_LIMIT + " and " + StringValidation.GAME_NAME_UPPER_LIMIT + " characters long and contain no special characters.");
             return;
         }
 
@@ -185,23 +183,26 @@ public class CreateGame : MonoBehaviour {
         int maxPlayers = Int32.Parse(maxPlayersDropdown.options[maxPlayersDropdown.value].text);
 
         if (networkApi.CreatePublicGame(gameName, forfeitTime, maxPlayers, boardId)) {
-            GameObject.Find("Canvas").GetComponent<MainMenu>().SetInitialMenuState();
+            GameObject.Find("Canvas").GetComponent<MainMenu>().SetPlayMenuState();
             foreach (var item in invitedPlayers) {
                 Destroy(item.Value);
             }
             invitedPlayers.Clear();
-            //Maybe pop up a game created message that fades out?
+            DisplayUserMessage("Incoming Message...", "Game created successfully.");
         }
         else {
-            //Inform the user that it failed for some reason
+            audioManager.Play(SoundName.ButtonError);
+            DisplayUserMessage("Error", "Could not create game.\nCheck your internet connection and try agai.n");
         }
-    }
-
-    public void UpdateTurnDuration() {
-        turnDuration.text = turnSlider.value <= 0.0f ? "infinite" : "" + turnSlider.value;
     }
 
     public void UpdateForfeitDuration() {
         forfeitDuration.text = forfeitSlider.value <= 0.0f ? "infinite" : "" + forfeitSlider.value;
+    }
+
+    private void DisplayUserMessage(string promptName, string message) {
+        userMessageText.SetText(message);
+        userPromptText.SetText(promptName);
+        userMessagePanel.SetActive(true);
     }
 }
