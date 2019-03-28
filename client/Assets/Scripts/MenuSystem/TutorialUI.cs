@@ -29,7 +29,7 @@ public class TutorialUI : MonoBehaviour {
         //for each tutorial, make a button
         foreach(TutorialPrefab t in tutorialList) {
             GameObject button = Instantiate(buttonPrefab) as GameObject;
-            
+
             //set the button text to the prefab's button text
             button.GetComponentInChildren<TextMeshProUGUI>().text = t.buttonText;
 
