@@ -275,7 +275,9 @@ public class MainMenu : MonoBehaviour {
 
         //Set up the join button to call the join function with the current state
         activeJoinButton.onClick.RemoveAllListeners();
-        activeJoinButton.onClick.AddListener(() => manager.LoadGame(state));
+        activeJoinButton.onClick.AddListener(() => {
+            manager.LoadGame(state);
+        });
     }
 
     //========================Public Games Functionality========================
