@@ -12,7 +12,7 @@ using System.Linq;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-
+#pragma warning disable 649
 public class UnitOutline : MonoBehaviour {
   private static HashSet<Mesh> registeredMeshes = new HashSet<Mesh>();
 

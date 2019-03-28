@@ -112,8 +112,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
             tempCardDisplaying = GameObject.Instantiate(this.gameObject) as GameObject;
             cardSystem.cardDisplayPanel.SetActive(true);
-            tempCardDisplaying.transform.SetParent(cardSystem.cardDisplayPanel.transform);
-            tempCardDisplaying.transform.localScale *= 4f;
+            tempCardDisplaying.transform.SetParent(cardSystem.cardDisplayPanel.transform, false);
+            tempCardDisplaying.transform.localScale *= 2.5f;
         }
     }
 

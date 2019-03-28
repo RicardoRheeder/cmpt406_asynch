@@ -8,11 +8,93 @@ ModelImporter:
     100004: Bone
     100006: mesh01
     100008: mesh03
+    100010: BackFemur_L
+    100012: BackFemur_R_001
+    100014: BackKneeTarget_L
+    100016: BackKneeTarget_R_001
+    100018: BackLeg_L
+    100020: BackLeg_L_001
+    100022: BackLeg_R_002
+    100024: BackTibia_L
+    100026: BackTibia_R_001
+    100028: Bone_011
+    100030: BottomVane
+    100032: BottomVane_001
+    100034: BottomVane_002
+    100036: Empty
+    100038: FrontFemur_L
+    100040: FrontFemur_R_001
+    100042: FrontkneeTarget_L
+    100044: FrontkneeTarget_R_001
+    100046: FrontLegIK_L
+    100048: FrontLegIK_R_001
+    100050: FrontTibia_L
+    100052: FrontTibia_R_001
+    100054: Gun
+    100056: GunSlide
+    100058: GunTarget
+    100060: MidFemur_L
+    100062: MidFemur_R_001
+    100064: MidKneeTarget_L
+    100066: MidKneeTarget_R_001
+    100068: MidLegIK_L
+    100070: MidLegIK_R_001
+    100072: MidTibia_L
+    100074: MidTibia_R_001
+    100076: MidVane
+    100078: MidVane_001
+    100080: MidVane_002
+    100082: TopVane
+    100084: TopVane_001
+    100086: TopVane_002
+    100088: TungstenArmature
+    100090: VaneTarget
     400000: //RootNode
     400002: Armature
     400004: Bone
     400006: mesh01
     400008: mesh03
+    400010: BackFemur_L
+    400012: BackFemur_R_001
+    400014: BackKneeTarget_L
+    400016: BackKneeTarget_R_001
+    400018: BackLeg_L
+    400020: BackLeg_L_001
+    400022: BackLeg_R_002
+    400024: BackTibia_L
+    400026: BackTibia_R_001
+    400028: Bone_011
+    400030: BottomVane
+    400032: BottomVane_001
+    400034: BottomVane_002
+    400036: Empty
+    400038: FrontFemur_L
+    400040: FrontFemur_R_001
+    400042: FrontkneeTarget_L
+    400044: FrontkneeTarget_R_001
+    400046: FrontLegIK_L
+    400048: FrontLegIK_R_001
+    400050: FrontTibia_L
+    400052: FrontTibia_R_001
+    400054: Gun
+    400056: GunSlide
+    400058: GunTarget
+    400060: MidFemur_L
+    400062: MidFemur_R_001
+    400064: MidKneeTarget_L
+    400066: MidKneeTarget_R_001
+    400068: MidLegIK_L
+    400070: MidLegIK_R_001
+    400072: MidTibia_L
+    400074: MidTibia_R_001
+    400076: MidVane
+    400078: MidVane_001
+    400080: MidVane_002
+    400082: TopVane
+    400084: TopVane_001
+    400086: TopVane_002
+    400088: TungstenArmature
+    400090: VaneTarget
     2100000: ___default___
     2100002: ___default____001
     2300000: //RootNode

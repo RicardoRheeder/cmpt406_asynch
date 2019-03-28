@@ -45,7 +45,7 @@ public class WindowGraph : MonoBehaviour {
         float yMinimum = valueList[0].value;
         
         for (int i = Mathf.Max(valueList.Count - maxVisibleValueAmount, 0); i < valueList.Count; i++) {
-            int value = valueList[i].value;
+            float value = valueList[i].value;
             if (value > yMaximum) {
                 yMaximum = value;
             }
@@ -76,7 +76,7 @@ public class WindowGraph : MonoBehaviour {
             /* on click, give a breakdown of totals (if provided) */
             if (breakDown != null && breakDown.ContainsKey(valueList[i].unitType)) {
                 UnitType ut = valueList[i].unitType;
-                Dictionary<UnitType, int> DamagePerUnitType = breakDown[ut].TotalPerUnitType;
+                Dictionary<UnitType, float> DamagePerUnitType = breakDown[ut].TotalPerUnitType;
                 barGameObject.AddComponent<Button>().onClick.AddListener(delegate {breakDownDamages(ut, DamagePerUnitType);});
             }
 
@@ -116,10 +116,10 @@ public class WindowGraph : MonoBehaviour {
         return gameObject;
     }
 
-    private void breakDownDamages(UnitType unit, Dictionary<UnitType, int> DamagePerUnitType) {
+    private void breakDownDamages(UnitType unit, Dictionary<UnitType, float> DamagePerUnitType) {
         List<AnalyticsManager.UnitValuePair> inputToShowGraph = new List<AnalyticsManager.UnitValuePair>();
 
-        foreach(KeyValuePair<UnitType, int> pair in DamagePerUnitType) {
+        foreach(KeyValuePair<UnitType, float> pair in DamagePerUnitType) {
             AnalyticsManager.UnitValuePair sd = new AnalyticsManager.UnitValuePair();
             sd.value = pair.Value;
             sd.unitType = pair.Key;
