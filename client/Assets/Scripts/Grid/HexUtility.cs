@@ -313,12 +313,10 @@ public static class HexUtility {
         List<Vector2Int> edgeTiles = new List<Vector2Int>();
         for(int i=0; i<outerRing.Count; i++) {
             List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap, ignoreElevation);
-            if(line.Count > 1) {
+            if(line.Count > 0) {
                 for(int k=0; k<line.Count-1; k++) {
                     visionTiles.Add(line[k]);
                 }
-            }
-            if(line.Count > 0) {
                 edgeTiles.Add(line[line.Count-1]);
             }
         }
