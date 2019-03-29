@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 using CardsAndCarnage;
 
@@ -295,13 +297,34 @@ public class GameManager : MonoBehaviour {
     }
 
     //===================== In game button functionality ===================
+    private bool exiting = false;
     public void EndTurn() {
+        if (exiting) {
+            return;
+        }
+        exiting = true;
+        StartCoroutine("MainMenuNavigationCountDown");
+        exiting = true;
+        audioManager.Play(SoundName.ButtonPress);
+
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }
-        audioManager.Play(SoundName.ButtonPress);
+    }
+
+    IEnumerator MainMenuNavigationCountDown() {
+        TextMeshProUGUI countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
+        this.inGameMenu.returningToMainMenuPanel.SetActive(true);
+        float startTime = Time.time;
+
+        int displayTime = 3;
+        while (displayTime > 0) {
+            countDownText.text = displayTime + "...";
+            displayTime = (int)(3 - (Time.time - startTime) + 1);
+            yield return null;
+        }
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
@@ -321,11 +344,15 @@ public class GameManager : MonoBehaviour {
     public void EndUnitPlacement() {
         //This function will have to figure out how to send the unit data to the server, and confirm that we are going
         //to be playing in this game
+        if (exiting) {
+            return;
+        }
+        exiting = true;
+        StartCoroutine("MainMenuNavigationCountDown");
         UnitStats general = placedUnits[0];
         placedUnits.RemoveAt(0);
         ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general);
         client.ReadyUnits(readyState);
-        SceneManager.LoadScene("MainMenu");
     }
 
     //Used for unit placement
