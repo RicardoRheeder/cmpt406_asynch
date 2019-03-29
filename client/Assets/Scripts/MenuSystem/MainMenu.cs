@@ -188,23 +188,24 @@ public class MainMenu : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        SetMenuState(mainMenuState: true, playContainerState: true);
-
         List<string> userFriends = networkApi.UserInformation.Friends;
         foreach(string friend in userFriends) {
             AddFriendHelper(friend);
         }
+
+        MasterPlayButton(playAudio: false);
+        YourGamesButton(playAudio: false);
     }
 
     //========================Helper Functions========================
     //Helper function to enable/disable menus with boolean flags
-    private void SetMenuState(bool mainMenuState=false, bool armyBuilderState=false, bool armySelectorState=false, bool mapsContainerState=false, bool playContainerState=false, bool tutorialPanelState=false) {
+    private void SetMenuState(bool mainMenuState = false, bool armySelectorState = false, bool armyBuilderState=false, bool playContainerState=false, bool tutorialPanelState=false, bool friendsListPanelState=false) {
         mainMenuPanel.SetActive(mainMenuState);
-        armyBuilderPanel.SetActive(armyBuilderState);
         armySelectorPanel.SetActive(armySelectorState);
-        mapsContainerPanel.SetActive(mapsContainerState);
+        armyBuilderPanel.SetActive(armyBuilderState);
         playContainerPanel.SetActive(playContainerState);
         tutorialPanel.SetActive(tutorialPanelState);
+        friendsListPanel.SetActive(friendsListPanelState);
     }
 
     //Helper function to destroy all children gameobjects of a content variable
@@ -231,9 +232,10 @@ public class MainMenu : MonoBehaviour {
         tutorialButtonImage.color = ColourConstants.BUTTON_DEFAULT;
     }
 
-    public void MasterPlayButton() {
-        audioManager.Play(SoundName.ButtonPress);
-        SetMenuState(mainMenuState: true, playContainerState: true);
+    public void MasterPlayButton(bool playAudio = true) {
+        if (playAudio)
+            audioManager.Play(SoundName.ButtonPress);
+        SetMenuState(mainMenuState: true, playContainerState: true, friendsListPanelState: true);
         SetPlayMenuState();
         armiesButtonImage.color = ColourConstants.BUTTON_DEFAULT;
         playButtonImage.color = ColourConstants.BUTTON_ACTIVE;
@@ -279,8 +281,9 @@ public class MainMenu : MonoBehaviour {
     }
 
     //========================Your Games Functionality========================
-    public void YourGamesButton() {
-        audioManager.Play(SoundName.ButtonPress);
+    public void YourGamesButton(bool playAudio = true) {
+        if(playAudio)
+            audioManager.Play(SoundName.ButtonPress);
         SetPlayMenuState(yourGamesState: true);
         DestroyChildrenInList(yourGamesListViewContent);
 
@@ -297,7 +300,8 @@ public class MainMenu : MonoBehaviour {
             }
         }
         else {
-            DisplayUserMessage("Error", "Failed to get game information from server.");
+            //This error can occur on a user that has no information available, i'll have to investigate
+            //DisplayUserMessage("Error", "Failed to get game information from server.");
         }
     }
 
@@ -334,7 +338,8 @@ public class MainMenu : MonoBehaviour {
             }
         }
         else {
-            DisplayUserMessage("Error", "Failed to get game information from server.");
+            //This error can occur on a user that has no information available, i'll have to investigate
+            //DisplayUserMessage("Error", "Failed to get game information from server.");
         }
     }
 
@@ -493,6 +498,15 @@ public class MainMenu : MonoBehaviour {
         }
     }
 
+    public void ArmyBuilderBack() {
+        audioManager.Play(SoundName.ButtonPress);
+        SetMenuState(armySelectorState: true, mainMenuState: true);
+        SetupArmySelector(10000, null);
+        armiesButtonImage.color = ColourConstants.BUTTON_ACTIVE;
+        playButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        tutorialButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+    }
+
     //========================Friend Functionality========================
     private void AddFriendHelper(string username) {
         GameObject friendText = Instantiate(friendsListCellPrefab);
@@ -543,7 +557,6 @@ public class MainMenu : MonoBehaviour {
     //========================Map Screen Functionality========================
     public void MapsButton() {
         audioManager.Play(SoundName.ButtonPress);
-        SetMenuState(mapsContainerState: true, mainMenuState: true);
         SetTutorialMenuState(mapsWindowState: true);
         MapSelection();
     }
