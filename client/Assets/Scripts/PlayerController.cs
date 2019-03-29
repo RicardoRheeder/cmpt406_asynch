@@ -72,7 +72,8 @@ public class PlayerController : MonoBehaviour {
         ability2,
         moving,
         attacking,
-        playingCard
+        playingCard,
+        selected
     };
     private InteractionState interactionState;
     private List<int> armyPreset;
@@ -87,6 +88,8 @@ public class PlayerController : MonoBehaviour {
     private Card cardBeingPlayed;
 
     private Dictionary<UnitStats, GameObject> unitButtonReferences;
+    private List<GameObject> unitButtonObjects;
+    private int unitButtonObjectsCurIndex = 0;
     private GameObject selectedUnitButton;
 
     private List<Vector2Int> highlightedTiles;
@@ -120,6 +123,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.none;
 
             this.unitButtonReferences = unitButtonReferences;
+            this.unitButtonObjects = new List<GameObject>();
 
             unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
             unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
@@ -157,7 +161,10 @@ public class PlayerController : MonoBehaviour {
                     audioManager.Play(SoundName.ButtonPress);
                     SelectUnit(pair.Key);
                     manager.SnapToPosition(selectedUnit.Position);
+                    int index = unitButtonObjects.IndexOf(pair.Value);
+                    unitButtonObjectsCurIndex = index + 1 >= unitButtonObjects.Count ? 0 : index + 1;
                 });
+                unitButtonObjects.Add(pair.Value);
             }
         }
         
@@ -189,7 +196,18 @@ public class PlayerController : MonoBehaviour {
         switch (controllerState) {
             case (PlayerState.playing):
                 switch (interactionState) {
+                    case (InteractionState.selected):
+                        if(Input.GetKeyDown(KeyCode.Space)) {
+                            MovementButton();
+                        }
+                        else if (Input.GetKeyDown(KeyCode.LeftShift)) {
+                            AttackButton();
+                        }
+                        break;
                     case (InteractionState.moving):
+                        if (Input.GetKeyDown(KeyCode.Space)) {
+                            MovementButton();
+                        }
                         if (prevMousePos != tilePos) {
                             hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
                             boardController.RenderPath(selectedUnit.Position, tilePos);
@@ -200,21 +218,24 @@ public class PlayerController : MonoBehaviour {
                         if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
                             if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
                                 manager.MoveUnit(selectedUnit.Position, tilePos);
-                                interactionState = InteractionState.none;
+                                interactionState = InteractionState.selected;
                             }
                         }
                         break;
                     case (InteractionState.attacking):
+                        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+                            AttackButton();
+                        }
                         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
                             if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
                                 manager.AttackUnit(selectedUnit.Position, tilePos);
-                                interactionState = InteractionState.none;
+                                interactionState = InteractionState.selected;
                             }
                         }
                         break;
                     case (InteractionState.ability1):
                         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                            interactionState = InteractionState.none;
+                            interactionState = InteractionState.selected;
                             if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability1)) {
                                 Ability1Button.onClick.RemoveAllListeners();
                                 Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
@@ -223,7 +244,7 @@ public class PlayerController : MonoBehaviour {
                         break;
                     case (InteractionState.ability2):
                         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                            interactionState = InteractionState.none;
+                            interactionState = InteractionState.selected;
                             if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability2)) {
                                 Ability2Button.onClick.RemoveAllListeners();
                                 Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
@@ -255,6 +276,9 @@ public class PlayerController : MonoBehaviour {
                 if(selectedUnit != null) {
                     UpdateUnitDisplay(selectedUnit);
                 }
+                if(Input.GetKeyDown(KeyCode.Tab)) {
+                    unitButtonObjects[unitButtonObjectsCurIndex].GetComponentInChildren<Button>().onClick.Invoke();
+                }
                 break;
             case (PlayerState.placing):
                 if (presetTexts.Count == 0) {
@@ -284,10 +308,11 @@ public class PlayerController : MonoBehaviour {
     private void MovementButton() {
         if(selectedUnit != null) {
             if(interactionState == InteractionState.moving) {
-                interactionState = InteractionState.none;
+                interactionState = InteractionState.selected;
                 boardController.ClearHighlighting();
             }
             else {
+                boardController.ClearHighlighting();
                 interactionState = InteractionState.moving;
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
@@ -299,10 +324,11 @@ public class PlayerController : MonoBehaviour {
     private void AttackButton() {
         if(selectedUnit != null) {
             if(interactionState == InteractionState.attacking) {
-                interactionState = InteractionState.none;
+                interactionState = InteractionState.selected;
                 boardController.ClearHighlighting();
             }
             else {
+                boardController.ClearHighlighting();
                 interactionState = InteractionState.attacking;
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
@@ -360,6 +386,10 @@ public class PlayerController : MonoBehaviour {
                 unitButtonReferences[unit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_ACTIVE;
                 selectedUnitButton = unitButtonReferences[unit];
             }
+            interactionState = InteractionState.selected;
+        }
+        else {
+            interactionState = InteractionState.none;
         }
         selectedUnit = unit;
     }

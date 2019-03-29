@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class GameBuilder : MonoBehaviour {
 
@@ -111,6 +112,7 @@ public class GameBuilder : MonoBehaviour {
         }
 
         GameObject generalText = Instantiate(prefabToUse);
+        List<Tabbing> tabScripts = new List<Tabbing>();
         UnitDisplayTexts.Add(generalText);
         for(int i = 0; i < unitNumbers.Count; i++) {
             int unit = unitNumbers[i];
