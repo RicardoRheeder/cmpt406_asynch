@@ -96,6 +96,8 @@ public class GameManager : MonoBehaviour {
         this.isPlacing = false;
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
+
+        audioManager.Play(SoundName.ButtonPress);
         
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
