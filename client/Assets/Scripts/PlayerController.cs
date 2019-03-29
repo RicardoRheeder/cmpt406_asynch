@@ -204,7 +204,7 @@ public class PlayerController : MonoBehaviour {
                                 }
                             }
                         }
-                        else if (Input.GetKeyDown(KeyCode.Space)) {
+                        else if (Input.GetKeyDown(KeyCode.F)) {
                             MovementButton();
                         }
                         else if (Input.GetKeyDown(KeyCode.LeftShift)) {
@@ -216,7 +216,7 @@ public class PlayerController : MonoBehaviour {
                         }
                         break;
                     case (InteractionState.moving):
-                        if (Input.GetKeyDown(KeyCode.Space)) {
+                        if (Input.GetKeyDown(KeyCode.F)) {
                             MovementButton();
                         }
                         else if (prevMousePos != tilePos) {
