@@ -307,17 +307,21 @@ public static class HexUtility {
         return path;
     }
 
-    public static List<Vector2Int> FindTilesInVision(Vector2Int position, int range, Tilemap tilemap, bool ignoreElevation) {
+    public static Tuple<List<Vector2Int>,List<Vector2Int>> FindTilesInVision(Vector2Int position, int range, Tilemap tilemap, bool ignoreElevation) {
         List<Vector2Int> outerRing = FindRing(position,range);
         HashSet<Vector2Int> visionTiles = new HashSet<Vector2Int>();
+        List<Vector2Int> edgeTiles = new List<Vector2Int>();
         for(int i=0; i<outerRing.Count; i++) {
             List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap, ignoreElevation);
             for(int k=0; k<line.Count; k++) {
                 visionTiles.Add(line[k]);
             }
+            if(line.Count > 0) {
+                edgeTiles.Add(line[0]);
+            }
         }
 
-        return visionTiles.ToList();
+        return new Tuple<List<Vector2Int>,List<Vector2Int>>(visionTiles.ToList(),edgeTiles);
     }
 
     public static List<Vector2Int> FindVisionLine(Vector2Int startPos, Vector2Int endPos, Tilemap tilemap, bool ignoreElevation) {
