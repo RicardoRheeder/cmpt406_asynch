@@ -15,7 +15,6 @@ public class Unit : MonoBehaviour {
 
     private int currDirection = 0;
 
-    
     void Awake() {
         rend = GetComponentInChildren<SkinnedMeshRenderer>();
         anim = GetComponent<Animator>();
@@ -29,14 +28,11 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(int dir) {
+    public void Attack(int dir, Vector3 sourceWorldPos, Vector3 targetWorldPos) {
         TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
-            if (this.GetComponent<SpecialEffect>() != null)
-            {
-                this.GetComponent<SpecialEffect>().playAttackEffect();
-            }
+            this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos);
         }
     }
 

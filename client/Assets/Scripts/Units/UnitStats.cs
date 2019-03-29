@@ -97,20 +97,20 @@ public class UnitStats {
     }
 
     //Returns a value based on the target
-    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, bool specialMove = false) {
-        if (!specialMove) {
-            if(!moveAfterAttack)
-                this.MovementSpeed = 0;
-            this.AttackActions--;
-        }
+    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, Vector3 sourceWorldPos, Vector3 targetWorldPos, bool analyticsAttack=false) {
+        if(!moveAfterAttack)
+            this.MovementSpeed = 0;
+        this.AttackActions--;
         int dir = HexUtility.FindDirection(this.Position,target);
-        if (MyUnit != null) {MyUnit.Attack(dir);} else {Debug.LogError("MyUnit is NULL!");}
+        if (!analyticsAttack)
+            MyUnit.Attack(dir, sourceWorldPos, targetWorldPos);
         return attackStrategy.Attack(this, target);
     }
 
     //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
-    public bool TakeDamage(int damage, int pierce) {
-        if (MyUnit != null) {MyUnit.GetHit();} else {Debug.LogError("MyUnit is NULL!");}
+    public bool TakeDamage(int damage, int pierce, bool analyticsAttack = false) {
+        if (!analyticsAttack)
+            MyUnit.GetHit();
         int resistance = Armour - pierce;
         resistance = resistance < 0 ? 0 : resistance;
         damage -= resistance;
