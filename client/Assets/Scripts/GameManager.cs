@@ -304,7 +304,6 @@ public class GameManager : MonoBehaviour {
         }
         exiting = true;
         StartCoroutine("MainMenuNavigationCountDown");
-        exiting = true;
         audioManager.Play(SoundName.ButtonPress);
 
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
@@ -325,6 +324,8 @@ public class GameManager : MonoBehaviour {
             displayTime = (int)(3 - (Time.time - startTime) + 1);
             yield return null;
         }
+        exiting = false;
+
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
@@ -342,8 +343,6 @@ public class GameManager : MonoBehaviour {
     }
 
     public void EndUnitPlacement() {
-        //This function will have to figure out how to send the unit data to the server, and confirm that we are going
-        //to be playing in this game
         if (exiting) {
             return;
         }

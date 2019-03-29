@@ -29,7 +29,6 @@ public class InGameMenu : MonoBehaviour {
         settingsPanel = GameObject.Find("SettingsPanel");
         menuPanel = GameObject.Find("MenuPanel");
         actionsPanel = GameObject.Find("ActionsPanel");
-        returningToMainMenuPanel = GameObject.Find("ReturningToMainMenu");
     }
 
     public void SetupPanels(bool isPlacing) {

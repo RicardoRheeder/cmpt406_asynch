@@ -261,6 +261,7 @@ public class CardSystemManager : MonoBehaviour {
             for(int i = 0; i < CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT; i++) {
                 startingHand.Add((CardFunction)int.Parse(cards[i]));
             }
+            reader.Close();
         }
 
         currentHand = new List<Card>();
