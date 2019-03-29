@@ -16,5 +16,6 @@ MonoBehaviour:
   prefabText: In order to move, first select a unit, then click the move option in
     the action panel at the bottom of the screen. When you do so, the tiles the unit
     can move to will begin to glow. By clicking on a tile the unit will move to it.
-    If you want to cancel your move, reclick the move button
+    If you want to cancel your move, reclick the move button. You can also press "space"
+    with a unit selected to enter the movement state.
   buttonText: Moving
