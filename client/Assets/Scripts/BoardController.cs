@@ -20,8 +20,6 @@ public class BoardController {
     
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
-
-        
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         if(tilemap == null) {
             Debug.Log("Tilemap is null. This will result in problems");
@@ -39,13 +37,12 @@ public class BoardController {
             GameObject.Find("RainParent").transform.GetChild(0).gameObject.SetActive(true);
             fogPlane.SetActive(true);
             fogPlane.GetComponent<FogSystem>().setMistColor(2);
-        } else if (randInt == 2)
-        {
+        }
+        else if (randInt == 2) {
             fogPlane.SetActive(true);
             fogPlane.GetComponent<FogSystem>().setMistColor((int)UnityEngine.Random.Range(0,1));
         }
-        else
-        {
+        else {
             fogPlane.SetActive(false);
         }
     }
@@ -74,15 +71,15 @@ public class BoardController {
         Vector3 position = Input.mousePosition; // get mouse position
         Vector3 worldPoint = Vector3.zero;
         Ray ray = Camera.main.ScreenPointToRay(position); // create a raycast from the mouse position
-        RaycastHit hit;
 
         // if a raycast hits a tile, use that position
-        if(Physics.Raycast(ray,out hit)) {
-            worldPoint = new Vector3(hit.point.x,hit.point.y,0);
-        } else if(plane.Raycast(ray, out float enter)) {    // otherwise cast a ray at the flat plane to get position
+        if (Physics.Raycast(ray, out RaycastHit hit)) {
+            worldPoint = new Vector3(hit.point.x, hit.point.y, 0);
+        }
+        else if (plane.Raycast(ray, out float enter)) {    // otherwise cast a ray at the flat plane to get position
             Vector3 hitPoint = ray.GetPoint(enter);
-            Debug.DrawRay(ray.origin,ray.direction * enter,Color.green);
-            worldPoint = new Vector3(hitPoint.x,hitPoint.y,0);
+            Debug.DrawRay(ray.origin, ray.direction * enter, Color.green);
+            worldPoint = new Vector3(hitPoint.x, hitPoint.y, 0);
         }
 
         return (Vector2Int)tilemap.WorldToCell(worldPoint);
@@ -90,7 +87,7 @@ public class BoardController {
 
     // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position
     public Vector3 CellToWorld(Vector2Int position) {
-        return CellToWorld(position,0f);
+        return CellToWorld(position, 0f);
     }
 
     // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position

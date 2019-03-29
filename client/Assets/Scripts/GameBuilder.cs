@@ -103,11 +103,11 @@ public class GameBuilder : MonoBehaviour {
 
         if (isPlacing) {
             prefabToUse = unitPlacementDisplayPrefab;
-            unitPlacementViewport = GameObject.Find("PlaceUnitsViewport");
+            unitPlacementViewport = GameObject.Find("PlaceUnitsContent");
         }
         else {
             prefabToUse = unitSelectionDisplayPrefab;
-            unitPlacementViewport = GameObject.Find("UnitSnapViewport");
+            unitPlacementViewport = GameObject.Find("UnitSnapContent");
         }
 
         GameObject generalText = Instantiate(prefabToUse);

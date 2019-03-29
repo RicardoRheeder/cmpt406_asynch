@@ -4,18 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+#pragma warning disable 649
 public class TutorialUI : MonoBehaviour {
+
     //a list of all of the tutorials
-    public TutorialPrefab[] tutorialList;
-    //the place the buttons will go
-    public GameObject buttonList;
-    //the button prefab
-    public GameObject buttonPrefab;
+    private TutorialPrefab[] tutorialList;
 
-    public GameObject tutImage;
-    public GameObject tutText;
+    [SerializeField]
+    private GameObject buttonContainer;
 
-    private void Awake() {
+    [SerializeField]
+    private GameObject buttonPrefab;
+
+    [SerializeField]
+    private GameObject tutImage;
+
+    [SerializeField]
+    private GameObject tutText;
+
+    public void Awake() {
         //loads all of the tutorials
         tutorialList = Resources.LoadAll<TutorialPrefab>("Tutorial");
 
@@ -30,7 +37,7 @@ public class TutorialUI : MonoBehaviour {
             button.GetComponent<Button>().onClick.AddListener(() => ChangeTut(t));
 
             //add it to the button view
-            button.transform.SetParent(buttonList.transform);
+            button.transform.SetParent(buttonContainer.transform);
         }
     }
 
