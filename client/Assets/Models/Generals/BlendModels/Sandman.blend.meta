@@ -44,6 +44,51 @@ ModelImporter:
     100076: SpineCenter
     100078: spineFront
     100080: spineRear
+    100082: Bone_001
+    100084: Bone_002
+    100086: Door_L
+    100088: Door_L_001
+    100090: DoorHinge_L
+    100092: DoorHinge_L_001
+    100094: DoorIK_L
+    100096: DoorIK_L_001
+    100098: Empty
+    100100: Hook_L
+    100102: Hook_L_001
+    100104: Hook_L_002
+    100106: Hook_L_003
+    100108: HookFemur_L
+    100110: HookFemur_L_001
+    100112: HookFemur_L_002
+    100114: HookFemur_L_003
+    100116: HookIK_L
+    100118: HookIK_L_001
+    100120: HookIK_L_002
+    100122: HookIK_L_003
+    100124: Suspension_L
+    100126: Suspension_L_001
+    100128: Suspension_L_002
+    100130: Suspension_L_003
+    100132: Suspension_L_004
+    100134: Suspension_L_005
+    100136: SuspensionRoot_L
+    100138: SuspensionRoot_L_001
+    100140: SuspensionRoot_L_002
+    100142: SuspensionRoot_L_003
+    100144: SuspensionRoot_L_004
+    100146: SuspensionRoot_L_005
+    100148: Wheel_L
+    100150: Wheel_L_001
+    100152: Wheel_L_002
+    100154: Wheel_L_003
+    100156: Wheel_L_004
+    100158: Wheel_L_005
+    100160: WheelIK_L
+    100162: WheelIK_L_001
+    100164: WheelIK_L_002
+    100166: WheelIK_L_003
+    100168: WheelIK_L_004
+    100170: WheelIK_L_005
     400000: mesh02
     400002: mesh03
     400004: mesh04
@@ -85,6 +130,51 @@ ModelImporter:
     400076: SpineCenter
     400078: spineFront
     400080: spineRear
+    400082: Bone_001
+    400084: Bone_002
+    400086: Door_L
+    400088: Door_L_001
+    400090: DoorHinge_L
+    400092: DoorHinge_L_001
+    400094: DoorIK_L
+    400096: DoorIK_L_001
+    400098: Empty
+    400100: Hook_L
+    400102: Hook_L_001
+    400104: Hook_L_002
+    400106: Hook_L_003
+    400108: HookFemur_L
+    400110: HookFemur_L_001
+    400112: HookFemur_L_002
+    400114: HookFemur_L_003
+    400116: HookIK_L
+    400118: HookIK_L_001
+    400120: HookIK_L_002
+    400122: HookIK_L_003
+    400124: Suspension_L
+    400126: Suspension_L_001
+    400128: Suspension_L_002
+    400130: Suspension_L_003
+    400132: Suspension_L_004
+    400134: Suspension_L_005
+    400136: SuspensionRoot_L
+    400138: SuspensionRoot_L_001
+    400140: SuspensionRoot_L_002
+    400142: SuspensionRoot_L_003
+    400144: SuspensionRoot_L_004
+    400146: SuspensionRoot_L_005
+    400148: Wheel_L
+    400150: Wheel_L_001
+    400152: Wheel_L_002
+    400154: Wheel_L_003
+    400156: Wheel_L_004
+    400158: Wheel_L_005
+    400160: WheelIK_L
+    400162: WheelIK_L_001
+    400164: WheelIK_L_002
+    400166: WheelIK_L_003
+    400168: WheelIK_L_004
+    400170: WheelIK_L_005
     2100000: ___default___
     2100002: ___default____001
     2100004: ___default____001__Sandman_UV_Painted_Albedo_00
@@ -163,6 +253,7 @@ ModelImporter:
     13700034: mesh25
     13700036: mesh26
     13700038: mesh27
+    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1
