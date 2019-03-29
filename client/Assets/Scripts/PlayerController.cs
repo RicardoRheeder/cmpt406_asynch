@@ -193,6 +193,8 @@ public class PlayerController : MonoBehaviour {
         Vector2Int tilePos = boardController.MousePosToCell();
         boardController.HoverHighlight(new List<Vector2Int>() { tilePos }, tilePos);
 
+        Debug.Log(interactionState);
+
         switch (controllerState) {
             case (PlayerState.playing):
                 switch (interactionState) {
@@ -203,7 +205,7 @@ public class PlayerController : MonoBehaviour {
                         else if (Input.GetKeyDown(KeyCode.LeftShift)) {
                             AttackButton();
                         }
-                        break;
+                        goto case InteractionState.none;
                     case (InteractionState.moving):
                         if (Input.GetKeyDown(KeyCode.Space)) {
                             MovementButton();
@@ -365,9 +367,9 @@ public class PlayerController : MonoBehaviour {
 
     public void PlayCard(Card card) {
         this.cardBeingPlayed = card;
-        this.interactionState = InteractionState.playingCard;
 
         SelectUnit();
+        this.interactionState = InteractionState.playingCard;
         this.highlightedTiles = manager.GetUnitPositions(card.type);
         boardController.HighlightTiles(this.highlightedTiles);
     }
