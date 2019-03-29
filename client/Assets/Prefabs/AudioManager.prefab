@@ -346,3 +346,4 @@ MonoBehaviour:
     audioMixerGroup: {fileID: 24300002, guid: 8b63de19650f3f64dac7d3ed3ba5e053, type: 2}
     audioSource: {fileID: 0}
   masterMixer: {fileID: 24100000, guid: 8b63de19650f3f64dac7d3ed3ba5e053, type: 2}
+  mixerGroup: {fileID: 24300002, guid: 8b63de19650f3f64dac7d3ed3ba5e053, type: 2}

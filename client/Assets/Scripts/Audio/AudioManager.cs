@@ -8,7 +8,7 @@ public class AudioManager : MonoBehaviour {
     public AudioLibrary[] sounds;
     private AudioManager audioManager = null;
     public AudioMixer masterMixer;
-
+    public AudioMixerGroup mixerGroup;
 
 
     void Awake() {
@@ -32,7 +32,7 @@ public class AudioManager : MonoBehaviour {
             sound.audioSource.volume = sound.volume;
             sound.audioSource.pitch = sound.pitch;
             sound.audioSource.loop = sound.loop;
-            sound.audioSource.outputAudioMixerGroup = sound.audioMixerGroup;
+            sound.audioSource.outputAudioMixerGroup = mixerGroup;
         }
     }
 
