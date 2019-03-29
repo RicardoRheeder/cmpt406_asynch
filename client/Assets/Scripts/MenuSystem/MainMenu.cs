@@ -29,6 +29,14 @@ public class MainMenu : MonoBehaviour {
     [SerializeField]
     private GameObject tutorialPanel;
 
+    //Master Buton Images for highlighting
+    [SerializeField]
+    private Image armiesButtonImage;
+    [SerializeField]
+    private Image playButtonImage;
+    [SerializeField]
+    private Image tutorialButtonImage;
+
     //Friends variables
     [SerializeField]
     private GameObject friendsListViewContent;
@@ -218,17 +226,26 @@ public class MainMenu : MonoBehaviour {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(armySelectorState: true, mainMenuState: true);
         SetupArmySelector(10000, null);
+        armiesButtonImage.color = ColourConstants.BUTTON_ACTIVE;
+        playButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        tutorialButtonImage.color = ColourConstants.BUTTON_DEFAULT;
     }
 
     public void MasterPlayButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(mainMenuState: true, playContainerState: true);
-        SetPlayMenuState(); //resets them all to be inactive
+        SetPlayMenuState();
+        armiesButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        playButtonImage.color = ColourConstants.BUTTON_ACTIVE;
+        tutorialButtonImage.color = ColourConstants.BUTTON_DEFAULT;
     }
 
     public void MasterTutorialButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(tutorialPanelState: true);
+        armiesButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        playButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        tutorialButtonImage.color = ColourConstants.BUTTON_ACTIVE;
     }
 
     //========================Logout Functionality========================
@@ -514,22 +531,26 @@ public class MainMenu : MonoBehaviour {
     }
 
     //========================Tutorial Functionality========================
-    //Most of the tutorial functionality is in its own script: TutorialUI.cs
-    //========================Map Screen Functionality========================
-
-    //Helper Functions while in the play menu
-    public void SetTutorialMenuState(bool tutWindowState = false, bool cardsWindowState = false, bool mapsWindowState = false)
-    {
+    //Helper Functions while in the tutorial menu
+    public void SetTutorialMenuState(bool tutWindowState = false, bool cardsWindowState = false, bool mapsWindowState = false) {
         mapsContainerWindow.SetActive(mapsWindowState);
         cardsContainerWindow.SetActive(cardsWindowState);
         tutContainerWindow.SetActive(tutWindowState);
     }
 
+    //Most of the tutorial functionality is in its own script: TutorialUI.cs
+
+    //========================Map Screen Functionality========================
     public void MapsButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(mapsContainerState: true, mainMenuState: true);
         SetTutorialMenuState(mapsWindowState: true);
         MapSelection();
+    }
+
+    public void CardsButton() {
+        audioManager.Play(SoundName.ButtonPress);
+        SetTutorialMenuState(cardsWindowState: true);
     }
     
     public void MapSelection() {

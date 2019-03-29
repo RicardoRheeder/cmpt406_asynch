@@ -44,6 +44,7 @@ public class TutorialUI : MonoBehaviour {
     //when a button is clicked change the image and text.
     //x is the index of the tutorial to show
     public void ChangeTut(TutorialPrefab prefab) {
+        GameObject.Find("Canvas").GetComponent<MainMenu>().SetTutorialMenuState(tutWindowState: true);
         tutImage.GetComponentInChildren<Image>().sprite = prefab.prefabImage;
         tutText.GetComponentInChildren<TextMeshProUGUI>().text = prefab.prefabText;
     }
