@@ -308,22 +308,26 @@ public static class HexUtility {
     }
 
     public static Tuple<List<Vector2Int>,List<Vector2Int>> FindTilesInVision(Vector2Int position, int range, Tilemap tilemap, bool ignoreElevation) {
-        List<Vector2Int> outerRing = FindRing(position,range);
+        List<Vector2Int> outerRing = FindRing(position,range+1);
         HashSet<Vector2Int> visionTiles = new HashSet<Vector2Int>();
         List<Vector2Int> edgeTiles = new List<Vector2Int>();
         for(int i=0; i<outerRing.Count; i++) {
             List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap, ignoreElevation);
-            for(int k=0; k<line.Count; k++) {
-                visionTiles.Add(line[k]);
+            if(line.Count > 1) {
+                for(int k=0; k<line.Count-1; k++) {
+                    visionTiles.Add(line[k]);
+                }
             }
             if(line.Count > 0) {
-                edgeTiles.Add(line[0]);
+                edgeTiles.Add(line[line.Count-1]);
             }
         }
 
         return new Tuple<List<Vector2Int>,List<Vector2Int>>(visionTiles.ToList(),edgeTiles);
     }
 
+    // First: tiles in vision
+    // Second: edge tile
     public static List<Vector2Int> FindVisionLine(Vector2Int startPos, Vector2Int endPos, Tilemap tilemap, bool ignoreElevation) {
         float distance = HexDistance( startPos, endPos );
         List<Vector2Int> visionLine = new List<Vector2Int>();
@@ -341,6 +345,7 @@ public static class HexUtility {
             }
 
             HexTile startTile = tilemap.GetTile((Vector3Int)startPos) as HexTile;
+            HexTile prevTile = null;
             if(startTile == null) {
                 return visionLine;
             }
@@ -353,9 +358,10 @@ public static class HexUtility {
                     continue;
                 }
                 visionLine.Add(tilePosition);
-                if(tile.elevation > startTile.elevation && !ignoreElevation) {
+                if(prevTile != null && prevTile.elevation > startTile.elevation && !ignoreElevation) {
                     break;
                 }
+                prevTile = tile;
             }
         }
         

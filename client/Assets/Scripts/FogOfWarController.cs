@@ -88,6 +88,13 @@ public class FogOfWarController {
                 tileList.Remove(viewer);
                 clearedTiles[oldTiles[i]] = tileList;
             }
+            if(tileList == null || tileList.Count == 0) {
+                clearedTiles.Remove(oldTiles[i]);
+                FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
+                mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile madEdgeTile);
+                tile.ShowFog(madEdgeTile != null);
+                fogTilemap.RefreshTile((Vector3Int)oldTiles[i]);
+            }
         }
 
         // clear new tiles
@@ -117,11 +124,9 @@ public class FogOfWarController {
             if((tileList == null || tileList.Count == 0) && tile != null) {
                 tile.SetAsEdge();
                 fogTilemap.RefreshTile((Vector3Int)edgeTiles[i]);
-                edgeTiles.Add(edgeTiles[i]);
+                viewer.GetEdgeTiles().Add(edgeTiles[i]);
             }
         }
-        viewer.SetEdgeTiles(edgeTiles);
-
     }
 
     public void ClearFogAtPosition(Vector2Int position) {
