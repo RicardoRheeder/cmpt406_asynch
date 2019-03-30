@@ -232,7 +232,7 @@ public class PlayerController : MonoBehaviour {
                         break;
                     case (InteractionState.playingCard):
                         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                            if (manager.UseCard(tilePos, cardBeingPlayed)) {
+                            if (manager.UseCard(tilePos, cardBeingPlayed.func)) {
                                 interactionState = InteractionState.none;
                             }
                         }

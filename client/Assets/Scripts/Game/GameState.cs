@@ -20,6 +20,9 @@ public class GameState {
     public readonly int maxUsers;
 
     [DataMember]
+    public readonly int turnCount;
+
+    [DataMember]
     public readonly int spotsAvailable;
 
     [DataMember]

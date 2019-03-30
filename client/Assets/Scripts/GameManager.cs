@@ -166,6 +166,52 @@ public class GameManager : MonoBehaviour {
 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
+
+        HandleReplay();
+    }
+
+    private void HandleReplay() {
+        /* Check if they want to see the replay... */
+        bool check = true;
+        if (check) {
+            int difference = (this.state.turnCount - this.state.maxUsers);
+            int oldTurnNumber = difference > 1 ? difference : 1;
+            GameState oldState = client.GetOldGamestate(this.state.id, this.state.turnCount).Second;
+
+            /* Remove current units/generals from board... */
+
+            /* display the old gamestate units/generals */
+            gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
+
+            /* Loop over all the actions inbetween oldstate and state, running those actions */
+            List<Action> replayActions = new List<Action>();
+            int curCount = this.state.Actions.Count;
+            difference = curCount - oldState.Actions.Count;
+            replayActions = this.state.Actions.GetRange(curCount - difference - 1, curCount - 1);
+
+            foreach(Action a in replayActions) {
+                switch (a.Type)
+                {
+                    case ActionType.Movement:
+                        MoveUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos));
+                        break;
+                    case ActionType.Attack:
+                        AttackUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos));
+                        break;
+                    case ActionType.Card:
+                        UseCard(new Vector2Int(a.TargetXPos, a.TargetYPos), a.CardId);
+                    break;
+                    case ActionType.Ability:
+                        UseAbility(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos), a.Ability);
+                    break;
+                    default:
+                        Debug.Log("Unhandled Action: " + a.Type);
+                        break;
+                }
+            }
+            turnActions.Clear();
+            /* At this point the gamebuilder should be the same as if it build the current gamestate... */
+        }
     }
     
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
@@ -451,8 +497,7 @@ public class GameManager : MonoBehaviour {
         return true;
     }
 
-    public bool UseCard(Vector2Int target, Card card) {
-        CardFunction cardId = card.func;
+    public bool UseCard(Vector2Int target, CardFunction cardId) {
         if (CardMetadata.CardEffectDictionary[cardId](target, unitPositions, user.Username, false)) {
             turnActions.Add(new Action(user.Username, ActionType.Card, target, target, GeneralAbility.NONE, cardId));
             return true;
