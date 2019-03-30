@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6940496793198130705}
   - component: {fileID: 5653979980119659209}
   - component: {fileID: 91914616}
+  - component: {fileID: 3512415254273634742}
   m_Layer: 0
   m_Name: Recon
   m_TagString: Untagged
@@ -69,6 +70,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
   moveSpeed: 5
+--- !u!114 &3512415254273634742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91914615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 6
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &342683470598113950
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,7 +321,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100002, guid: b558eca32a5fb4f4288b34f241f3cbee, type: 3}
+  - {fileID: 2100000, guid: 01aa0c3ca7d531242ba05681fe6ee167, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

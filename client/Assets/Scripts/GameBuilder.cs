@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class GameBuilder : MonoBehaviour {
 
@@ -11,7 +12,8 @@ public class GameBuilder : MonoBehaviour {
     public Dictionary<Vector2Int, Effect> effectPositions = new Dictionary<Vector2Int, Effect>();
 
     //Reference to the menus
-    public GameObject unitDisplayPrefab;
+    public GameObject unitPlacementDisplayPrefab;
+    public GameObject unitSelectionDisplayPrefab;
     private GameObject unitPlacementViewport;
     public List<GameObject> UnitDisplayTexts { get; private set; }
 
@@ -36,7 +38,9 @@ public class GameBuilder : MonoBehaviour {
     private BoardController board;
     private FogOfWarController fogController;
     private bool isPlacing;
-    private ArmyPreset armyPreset;
+    private List<int> unitNumbers;
+    private List<GameObject> unitTexts;
+    public Dictionary<UnitStats, GameObject> UnitButtons;
 
     public void Awake() {
         //Populate the dictionary whenever we build the map
@@ -66,30 +70,55 @@ public class GameBuilder : MonoBehaviour {
         this.board = board;
         this.fogController = fogController;
         this.isPlacing = isPlacing;
-        this.armyPreset = armyPreset;
-        SetupScene();
 
+        if (armyPreset != null) {
+            this.unitNumbers = new List<int>(){
+                armyPreset.General
+            };
+            this.unitNumbers.AddRange(armyPreset.Units);
+        }
+        else {
+            this.unitNumbers = new List<int>();
+            this.unitTexts = new List<GameObject>();
+            this.UnitButtons = new Dictionary<UnitStats, GameObject>();
+            List<UnitStats> userGeneral = state.UserGeneralsMap[username];
+            for (int i = 0; i < userGeneral.Count; i++) {
+                this.unitNumbers.Add((int)userGeneral[i].UnitType);
+            }
+            List<UnitStats> userUnits = state.UserUnitsMap[username];
+            for (int i = 0; i < userUnits.Count; i++) {
+                this.unitNumbers.Add((int)userUnits[i].UnitType);
+            }
+        }
+
+        SetupScene();
         if(!isPlacing) {
             InstantiateUnits();
-            InstantiateEffects();
         }
     }
 
     //Method responsible for instantiate the canvas, the camera rig, the light(s),
     private void SetupScene() {
-        if (isPlacing) {
-            unitPlacementViewport = GameObject.Find("PlaceUnitsViewport");
-            UnitDisplayTexts = new List<GameObject>();
+        GameObject prefabToUse;
+        UnitDisplayTexts = new List<GameObject>();
 
-            GameObject generalText = Instantiate(unitDisplayPrefab);
-            UnitDisplayTexts.Add(generalText);
-            generalText.transform.SetParent(unitPlacementViewport.transform, false);
-            generalText.GetComponent<TMP_Text>().text = UnitMetadata.ReadableNames[(UnitType)armyPreset.General];
-            foreach (int unit in armyPreset.Units) {
-                GameObject unitText = Instantiate(unitDisplayPrefab);
-                UnitDisplayTexts.Add(unitText);
-                unitText.transform.SetParent(unitPlacementViewport.transform, false);
-                unitText.GetComponent<TMP_Text>().text = UnitMetadata.ReadableNames[(UnitType)unit];
+        if (isPlacing) {
+            prefabToUse = unitPlacementDisplayPrefab;
+            unitPlacementViewport = GameObject.Find("PlaceUnitsContent");
+        }
+        else {
+            prefabToUse = unitSelectionDisplayPrefab;
+            unitPlacementViewport = GameObject.Find("UnitSnapContent");
+        }
+
+        for(int i = 0; i < unitNumbers.Count; i++) {
+            int unit = unitNumbers[i];
+            GameObject unitText = Instantiate(prefabToUse);
+            UnitDisplayTexts.Add(unitText);
+            unitText.transform.SetParent(unitPlacementViewport.transform, false);
+            unitText.GetComponentInChildren<TMP_Text>().text = UnitMetadata.ReadableNames[(UnitType)unit];
+            if(!isPlacing) {
+                this.unitTexts.Add(unitText);
             }
         }
     }
@@ -106,8 +135,20 @@ public class GameBuilder : MonoBehaviour {
             }
             foreach (var general in userGeneralList.Value) {
                 UnitStats newUnit = InstantiateUnit(general.Position, (int)general.UnitType, general.Owner, general);
-                newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
+                newUnit.MyUnit.rend.material.SetColor("_EmissionColor", ColourConstants.SpawnColours[spawnPoint]);
                 unitPositions.Add(general.Position, newUnit);
+                if(newUnit.Owner == username) {
+                    if (unitNumbers.Contains((int)newUnit.UnitType)) {
+                        unitNumbers.Remove((int)newUnit.UnitType);
+                        for(int i = 0; i < unitTexts.Count; i++) {
+                            if (unitTexts[i].GetComponentInChildren<TMP_Text>().text == UnitMetadata.ReadableNames[(UnitType)newUnit.UnitType]) {
+                                UnitButtons[newUnit] = unitTexts[i];
+                                unitTexts.RemoveAt(i);
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
         foreach (var userUnitList in state.UserUnitsMap) {
@@ -120,8 +161,20 @@ public class GameBuilder : MonoBehaviour {
             }
             foreach (var unit in userUnitList.Value) {
                 UnitStats newUnit = InstantiateUnit(unit.Position, (int)unit.UnitType, unit.Owner, unit);
-                newUnit.MyUnit.rend.material.color = SpawnMetadata.SpawnColours[spawnPoint];
+                newUnit.MyUnit.rend.material.SetColor("_EmissionColor", ColourConstants.SpawnColours[spawnPoint]);
                 unitPositions.Add(unit.Position, newUnit);
+                if (newUnit.Owner == username) {
+                    if (unitNumbers.Contains((int)newUnit.UnitType)) {
+                        unitNumbers.Remove((int)newUnit.UnitType);
+                        for (int i = 0; i < unitTexts.Count; i++) {
+                            if (unitTexts[i].GetComponentInChildren<TMP_Text>().text == UnitMetadata.ReadableNames[(UnitType)newUnit.UnitType]) {
+                                UnitButtons[newUnit] = unitTexts[i];
+                                unitTexts.RemoveAt(i);
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -168,10 +221,5 @@ public class GameBuilder : MonoBehaviour {
             unit.SetPassive(GeneralMetadata.GeneralPassiveDictionary[unit.UnitType]);
         }
         return unit;
-    }
-
-    //Methods to deal with effects
-    public void InstantiateEffects() {
-
     }
 }

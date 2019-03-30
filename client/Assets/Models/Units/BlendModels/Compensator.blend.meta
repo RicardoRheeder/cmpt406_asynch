@@ -18,6 +18,39 @@ ModelImporter:
     100024: RD_Shin
     100026: RP_Femer
     100028: RP_Shin_
+    100030: BackFemur_L
+    100032: BackFemur_R_001
+    100034: BackKneeTarget_L
+    100036: BackKneeTarget_R_001
+    100038: BackLeg_L_001
+    100040: BackLeg_R_003
+    100042: BackTibia_L
+    100044: BackTibia_R_001
+    100046: Bone_011
+    100048: FrontFemur_L
+    100050: FrontFemur_R_001
+    100052: FrontkneeTarget_L
+    100054: FrontkneeTarget_R_001
+    100056: FrontLegIK_L
+    100058: FrontLegIK_R_001
+    100060: FrontTibia_L
+    100062: FrontTibia_R_001
+    100064: Gun
+    100066: GunSlide
+    100068: GunTarget
+    100070: TungstenArmature
+    100072: Vane_L
+    100074: Vane_L_001
+    100076: Vane_L_002
+    100078: Vane_L_003
+    100080: VaneBase_L
+    100082: VaneBase_L_001
+    100084: VaneBase_L_002
+    100086: VaneBase_L_003
+    100088: VaneIK_L
+    100090: VaneIK_L_001
+    100092: VaneIK_L_002
+    100094: VaneIK_L_003
     400000: //RootNode
     400002: Armature
     400004: Bone
@@ -33,8 +66,42 @@ ModelImporter:
     400024: RD_Shin
     400026: RP_Femer
     400028: RP_Shin_
+    400030: BackFemur_L
+    400032: BackFemur_R_001
+    400034: BackKneeTarget_L
+    400036: BackKneeTarget_R_001
+    400038: BackLeg_L_001
+    400040: BackLeg_R_003
+    400042: BackTibia_L
+    400044: BackTibia_R_001
+    400046: Bone_011
+    400048: FrontFemur_L
+    400050: FrontFemur_R_001
+    400052: FrontkneeTarget_L
+    400054: FrontkneeTarget_R_001
+    400056: FrontLegIK_L
+    400058: FrontLegIK_R_001
+    400060: FrontTibia_L
+    400062: FrontTibia_R_001
+    400064: Gun
+    400066: GunSlide
+    400068: GunTarget
+    400070: TungstenArmature
+    400072: Vane_L
+    400074: Vane_L_001
+    400076: Vane_L_002
+    400078: Vane_L_003
+    400080: VaneBase_L
+    400082: VaneBase_L_001
+    400084: VaneBase_L_002
+    400086: VaneBase_L_003
+    400088: VaneIK_L
+    400090: VaneIK_L_001
+    400092: VaneIK_L_002
+    400094: VaneIK_L_003
     2100000: ___default___
     2100002: ___default____002
+    2100004: ___default____002__Compensator_UV_Painted_Albedo_00
     2300000: //RootNode
     3300000: //RootNode
     4300000: mesh01

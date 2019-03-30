@@ -6,15 +6,10 @@ using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using System.Linq;
 
-using cakeslice; //for Outline effect package
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour {
-
-    //Constants
-    private Color BUTTON_ACTIVE = Color.yellow;
-    private Color BUTTON_INACTIVE = Color.gray;
    
     //Controllers
     private CardController deck;
@@ -66,7 +61,6 @@ public class PlayerController : MonoBehaviour {
 
     private bool initialized = false;
 
-    private Color tempColor;
     private enum PlayerState {
         playing,
         placing
@@ -78,7 +72,8 @@ public class PlayerController : MonoBehaviour {
         ability2,
         moving,
         attacking,
-        playingCard
+        playingCard,
+        selected
     };
     private InteractionState interactionState;
     private List<int> armyPreset;
@@ -92,9 +87,16 @@ public class PlayerController : MonoBehaviour {
     private string username;
     private Card cardBeingPlayed;
 
-    private List<Vector2Int> highlightedTiles;
+    private Dictionary<UnitStats, GameObject> unitButtonReferences;
+    private List<GameObject> unitButtonObjects;
+    private int unitButtonObjectsCurIndex = 0;
+    private GameObject selectedUnitButton;
 
-    public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, FogOfWarController fogOfWarController, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none) {
+    private List<Vector2Int> highlightedTiles;
+    private Vector2Int prevMousePos;
+    private List<Vector2Int> hoverAttackRange = new List<Vector2Int>();
+
+    public void Initialize(GameManager manager, AudioManager audioManager, string username, GameState gamestate, CardController deck, GameBuilder builder, BoardController board, FogOfWarController fogOfWarController, bool isPlacing, ArmyPreset armyPreset = null, List<GameObject> presetTexts = null, SpawnPoint spawnPoint = SpawnPoint.none, Dictionary<UnitStats, GameObject> unitButtonReferences = null) {
         this.deck = deck;
         this.manager = manager;
         this.boardController = board;
@@ -104,18 +106,25 @@ public class PlayerController : MonoBehaviour {
         this.isPlacing = isPlacing;
         this.username = username;
         this.audioManager = audioManager;
+        this.presetTexts = presetTexts;
 
+        userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
         if (isPlacing) {
             controllerState = PlayerState.placing;
             this.armyPreset = new List<int>() {
                 armyPreset.General,
             };
             this.armyPreset.AddRange(armyPreset.Units);
-            this.presetTexts = presetTexts;
+
+            userTurnText.text = "Placing Units";
         }
         else {
             controllerState = PlayerState.playing;
             interactionState = InteractionState.none;
+
+            this.unitButtonReferences = unitButtonReferences;
+            this.unitButtonObjects = new List<GameObject>();
+
             unitDisplayHealth = GameObject.Find("unitDisplayHealth").GetComponent<TMP_Text>();
             unitDisplayArmour = GameObject.Find("unitDisplayArmour").GetComponent<TMP_Text>();
             unitDisplayRange = GameObject.Find("unitDisplayRange").GetComponent<TMP_Text>();
@@ -124,7 +133,6 @@ public class PlayerController : MonoBehaviour {
             unitDisplayMovementSpeed = GameObject.Find("unitDisplayMove").GetComponent<TMP_Text>();
             unitDisplayPierce = GameObject.Find("unitDisplayPierce").GetComponent<TMP_Text>();
             unitDisplayName = GameObject.Find("unitName").GetComponent<TMP_Text>();
-            userTurnText = GameObject.Find("GameUserTurnText").GetComponent<TMP_Text>();
 
             actionsName = GameObject.Find("ActionName");
             attackButtonObject = GameObject.Find("AttackButton");
@@ -147,6 +155,17 @@ public class PlayerController : MonoBehaviour {
             concedeButton.onClick.AddListener(Forfeit);
             closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
             closeGameButton.onClick.AddListener(ExitGame);
+
+            foreach(var pair in unitButtonReferences) {
+                pair.Value.GetComponentInChildren<Button>().onClick.AddListener(() => {
+                    audioManager.Play(SoundName.ButtonPress);
+                    SelectUnit(pair.Key);
+                    manager.SnapToPosition(selectedUnit.Position);
+                    int index = unitButtonObjects.IndexOf(pair.Value);
+                    unitButtonObjectsCurIndex = index + 1 >= unitButtonObjects.Count ? 0 : index + 1;
+                });
+                unitButtonObjects.Add(pair.Value);
+            }
         }
         
         initialized = true;
@@ -167,79 +186,115 @@ public class PlayerController : MonoBehaviour {
             if (selectedUnit.CurrentHP <= 0) {
                 selectedUnit = null;
             }
-            else if (selectedUnit.MyUnit.rend.material.color != Color.white){
-                tempColor = selectedUnit.MyUnit.rend.material.color;
-                selectedUnit.MyUnit.rend.material.color = Color.white;
-            }
         }
     }
 
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
-        boardController.HoverHighlight(tilePos);
+        boardController.HoverHighlight(new List<Vector2Int>() { tilePos }, tilePos);
 
-        switch(controllerState) {
+        switch (controllerState) {
             case (PlayerState.playing):
-                if (Input.GetMouseButtonDown(0)) {
-                    if (!EventSystem.current.IsPointerOverGameObject()) {
-                        switch (interactionState) {
-                            case (InteractionState.moving):
-                                if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                    manager.MoveUnit(selectedUnit.Position, tilePos);
-                                    boardController.ClearHighlighting();
-                                    interactionState = InteractionState.none;
+                switch (interactionState) {
+                    case (InteractionState.selected):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (!fogOfWarController.CheckIfTileHasFog(tilePos)) {
+                                if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                                    SelectUnit(unit);
                                 }
-                                break;
-                            case (InteractionState.attacking):
-                                if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                    manager.AttackUnit(selectedUnit.Position, tilePos);
-                                    boardController.ClearHighlighting();
-                                    interactionState = InteractionState.none;
-                                }
-                                break;
-                            case (InteractionState.ability1):
-                                interactionState = InteractionState.none;
-                                if(manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability1)) {
-                                    Ability1Button.onClick.RemoveAllListeners();
-                                    Ability1Button.GetComponent<Image>().color = BUTTON_INACTIVE;
-                                }
-                                boardController.ClearHighlighting();
-                                break;
-                            case (InteractionState.ability2):
-                                interactionState = InteractionState.none;
-                                if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability2)) {
-                                    Ability2Button.onClick.RemoveAllListeners();
-                                    Ability2Button.GetComponent<Image>().color = BUTTON_INACTIVE;
-                                }
-                                boardController.ClearHighlighting();
-                                break;
-                            case (InteractionState.playingCard):
-                                if(manager.UseCard(tilePos, cardBeingPlayed))
-                                    interactionState = InteractionState.none;
-                                break;
-                            case (InteractionState.none):
-                                if(!fogOfWarController.CheckIfTileHasFog(tilePos)) {
-                                    if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
-                                        if (selectedUnit != null) {
-                                            selectedUnit.MyUnit.rend.material.color = tempColor;
-                                        }
-                                        selectedUnit = unit;
-                                    }
-                                }
-                                break;
-                            default:
-                                Debug.Log("Interaction state is in a weird place");
-                                break;
+                            }
                         }
-                        if(selectedUnit != null) {
-                            UpdateUnitDisplay(selectedUnit);
-                        }   
-                    }
+                        else if (Input.GetKeyDown(KeyCode.F)) {
+                            MovementButton();
+                        }
+                        else if (Input.GetKeyDown(KeyCode.LeftShift)) {
+                            AttackButton();
+                        }
+                        else {
+                            boardController.ClearRenderedPath();
+                            boardController.ClearHighlighting();
+                        }
+                        break;
+                    case (InteractionState.moving):
+                        if (Input.GetKeyDown(KeyCode.F)) {
+                            MovementButton();
+                        }
+                        else if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                manager.MoveUnit(selectedUnit.Position, tilePos);
+                                interactionState = InteractionState.selected;
+                            }
+                        }
+                        else if (prevMousePos != tilePos) {
+                            hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
+                            boardController.RenderPath(selectedUnit.Position, tilePos);
+                        }
+                        else if (selectedUnit != null) {
+                            boardController.HoverHighlight(hoverAttackRange, tilePos);
+                        }
+                        break;
+                    case (InteractionState.attacking):
+                        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+                            AttackButton();
+                        }
+                        else if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                manager.AttackUnit(selectedUnit.Position, tilePos);
+                                interactionState = InteractionState.selected;
+                            }
+                        }
+                        break;
+                    case (InteractionState.ability1):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            interactionState = InteractionState.selected;
+                            if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability1)) {
+                                Ability1Button.onClick.RemoveAllListeners();
+                                Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
+                            }
+                        }
+                        break;
+                    case (InteractionState.ability2):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            interactionState = InteractionState.selected;
+                            if (manager.UseAbility(selectedUnit.Position, tilePos, selectedUnit.Ability2)) {
+                                Ability2Button.onClick.RemoveAllListeners();
+                                Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
+                            }
+                        }
+                        break;
+                    case (InteractionState.playingCard):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (manager.UseCard(tilePos, cardBeingPlayed)) {
+                                interactionState = InteractionState.none;
+                            }
+                        }
+                        break;
+                    case (InteractionState.none):
+                        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (!fogOfWarController.CheckIfTileHasFog(tilePos)) {
+                                if (manager.GetUnitOnTile(tilePos, out UnitStats unit)) {
+                                    SelectUnit(unit);
+                                }
+                            }
+                        }
+                        boardController.ClearRenderedPath();
+                        boardController.ClearHighlighting();
+                        break;
+                    default:
+                        Debug.Log("Interaction state is in a weird place");
+                        break;
+                }
+                if(selectedUnit != null) {
+                    UpdateUnitDisplay(selectedUnit);
+                }
+                if(Input.GetKeyDown(KeyCode.Tab)) {
+                    unitButtonObjects[unitButtonObjectsCurIndex].GetComponentInChildren<Button>().onClick.Invoke();
                 }
                 break;
             case (PlayerState.placing):
                 if (presetTexts.Count == 0) {
                     donePlacing = true;
+                    break;
                 }
                 if (Input.GetMouseButtonDown(0)) {
                     if (!EventSystem.current.IsPointerOverGameObject()) {
@@ -258,70 +313,95 @@ public class PlayerController : MonoBehaviour {
                 Debug.Log("Player controller is in an invalid state");
                 break;
         }
+        prevMousePos = tilePos;
     }
 
     private void MovementButton() {
         if(selectedUnit != null) {
-            if(interactionState == InteractionState.moving) {
-                interactionState = InteractionState.none;
+            audioManager.Play(SoundName.ButtonPress);
+            if (interactionState == InteractionState.moving) {
                 boardController.ClearHighlighting();
-                
+                interactionState = InteractionState.selected;
             }
             else {
-                interactionState = InteractionState.moving;
+                boardController.ClearHighlighting();
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
-                audioManager.Play(SoundName.ButtonPress);
+                interactionState = InteractionState.moving;
             }
         }
     }
 
     private void AttackButton() {
         if(selectedUnit != null) {
-            if(interactionState == InteractionState.attacking) {
-                interactionState = InteractionState.none;
+            audioManager.Play(SoundName.ButtonPress);
+            if (interactionState == InteractionState.attacking) {
                 boardController.ClearHighlighting();
+                interactionState = InteractionState.selected;
             }
             else {
-                interactionState = InteractionState.attacking;
+                boardController.ClearHighlighting();
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
-                audioManager.Play(SoundName.ButtonPress);
+                interactionState = InteractionState.attacking;
             }
         }
     }
 
     public void Ability1ButtonClicked() {
         if(interactionState == InteractionState.ability1) {
-            interactionState = InteractionState.none;
             boardController.ClearHighlighting();
+            interactionState = InteractionState.none;
         }
         else {
-            interactionState = InteractionState.ability1;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability1]);
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
+            interactionState = InteractionState.ability1;
         }
     }
 
     public void Ability2ButtonClicked() {
         if (interactionState == InteractionState.ability2) {
-            interactionState = InteractionState.none;
             boardController.ClearHighlighting();
+            interactionState = InteractionState.none;
         }
         else {
-            interactionState = InteractionState.ability2;
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
+            interactionState = InteractionState.ability2;
         }
     }
 
     public void PlayCard(Card card) {
         this.cardBeingPlayed = card;
-        this.interactionState = InteractionState.playingCard;
 
-        //Note: here we have to highlight the appropriate tiles if the card is unique to a unit
+        SelectUnit();
+        this.highlightedTiles = manager.GetUnitPositions(card.type);
+        boardController.HighlightTiles(this.highlightedTiles);
+        this.interactionState = InteractionState.playingCard;
+    }
+
+    private void SelectUnit(UnitStats unit = null) {
+        InteractionState storedState = InteractionState.none;
+        if(selectedUnit != null) {
+            selectedUnit.MyUnit.HideUnitOutline();
+            if (selectedUnit.Owner == username) {
+                unitButtonReferences[selectedUnit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_DEFAULT;
+                selectedUnitButton = null;
+            }
+        }
+        if(unit != null) {
+            unit.MyUnit.OutlineUnit();
+            if (unit.Owner == username) {
+                unitButtonReferences[unit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                selectedUnitButton = unitButtonReferences[unit];
+                storedState = InteractionState.selected;
+            }
+        }
+        selectedUnit = unit;
+        interactionState = storedState;
     }
 
     private void UpdateUnitDisplay(UnitStats unit) {
@@ -349,21 +429,21 @@ public class PlayerController : MonoBehaviour {
             attackButtonObject.SetActive(true);
             movementButtonObject.SetActive(true);
             if (unit.AttackActions != 0 && unit.Damage != 0) {
-                attackButton.GetComponent<Image>().color = BUTTON_ACTIVE;
+                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
                 attackButton.onClick.RemoveAllListeners();
                 attackButton.onClick.AddListener(AttackButton);
             }
             else {
-                attackButton.GetComponent<Image>().color = BUTTON_INACTIVE;
+                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                 attackButton.onClick.RemoveAllListeners();
             }
             if (unit.MovementSpeed != 0) {
-                movementButton.GetComponent<Image>().color = BUTTON_ACTIVE;
+                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
                 movementButton.onClick.RemoveAllListeners();
                 movementButton.onClick.AddListener(MovementButton);
             }
             else {
-                movementButton.GetComponent<Image>().color = BUTTON_INACTIVE;
+                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                 movementButton.onClick.RemoveAllListeners();
             }
             if (unit.UnitClass == UnitClass.general) {
@@ -372,20 +452,20 @@ public class PlayerController : MonoBehaviour {
                 if (unit.Ability1Cooldown == 0) {
                     Ability1Button.onClick.RemoveAllListeners();
                     Ability1Button.onClick.AddListener(Ability1ButtonClicked);
-                    Ability1Button.GetComponent<Image>().color = BUTTON_ACTIVE;
+                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
                 }
                 else {
-                    Ability1Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                     Ability1Button.onClick.RemoveAllListeners();
                 }
                 Ability2Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability2]);
                 if (unit.Ability2Cooldown == 0) {
                     Ability2Button.onClick.RemoveAllListeners();
                     Ability2Button.onClick.AddListener(Ability2ButtonClicked);
-                    Ability2Button.GetComponent<Image>().color = BUTTON_ACTIVE;
+                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
                 }
                 else {
-                    Ability2Button.GetComponent<Image>().color = BUTTON_INACTIVE;
+                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                     Ability2Button.onClick.RemoveAllListeners();
                 }
                 generalName.SetActive(true);

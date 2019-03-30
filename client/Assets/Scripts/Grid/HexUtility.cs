@@ -153,7 +153,8 @@ public static class HexUtility {
         List<Vector2Int> neighbors = new List<Vector2Int>();
         for(int i = 0; i<=5; i++){
             Vector2Int neighbor = NeighborTile(hex, i);
-            if((tilemap.HasTile((Vector3Int)neighbor) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap)))) {
+            HexTile tile = tilemap.GetTile((Vector3Int)neighbor) as HexTile;
+            if(tile != null && !tile.attributes.Contains(TileAttribute.Obstacle) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap))) {
                 neighbors.Add(neighbor);
             }
         }
@@ -228,11 +229,13 @@ public static class HexUtility {
     // Obstacles and the edge of the map are taken into account, and will prevent certain hexes from being reached.
     // if ignoreElevation is false, it won't include tiles with an elevation difference >= 2
     public static List<Vector2Int> HexReachable(Vector2Int startPos, int movementRange, Tilemap tilemap, bool ignoreElevation){
-        List<Vector2Int> visited = new List<Vector2Int>();
-        visited.Add(startPos);
+        List<Vector2Int> visited = new List<Vector2Int> {
+            startPos
+        };
         List<List<Vector2Int>> fringes = new List<List<Vector2Int>>();
-        List<Vector2Int> startList = new List<Vector2Int>();
-        startList.Add(startPos);
+        List<Vector2Int> startList = new List<Vector2Int> {
+            startPos
+        };
         fringes.Add(startList);
         for(int movement = 1; movement <= movementRange; movement++){
             fringes.Add(new List<Vector2Int>());

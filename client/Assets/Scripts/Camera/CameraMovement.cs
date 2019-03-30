@@ -165,7 +165,7 @@ public class CameraMovement : MonoBehaviour {
                 zoom -= zoomSensitivity * Time.deltaTime * 0.2f;
             }
             zoom = Mathf.Lerp(zoom, Camera.main.transform.position.z, smoothFactor);
-            Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Mathf.Clamp(zoom, -150, -50)), Camera.main.transform.rotation);
+            Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Mathf.Clamp(zoom, -150, -10)), Camera.main.transform.rotation);
             zoom = Camera.main.transform.position.z;
         }
     }

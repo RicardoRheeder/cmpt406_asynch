@@ -17,6 +17,31 @@ ModelImporter:
     100022: RP_Femer
     100024: RP_Shin_
     100026: Spine
+    100028: BackFemur_L
+    100030: BackFemur_R_001
+    100032: BackKneeTarget_L
+    100034: BackKneeTarget_R_001
+    100036: BackTibia_L
+    100038: BackTibia_R_001
+    100040: Bone
+    100042: Bone_011
+    100044: FrontFemur_L
+    100046: FrontFemur_R_001
+    100048: FrontkneeTarget_L
+    100050: FrontkneeTarget_R_001
+    100052: FrontTibia_L
+    100054: FrontTibia_R_001
+    100056: GunSlide
+    100058: GunTarget
+    100060: TungstenArmature
+    100062: Vane_L
+    100064: Vane_L_001
+    100066: Vane_R_002
+    100068: Vane_R_003
+    100070: VaneBase_L
+    100072: VaneBase_L_001
+    100074: VaneBase_R_002
+    100076: VaneBase_R_003
     400000: //RootNode
     400002: Armature
     400004: FD_Femer
@@ -31,6 +56,31 @@ ModelImporter:
     400022: RP_Femer
     400024: RP_Shin_
     400026: Spine
+    400028: BackFemur_L
+    400030: BackFemur_R_001
+    400032: BackKneeTarget_L
+    400034: BackKneeTarget_R_001
+    400036: BackTibia_L
+    400038: BackTibia_R_001
+    400040: Bone
+    400042: Bone_011
+    400044: FrontFemur_L
+    400046: FrontFemur_R_001
+    400048: FrontkneeTarget_L
+    400050: FrontkneeTarget_R_001
+    400052: FrontTibia_L
+    400054: FrontTibia_R_001
+    400056: GunSlide
+    400058: GunTarget
+    400060: TungstenArmature
+    400062: Vane_L
+    400064: Vane_L_001
+    400066: Vane_R_002
+    400068: Vane_R_003
+    400070: VaneBase_L
+    400072: VaneBase_L_001
+    400074: VaneBase_R_002
+    400076: VaneBase_R_003
     2100000: ___default___
     2100002: ___default____003
     2300000: //RootNode

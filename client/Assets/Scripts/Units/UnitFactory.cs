@@ -105,7 +105,7 @@ public static class UnitFactory {
 
     private readonly static int HEAVY_ALBARN_HP = 500;
     private readonly static int HEAVY_ALBARN_ARMOUR = 30;
-    private readonly static int HEAVY_ALBARN_RANGE = 1000;
+    private readonly static int HEAVY_ALBARN_RANGE = 120;
     private readonly static int HEAVY_ALBARN_DAMAGE = 10;
     private readonly static int HEAVY_ALBARN_PIERCE = 0;
     private readonly static int HEAVY_ALBARN_AOE = 1;
@@ -127,7 +127,7 @@ public static class UnitFactory {
 
     private readonly static int LIGHT_ADREN_HP = 500;
     private readonly static int LIGHT_ADREN_ARMOUR = 30;
-    private readonly static int LIGHT_ADREN_RANGE = 1000;
+    private readonly static int LIGHT_ADREN_RANGE = 120;
     private readonly static int LIGHT_ADREN_DAMAGE = 20;
     private readonly static int LIGHT_ADREN_PIERCE = 0;
     private readonly static int LIGHT_ADREN_AOE = 0;

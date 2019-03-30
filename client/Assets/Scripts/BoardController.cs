@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
+using System.Linq;
 
 public class BoardController {
 
@@ -10,18 +11,15 @@ public class BoardController {
     public float elevationHeight = 2.4f; // the difference between each elevation level. used to calculate the y world position
     Tilemap tilemap; // the tilemap instance
     Plane plane;
+    LineRenderer pathLine;
 
     private List<GameObject> hightlightedTiles;
-    private GameObject hoverHighlightedTile;
-    private GameObject alreadyHighlightedTile;
-    private GameObject singleHighlitedTile;
-    private int alreadyHighlightedTileColor; 
-    private Vector2Int previousHoverTilePos;
+    private List<GameObject> hoverHighlightedTiles = new List<GameObject>();
+    private Tuple<Vector2Int,int> previousHoverTilePos;
+    private Tuple<Vector2Int,Vector2Int> renderPathCache;
     
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
-
-        
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         if(tilemap == null) {
             Debug.Log("Tilemap is null. This will result in problems");
@@ -30,9 +28,22 @@ public class BoardController {
             plane = new Plane(tilemap.transform.forward, tilemap.transform.position); // creates a flat horizontal plane at y = 0
         }
         this.hightlightedTiles = new List<GameObject>();
+        this.pathLine = GameObject.Instantiate(Resources.Load<LineRenderer>("PathLine"));
         
-        if (UnityEngine.Random.Range(0, 2) == 1) {
+        GameObject fogPlane = GameObject.Find("Fog Plane");
+        int randInt = UnityEngine.Random.Range(0, 2);
+
+        if (randInt == 1) {
             GameObject.Find("RainParent").transform.GetChild(0).gameObject.SetActive(true);
+            fogPlane.SetActive(true);
+            fogPlane.GetComponent<FogSystem>().setMistColor(2);
+        }
+        else if (randInt == 2) {
+            fogPlane.SetActive(true);
+            fogPlane.GetComponent<FogSystem>().setMistColor((int)UnityEngine.Random.Range(0,1));
+        }
+        else {
+            fogPlane.SetActive(false);
         }
     }
 
@@ -60,15 +71,15 @@ public class BoardController {
         Vector3 position = Input.mousePosition; // get mouse position
         Vector3 worldPoint = Vector3.zero;
         Ray ray = Camera.main.ScreenPointToRay(position); // create a raycast from the mouse position
-        RaycastHit hit;
 
         // if a raycast hits a tile, use that position
-        if(Physics.Raycast(ray,out hit)) {
-            worldPoint = new Vector3(hit.point.x,hit.point.y,0);
-        } else if(plane.Raycast(ray, out float enter)) {    // otherwise cast a ray at the flat plane to get position
+        if (Physics.Raycast(ray, out RaycastHit hit)) {
+            worldPoint = new Vector3(hit.point.x, hit.point.y, 0);
+        }
+        else if (plane.Raycast(ray, out float enter)) {    // otherwise cast a ray at the flat plane to get position
             Vector3 hitPoint = ray.GetPoint(enter);
-            Debug.DrawRay(ray.origin,ray.direction * enter,Color.green);
-            worldPoint = new Vector3(hitPoint.x,hitPoint.y,0);
+            Debug.DrawRay(ray.origin, ray.direction * enter, Color.green);
+            worldPoint = new Vector3(hitPoint.x, hitPoint.y, 0);
         }
 
         return (Vector2Int)tilemap.WorldToCell(worldPoint);
@@ -76,6 +87,11 @@ public class BoardController {
 
     // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position
     public Vector3 CellToWorld(Vector2Int position) {
+        return CellToWorld(position, 0f);
+    }
+
+    // Converts a cell (tile/grid) position to world position, adding the elevation if a tile exists at that position
+    public Vector3 CellToWorld(Vector2Int position, float zOffset) {
         if(tilemap == null) {   // throw exception if tilemap is null
             throw new MissingComponentException("Tilemap is missing");
         }
@@ -83,7 +99,7 @@ public class BoardController {
         Vector3 worldPosition = tilemap.CellToWorld((Vector3Int)position);
         HexTile tile = tilemap.GetTile((Vector3Int)position) as HexTile;
         if(tile != null) { // if tile exists, add elevation to world position
-            return new Vector3(worldPosition.x,worldPosition.y,worldPosition.z-(tileHeight+((int)tile.elevation*elevationHeight)));
+            return new Vector3(worldPosition.x,worldPosition.y,worldPosition.z-(tileHeight+((int)tile.elevation*elevationHeight)+zOffset));
         }
         return worldPosition;
     }
@@ -152,18 +168,24 @@ public class BoardController {
                 HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
                 tileObject = tile.GetTileObject(); //get the tile game object 
 
-                if (tileObject.GetComponent<cakeslice.Outline>() == null) {
-                    tileObject.AddComponent<cakeslice.Outline>();
+                if(!IsOutlineComponentAttached(tileObject)) {
+                    AttachOutlineComponent(tileObject);
                 }
                 hightlightedTiles.Add(tileObject);
-                tileObject.GetComponent<cakeslice.Outline>().enabled = true;
+                TileOutline tileOutline = tileObject.GetComponent<TileOutline>();
+                tileOutline.enabled = true;
+                if(tileOutline.outlineMode == OutlineMode.Hover) {
+                    tileOutline.outlineMode = OutlineMode.HoverOverHighlight;
+                } else {
+                    tileOutline.outlineMode = OutlineMode.Highlight;
+                }
             }
         }
     }
 
     //Checks if mouse position is changed to a new tile
-    private bool IsMousePositionChanged(Vector2Int tilePosition) {
-        if (tilePosition.Equals(previousHoverTilePos)) {
+    private bool IsMousePositionChanged(Tuple<Vector2Int,int> tilePosition) {
+        if (previousHoverTilePos != null && tilePosition.Equals(previousHoverTilePos)) {
             return false;
         } else {
             previousHoverTilePos = tilePosition;
@@ -173,158 +195,66 @@ public class BoardController {
 
    //Checks if the Outline script component is attached to the tile object
     private bool IsOutlineComponentAttached(GameObject tileObject) {
-        return tileObject.GetComponent<cakeslice.Outline>() != null;
-    }
-
-    //Checks if the Outline script component is enabled on the tile object
-    private bool IsOutlineComponentEnabled(GameObject tileObject) {
-        if (!IsOutlineComponentAttached(tileObject)) {
-            throw new MissingComponentException("Outline Component is missing");
-        }
-        return tileObject.GetComponent<cakeslice.Outline>().enabled;
+        return tileObject.GetComponent<TileOutline>() != null;
     }
 
     //Attatch the Outline script component to the tile object if it is not
     private void AttachOutlineComponent(GameObject tileObject) {
         if (!IsOutlineComponentAttached(tileObject)) {
-            tileObject.AddComponent<cakeslice.Outline>();
+            tileObject.AddComponent<TileOutline>();
         }
     }
-
-    //Enables the Outline script component on the object and changes the colo
-    private void EnableOutlineComponentAndChangeColor(GameObject tileObject, int colorNum) {
-        tileObject.GetComponent<cakeslice.Outline>().enabled = true;
-        tileObject.GetComponent<cakeslice.Outline>().color = colorNum; 
-    }
-
-    //Highlight the tile object selected unit is on and disable the previous one
-   public void HighlightSingleTile(Vector2Int tilePosition) {
-       if (this.HasHexTile(tilePosition)) {
-           GameObject tileObject;
-
-           if (singleHighlitedTile != null) {
-               singleHighlitedTile.GetComponent<cakeslice.Outline>().enabled = false;
-               singleHighlitedTile.GetComponent<cakeslice.Outline>().color = 0;
-           }
-
-           HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
-           tileObject = tile.GetTileObject(); //get the tile game object 
-
-           if (IsOutlineComponentAttached(tileObject)) {
-               if (IsOutlineComponentEnabled(tileObject)) {
-                   tileObject.GetComponent<cakeslice.Outline>().color = 2;
-               }
-               else {
-                   EnableOutlineComponentAndChangeColor(tileObject, 2);
-               }
-           }
-           else {
-               AttachOutlineComponent(tileObject);
-               EnableOutlineComponentAndChangeColor(tileObject, 2);
-           }
-           singleHighlitedTile = tileObject;
-       }
-   }
 
     //This function highlights tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
     //should should the mouse over effect on already highligted tiles
-    public void HoverHighlight(Vector2Int tilePosition) {
+    public void HoverHighlight(List<Vector2Int> tilePositions, Vector2Int centerTile) {
+        if(tilePositions == null || tilePositions.Count == 0) {
+            return;
+        }
         //this is to check if cursor is moved, we dont want to keep checking if its in the same position
-        if (IsMousePositionChanged(tilePosition)) {
-            if (hoverHighlightedTile != null) {//the first time this is false
-                if (hoverHighlightedTile.GetComponent<cakeslice.Outline>().color != 2) {
-                    hoverHighlightedTile.GetComponent<cakeslice.Outline>().enabled = false;
-                    hoverHighlightedTile.GetComponent<cakeslice.Outline>().color = 0;
+        if (IsMousePositionChanged(new Tuple<Vector2Int,int>(centerTile,tilePositions.Count))) {
+            for(int i=0; i<hoverHighlightedTiles.Count; i++) {
+                TileOutline tileOutline = hoverHighlightedTiles[i].GetComponent<TileOutline>();
+                if(tileOutline.outlineMode == OutlineMode.Hover) {
+                    tileOutline.enabled = false;
+                    tileOutline.outlineMode = OutlineMode.None;
+                } else if (tileOutline.outlineMode == OutlineMode.HoverOverHighlight) {
+                    tileOutline.outlineMode = OutlineMode.Highlight;
                 }
             }
 
-            if (alreadyHighlightedTile != null) {
-                alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color = alreadyHighlightedTileColor;
-            }
-
-            //previousHoverTile = tilePosition;
             GameObject tileObject;
+            hoverHighlightedTiles.Clear();
 
-            if (this.HasHexTile(tilePosition)) {
-                HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
-                tileObject = tile.GetTileObject(); //get the tile game object 
-
-                //this checks for tiles that are already highlited 
-                if (IsOutlineComponentAttached(tileObject)) {
-                    if (IsOutlineComponentEnabled(tileObject)) {
-                        alreadyHighlightedTile = tileObject;
-                        alreadyHighlightedTileColor = alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color;
-                        alreadyHighlightedTile.GetComponent<cakeslice.Outline>().color = 1;
-                        return; //if they are highlighted than return
+            for(int i=0; i<tilePositions.Count;i++) {
+                if (this.HasHexTile(tilePositions[i])) {
+                    HexTile tile = this.GetHexTile(tilePositions[i]); //get the Hex tile using Vector2Int position
+                    tileObject = tile.GetTileObject(); //get the tile game object 
+                    if (!IsOutlineComponentAttached(tileObject)) {//outline component not attached then attach it
+                        AttachOutlineComponent(tileObject);
                     }
-
                     //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
-                    hoverHighlightedTile = tileObject;
-                    //only change the color if the tile color is not 2 otherwise leave tile color as is for the unit selected on that tile
-                    if (hoverHighlightedTile.GetComponent<cakeslice.Outline>().color != 2) {
-                        EnableOutlineComponentAndChangeColor(hoverHighlightedTile, 1);
-                    }
-                }
-                //this is for if its a tile that is not already higlighted and does not have the outline component
-                else {
-                    hoverHighlightedTile = tileObject;
-                    if (!IsOutlineComponentAttached(hoverHighlightedTile)) {//outline component not attached then attach it
-                        AttachOutlineComponent(hoverHighlightedTile);
-                    }
-                    //only change the color if the tile color is not 2 otherwise leave tile color as is for the unit selected on that tile
-                    if (hoverHighlightedTile.GetComponent<cakeslice.Outline>().color != 2) {
-                        EnableOutlineComponentAndChangeColor(hoverHighlightedTile, 1);
+                    hoverHighlightedTiles.Add(tileObject);
+                    TileOutline tileOutline = tileObject.GetComponent<TileOutline>();
+                    tileOutline.enabled = true;
+                    tileOutline.hoverColor = 2;
+                    tileOutline.hoverOverHighlightColor = 1;
+                    if(tileOutline.outlineMode == OutlineMode.Highlight) {
+                        tileOutline.outlineMode = OutlineMode.HoverOverHighlight;
+                    } else {
+                        tileOutline.outlineMode = OutlineMode.Hover;
                     }
                 }
             }
+            previousHoverTilePos = new Tuple<Vector2Int,int>(centerTile,tilePositions.Count);
         }
     }
 
-    //leave this here for now
-    //This function highligts tiles on mouse over and disables when mouse leaves the tile. It does not work on tile already highlighted -- but it
-    //should should the mouse over effect on already highligted tiles
-    //public void HoverHighlight(Vector2Int tilePosition)
-    //{
-    //    if (!tilePosition.Equals(previousHoverTile)){ //this is to check if cursor is moved, we dont want to keep checking if its in the same position
-    //        if (hoverHighlightedTile != null){ //the first time this is false
-    //            hoverHighlightedTile.GetComponent<cakeslice.Outline>().enabled = false;
-    //        }
-
-    //        previousHoverTile = tilePosition;
-    //        GameObject tileObject;
-
-    //        if (this.HasHexTile(tilePosition)){
-    //            HexTile tile = this.GetHexTile(tilePosition); //get the Hex tile using Vector2Int position
-    //            tileObject = tile.GetTileObject(); //get the tile game object 
-                
-    //            //this checks for tiles that are already highlited 
-    //            if (tileObject.GetComponentsInChildren<cakeslice.Outline>().Length > 0){ 
-    //                if (tileObject.GetComponentsInChildren<cakeslice.Outline>()[0].enabled == true){ 
-
-    //                    return; //if they are highlighted than return
-    //                }
-    //                //if they only have the outline component but are not highlighted than save into the hoverHighlightedTile and enable the highlight
-    //                hoverHighlightedTile = tileObject;
-    //                hoverHighlightedTile.GetComponent<cakeslice.Outline>().enabled = true;
-    //                tileObject.GetComponent<cakeslice.Outline>().color = 1; //change the color to yellow
-    //            }
-    //            //this is for if its a tile that is not already higlighted and does not have the outline component
-    //            else {
-    //                hoverHighlightedTile = tileObject;
-    //                if (hoverHighlightedTile.GetComponentsInChildren<cakeslice.Outline>().Length <= 0){
-    //                        hoverHighlightedTile.AddComponent<cakeslice.Outline>();
-    //                }
-    //                hoverHighlightedTile.GetComponent<cakeslice.Outline>().enabled = true;
-    //                tileObject.GetComponent<cakeslice.Outline>().color = 1;
-    //            }
-    //        }
-    //    }
-    //}
-
-
     public void ClearHighlighting() {
         foreach (var tile in hightlightedTiles) {
-            tile.GetComponent<cakeslice.Outline>().enabled = false;
+            TileOutline tileOutline = tile.GetComponent<TileOutline>();
+            tileOutline.enabled = false;
+            tileOutline.outlineMode = OutlineMode.None;
         }
         hightlightedTiles.Clear();
     }
@@ -357,10 +287,33 @@ public class BoardController {
     }
 
     public List<Vector2Int> GetTilesWithinAttackRange(Vector2Int startingPos, int range) {
-        return HexUtility.HexReachable(startingPos, range, tilemap, true);
+        return HexUtility.GetTilePositionsInRange(tilemap, startingPos, range);
     }
 
     public List<Vector2Int> GetTilesWithinMovementRange(Vector2Int startingPos, int movementSpeed) {
         return HexUtility.HexReachable(startingPos, movementSpeed, tilemap, false);
+    }
+
+    public void RenderPath(Vector2Int startingPos, Vector2Int endPos) {
+        Tuple<Vector2Int,Vector2Int> pathEndPositions = new Tuple<Vector2Int, Vector2Int>(startingPos,endPos);
+        if(renderPathCache != null && renderPathCache.Equals(pathEndPositions)) {
+            return;
+        }
+        List<Vector2Int> path = HexUtility.Pathfinding(startingPos,endPos,this.tilemap,false);
+        List<Vector3> worldPosPath = new List<Vector3>();
+        worldPosPath.Add(CellToWorld(startingPos,1f));
+        foreach(Vector2Int pos in path) {
+            worldPosPath.Add(CellToWorld(pos,1f));
+        }
+        pathLine.positionCount = worldPosPath.Count;
+        pathLine.SetPositions(worldPosPath.ToArray());
+        pathLine.endWidth = 0.5f;
+        renderPathCache = pathEndPositions;
+    }
+
+    public void ClearRenderedPath() {
+        pathLine.positionCount = 0;
+        pathLine.SetPositions(new Vector3[0]);
+        renderPathCache = null;
     }
 }

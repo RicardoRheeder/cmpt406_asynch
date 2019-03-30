@@ -27,11 +27,66 @@ ModelImporter:
     100042: mesh22
     100044: Armature
     100046: Bone
-    100048: mesh04
-    100050: mesh05_001
-    100052: mesh23
-    100054: mesh24
-    100056: mesh25
+    100048: BackLeg
+    100050: BackLeg_001
+    100052: BackLeg_002
+    100054: BaseSpine
+    100056: BigPiston_L
+    100058: BigPiston_R
+    100060: FrontLeg
+    100062: FrontLeg_001
+    100064: FrontLeg_002
+    100066: Head
+    100068: mesh25
+    100070: Shoulder_L
+    100072: Shoulder_L_001
+    100074: Shoulder_L_002
+    100076: Shoulder_R
+    100078: Shoulder_R_001
+    100080: Shoulder_R_002
+    100082: SideBackLeg_L
+    100084: SideBackLeg_L_001
+    100086: SideBackLeg_L_002
+    100088: SideBackLeg_L_003
+    100090: SideBackLeg_R
+    100092: SideBackLeg_R_001
+    100094: SideBackLeg_R_003
+    100096: SideFrontLeg_L
+    100098: SideFrontLeg_L_001
+    100100: SideFrontLeg_L_002
+    100102: SideFrontLeg_R
+    100104: SideFrontLeg_R_001
+    100106: SideFrontLeg_R_002
+    100108: TopPiston
+    100110: mesh04
+    100112: mesh05_001
+    100114: mesh23
+    100116: mesh24
+    100118: BackSideFemur_L
+    100120: BackSideFemur_L_001
+    100122: BackSideFoot_L
+    100124: BackSideFoot_L_001
+    100126: BackSideFootIK_L_002
+    100128: BackSideFootIK_L_003
+    100130: Base
+    100132: Cylinder_L
+    100134: Cylinder_R_001
+    100136: DrillShaft
+    100138: Empty
+    100140: FrontFemur
+    100142: FrontFoot
+    100144: FrontFootIK
+    100146: FrontSideBoot_L
+    100148: FrontSideBoot_L_001
+    100150: FrontSideBootIK_L_002
+    100152: FrontSideFemur_L
+    100154: FrontSideFemur_L_001
+    100156: FrontSideFootIK_L_003
+    100158: Piston_L
+    100160: Piston_R_001
+    100162: RearFemur
+    100164: RearFoot
+    100166: RearFootIK_001
     400000: //RootNode
     400002: cylinder01
     400004: mesh02
@@ -56,11 +111,66 @@ ModelImporter:
     400042: mesh22
     400044: Armature
     400046: Bone
-    400048: mesh04
-    400050: mesh05_001
-    400052: mesh23
-    400054: mesh24
-    400056: mesh25
+    400048: BackLeg
+    400050: BackLeg_001
+    400052: BackLeg_002
+    400054: BaseSpine
+    400056: BigPiston_L
+    400058: BigPiston_R
+    400060: FrontLeg
+    400062: FrontLeg_001
+    400064: FrontLeg_002
+    400066: Head
+    400068: mesh25
+    400070: Shoulder_L
+    400072: Shoulder_L_001
+    400074: Shoulder_L_002
+    400076: Shoulder_R
+    400078: Shoulder_R_001
+    400080: Shoulder_R_002
+    400082: SideBackLeg_L
+    400084: SideBackLeg_L_001
+    400086: SideBackLeg_L_002
+    400088: SideBackLeg_L_003
+    400090: SideBackLeg_R
+    400092: SideBackLeg_R_001
+    400094: SideBackLeg_R_003
+    400096: SideFrontLeg_L
+    400098: SideFrontLeg_L_001
+    400100: SideFrontLeg_L_002
+    400102: SideFrontLeg_R
+    400104: SideFrontLeg_R_001
+    400106: SideFrontLeg_R_002
+    400108: TopPiston
+    400110: mesh04
+    400112: mesh05_001
+    400114: mesh23
+    400116: mesh24
+    400118: BackSideFemur_L
+    400120: BackSideFemur_L_001
+    400122: BackSideFoot_L
+    400124: BackSideFoot_L_001
+    400126: BackSideFootIK_L_002
+    400128: BackSideFootIK_L_003
+    400130: Base
+    400132: Cylinder_L
+    400134: Cylinder_R_001
+    400136: DrillShaft
+    400138: Empty
+    400140: FrontFemur
+    400142: FrontFoot
+    400144: FrontFootIK
+    400146: FrontSideBoot_L
+    400148: FrontSideBoot_L_001
+    400150: FrontSideBootIK_L_002
+    400152: FrontSideFemur_L
+    400154: FrontSideFemur_L_001
+    400156: FrontSideFootIK_L_003
+    400158: Piston_L
+    400160: Piston_R_001
+    400162: RearFemur
+    400164: RearFoot
+    400166: RearFootIK_001
     2100000: ___default___
     2100002: ___default____001
     2300000: cylinder01
@@ -126,8 +236,8 @@ ModelImporter:
     4300036: mesh08
     4300038: mesh12
     4300040: cylinder01
-    4300042: mesh23
-    4300044: mesh25
+    4300042: mesh25
+    4300044: mesh23
     4300046: mesh05_001
     4300048: mesh24
     4300050: mesh04
@@ -139,30 +249,30 @@ ModelImporter:
     7400010: Walk_00
     9500000: //RootNode
     13700000: mesh05
-    13700002: mesh02
-    13700004: mesh03
-    13700006: mesh04
-    13700008: mesh05_001
-    13700010: mesh06
-    13700012: mesh07
-    13700014: mesh08
-    13700016: mesh09
-    13700018: mesh10
-    13700020: mesh11
-    13700022: mesh12
-    13700024: mesh13
-    13700026: mesh14
-    13700028: mesh15
-    13700030: mesh16
-    13700032: mesh17
-    13700034: mesh18
-    13700036: mesh19
-    13700038: mesh20
-    13700040: mesh21
-    13700042: mesh22
-    13700044: mesh23
-    13700046: mesh24
-    13700048: mesh25
+    13700002: mesh25
+    13700004: mesh02
+    13700006: mesh03
+    13700008: mesh04
+    13700010: mesh05_001
+    13700012: mesh06
+    13700014: mesh07
+    13700016: mesh08
+    13700018: mesh09
+    13700020: mesh10
+    13700022: mesh11
+    13700024: mesh12
+    13700026: mesh13
+    13700028: mesh14
+    13700030: mesh15
+    13700032: mesh16
+    13700034: mesh17
+    13700036: mesh18
+    13700038: mesh19
+    13700040: mesh20
+    13700042: mesh21
+    13700044: mesh22
+    13700046: mesh23
+    13700048: mesh24
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:

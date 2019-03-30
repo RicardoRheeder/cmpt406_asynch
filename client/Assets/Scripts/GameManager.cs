@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 using CardsAndCarnage;
 
@@ -49,7 +51,6 @@ public class GameManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        
         DontDestroyOnLoad(this.gameObject);
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         client = GameObject.Find("Networking").GetComponent<Client>();
@@ -97,6 +98,8 @@ public class GameManager : MonoBehaviour {
         this.isPlacing = false;
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
+
+        audioManager.Play(SoundName.ButtonPress);
         
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
@@ -126,7 +129,7 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts:gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
 
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
         cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
@@ -153,7 +156,7 @@ public class GameManager : MonoBehaviour {
             cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
         }
         else {
-            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:7);
+            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT);
         }
 
         inGameMenu.SetupPanels(isPlacing: false);
@@ -294,13 +297,35 @@ public class GameManager : MonoBehaviour {
     }
 
     //===================== In game button functionality ===================
+    private bool exiting = false;
     public void EndTurn() {
+        if (exiting) {
+            return;
+        }
+        exiting = true;
+        StartCoroutine("MainMenuNavigationCountDown");
+        audioManager.Play(SoundName.ButtonPress);
+
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }
-        audioManager.Play(SoundName.ButtonPress);
+    }
+
+    IEnumerator MainMenuNavigationCountDown() {
+        TextMeshProUGUI countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
+        this.inGameMenu.returningToMainMenuPanel.SetActive(true);
+        float startTime = Time.time;
+
+        int displayTime = 3;
+        while (displayTime > 0) {
+            countDownText.text = displayTime + "...";
+            displayTime = (int)(3 - (Time.time - startTime) + 1);
+            yield return null;
+        }
+        exiting = false;
+
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
@@ -318,13 +343,15 @@ public class GameManager : MonoBehaviour {
     }
 
     public void EndUnitPlacement() {
-        //This function will have to figure out how to send the unit data to the server, and confirm that we are going
-        //to be playing in this game
+        if (exiting) {
+            return;
+        }
+        exiting = true;
+        StartCoroutine("MainMenuNavigationCountDown");
         UnitStats general = placedUnits[0];
         placedUnits.RemoveAt(0);
         ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general);
         client.ReadyUnits(readyState);
-        SceneManager.LoadScene("MainMenu");
     }
 
     //Used for unit placement
@@ -459,5 +486,26 @@ public class GameManager : MonoBehaviour {
         else {
             return false;
         }
+    }
+
+    //===================== Functions used to get unit positions ===================
+    public List<Vector2Int> GetUnitPositions(UnitType type = UnitType.none) {
+        List<Vector2Int> retList = new List<Vector2Int>();
+        foreach (Vector2Int pos in unitPositions.Keys) {
+            UnitStats unit = unitPositions[pos];
+            if((int)unit.UnitType < UnitMetadata.GENERAL_THRESHOLD) {
+                if (unit.Owner == user.Username) {
+                    if (type == UnitType.none || unit.UnitType == type) {
+                        retList.Add(pos);
+                    }
+                }
+            }
+        }
+        return retList;
+    }
+
+    //===================== Functions used to interact with the camera ===================
+    public void SnapToPosition(Vector2Int pos) {
+        cameraRig.SnapToPosition(boardController.CellToWorld(pos));
     }
 }

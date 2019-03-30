@@ -5,22 +5,27 @@ using UnityEngine;
 //The actual script on the unit that handles animations
 public class Unit : MonoBehaviour {
     
-    public Renderer rend;
+    public SkinnedMeshRenderer rend;
     public float moveSpeed = 5f;
     Animator anim;
 
     Vector2Int currTilePosition;
     FogViewer fogViewer;
+    UnitOutline unitOutline;
 
     private int currDirection = 0;
 
     
     void Awake() {
-        // rend = this.GetComponent<Renderer>();
-        rend = GetComponentInChildren<Renderer>();
+        rend = GetComponentInChildren<SkinnedMeshRenderer>();
         anim = GetComponent<Animator>();
+        unitOutline = GetComponent<UnitOutline>();
         fogViewer = new FogViewer();
         transform.rotation = Quaternion.Euler(-90,0,0); 
+
+        if(unitOutline != null) {
+            unitOutline.enabled = false;
+        }
     }
 
     //Method used to handle the attack animation
@@ -65,17 +70,29 @@ public class Unit : MonoBehaviour {
         transform.rotation = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
     }
 
+    public void OutlineUnit() {
+        if(unitOutline != null) {
+            unitOutline.enabled = true;
+        }
+    }
+
+    public void HideUnitOutline() {
+        if(unitOutline != null) {
+            unitOutline.enabled = false;
+        }
+    }
+
     IEnumerator PathMovement(List<Tuple<Vector2Int,int>> path, BoardController board) {
         if(this.anim != null) {
             anim.SetBool("walking",true);
         }
-         float step = moveSpeed * Time.fixedDeltaTime;
-         float t = 0;
-         Vector3 prevPos = transform.position;
-         Vector2Int prevTilePos = currTilePosition;
-         int prevDir = currDirection;
-         Quaternion prevRotation = transform.rotation;
-         for(int i = 0; i < path.Count; i++) {
+        float step = moveSpeed * Time.fixedDeltaTime;
+        float t = 0;
+        Vector3 prevPos = transform.position;
+        Vector2Int prevTilePos = currTilePosition;
+        int prevDir = currDirection;
+        Quaternion prevRotation = transform.rotation;
+        for(int i = 0; i < path.Count; i++) {
             currTilePosition = path[i].First;
             currDirection = path[i].Second;
             fogViewer.SetPosition(currTilePosition);

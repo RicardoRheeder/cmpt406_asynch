@@ -2,16 +2,16 @@
 
 public static class StringValidation {
     private static readonly string CREDENTIALS_PATTERN = "^[a-zA-Z0-9_-]*$";
-    private static readonly int CREDENTIALS_LOWER_LIMIT = 4;
-    private static readonly int CREDENTIALS_UPPER_LIMIT = 20;
+    public static readonly int CREDENTIALS_LOWER_LIMIT = 4;
+    public static readonly int CREDENTIALS_UPPER_LIMIT = 20;
 
     private static readonly string GAME_NAME_PATTERN = "^[a-zA-Z0-9 _-]*$";
-    private static readonly int GAME_NAME_LOWER_LIMIT = 4;
-    private static readonly int GAME_NAME_UPPER_LIMIT = 20;
+    public static readonly int GAME_NAME_LOWER_LIMIT = 4;
+    public static readonly int GAME_NAME_UPPER_LIMIT = 20;
 
     private static readonly string ARMY_NAME_PATTERN = "^[a-zA-Z0-9 _-]*$";
-    private static readonly int ARMY_NAME_LOWER_LIMIT = 4;
-    private static readonly int ARMY_NAME_UPPER_LIMIT = 20;
+    public static readonly int ARMY_NAME_LOWER_LIMIT = 4;
+    public static readonly int ARMY_NAME_UPPER_LIMIT = 20;
 
     public static bool ValidateUsername(string username) {
         return ValidateString(username, CREDENTIALS_LOWER_LIMIT, CREDENTIALS_UPPER_LIMIT, CREDENTIALS_PATTERN);
