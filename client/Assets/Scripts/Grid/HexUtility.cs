@@ -312,12 +312,11 @@ public static class HexUtility {
         HashSet<Vector2Int> visionTiles = new HashSet<Vector2Int>();
         List<Vector2Int> edgeTiles = new List<Vector2Int>();
         for(int i=0; i<outerRing.Count; i++) {
-            List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap, ignoreElevation);
+            List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap,ignoreElevation);
             if(line.Count > 0) {
                 for(int k=0; k<line.Count-1; k++) {
                     visionTiles.Add(line[k]);
                 }
-                edgeTiles.Add(line[line.Count-1]);
             }
         }
 
@@ -333,7 +332,6 @@ public static class HexUtility {
         Vector3 cubeEnd = OddrToCube( endPos );
         if(cubeStart == cubeEnd) {
             visionLine.Add(CubeToOddr(CubeRound(cubeStart)));
-
         } else {
             Vector3 epsilonHex = new Vector3(1e-6f, 2e-6f, -3e-6f);
             if(cubeEnd.z-cubeStart.z>=0) {
@@ -353,6 +351,7 @@ public static class HexUtility {
                 HexTile tile = tilemap.GetTile((Vector3Int)tilePosition) as HexTile;
                 
                 if(tile == null) {
+                    visionLine.Add(tilePosition);
                     continue;
                 }
                 visionLine.Add(tilePosition);
