@@ -103,7 +103,7 @@ public class UnitStats {
         this.AttackActions--;
         int dir = HexUtility.FindDirection(this.Position,target);
         if (!analyticsAttack)
-            MyUnit.Attack(dir, sourceWorldPos, targetWorldPos);
+            MyUnit.Attack(dir, sourceWorldPos, targetWorldPos, this.UnitType);
         return attackStrategy.Attack(this, target);
     }
 

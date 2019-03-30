@@ -28,11 +28,11 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(int dir, Vector3 sourceWorldPos, Vector3 targetWorldPos) {
+    public void Attack(int dir, Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType) {
         TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
-            this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos);
+            this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos, unitType);
         }
     }
 
