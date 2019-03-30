@@ -313,16 +313,11 @@ public class Client : MonoBehaviour, INetwork {
         }
     }
 
-    private struct GetOldStateRequest {
-        public string gameId;
-        public int turnCount;
-    }
 
     public Tuple<bool, GameState> GetOldGamestate(string id, int turnCount) {
         BeginRequest();
         HttpWebRequest request = CreatePostRequest(GET_OLD_GAME_STATE);
-        GetOldStateRequest requestData;
-        requestData.gameId = id; requestData.turnCount = turnCount;
+        GetOldGameState requestData = new GetOldGameState(id, turnCount);
         string requestJson = JsonConversion.ConvertObjectToJson(requestData);
         AddJsonToRequest(requestJson, ref request);
 

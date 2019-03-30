@@ -7,13 +7,13 @@ public class GameState {
     [DataMember(IsRequired=true)]
     public readonly string id;
 
-    [DataMember(IsRequired = true)]
+    [DataMember]
     public readonly string gameName;
 
-    [DataMember(IsRequired = true)]
+    [DataMember]
     public readonly string createdBy;
 
-    [DataMember(IsRequired = true)]
+    [DataMember]
     public readonly BoardType boardId;
 
     [DataMember]
@@ -35,7 +35,7 @@ public class GameState {
     public List<string> AcceptedUsers { get; private set; }
 
     [DataMember(Name = "readyUsers")]
-    public List<string> ReadyUsers { get; private set; }
+    public List<string> ReadyUsers { get; set; }
 
     [DataMember(Name = "aliveUsers")]
     public List<string> AliveUsers { get; private set; }
@@ -137,6 +137,22 @@ public class GameStateCollection {
 
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(this);
+    }
+}
+
+//Used to create a collection of gamestates from a server response
+[DataContract]
+public class GetOldGameState {
+
+    [DataMember]
+    private string gameId;
+
+    [DataMember]
+    private int turnCount;
+
+    public GetOldGameState(string gameId, int turnCount) {
+        this.gameId = gameId;
+        this.turnCount = turnCount;
     }
 }
 

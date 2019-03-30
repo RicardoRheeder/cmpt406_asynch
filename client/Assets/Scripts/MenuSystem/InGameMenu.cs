@@ -15,6 +15,7 @@ public class InGameMenu : MonoBehaviour {
     private GameObject menuPanel;
     private GameObject actionsPanel;
     public GameObject returningToMainMenuPanel;
+    public GameObject replayOpponentTurnsPanel;
 
 
     // Start is called before the first frame update
@@ -45,6 +46,7 @@ public class InGameMenu : MonoBehaviour {
         }
         else {
             placeUnitsPanel.SetActive(false);
+            replayOpponentTurnsPanel.SetActive(true);
         }
     }
 }

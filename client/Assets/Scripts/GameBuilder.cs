@@ -70,6 +70,8 @@ public class GameBuilder : MonoBehaviour {
         this.board = board;
         this.fogController = fogController;
         this.isPlacing = isPlacing;
+        unitPositions = new Dictionary<Vector2Int, UnitStats>();
+        effectPositions = new Dictionary<Vector2Int, Effect>();
 
         if (armyPreset != null) {
             this.unitNumbers = new List<int>(){
