@@ -155,8 +155,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Attack_00
       takeName: Attack_00
-      firstFrame: -1
-      lastFrame: 24
+      firstFrame: 0
+      lastFrame: 492
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -183,8 +183,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Death_00
       takeName: Death_00
-      firstFrame: -1
-      lastFrame: 24
+      firstFrame: 0
+      lastFrame: 202
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -211,8 +211,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Hit_00
       takeName: Hit_00
-      firstFrame: -1
-      lastFrame: 24
+      firstFrame: 0
+      lastFrame: 132
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -239,8 +239,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Idle_00
       takeName: Idle_00
-      firstFrame: -1
-      lastFrame: 16
+      firstFrame: 0
+      lastFrame: 2093
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -267,8 +267,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Walk_00
       takeName: Walk_00
-      firstFrame: -1
-      lastFrame: 59
+      firstFrame: 0
+      lastFrame: 206
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
