@@ -79,8 +79,6 @@ func handleGetUser(w http.ResponseWriter, r *http.Request) {
 	user.Password = ""
 
 	json.NewEncoder(w).Encode(user)
-
-	w.WriteHeader(http.StatusOK)
 	return
 }
 
@@ -378,8 +376,6 @@ func handleGetGameState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(gameState)
-
-	w.WriteHeader(http.StatusOK)
 	return
 }
 
@@ -409,8 +405,6 @@ func handleGetGameStateMulti(w http.ResponseWriter, r *http.Request) {
 	response := &request.MultiStatesResponse{States: gameStates}
 
 	json.NewEncoder(w).Encode(response)
-
-	w.WriteHeader(http.StatusOK)
 	return
 }
 
@@ -439,8 +433,6 @@ func handleGetPublicGamesSummary(w http.ResponseWriter, r *http.Request) {
 	response := &request.MultiStatesResponse{States: publicGameStates}
 
 	json.NewEncoder(w).Encode(response)
-
-	w.WriteHeader(http.StatusOK)
 	return
 }
 
@@ -469,8 +461,6 @@ func handleGetCompletedGames(w http.ResponseWriter, r *http.Request) {
 	response := &request.MultiStatesResponse{States: completedGameStates}
 
 	json.NewEncoder(w).Encode(response)
-
-	w.WriteHeader(http.StatusOK)
 	return
 }
 

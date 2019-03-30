@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class GameBuilder : MonoBehaviour {
 
@@ -71,9 +72,9 @@ public class GameBuilder : MonoBehaviour {
         this.isPlacing = isPlacing;
 
         if (armyPreset != null) {
-            this.unitNumbers = new List<int>(
+            this.unitNumbers = new List<int>(){
                 armyPreset.General
-            );
+            };
             this.unitNumbers.AddRange(armyPreset.Units);
         }
         else {
@@ -110,8 +111,6 @@ public class GameBuilder : MonoBehaviour {
             unitPlacementViewport = GameObject.Find("UnitSnapContent");
         }
 
-        GameObject generalText = Instantiate(prefabToUse);
-        UnitDisplayTexts.Add(generalText);
         for(int i = 0; i < unitNumbers.Count; i++) {
             int unit = unitNumbers[i];
             GameObject unitText = Instantiate(prefabToUse);

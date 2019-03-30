@@ -8,10 +8,12 @@ public class AudioManager : MonoBehaviour {
     public AudioLibrary[] sounds;
     public AudioMixer masterMixer;
 
+
     void Awake() {
         // Instaniate the object. If one already exists, destroy it.
         DontDestroyOnLoad(this);
     }
+
 
     private void InitalizeAudio() {
         // Creates an a modifible element in the inspector of the audioManager for each audio clip.
@@ -21,7 +23,7 @@ public class AudioManager : MonoBehaviour {
             sound.audioSource.volume = sound.volume;
             sound.audioSource.pitch = sound.pitch;
             sound.audioSource.loop = sound.loop;
-            sound.audioSource.outputAudioMixerGroup = sound.audioMixerGroup;
+            sound.audioSource.outputAudioMixerGroup = sound.mixerGroup;
         }
     }
 
@@ -64,8 +66,17 @@ public class AudioManager : MonoBehaviour {
     }
 
     // Sets the volume. (Currently it's based on the in game UI slider)
-    public void setVolume(float masterVolume) {
+    public void setMasterVolume(float masterVolume) {
         masterMixer.SetFloat("masterVolume", Mathf.Log10(masterVolume) * 20);
     }
 
+    // Sets the volume of the music.
+    public void setMusicVolume(float musicVol) {
+        masterMixer.SetFloat("musicVol", Mathf.Log10(musicVol) * 20);
+    }
+
+    // Sets the volume of sound effects.
+    public void setSFXVolume(float sfxVol) {
+        masterMixer.SetFloat("sfxVol", Mathf.Log10(sfxVol) * 20);
+    }
 }
