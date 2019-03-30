@@ -14,6 +14,7 @@ type GameState struct {
 	MaxUsers       int       `json:"maxUsers,omitempty"`
 	SpotsAvailable int       `json:"spotsAvailable,omitempty"`
 	IsPublic       bool      `json:"isPublic"`
+	TurnCount      int       `json:"turnCount"`
 	IsComplete     bool      `json:"isComplete"`
 	Users          []string  `json:"users,omitempty" datastore:",noindex,omitempty"`
 	AcceptedUsers  []string  `json:"acceptedUsers,omitempty" datastore:",noindex,omitempty"`
@@ -31,6 +32,16 @@ type GameState struct {
 	ForfeitTime    int       `json:"forfeitTime,omitempty" datastore:",noindex"`
 	LoseReasons    []Lose    `json:"loseReasons,omitempty" datastore:",noindex,omitempty"`
 	Created        time.Time `json:"created,omitempty" datastore:",noindex,omitempty"`
+}
+
+// GSAncestor is an old version of a gamestate
+type GSAncestor struct {
+	ID            string   `json:"id,omitempty"`
+	TurnCount     int      `json:"turnCount" datastore:",noindex"`
+	Units         []Unit   `json:"units,omitempty" datastore:",noindex,omitempty"`
+	Generals      []Unit   `json:"generals,omitempty" datastore:",noindex,omitempty"`
+	ActiveEffects []Effect `json:"activeEffects,omitempty" datastore:",noindex,omitempty"`
+	Actions       []Action `json:"actions,omitempty" datastore:",noindex,omitempty"`
 }
 
 // Unit is a game piece on the board

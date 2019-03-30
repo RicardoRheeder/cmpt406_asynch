@@ -46,6 +46,12 @@ type OnlyGameID struct {
 	GameID string `json:"gameId"`
 }
 
+// GetOldGameState is a struct to handle the request of getting an old version
+type GetOldGameState struct {
+	GameID    string `json:"gameId"`
+	TurnCount int    `json:"turnCount"`
+}
+
 // GetGameStateMulti is a struct to handle the /GetGameStateMulti payload
 type GetGameStateMulti struct {
 	GameIDs []string `json:"gameIds"`

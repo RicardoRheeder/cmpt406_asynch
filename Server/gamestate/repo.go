@@ -2,6 +2,7 @@ package gamestate
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"google.golang.org/appengine/datastore"
@@ -24,6 +25,7 @@ func CreateGameState(ctx context.Context, ID string, boardID int, users, accepte
 		CreatedBy:      acceptedUsers[0],
 		BoardID:        boardID,
 		IsPublic:       isPublic,
+		TurnCount:      0,
 		IsComplete:     false,
 		MaxUsers:       maxUsers,
 		SpotsAvailable: spotsAvailable,
@@ -206,4 +208,43 @@ func GetCompletedGames(ctx context.Context, limit int) ([]GameState, error) {
 	}
 
 	return gameStates, nil
+}
+
+// SaveGSAncestor will store the ancestor in datastore
+func SaveGSAncestor(ctx context.Context, gsID string, turnCount int, units []Unit, generals []Unit, activeEffects []Effect, actions []Action) error {
+
+	gsaID := gsID + ":" + strconv.Itoa(turnCount)
+
+	gsa := &GSAncestor{
+		ID:            gsaID,
+		TurnCount:     turnCount,
+		Units:         units,
+		Generals:      generals,
+		ActiveEffects: activeEffects,
+		Actions:       actions,
+	}
+
+	key := datastore.NewKey(ctx, "GSAncestor", gsaID, 0, nil)
+	_, err := datastore.Put(ctx, key, gsa)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Put (create) GSAncestor: %s", gsaID)
+		return err
+	}
+	return nil
+}
+
+// GetGSAncestor will get an ancestor gamestate via its key ID from DataStore
+func GetGSAncestor(ctx context.Context, gsID string, turnCount int) (*GSAncestor, error) {
+
+	var gsa GSAncestor
+	gsaID := gsID + ":" + strconv.Itoa(turnCount)
+	key := datastore.NewKey(ctx, "GSAncestor", gsaID, 0, nil)
+
+	err := datastore.Get(ctx, key, &gsa)
+	if err != nil {
+		log.Errorf(ctx, "Failed to Get GSAncestor: %s", gsaID)
+		return nil, err
+	}
+
+	return &gsa, nil
 }
