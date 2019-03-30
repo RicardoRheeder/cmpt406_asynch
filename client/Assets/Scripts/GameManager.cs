@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 
 using CardsAndCarnage;
 
@@ -98,8 +96,6 @@ public class GameManager : MonoBehaviour {
         this.isPlacing = false;
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
-
-        audioManager.Play(SoundName.ButtonPress);
         
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
@@ -297,35 +293,13 @@ public class GameManager : MonoBehaviour {
     }
 
     //===================== In game button functionality ===================
-    private bool exiting = false;
     public void EndTurn() {
-        if (exiting) {
-            return;
-        }
-        exiting = true;
-        StartCoroutine("MainMenuNavigationCountDown");
-        audioManager.Play(SoundName.ButtonPress);
-
         client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
         string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
         if (System.IO.File.Exists(path)) {
             System.IO.File.Delete(path);
         }
-    }
-
-    IEnumerator MainMenuNavigationCountDown() {
-        TextMeshProUGUI countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
-        this.inGameMenu.returningToMainMenuPanel.SetActive(true);
-        float startTime = Time.time;
-
-        int displayTime = 3;
-        while (displayTime > 0) {
-            countDownText.text = displayTime + "...";
-            displayTime = (int)(3 - (Time.time - startTime) + 1);
-            yield return null;
-        }
-        exiting = false;
-
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
@@ -343,15 +317,13 @@ public class GameManager : MonoBehaviour {
     }
 
     public void EndUnitPlacement() {
-        if (exiting) {
-            return;
-        }
-        exiting = true;
-        StartCoroutine("MainMenuNavigationCountDown");
+        //This function will have to figure out how to send the unit data to the server, and confirm that we are going
+        //to be playing in this game
         UnitStats general = placedUnits[0];
         placedUnits.RemoveAt(0);
         ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general);
         client.ReadyUnits(readyState);
+        SceneManager.LoadScene("MainMenu");
     }
 
     //Used for unit placement
@@ -399,10 +371,10 @@ public class GameManager : MonoBehaviour {
                 if(unit.MovementSpeed > 0 && unit.Owner == user.Username) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
-                        unit.SandboxMove(endpoint, ref boardController);
+                        unit.SandboxMove(endpoint, ref boardController, audioManager);
                     }
                     else{
-                        unit.Move(endpoint, ref boardController);
+                        unit.Move(endpoint, ref boardController, audioManager);
                     }
                     unitPositions[endpoint] = unit;
                     turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint, GeneralAbility.NONE, CardFunction.NONE));
@@ -415,14 +387,14 @@ public class GameManager : MonoBehaviour {
         turnActions.Add(new Action(user.Username, ActionType.Attack, source, target, GeneralAbility.NONE, CardFunction.NONE));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
             if(sourceUnit.AttackActions > 0 && sourceUnit.Owner == user.Username) {
-                List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
+                List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target, audioManager);
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
                         int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
                         if (modifiedDamage > 0) {
                             if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
                                 unitPositions.Remove(damage.First);
-                                targetUnit.Kill();
+                                targetUnit.Kill(audioManager);
                             }
                         }
                         else {

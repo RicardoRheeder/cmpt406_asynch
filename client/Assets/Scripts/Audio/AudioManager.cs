@@ -40,7 +40,8 @@ public class AudioManager : MonoBehaviour {
     }
 
     // Plays a sound based on the unit type and the sound type
-    public void Play(UnitType unit, SoundType type) {
+    public void Play(UnitType unit, SoundType type) { 
+        Debug.Log("Called unit:" + unit.ToString() + "'s " + type.ToString());
         string soundName = unit.ToString() + "_" + type.ToString();
         AudioLibrary s = Array.Find(sounds, sound => sound.name.ToString() == soundName);
         s.audioSource.Play();
