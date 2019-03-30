@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea92d10f26517bf489b1bd1e4f2ad8a0, type: 3}
   m_Name: 7_UnitSnap
   m_EditorClassIdentifier: 
-  prefabImage: {fileID: 21300000, guid: fa19f8a4234d67842a90931d5cf9babe, type: 3}
+  prefabImage: {fileID: 21300000, guid: 0ef3b7fc84667c74ea38ffbc6af71e63, type: 3}
   prefabText: Click on a button in the list to instantly select and focus the camera
     on that unit. Pressing tab will automatically cycle to the next button in the
     list.
