@@ -85,7 +85,7 @@ public class ArmyBuilderUI : MonoBehaviour {
     private GameObject addUnitButton;
 
     [SerializeField]
-    private Sprite light;
+    private new Sprite light;
     [SerializeField]
     private Sprite piercing;
     [SerializeField]
