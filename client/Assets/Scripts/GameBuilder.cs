@@ -72,9 +72,9 @@ public class GameBuilder : MonoBehaviour {
         this.isPlacing = isPlacing;
 
         if (armyPreset != null) {
-            this.unitNumbers = new List<int>(
+            this.unitNumbers = new List<int>(){
                 armyPreset.General
-            );
+            };
             this.unitNumbers.AddRange(armyPreset.Units);
         }
         else {
@@ -91,6 +91,7 @@ public class GameBuilder : MonoBehaviour {
             }
         }
 
+        Debug.Log(this.unitNumbers.Count);
         SetupScene();
         if(!isPlacing) {
             InstantiateUnits();
@@ -111,9 +112,6 @@ public class GameBuilder : MonoBehaviour {
             unitPlacementViewport = GameObject.Find("UnitSnapContent");
         }
 
-        GameObject generalText = Instantiate(prefabToUse);
-        List<Tabbing> tabScripts = new List<Tabbing>();
-        UnitDisplayTexts.Add(generalText);
         for(int i = 0; i < unitNumbers.Count; i++) {
             int unit = unitNumbers[i];
             GameObject unitText = Instantiate(prefabToUse);

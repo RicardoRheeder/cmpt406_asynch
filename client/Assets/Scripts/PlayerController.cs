@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour {
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
         boardController.HoverHighlight(new List<Vector2Int>() { tilePos }, tilePos);
-        Debug.Log(interactionState);
+
         switch (controllerState) {
             case (PlayerState.playing):
                 switch (interactionState) {
