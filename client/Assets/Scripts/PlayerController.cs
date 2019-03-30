@@ -219,18 +219,18 @@ public class PlayerController : MonoBehaviour {
                         if (Input.GetKeyDown(KeyCode.F)) {
                             MovementButton();
                         }
+                        else if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
+                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
+                                manager.MoveUnit(selectedUnit.Position, tilePos);
+                                interactionState = InteractionState.selected;
+                            }
+                        }
                         else if (prevMousePos != tilePos) {
                             hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
                             boardController.RenderPath(selectedUnit.Position, tilePos);
                         }
                         else if (selectedUnit != null) {
                             boardController.HoverHighlight(hoverAttackRange, tilePos);
-                        }
-                        else if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                            if (highlightedTiles.Any(tile => tile.Equals(tilePos))) {
-                                manager.MoveUnit(selectedUnit.Position, tilePos);
-                                interactionState = InteractionState.selected;
-                            }
                         }
                         break;
                     case (InteractionState.attacking):

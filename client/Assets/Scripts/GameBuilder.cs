@@ -91,7 +91,6 @@ public class GameBuilder : MonoBehaviour {
             }
         }
 
-        Debug.Log(this.unitNumbers.Count);
         SetupScene();
         if(!isPlacing) {
             InstantiateUnits();
