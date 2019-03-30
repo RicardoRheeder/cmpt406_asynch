@@ -49,6 +49,9 @@ public class GameManager : MonoBehaviour {
     private List<UnitStats> placedUnits;
     private bool isPlacing = false;
 
+    //flag for the sandbox;
+    private bool isSandboxMode = false;
+
     // Start is called before the first frame update
     void Start() {
         DontDestroyOnLoad(this.gameObject);
@@ -173,6 +176,8 @@ public class GameManager : MonoBehaviour {
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
         SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
+
+        isSandboxMode = true;
     }
 
     private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
@@ -232,6 +237,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnMenuSandbox;
         client = GameObject.Find("Networking").GetComponent<Client>();
         this.user = client.GetUserInformation();
+        isSandboxMode = false;
     }
 
     //===================== Preprocessing functions ===================
@@ -302,14 +308,52 @@ public class GameManager : MonoBehaviour {
         if (exiting) {
             return;
         }
+        GameObject.Find("MenuButton").GetComponent<Button>().onClick.RemoveAllListeners();
         exiting = true;
-        StartCoroutine("MainMenuNavigationCountDown");
+        EndTurnState endTurnState = new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn());
+
         audioManager.Play(SoundName.ButtonPress);
 
-        client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
-        string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
-        if (System.IO.File.Exists(path)) {
-            System.IO.File.Delete(path);
+        if (endTurnState.IsVictory && !isSandboxMode) {
+            client.EndTurn(endTurnState); //done here to prevent the user from exiting the game
+            inGameMenu.victoryButton.onClick.RemoveAllListeners();
+            inGameMenu.victoryButton.onClick.AddListener(() => {
+                audioManager.Play(SoundName.ButtonPress);
+                string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
+                if (System.IO.File.Exists(path)) {
+                    System.IO.File.Delete(path);
+                }
+                exiting = false;
+
+                SceneManager.sceneLoaded += OnMenuLoaded;
+                SceneManager.LoadScene("MainMenu");
+            });
+            inGameMenu.victoryPanel.SetActive(true);
+        }
+        else if(endTurnState.IsDefeat && !isSandboxMode) {
+            client.EndTurn(endTurnState); //done here to prevent the user from exiting the game
+            inGameMenu.defeatButton.onClick.RemoveAllListeners();
+            inGameMenu.defeatButton.onClick.AddListener(() => {
+                audioManager.Play(SoundName.ButtonPress);
+                string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
+                if (System.IO.File.Exists(path)) {
+                    System.IO.File.Delete(path);
+                }
+                exiting = false;
+
+                SceneManager.sceneLoaded += OnMenuLoaded;
+                SceneManager.LoadScene("MainMenu");
+            });
+            inGameMenu.defeatPanel.SetActive(true);
+        }
+        else {
+            StartCoroutine("MainMenuNavigationCountDown");
+
+            client.EndTurn(endTurnState);
+            string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
+            if (System.IO.File.Exists(path)) {
+                System.IO.File.Delete(path);
+            }
         }
     }
 
@@ -331,6 +375,9 @@ public class GameManager : MonoBehaviour {
     }
 
     public void Forfeit() {
+        if (exiting) {
+            return;
+        }
         audioManager.Play(SoundName.ButtonPress);
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
@@ -338,6 +385,9 @@ public class GameManager : MonoBehaviour {
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
+        if (exiting) {
+            return;
+        }
         audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }

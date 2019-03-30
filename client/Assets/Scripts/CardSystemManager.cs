@@ -259,7 +259,10 @@ public class CardSystemManager : MonoBehaviour {
             string[] cards = cardData.Split('X');
             startingHand.Clear();
             for(int i = 0; i < CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT; i++) {
-                startingHand.Add((CardFunction)int.Parse(cards[i]));
+                if (cards[i].Trim() != "")
+                    startingHand.Add((CardFunction)int.Parse(cards[i]));
+                else
+                    break;
             }
             reader.Close();
         }
