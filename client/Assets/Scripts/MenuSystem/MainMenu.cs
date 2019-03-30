@@ -29,6 +29,14 @@ public class MainMenu : MonoBehaviour {
     [SerializeField]
     private GameObject tutorialPanel;
 
+    //Master Buton Images for highlighting
+    [SerializeField]
+    private Image armiesButtonImage;
+    [SerializeField]
+    private Image playButtonImage;
+    [SerializeField]
+    private Image tutorialButtonImage;
+
     //Friends variables
     [SerializeField]
     private GameObject friendsListViewContent;
@@ -85,6 +93,8 @@ public class MainMenu : MonoBehaviour {
     //Army Selector variables
     [SerializeField]
     private GameObject armySelectorListViewContent;
+    [SerializeField]
+    private GameObject armySelectorListViewPrefab;
     [SerializeField]
     private TMP_Text armyName;
     [SerializeField]
@@ -147,6 +157,14 @@ public class MainMenu : MonoBehaviour {
     [SerializeField]
     private Image mapPreview;
 
+    //Tutorial screen variables
+    [SerializeField]
+    private GameObject mapsContainerWindow;
+    [SerializeField]
+    private GameObject cardsContainerWindow;
+    [SerializeField]
+    private GameObject tutContainerWindow;
+
     private void Awake() {
         networkApi = GameObject.Find("Networking").GetComponent<Client>();
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -170,23 +188,24 @@ public class MainMenu : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        SetMenuState(mainMenuState: true, playContainerState: true);
-
         List<string> userFriends = networkApi.UserInformation.Friends;
         foreach(string friend in userFriends) {
             AddFriendHelper(friend);
         }
+
+        MasterPlayButton(playAudio: false);
+        YourGamesButton(playAudio: false);
     }
 
     //========================Helper Functions========================
     //Helper function to enable/disable menus with boolean flags
-    private void SetMenuState(bool mainMenuState=false, bool armyBuilderState=false, bool armySelectorState=false, bool mapsContainerState=false, bool playContainerState=false, bool tutorialPanelState=false) {
+    private void SetMenuState(bool mainMenuState = false, bool armySelectorState = false, bool armyBuilderState=false, bool playContainerState=false, bool tutorialPanelState=false, bool friendsListPanelState=false) {
         mainMenuPanel.SetActive(mainMenuState);
-        armyBuilderPanel.SetActive(armyBuilderState);
         armySelectorPanel.SetActive(armySelectorState);
-        mapsContainerPanel.SetActive(mapsContainerState);
+        armyBuilderPanel.SetActive(armyBuilderState);
         playContainerPanel.SetActive(playContainerState);
         tutorialPanel.SetActive(tutorialPanelState);
+        friendsListPanel.SetActive(friendsListPanelState);
     }
 
     //Helper function to destroy all children gameobjects of a content variable
@@ -206,19 +225,29 @@ public class MainMenu : MonoBehaviour {
     //========================Master Button Functionality========================
     public void MasterArmiesButton() {
         audioManager.Play(SoundName.ButtonPress);
-        SetMenuState(armySelectorState: true);
+        SetMenuState(armySelectorState: true, mainMenuState: true);
         SetupArmySelector(10000, null);
+        armiesButtonImage.color = ColourConstants.BUTTON_ACTIVE;
+        playButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        tutorialButtonImage.color = ColourConstants.BUTTON_DEFAULT;
     }
 
-    public void MasterPlayButton() {
-        audioManager.Play(SoundName.ButtonPress);
-        SetMenuState(mainMenuState: true, playContainerState: true);
-        SetPlayMenuState(); //resets them all to be inactive
+    public void MasterPlayButton(bool playAudio = true) {
+        if (playAudio)
+            audioManager.Play(SoundName.ButtonPress);
+        SetMenuState(mainMenuState: true, playContainerState: true, friendsListPanelState: true);
+        SetPlayMenuState();
+        armiesButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        playButtonImage.color = ColourConstants.BUTTON_ACTIVE;
+        tutorialButtonImage.color = ColourConstants.BUTTON_DEFAULT;
     }
 
     public void MasterTutorialButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetMenuState(tutorialPanelState: true);
+        armiesButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        playButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        tutorialButtonImage.color = ColourConstants.BUTTON_ACTIVE;
     }
 
     //========================Logout Functionality========================
@@ -252,8 +281,9 @@ public class MainMenu : MonoBehaviour {
     }
 
     //========================Your Games Functionality========================
-    public void YourGamesButton() {
-        audioManager.Play(SoundName.ButtonPress);
+    public void YourGamesButton(bool playAudio = true) {
+        if(playAudio)
+            audioManager.Play(SoundName.ButtonPress);
         SetPlayMenuState(yourGamesState: true);
         DestroyChildrenInList(yourGamesListViewContent);
 
@@ -270,7 +300,8 @@ public class MainMenu : MonoBehaviour {
             }
         }
         else {
-            DisplayUserMessage("Error", "Failed to get game information from server.");
+            //This error can occur on a user that has no information available, i'll have to investigate
+            //DisplayUserMessage("Error", "Failed to get game information from server.");
         }
     }
 
@@ -307,7 +338,8 @@ public class MainMenu : MonoBehaviour {
             }
         }
         else {
-            DisplayUserMessage("Error", "Failed to get game information from server.");
+            //This error can occur on a user that has no information available, i'll have to investigate
+            //DisplayUserMessage("Error", "Failed to get game information from server.");
         }
     }
 
@@ -330,7 +362,7 @@ public class MainMenu : MonoBehaviour {
             audioManager.Play(SoundName.ButtonPress);
             networkApi.AcceptGame(state.id);
         }
-        SetMenuState(armySelectorState: true);
+        SetMenuState(armySelectorState: true, mainMenuState: true);
         SetupArmySelector(BoardMetadata.CostDict[state.boardId], state);
     }
 
@@ -353,7 +385,7 @@ public class MainMenu : MonoBehaviour {
 
         List<ArmyPreset> presets = ArmyBuilder.GetPresetsUnderCost(maxCost);
         foreach (var preset in presets) {
-            GameObject armyCell = Instantiate(gameListCellPrefab);
+            GameObject armyCell = Instantiate(armySelectorListViewPrefab);
             Button armyButton = armyCell.GetComponent<Button>();
             armyButton.GetComponentsInChildren<TMP_Text>()[0].SetText(preset.GetDescription());
             armyButton.onClick.RemoveAllListeners();
@@ -466,6 +498,15 @@ public class MainMenu : MonoBehaviour {
         }
     }
 
+    public void ArmyBuilderBack() {
+        audioManager.Play(SoundName.ButtonPress);
+        SetMenuState(armySelectorState: true, mainMenuState: true);
+        SetupArmySelector(10000, null);
+        armiesButtonImage.color = ColourConstants.BUTTON_ACTIVE;
+        playButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+        tutorialButtonImage.color = ColourConstants.BUTTON_DEFAULT;
+    }
+
     //========================Friend Functionality========================
     private void AddFriendHelper(string username) {
         GameObject friendText = Instantiate(friendsListCellPrefab);
@@ -504,12 +545,25 @@ public class MainMenu : MonoBehaviour {
     }
 
     //========================Tutorial Functionality========================
+    //Helper Functions while in the tutorial menu
+    public void SetTutorialMenuState(bool tutWindowState = false, bool cardsWindowState = false, bool mapsWindowState = false) {
+        mapsContainerWindow.SetActive(mapsWindowState);
+        cardsContainerWindow.SetActive(cardsWindowState);
+        tutContainerWindow.SetActive(tutWindowState);
+    }
+
     //Most of the tutorial functionality is in its own script: TutorialUI.cs
+
     //========================Map Screen Functionality========================
     public void MapsButton() {
         audioManager.Play(SoundName.ButtonPress);
-        SetMenuState(mapsContainerState: true, mainMenuState: true);
+        SetTutorialMenuState(mapsWindowState: true);
         MapSelection();
+    }
+
+    public void CardsButton() {
+        audioManager.Play(SoundName.ButtonPress);
+        SetTutorialMenuState(cardsWindowState: true);
     }
     
     public void MapSelection() {

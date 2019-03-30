@@ -178,7 +178,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5748911921065026839, guid: 06e1ff36f8eed5047ab0a88ddfd0e481,
           type: 3}
-        m_MethodName: setVolume
+        m_MethodName: setMasterVolume
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

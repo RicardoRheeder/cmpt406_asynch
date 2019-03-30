@@ -17,5 +17,6 @@ MonoBehaviour:
     attack option in the actions panel at the bottom of the screen. After doing so,
     the attack range of the unit will be displayed by the glowing tiles. Selecting
     a unit inside of the attack range will cause your unit to attack the target. If
-    you want to cancel your attack, reclick the attack button
+    you want to cancel your attack, reclick the attack button. The left "shift" key
+    can be used in place of the attack button.
   buttonText: Attacking

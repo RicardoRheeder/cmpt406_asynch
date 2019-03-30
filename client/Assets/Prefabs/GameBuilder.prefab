@@ -48,14 +48,13 @@ MonoBehaviour:
   unitSelectionDisplayPrefab: {fileID: 6261854098719739517, guid: bfb9de7b17ecee44b8ab38b29d6118ef,
     type: 3}
   claymorePrefab: {fileID: 1364412091, guid: f8294f50b9dd14fab98a9b98818f4e9c, type: 3}
-  compensatorPrefab: {fileID: 1522284473, guid: 19b8636b8970a4ad682fce71dea39343,
-    type: 3}
+  compensatorPrefab: {fileID: 793418722, guid: 3d6e55d969e334ec3a885093e7025ee9, type: 3}
   trooperPrefab: {fileID: 931411258, guid: 1b5351f7914cf4c779a5ea10745da59e, type: 3}
   reconPrefab: {fileID: 91914615, guid: 45b6e0323c42e4865b5fca76069473a8, type: 3}
   steamerPrefab: {fileID: 7378538391732608622, guid: e21b8cf8ea5cf4e20ad8897b77fabef7,
     type: 3}
   pewpewPrefab: {fileID: 1765606812, guid: 7ed9545a1924341688a696864b512e7f, type: 3}
-  foundationPrefab: {fileID: 2085746575, guid: 780e76ab48e5d45e2832d492ccffa96c, type: 3}
+  foundationPrefab: {fileID: 809058093, guid: 646a72a4aef274050953d4b98b070075, type: 3}
   powerSurgePrefab: {fileID: 95310979, guid: 0de30e3d677d745c9b3799840f6de0b3, type: 3}
   midasPrefab: {fileID: 1284673767, guid: 6200c66161e9048359b59dd759fd707f, type: 3}
   heavyAlbarnPrefab: {fileID: 1925483578, guid: a998e8938c97d402fa291970fc34dd5c,
