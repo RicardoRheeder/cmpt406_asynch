@@ -213,7 +213,7 @@ public class GameManager : MonoBehaviour {
                     AttackUnit(originPos, new Vector2Int(a.TargetXPos, a.TargetYPos));
                     break;
                 case ActionType.Card:
-                    UseCard(new Vector2Int(a.TargetXPos, a.TargetYPos), a.CardId);
+                    CardMetadata.CardEffectDictionary[a.CardId](new Vector2Int(a.TargetXPos, a.TargetYPos), unitPositions, a.Username, false);
                     break;
                 case ActionType.Ability:
                     UseAbility(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos), a.Ability);
