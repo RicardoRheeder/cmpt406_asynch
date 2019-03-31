@@ -172,28 +172,33 @@ public class GameManager : MonoBehaviour {
     }
 
     private void HandleReplay() {
+        /* They want to replay the opponents turns */
         this.inGameMenu.replayOpponentTurnsPanel.SetActive(false);
-        /* Check if they want to see the replay... */
+
+        /* Get the old game state */
         int difference = (this.state.turnCount - this.state.maxUsers) + 1;
         int oldTurnNumber = difference > 1 ? difference : 1;
         GameState oldState = client.GetOldGamestate(this.state.id, oldTurnNumber).Second;
 
-        /* Remove current units/generals from board... */
-        foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
-            unit.Value.Kill();
-        }
-
-        /* display the old gamestate units/generals */
-        oldState.ReadyUsers = this.state.ReadyUsers;
-        gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
-        unitPositions = gameBuilder.unitPositions;
-
-        /* Loop over all the actions inbetween oldstate and state, running those actions */
+        /* Get the actions that need to be shown */
         List<Action> replayActions = new List<Action>();
         int curCount = this.state.Actions.Count;
         difference = curCount - oldState.Actions.Count;
         replayActions = this.state.Actions.GetRange(curCount - difference - 1, difference);
 
+        /* display the old gamestate units/generals */
+        foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
+            unit.Value.Kill();
+        }
+        oldState.ReadyUsers = this.state.ReadyUsers;
+        gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
+        unitPositions = gameBuilder.unitPositions;
+
+        StartCoroutine("ReplayActions", replayActions);
+    }
+
+    private IEnumerator ReplayActions(List<Action> replayActions) {
+        /* Play out the old actions */
         Debug.Log("action count: " + replayActions.Count);
         foreach(Action a in replayActions) {
             Debug.Log("Replaying actio: " + a.Type.ToString());
@@ -215,6 +220,7 @@ public class GameManager : MonoBehaviour {
                     Debug.Log("Unhandled Action: " + a.Type);
                     break;
             }
+             yield return new WaitForSeconds(0.2f);
         }
         turnActions.Clear();
         /* At this point the gamebuilder should be the same as if it build the current gamestate... */
