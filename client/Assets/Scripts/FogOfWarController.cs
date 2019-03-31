@@ -78,39 +78,36 @@ public class FogOfWarController {
             return;
         }
 
-        //fill in any old cleared tiles
-        List<Vector2Int> oldTiles = new List<Vector2Int>();
-        oldTiles.AddRange(viewer.GetAffectedTiles());
-        oldTiles.AddRange(viewer.GetEdgeTiles());
-        for(int i=0; i < oldTiles.Count; i++) {
-            clearedTiles.TryGetValue(oldTiles[i], out List<FogViewer> tileList);
+        for(int i=0; i<viewer.GetAffectedTiles().Count;i++) {
+            clearedTiles.TryGetValue(viewer.GetAffectedTiles()[i], out List<FogViewer> tileList);
             if(tileList != null && tileList.Count > 0) {
                 tileList.Remove(viewer);
-                clearedTiles[oldTiles[i]] = tileList;
+                clearedTiles[viewer.GetAffectedTiles()[i]] = tileList;
             } 
             if(tileList == null || tileList.Count == 0) {
-                clearedTiles.Remove(oldTiles[i]);
-                FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
-                mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile mapEdgeTile);
+                clearedTiles.Remove(viewer.GetAffectedTiles()[i]);
+                FogTile tile = fogTilemap.GetTile((Vector3Int)viewer.GetAffectedTiles()[i]) as FogTile;
+                mapEdgeTiles.TryGetValue(viewer.GetAffectedTiles()[i], out FogTile mapEdgeTile);
                 tile.ShowFog(mapEdgeTile != null);
-                fogTilemap.RefreshTile((Vector3Int)oldTiles[i]);
+                fogTilemap.RefreshTile((Vector3Int)viewer.GetAffectedTiles()[i]);
                 continue;
             }
+        }
 
-            edgeTiles.TryGetValue(oldTiles[i], out List<FogViewer> edgeTileList);
+        for(int i=0; i<viewer.GetEdgeTiles().Count;i++) {
+            edgeTiles.TryGetValue(viewer.GetEdgeTiles()[i], out List<FogViewer> edgeTileList);
             if (edgeTileList != null && edgeTileList.Count > 0) {
                 edgeTileList.Remove(viewer);
-                edgeTiles[oldTiles[i]] = edgeTileList;
+                edgeTiles[viewer.GetEdgeTiles()[i]] = edgeTileList;
             }
             if(edgeTiles == null || edgeTiles.Count == 0) {
-                clearedTiles.Remove(oldTiles[i]);
-                FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
-                mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile mapEdgeTile);
+                edgeTiles.Remove(viewer.GetEdgeTiles()[i]);
+                FogTile tile = fogTilemap.GetTile((Vector3Int)viewer.GetEdgeTiles()[i]) as FogTile;
+                mapEdgeTiles.TryGetValue(viewer.GetEdgeTiles()[i], out FogTile mapEdgeTile);
                 tile.ShowFog(mapEdgeTile != null);
-                fogTilemap.RefreshTile((Vector3Int)oldTiles[i]);
+                fogTilemap.RefreshTile((Vector3Int)viewer.GetEdgeTiles()[i]);
                 continue;
             }
-
         }
 
         // clear new tiles
