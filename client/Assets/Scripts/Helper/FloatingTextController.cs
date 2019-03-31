@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FloatingTextController : MonoBehaviour
-{
+public class FloatingTextController : MonoBehaviour {
     
 	private static FloatingText popupText;
 	private static GameObject canvas;
 	
-	public static void Initialize(){
+	public static void Initialize() {
 		canvas = GameObject.Find("GameHUDCanvas");
 		if(!popupText)
 			popupText = Resources.Load<FloatingText>("Prefabs/FloatingTextParent");
 	}
 	
-	public static void CreateFloatingText(string text, Transform location, bool isHeal){
+	public static void CreateFloatingText(string text, Transform location, bool isHeal) {
 		Vector2 screenPosition = Camera.main.WorldToScreenPoint(location.position);
 		
 		FloatingText instance = Instantiate(popupText);

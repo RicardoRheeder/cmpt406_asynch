@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitHUD : MonoBehaviour
-{
+public class UnitHUD : MonoBehaviour {
     public Text hp;
 	public Text ar;
 	public Text dmg;
@@ -18,19 +17,19 @@ public class UnitHUD : MonoBehaviour
 		parent.transform.position = screenPosition;
 	}
 	
-	public void SetHPText(string text){
+	public void SetHPText(string text) {
 		hp.GetComponent<Text>().text = text;
 	}
 	
-	public void SetARText(string text){
+	public void SetARText(string text) {
 		ar.GetComponent<Text>().text = text;
 	}
 	
-	public void SetDMGText(string text){
+	public void SetDMGText(string text) {
 		dmg.GetComponent<Text>().text = text;
 	}
 	
-	public void SetPENText(string text){
+	public void SetPENText(string text) {
 		pen.GetComponent<Text>().text = text;
 	}
 	
