@@ -100,7 +100,7 @@ public class FogOfWarController {
             edgeTiles.TryGetValue(oldTiles[i], out List<FogViewer> edgeTileList);
             if (edgeTileList != null && edgeTileList.Count > 0) {
                 edgeTileList.Remove(viewer);
-                clearedTiles[oldTiles[i]] = tileList;
+                edgeTiles[oldTiles[i]] = edgeTileList;
             }
             if(edgeTiles == null || edgeTiles.Count == 0) {
                 clearedTiles.Remove(oldTiles[i]);
