@@ -12,6 +12,7 @@ public class FogOfWarController {
 
     Dictionary<Vector2Int,List<FogViewer>> clearedTiles = new Dictionary<Vector2Int, List<FogViewer>>();
     Dictionary<Vector2Int,FogTile> mapEdgeTiles = new Dictionary<Vector2Int, FogTile>();
+    Dictionary<Vector2Int,List<FogViewer>> edgeTiles = new Dictionary<Vector2Int, List<FogViewer>>();
     List<FogViewer> viewers = new List<FogViewer>();
 
     public void InitializeFogOfWar(Tilemap tilemap) {
@@ -86,20 +87,36 @@ public class FogOfWarController {
             if(tileList != null && tileList.Count > 0) {
                 tileList.Remove(viewer);
                 clearedTiles[oldTiles[i]] = tileList;
-            }
+            } 
             if(tileList == null || tileList.Count == 0) {
                 clearedTiles.Remove(oldTiles[i]);
                 FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
                 mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile mapEdgeTile);
                 tile.ShowFog(mapEdgeTile != null);
                 fogTilemap.RefreshTile((Vector3Int)oldTiles[i]);
+                continue;
             }
+
+            edgeTiles.TryGetValue(oldTiles[i], out List<FogViewer> edgeTileList);
+            if (edgeTileList != null && edgeTileList.Count > 0) {
+                edgeTileList.Remove(viewer);
+                clearedTiles[oldTiles[i]] = tileList;
+            }
+            if(edgeTiles == null || edgeTiles.Count == 0) {
+                clearedTiles.Remove(oldTiles[i]);
+                FogTile tile = fogTilemap.GetTile((Vector3Int)oldTiles[i]) as FogTile;
+                mapEdgeTiles.TryGetValue(oldTiles[i], out FogTile mapEdgeTile);
+                tile.ShowFog(mapEdgeTile != null);
+                fogTilemap.RefreshTile((Vector3Int)oldTiles[i]);
+                continue;
+            }
+
         }
 
         // clear new tiles
         Tuple<List<Vector2Int>,List<Vector2Int>> tiles = HexUtility.FindTilesInVision(viewer.GetPosition(),viewer.GetRadius(),tilemap,false);
         List<Vector2Int> clearTiles = tiles.First;
-        List<Vector2Int> edgeTiles = tiles.Second;
+        List<Vector2Int> viewerEdgeTiles = tiles.Second;
         List<Vector2Int> newTiles = new List<Vector2Int>();
         for(int i=0; i < clearTiles.Count; i++) {
             FogTile tile = fogTilemap.GetTile((Vector3Int)clearTiles[i]) as FogTile;
@@ -117,13 +134,19 @@ public class FogOfWarController {
         }
         viewer.SetAffectedTiles(newTiles);
         viewer.SetEdgeTiles(new List<Vector2Int>());
-        for(int i=0; i < edgeTiles.Count; i++) {
-            clearedTiles.TryGetValue(edgeTiles[i],out List<FogViewer> tileList);
-            FogTile tile = fogTilemap.GetTile((Vector3Int)edgeTiles[i]) as FogTile;
+        for(int i=0; i < viewerEdgeTiles.Count; i++) {
+            clearedTiles.TryGetValue(viewerEdgeTiles[i],out List<FogViewer> tileList);
+            edgeTiles.TryGetValue(viewerEdgeTiles[i],out List<FogViewer> edgeTileList);
+            FogTile tile = fogTilemap.GetTile((Vector3Int)viewerEdgeTiles[i]) as FogTile;
             if((tileList == null || tileList.Count == 0) && tile != null) {
                 tile.SetAsEdge();
-                fogTilemap.RefreshTile((Vector3Int)edgeTiles[i]);
-                viewer.GetEdgeTiles().Add(edgeTiles[i]);
+                fogTilemap.RefreshTile((Vector3Int)viewerEdgeTiles[i]);
+                if(edgeTileList == null || edgeTileList.Count == 0) {
+                    edgeTileList = new List<FogViewer>();
+                } 
+                edgeTileList.Add(viewer);
+                edgeTiles[viewerEdgeTiles[i]] = edgeTileList;
+                viewer.GetEdgeTiles().Add(viewerEdgeTiles[i]);
             }
         }
     }
