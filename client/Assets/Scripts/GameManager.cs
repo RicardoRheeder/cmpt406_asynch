@@ -223,7 +223,15 @@ public class GameManager : MonoBehaviour {
             }
              yield return new WaitForSeconds(0.2f);
         }
+        /* Make it so these actions dont "count" */
         turnActions.Clear();
+        /* put things back to the current game state reference */
+        foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
+            unit.Value.Kill();
+        }
+        unitPositions.Clear();
+        gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
+        unitPositions = gameBuilder.unitPositions;
         /* At this point the gamebuilder should be the same as if it build the current gamestate... */
     }
     
