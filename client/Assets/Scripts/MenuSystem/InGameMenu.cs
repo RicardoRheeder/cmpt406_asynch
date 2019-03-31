@@ -16,6 +16,7 @@ public class InGameMenu : MonoBehaviour {
     private GameObject menuPanel;
     private GameObject actionsPanel;
     public GameObject returningToMainMenuPanel;
+    public GameObject replayOpponentTurnsPanel;
     public GameObject victoryPanel;
     public Button victoryButton;
     public GameObject defeatPanel;
@@ -50,6 +51,7 @@ public class InGameMenu : MonoBehaviour {
             actionsPanel.SetActive(false);
         }
         else {
+            replayOpponentTurnsPanel.SetActive(true);
             placeUnitsPanel.SetActive(false);
         }
     }
