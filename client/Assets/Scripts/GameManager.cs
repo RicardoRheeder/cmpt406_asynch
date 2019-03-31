@@ -178,6 +178,9 @@ public class GameManager : MonoBehaviour {
         int difference = (this.state.turnCount - this.state.maxUsers) + 1;
         int oldTurnNumber = difference > 1 ? difference : 1;
         GameState oldState = client.GetOldGamestate(this.state.id, oldTurnNumber).Second;
+        if (oldState == null) {
+            return;
+        }
 
         /* Get the actions that need to be shown */
         List<Action> replayActions = new List<Action>();
