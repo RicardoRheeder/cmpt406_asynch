@@ -126,7 +126,6 @@ public class GameManager : MonoBehaviour {
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
 
         unitPositions = gameBuilder.unitPositions;
-        Debug.Log("unit count: " + unitPositions.Count);
         turnActions = new List<Action>();
 
         playerControllerObject = Instantiate(playerControllerPrefab);
@@ -173,7 +172,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private void HandleReplay() {
-        /* They want to replay the opponents turns */
         this.inGameMenu.replayOpponentTurnsPanel.SetActive(false);
 
         /* Get the old game state */
@@ -185,7 +183,7 @@ public class GameManager : MonoBehaviour {
         List<Action> replayActions = new List<Action>();
         int curCount = this.state.Actions.Count;
         difference = curCount - oldState.Actions.Count;
-        replayActions = this.state.Actions.GetRange(curCount - difference - 1, difference);
+        replayActions = this.state.Actions.GetRange(curCount - difference, difference);
 
         /* display the old gamestate units/generals */
         foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
@@ -195,22 +193,24 @@ public class GameManager : MonoBehaviour {
         oldState.ReadyUsers = this.state.ReadyUsers;
         gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
         unitPositions = gameBuilder.unitPositions;
-        Debug.Log("unit count: " + unitPositions.Count);
 
         StartCoroutine("ReplayActions", replayActions);
     }
 
     private IEnumerator ReplayActions(List<Action> replayActions) {
-        /* Play out the old actions */
-        foreach(Action a in replayActions) {
-            Debug.Log("Replaying actio: " + a.Type.ToString());
+        yield return new WaitForSeconds(1f);
+        Vector2Int lastMoveTarget = new Vector2Int(-999, -999);
+        foreach (Action a in replayActions) {
             switch (a.Type)
             {
                 case ActionType.Movement:
-                    MoveUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos));
+                    lastMoveTarget = new Vector2Int(a.TargetXPos, a.TargetYPos);
+                    MoveUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), lastMoveTarget);
                     break;
                 case ActionType.Attack:
-                    AttackUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos));
+                    Vector2Int originPos = new Vector2Int(a.OriginXPos, a.OriginYPos);
+                    if (originPos.x == lastMoveTarget.x && originPos.x == lastMoveTarget.x) { yield return new WaitForSeconds(0.5f); }
+                    AttackUnit(originPos, new Vector2Int(a.TargetXPos, a.TargetYPos));
                     break;
                 case ActionType.Card:
                     UseCard(new Vector2Int(a.TargetXPos, a.TargetYPos), a.CardId);
@@ -219,21 +219,15 @@ public class GameManager : MonoBehaviour {
                     UseAbility(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos), a.Ability);
                     break;
                 default:
-                    Debug.Log("Unhandled Action: " + a.Type);
+                    Debug.LogError("Unhandled Action: " + a.Type);
                     break;
             }
-             yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.5f);
         }
         /* Make it so these actions dont "count" */
         turnActions.Clear();
         /* put things back to the current game state reference */
-        /*foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
-            unit.Value.Kill();
-        }
-        unitPositions.Clear();
-        gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
-        unitPositions = gameBuilder.unitPositions; */
-        //playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts: gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
+        this.playerController.unitButtonReferences = this.gameBuilder.UnitButtons;
         /* At this point the gamebuilder should be the same as if it build the current gamestate... */
     }
 
@@ -461,21 +455,16 @@ public class GameManager : MonoBehaviour {
     //If the following conditions are true:
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
-        Debug.Log("here-1");
         if (!unitPositions.ContainsKey(endpoint)) {
-            Debug.Log("here0");
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                Debug.Log("here1");
-                if (unit.MovementSpeed > 0 /*&& unit.Owner == user.Username*/) {
+                if (unit.MovementSpeed > 0) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
                         unit.SandboxMove(endpoint, ref boardController);
                     }
                     else{
-                        Debug.Log("here2");
                         unit.Move(endpoint, ref boardController);
                     }
-                    Debug.Log("here3");
                     unitPositions[endpoint] = unit;
                     turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint, GeneralAbility.NONE, CardFunction.NONE));
                 }
@@ -486,7 +475,7 @@ public class GameManager : MonoBehaviour {
     public void AttackUnit(Vector2Int source, Vector2Int target) {
         turnActions.Add(new Action(user.Username, ActionType.Attack, source, target, GeneralAbility.NONE, CardFunction.NONE));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
-            if(sourceUnit.AttackActions > 0 && sourceUnit.Owner == user.Username) {
+            if(sourceUnit.AttackActions > 0) {
                 List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {

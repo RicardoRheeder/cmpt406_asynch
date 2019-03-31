@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour {
     private string username;
     private Card cardBeingPlayed;
 
-    private Dictionary<UnitStats, GameObject> unitButtonReferences;
+    public Dictionary<UnitStats, GameObject> unitButtonReferences;
     private List<GameObject> unitButtonObjects;
     private int unitButtonObjectsCurIndex = 0;
     private GameObject selectedUnitButton;
