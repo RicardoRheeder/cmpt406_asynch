@@ -126,6 +126,7 @@ public class GameManager : MonoBehaviour {
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
 
         unitPositions = gameBuilder.unitPositions;
+        Debug.Log("unit count: " + unitPositions.Count);
         turnActions = new List<Action>();
 
         playerControllerObject = Instantiate(playerControllerPrefab);
@@ -194,13 +195,13 @@ public class GameManager : MonoBehaviour {
         oldState.ReadyUsers = this.state.ReadyUsers;
         gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
         unitPositions = gameBuilder.unitPositions;
+        Debug.Log("unit count: " + unitPositions.Count);
 
         StartCoroutine("ReplayActions", replayActions);
     }
 
     private IEnumerator ReplayActions(List<Action> replayActions) {
         /* Play out the old actions */
-        Debug.Log("action count: " + replayActions.Count);
         foreach(Action a in replayActions) {
             Debug.Log("Replaying actio: " + a.Type.ToString());
             switch (a.Type)
@@ -221,20 +222,21 @@ public class GameManager : MonoBehaviour {
                     Debug.Log("Unhandled Action: " + a.Type);
                     break;
             }
-             yield return new WaitForSeconds(0.2f);
+             yield return new WaitForSeconds(0.5f);
         }
         /* Make it so these actions dont "count" */
         turnActions.Clear();
         /* put things back to the current game state reference */
-        foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
+        /*foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
             unit.Value.Kill();
         }
         unitPositions.Clear();
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
-        unitPositions = gameBuilder.unitPositions;
+        unitPositions = gameBuilder.unitPositions; */
+        //playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts: gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
         /* At this point the gamebuilder should be the same as if it build the current gamestate... */
     }
-    
+
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
         SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
@@ -459,16 +461,21 @@ public class GameManager : MonoBehaviour {
     //If the following conditions are true:
     //   the dictionary contains a unit at the "targetUnit" key, and does not contain a unit at the endpoint key
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
+        Debug.Log("here-1");
         if (!unitPositions.ContainsKey(endpoint)) {
+            Debug.Log("here0");
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                if(unit.MovementSpeed > 0 && unit.Owner == user.Username) {
+                Debug.Log("here1");
+                if (unit.MovementSpeed > 0 /*&& unit.Owner == user.Username*/) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
                         unit.SandboxMove(endpoint, ref boardController);
                     }
                     else{
+                        Debug.Log("here2");
                         unit.Move(endpoint, ref boardController);
                     }
+                    Debug.Log("here3");
                     unitPositions[endpoint] = unit;
                     turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint, GeneralAbility.NONE, CardFunction.NONE));
                 }
