@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour {
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
     private bool isPlacing = false;
+    private bool doingReplay = false;
 
     // Start is called before the first frame update
     void Start() {
@@ -172,6 +173,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private void HandleReplay() {
+        doingReplay = true;
         this.inGameMenu.replayOpponentTurnsPanel.SetActive(false);
 
         /* Get the old game state */
@@ -239,6 +241,7 @@ public class GameManager : MonoBehaviour {
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
         unitPositions = gameBuilder.unitPositions;
         this.playerController.unitButtonReferences = this.gameBuilder.UnitButtons;
+        doingReplay = false;
     }
 
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
@@ -467,7 +470,7 @@ public class GameManager : MonoBehaviour {
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                if (unit.MovementSpeed > 0) {
+                if (unit.MovementSpeed > 0 && (unit.Owner == user.Username || doingReplay)) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
                         unit.SandboxMove(endpoint, ref boardController);
@@ -485,7 +488,7 @@ public class GameManager : MonoBehaviour {
     public void AttackUnit(Vector2Int source, Vector2Int target) {
         turnActions.Add(new Action(user.Username, ActionType.Attack, source, target, GeneralAbility.NONE, CardFunction.NONE));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
-            if(sourceUnit.AttackActions > 0) {
+            if(sourceUnit.AttackActions > 0 && (sourceUnit.Owner == user.Username || doingReplay)) {
                 List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
