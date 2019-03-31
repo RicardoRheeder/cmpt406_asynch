@@ -190,6 +190,7 @@ public class GameManager : MonoBehaviour {
         foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
             unit.Value.Kill();
         }
+        unitPositions.Clear();
         oldState.ReadyUsers = this.state.ReadyUsers;
         gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
         unitPositions = gameBuilder.unitPositions;
