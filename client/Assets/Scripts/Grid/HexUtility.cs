@@ -317,6 +317,7 @@ public static class HexUtility {
                 for(int k=0; k<line.Count-1; k++) {
                     visionTiles.Add(line[k]);
                 }
+                edgeTiles.Add(line[line.Count-1]);
             }
         }
 
