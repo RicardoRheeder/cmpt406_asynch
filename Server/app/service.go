@@ -652,6 +652,12 @@ func forfeitGame(ctx context.Context, username, gameStateID string, reason games
 			}
 			gs.UsersTurn = ""
 			gs.IsComplete = true
+		} else {
+			err := CreateTask(ctx, gs.ID, gs.UsersTurn, len(gs.Actions), gs.ForfeitTime)
+			if err != nil {
+				log.Errorf(ctx, "Failed to create task: %v", err)
+				// not a huge deal so just continue on
+			}
 		}
 
 		return nil

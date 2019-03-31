@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 using CardsAndCarnage;
 
@@ -46,6 +48,9 @@ public class GameManager : MonoBehaviour {
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
     private bool isPlacing = false;
+
+    //flag for the sandbox;
+    private bool isSandboxMode = false;
 
     // Start is called before the first frame update
     void Start() {
@@ -108,6 +113,8 @@ public class GameManager : MonoBehaviour {
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         Debug.Log("Loading state: " + state);
+		FloatingTextController.Initialize();
+		UnitHUDController.Initialize();
 
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
@@ -171,6 +178,8 @@ public class GameManager : MonoBehaviour {
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
         SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
+
+        isSandboxMode = true;
     }
 
     private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
@@ -230,6 +239,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.sceneLoaded -= OnMenuSandbox;
         client = GameObject.Find("Networking").GetComponent<Client>();
         this.user = client.GetUserInformation();
+        isSandboxMode = false;
     }
 
     //===================== Preprocessing functions ===================
@@ -295,18 +305,81 @@ public class GameManager : MonoBehaviour {
     }
 
     //===================== In game button functionality ===================
+    private bool exiting = false;
     public void EndTurn() {
-        client.EndTurn(new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn()));
-        string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
-        if (System.IO.File.Exists(path)) {
-            System.IO.File.Delete(path);
+        if (exiting) {
+            return;
         }
+        GameObject.Find("MenuButton").GetComponent<Button>().onClick.RemoveAllListeners();
+        exiting = true;
+        EndTurnState endTurnState = new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn());
+
         audioManager.Play(SoundName.ButtonPress);
+
+        if (endTurnState.IsVictory && !isSandboxMode) {
+            client.EndTurn(endTurnState); //done here to prevent the user from exiting the game
+            inGameMenu.victoryButton.onClick.RemoveAllListeners();
+            inGameMenu.victoryButton.onClick.AddListener(() => {
+                audioManager.Play(SoundName.ButtonPress);
+                string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
+                if (System.IO.File.Exists(path)) {
+                    System.IO.File.Delete(path);
+                }
+                exiting = false;
+
+                SceneManager.sceneLoaded += OnMenuLoaded;
+                SceneManager.LoadScene("MainMenu");
+            });
+            inGameMenu.victoryPanel.SetActive(true);
+        }
+        else if(endTurnState.IsDefeat && !isSandboxMode) {
+            client.EndTurn(endTurnState); //done here to prevent the user from exiting the game
+            inGameMenu.defeatButton.onClick.RemoveAllListeners();
+            inGameMenu.defeatButton.onClick.AddListener(() => {
+                audioManager.Play(SoundName.ButtonPress);
+                string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
+                if (System.IO.File.Exists(path)) {
+                    System.IO.File.Delete(path);
+                }
+                exiting = false;
+
+                SceneManager.sceneLoaded += OnMenuLoaded;
+                SceneManager.LoadScene("MainMenu");
+            });
+            inGameMenu.defeatPanel.SetActive(true);
+        }
+        else {
+            StartCoroutine("MainMenuNavigationCountDown");
+
+            client.EndTurn(endTurnState);
+            string path = CardMetadata.FILE_PATH_BASE + "/." + state.id + CardMetadata.FILE_EXTENSION;
+            if (System.IO.File.Exists(path)) {
+                System.IO.File.Delete(path);
+            }
+        }
+    }
+
+    IEnumerator MainMenuNavigationCountDown() {
+        TextMeshProUGUI countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
+        this.inGameMenu.returningToMainMenuPanel.SetActive(true);
+        float startTime = Time.time;
+
+        int displayTime = 3;
+        while (displayTime > 0) {
+            countDownText.text = displayTime + "...";
+            displayTime = (int)(3 - (Time.time - startTime) + 1);
+            yield return null;
+        }
+        exiting = false;
+
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
 
     public void Forfeit() {
+        if (exiting) {
+            return;
+        }
         audioManager.Play(SoundName.ButtonPress);
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
@@ -314,18 +387,23 @@ public class GameManager : MonoBehaviour {
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
+        if (exiting) {
+            return;
+        }
         audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 
     public void EndUnitPlacement() {
-        //This function will have to figure out how to send the unit data to the server, and confirm that we are going
-        //to be playing in this game
+        if (exiting) {
+            return;
+        }
+        exiting = true;
+        StartCoroutine("MainMenuNavigationCountDown");
         UnitStats general = placedUnits[0];
         placedUnits.RemoveAt(0);
         ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general);
         client.ReadyUnits(readyState);
-        SceneManager.LoadScene("MainMenu");
     }
 
     //Used for unit placement

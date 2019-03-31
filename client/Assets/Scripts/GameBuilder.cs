@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class GameBuilder : MonoBehaviour {
 
@@ -71,9 +72,9 @@ public class GameBuilder : MonoBehaviour {
         this.isPlacing = isPlacing;
 
         if (armyPreset != null) {
-            this.unitNumbers = new List<int>(
+            this.unitNumbers = new List<int>(){
                 armyPreset.General
-            );
+            };
             this.unitNumbers.AddRange(armyPreset.Units);
         }
         else {
@@ -110,8 +111,6 @@ public class GameBuilder : MonoBehaviour {
             unitPlacementViewport = GameObject.Find("UnitSnapContent");
         }
 
-        GameObject generalText = Instantiate(prefabToUse);
-        UnitDisplayTexts.Add(generalText);
         for(int i = 0; i < unitNumbers.Count; i++) {
             int unit = unitNumbers[i];
             GameObject unitText = Instantiate(prefabToUse);
@@ -195,6 +194,7 @@ public class GameBuilder : MonoBehaviour {
             FogViewer unitFogViewer = unitComponent.GetFogViewer();
             unitFogViewer.SetRadius(unit.Vision + 1);
             fogController.AddFogViewer(unitFogViewer);
+			unit.unitHUD = UnitHUDController.CreateUnitHUD(unit.CurrentHP.ToString(), unit.Armour.ToString(), unit.Damage.ToString(), unit.Pierce.ToString(), unit.MyUnit);
         }
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit, username);
@@ -216,6 +216,7 @@ public class GameBuilder : MonoBehaviour {
             FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
             unitFogViewer.SetRadius(unit.Vision + 1);
             fogController.AddFogViewer(unitFogViewer);
+			unit.unitHUD = UnitHUDController.CreateUnitHUD(unit.CurrentHP.ToString(), unit.Armour.ToString(), unit.Damage.ToString(), unit.Pierce.ToString(), unit.MyUnit);
         }
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType]);

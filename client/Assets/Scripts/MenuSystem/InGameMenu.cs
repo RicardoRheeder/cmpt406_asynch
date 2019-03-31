@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InGameMenu : MonoBehaviour {
 
@@ -14,6 +15,11 @@ public class InGameMenu : MonoBehaviour {
     private GameObject unitStatsPanel;
     private GameObject menuPanel;
     private GameObject actionsPanel;
+    public GameObject returningToMainMenuPanel;
+    public GameObject victoryPanel;
+    public Button victoryButton;
+    public GameObject defeatPanel;
+    public Button defeatButton;
 
     // Start is called before the first frame update
     void Awake() {
@@ -32,6 +38,9 @@ public class InGameMenu : MonoBehaviour {
     public void SetupPanels(bool isPlacing) {
         menuPanel.SetActive(false);
         settingsPanel.SetActive(false);
+        returningToMainMenuPanel.SetActive(false);
+        victoryPanel.SetActive(false);
+        defeatPanel.SetActive(false);
 
         if (isPlacing) {
             unitSnapPanel.SetActive(false);
