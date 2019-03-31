@@ -45,8 +45,6 @@ public class Client : MonoBehaviour, INetwork {
     //Networking constants
     private const string JSON_TYPE = "application/json";
 
-
-
     //Make sure this object is not destroyed on scene transitions
     public void Start() {
         DontDestroyOnLoad(this.gameObject);
@@ -216,26 +214,33 @@ public class Client : MonoBehaviour, INetwork {
     }
 
     public Tuple<bool, GameStateCollection> GetPublicGames() {
-        BeginRequest();
-        HttpWebRequest request = CreatePostRequest(GET_PUBLIC_GAMES);
-        string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100);
-        AddJsonToRequest(requestJson, ref request);
+        if (RefreshUserData()) {
+            BeginRequest();
+            HttpWebRequest request = CreatePostRequest(GET_PUBLIC_GAMES);
+            string requestJson = JsonConversion.GetJsonForSingleInt("limit", 100);
+            AddJsonToRequest(requestJson, ref request);
 
-        try {
-            var response = (HttpWebResponse)request.GetResponse();
-            string responseJson;
-            using (var reader = new StreamReader(response.GetResponseStream())) {
-                responseJson = reader.ReadToEnd();
+            try {
+                var response = (HttpWebResponse)request.GetResponse();
+                string responseJson;
+                using (var reader = new StreamReader(response.GetResponseStream())) {
+                    responseJson = reader.ReadToEnd();
+                }
+                Debug.Log(responseJson);
+                GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
+                EndRequest();
+                return new Tuple<bool, GameStateCollection>(true, states);
             }
-            GameStateCollection states = JsonConversion.CreateFromJson<GameStateCollection>(responseJson, typeof(GameStateCollection));
-            EndRequest();
-            return new Tuple<bool, GameStateCollection>(true, states);
+            catch (WebException e) {
+                PrettyPrint(GET_PUBLIC_GAMES, (HttpWebResponse)e.Response);
+                EndRequest();
+                return new Tuple<bool, GameStateCollection>(false, null);
+            }
         }
-        catch (WebException e) {
-            PrettyPrint(GET_PUBLIC_GAMES, (HttpWebResponse)e.Response);
-            EndRequest();
-            return new Tuple<bool, GameStateCollection>(false, null);
+        else {
+            // bad shit happened
         }
+        return new Tuple<bool, GameStateCollection>(false, null);
     }
 
     public Tuple<bool, GameStateCollection> GetAllCompletedGames() {

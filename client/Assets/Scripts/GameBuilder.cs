@@ -190,10 +190,11 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitComponent);
         unit.Place(pos, ref board);
         unit.Owner = username;
-        if(this.username == username) {
+        if(this.username == username && !isPlacing) {
             FogViewer unitFogViewer = unitComponent.GetFogViewer();
             unitFogViewer.SetRadius(unit.Vision + 1);
             fogController.AddFogViewer(unitFogViewer);
+            unit.unitHUD = UnitHUDController.CreateUnitHUD(unit.CurrentHP.ToString(), unit.Armour.ToString(), unit.Damage.ToString(), unit.Pierce.ToString(), unit.MyUnit);
         }
         if (unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType], serverUnit, username);
@@ -211,10 +212,11 @@ public class GameBuilder : MonoBehaviour {
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Place(pos, ref board);
         unit.Owner = username;
-        if(username == this.username) {
+        if(username == this.username && !isPlacing) {
             FogViewer unitFogViewer = unitObject.GetComponent<Unit>().GetFogViewer();
             unitFogViewer.SetRadius(unit.Vision + 1);
             fogController.AddFogViewer(unitFogViewer);
+            unit.unitHUD = UnitHUDController.CreateUnitHUD(unit.CurrentHP.ToString(), unit.Armour.ToString(), unit.Damage.ToString(), unit.Pierce.ToString(), unit.MyUnit);
         }
         if(unitType > UnitMetadata.GENERAL_THRESHOLD) {
             unit.SetAbilities(GeneralMetadata.GeneralAbilityDictionary[unit.UnitType]);

@@ -251,6 +251,7 @@ MonoBehaviour:
   self: {fileID: 0}
   nextField: {fileID: 0}
   button: {fileID: 742585005}
+  autoHitButton: 0
 --- !u!114 &30583495
 MonoBehaviour:
   m_ObjectHideFlags: 0
