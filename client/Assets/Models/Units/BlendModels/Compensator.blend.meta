@@ -111,6 +111,7 @@ ModelImporter:
     7400004: Death_00
     7400006: Hit_00
     7400008: Idle_00
+    7400010: Walk_00
     9500000: //RootNode
     13700000: Compensator
     2186277476908879412: ImportLogs
@@ -146,7 +147,7 @@ ModelImporter:
       name: Default Take
       takeName: Default Take
       firstFrame: -1
-      lastFrame: 32
+      lastFrame: 133
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -173,8 +174,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Attack_00
       takeName: Attack_00
-      firstFrame: -1
-      lastFrame: 35
+      firstFrame: 0
+      lastFrame: 492
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -201,8 +202,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Death_00
       takeName: Death_00
-      firstFrame: -1
-      lastFrame: 35
+      firstFrame: 0
+      lastFrame: 202
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -229,8 +230,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Hit_00
       takeName: Hit_00
-      firstFrame: -1
-      lastFrame: 35
+      firstFrame: 0
+      lastFrame: 132
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -257,8 +258,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Idle_00
       takeName: Idle_00
-      firstFrame: -1
-      lastFrame: 14
+      firstFrame: 0
+      lastFrame: 1378
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -267,6 +268,34 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 1
       loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Walk_00
+      takeName: Walk_00
+      firstFrame: 0
+      lastFrame: 206
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0

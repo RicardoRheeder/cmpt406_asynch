@@ -245,6 +245,9 @@ public class EndTurnState {
     [DataMember]
     private List<string> killedUsers;
 
+    public bool IsVictory { get; private set; }
+    public bool IsDefeat { get; private set; }
+
     public EndTurnState(GameState state, string currentUser, List<Action> turnActions, List<UnitStats> allUnits, List<CardFunction> cards) {
         gameId = state.id;
         actions = turnActions;
@@ -274,5 +277,8 @@ public class EndTurnState {
             aliveUsers.Remove(unit.Owner);
         }
         killedUsers = new List<string>(aliveUsers);
+
+        IsVictory = (killedUsers.Count == state.AliveUsers.Count - 1) && !killedUsers.Contains(currentUser);
+        IsDefeat = killedUsers.Contains(currentUser);
     }
 }

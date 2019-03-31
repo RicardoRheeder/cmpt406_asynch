@@ -334,7 +334,7 @@ ModelImporter:
       name: Attack_00
       takeName: Attack_00
       firstFrame: -1
-      lastFrame: 9
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -362,7 +362,7 @@ ModelImporter:
       name: Death_00
       takeName: Death_00
       firstFrame: -1
-      lastFrame: 9
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -390,7 +390,7 @@ ModelImporter:
       name: Hit_00
       takeName: Hit_00
       firstFrame: -1
-      lastFrame: 9
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -418,7 +418,7 @@ ModelImporter:
       name: Idle_00
       takeName: Idle_00
       firstFrame: -1
-      lastFrame: 9
+      lastFrame: 465
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -446,7 +446,7 @@ ModelImporter:
       name: Walk_00
       takeName: Walk_00
       firstFrame: -1
-      lastFrame: 9
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

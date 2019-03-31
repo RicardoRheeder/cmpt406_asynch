@@ -134,6 +134,7 @@ ModelImporter:
     7400032: JumpDown_00
     7400034: JumpUp_00
     7400036: Move_00
+    7400038: Walk_00
     9500000: //RootNode
     13700000: mesh01
     2186277476908879412: ImportLogs
@@ -418,9 +419,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Move_00
-      takeName: Move_00
-      firstFrame: -1
+      name: Walk_00
+      takeName: Walk_00
+      firstFrame: 0
       lastFrame: 209
       wrapMode: 0
       orientationOffsetY: 0
