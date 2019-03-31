@@ -213,10 +213,10 @@ public class GameManager : MonoBehaviour {
                     AttackUnit(originPos, new Vector2Int(a.TargetXPos, a.TargetYPos));
                     break;
                 case ActionType.Card:
-                    CardMetadata.CardEffectDictionary[a.CardId](new Vector2Int(a.TargetXPos, a.TargetYPos), unitPositions, a.Username, false);
+                    /* do nothing */
                     break;
                 case ActionType.Ability:
-                    UseAbility(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos), a.Ability);
+                    /* do nothing */
                     break;
                 default:
                     Debug.LogError("Unhandled Action: " + a.Type);
@@ -227,8 +227,15 @@ public class GameManager : MonoBehaviour {
         /* Make it so these actions dont "count" */
         turnActions.Clear();
         /* put things back to the current game state reference */
+        yield return new WaitForSeconds(2f);
+        foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions)
+        {
+            unit.Value.Kill();
+        }
+        unitPositions.Clear();
+        gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
+        unitPositions = gameBuilder.unitPositions;
         this.playerController.unitButtonReferences = this.gameBuilder.UnitButtons;
-        /* At this point the gamebuilder should be the same as if it build the current gamestate... */
     }
 
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
