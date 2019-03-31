@@ -113,6 +113,8 @@ public class GameManager : MonoBehaviour {
 
     private void OnGameLoaded(Scene scene, LoadSceneMode mode) {
         Debug.Log("Loading state: " + state);
+		FloatingTextController.Initialize();
+		UnitHUDController.Initialize();
 
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
