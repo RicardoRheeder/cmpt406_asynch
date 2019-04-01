@@ -43,7 +43,12 @@ public class AudioManager : MonoBehaviour {
     public void Play(UnitType unit, SoundType type) {
         string soundName = unit.ToString() + "_" + type.ToString();
         AudioLibrary s = Array.Find(sounds, sound => sound.name.ToString() == soundName);
-        s.audioSource.Play();
+        if(s != null) {
+            s.audioSource.Play();
+        }
+        else {
+            Debug.Log("Missing Sound: " + soundName);
+        }
     }
 
     // Goes through the list of sounds in the AudioLibrary and mutes them
