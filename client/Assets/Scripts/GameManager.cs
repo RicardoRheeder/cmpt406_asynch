@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour {
     //Dictionary used to the game information
     private Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
     private Dictionary<Vector2Int, Effect> effectPositions = new Dictionary<Vector2Int, Effect>();
+    private List<Action> actionsSinceLastTurn;
 
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
@@ -166,8 +167,10 @@ public class GameManager : MonoBehaviour {
 
         inGameMenu.SetupPanels(isPlacing: false);
 
+        actionsSinceLastTurn = new List<Action>();
         PreprocessGenerals();
         PreprocessCards();
+        PreprocessTraps();
 
         fogOfWarController.UpdateAllFog();
 
@@ -291,17 +294,23 @@ public class GameManager : MonoBehaviour {
                 break;
             }
             else {
+                actionsSinceLastTurn.Add(action);
                 if (action.Type == ActionType.Card) {
                     cardsSinceLastTurn.Add(action);
                 }
             }
         }
 
+        actionsSinceLastTurn.Reverse();
         cardsSinceLastTurn.Reverse();
         for(int i = 0; i < cardsSinceLastTurn.Count; i++) {
             Action action = cardsSinceLastTurn[i];
             CardMetadata.CardEffectDictionary[action.CardId](new Vector2Int(action.TargetXPos, action.TargetYPos), unitPositions, action.Username, true);
         }
+    }
+
+    private void PreprocessTraps() {
+
     }
 
     //===================== In game button functionality ===================

@@ -119,27 +119,31 @@ public class UnitStats {
         damage = damage <= 0 ? 1 : damage;
         CurrentHP -= damage;
 		FloatingTextController.CreateFloatingText(damage.ToString(), MyUnit.transform, false);
-		unitHUD.SetHPText(CurrentHP.ToString());
+        if (unitHUD != null)
+            unitHUD.SetHPText(CurrentHP.ToString());
         return CurrentHP <= 0;
     }
 
     public void TakeCardDamage(int damage) {
         CurrentHP -= damage;
         CurrentHP = CurrentHP <= 0 ? 1 : CurrentHP;
-		unitHUD.SetHPText(CurrentHP.ToString());
+        if(unitHUD != null)
+    		unitHUD.SetHPText(CurrentHP.ToString());
 		FloatingTextController.CreateFloatingText(damage.ToString(), MyUnit.transform, false);
     }
 
     public void Heal(int amount) {
         this.CurrentHP += amount;
         CurrentHP = CurrentHP > MaxHP ? MaxHP : CurrentHP;
-		unitHUD.SetHPText(CurrentHP.ToString());
+        if (unitHUD != null)
+            unitHUD.SetHPText(CurrentHP.ToString());
 		FloatingTextController.CreateFloatingText(amount.ToString(), MyUnit.transform, true);
     }
     
     public void Kill() {
         MyUnit.Kill();
-		unitHUD.DestroyThis();
+        if (unitHUD != null)
+            unitHUD.DestroyThis();
     }
 
     //Methods to alter stats
@@ -157,7 +161,8 @@ public class UnitStats {
                 this.Damage = change;
             }
         }
-		unitHUD.SetDMGText(Damage.ToString());
+        if (unitHUD != null)
+            unitHUD.SetDMGText(Damage.ToString());
     }
 
     public void AlterSpeed(int change) {
@@ -175,13 +180,15 @@ public class UnitStats {
     public void AlterPierce(int change) {
         this.Pierce += change;
         this.Pierce = this.Pierce < 0 ? 0 : this.Pierce;
-		unitHUD.SetPENText(Pierce.ToString());
+        if (unitHUD != null)
+            unitHUD.SetPENText(Pierce.ToString());
     }
 
     public void AlterArmour(int change) {
         this.Armour += change;
         this.Armour = this.Armour < 0 ? 0 : this.Armour;
-		unitHUD.SetARText(Armour.ToString());
+        if (unitHUD != null)
+            unitHUD.SetARText(Armour.ToString());
     }
 
     public void AlterRange(int change) {
@@ -204,12 +211,14 @@ public class UnitStats {
 
     public void DoublePierce() {
         this.Pierce = this.Pierce * 2;
-		unitHUD.SetPENText(Pierce.ToString());
+        if (unitHUD != null)
+            unitHUD.SetPENText(Pierce.ToString());
     }
 
     public void DoubleDamage() {
         this.Damage = this.Damage * 2;
-		unitHUD.SetDMGText(Damage.ToString());
+        if (unitHUD != null)
+            unitHUD.SetDMGText(Damage.ToString());
     }
 
     public void DoubleSpeed() {
