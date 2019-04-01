@@ -279,6 +279,27 @@ Gets all of the data for a provided GameStateID
         "aliveUsers": ["user1", "user2"]
     }
 
+Get Old Game State:
+-----------------------
+Gets some gamestate data from a past turn
+
+ - Path: /GetOldGameState
+ - POST
+ - Auth: Basic Auth
+ - Body: JSON
+ - Request Body Example:
+    {
+        "gameId":    "123-456"
+        "turnCount": "3"
+    }
+ - Return: GameState Data
+ - Example Return Data:
+    {   
+        "units": "[unit1, unit2]"
+        "generals": "[general1, general2]"
+        "actions": "[action1, action2]"
+    }
+
 
 Get Game State Multi:
 -----------------------

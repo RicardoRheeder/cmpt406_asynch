@@ -636,8 +636,15 @@ func forfeitGame(ctx context.Context, username, gameStateID string, reason games
 		/* Add the action that says they forfeited */
 		gs.Actions = append(gs.Actions, gamestate.Action{Username: username, ActionType: gamestate.Forfeit})
 		gs.LoseReasons = append(gs.LoseReasons, gamestate.Lose{Username: username, Reason: reason})
+		gs.TurnCount++
 
-		err := user.UpdateUser(ctx, username, updateActiveGameToComplete(ctx, gameStateID))
+		/* Store a record of this turn */
+		err := gamestate.SaveGSAncestor(ctx, gs.ID, gs.TurnCount, gs.Units, gs.Generals, gs.ActiveEffects, gs.Actions)
+		if err != nil {
+			/* We failed to save this turn but I don't think it should block anything... */
+		}
+
+		err = user.UpdateUser(ctx, username, updateActiveGameToComplete(ctx, gameStateID))
 		if err != nil {
 			log.Errorf(ctx, "We failed to update a user %s to remove active game", username)
 			return err
@@ -748,6 +755,22 @@ func GetGameState(ctx context.Context, gameStateID string, username string) (*ga
 	}
 
 	return gs, nil
+}
+
+// GetGSAncestor will get the GameState for a particular gameID at the particular turnNumber
+func GetGSAncestor(ctx context.Context, gameStateID string, turnCount int) (*gamestate.GSAncestor, error) {
+
+	err := common.StringNotEmpty(gameStateID)
+	if err != nil {
+		log.Errorf(ctx, "Get Old Game failed: gameStateID is required")
+		return nil, errors.New("gameStateID is required")
+	}
+	if turnCount <= 0 {
+		log.Errorf(ctx, "Get Old Game failed: turnCount must be > 0")
+		return nil, errors.New("turnCount invalid (<= 0)")
+	}
+
+	return gamestate.GetGSAncestor(ctx, gameStateID, turnCount)
 }
 
 // GetGameStateMulti will get all the GameStates for the gameIDs and user
@@ -953,6 +976,13 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 		gs.Cards = cards // The client will always give the server ALL of the cards on MakeMove
 		gs.Generals = generals
 		gs.ActiveEffects = activeEffects
+		gs.TurnCount++
+
+		/* Store a record of this turn */
+		err := gamestate.SaveGSAncestor(ctx, gs.ID, gs.TurnCount, gs.Units, gs.Generals, gs.ActiveEffects, gs.Actions)
+		if err != nil {
+			/* We failed to save this turn but I don't think it should block anything... */
+		}
 
 		return nil
 	}

@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc("/ForfeitGame", handleForfeitGame)
 
 	http.HandleFunc("/GetGameState", handleGetGameState)
+	http.HandleFunc("/GetOldGameState", handleGetOldGameState)
 	http.HandleFunc("/GetGameStateMulti", handleGetGameStateMulti)
 	http.HandleFunc("/GetPublicGamesSummary", handleGetPublicGamesSummary)
 	http.HandleFunc("/GetCompletedGames", handleGetCompletedGames)
@@ -376,6 +377,33 @@ func handleGetGameState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(gameState)
+	return
+}
+
+func handleGetOldGameState(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	_, err := ValidateAuth(ctx, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var gogs request.GetOldGameState
+	err = decoder.Decode(&gogs)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	gsAncestor, err := GetGSAncestor(ctx, gogs.GameID, gogs.TurnCount)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(gsAncestor)
 	return
 }
 
