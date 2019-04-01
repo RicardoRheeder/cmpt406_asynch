@@ -67,6 +67,9 @@ public class GameState {
     [DataMember(Name="forfeitTime")]
     public int ForfeitTime { get; private set; }
 
+    [DataMember(Name="loseReasons")]
+    public List<LossReason> LossReasons;
+
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(this);
     }
@@ -84,6 +87,8 @@ public class GameState {
         if (AliveUsers == null) AliveUsers = new List<string>();
         if (cards == null) cards = new List<CardController>();
         if (Actions == null) Actions = new List<Action>();
+        if (LossReasons == null) LossReasons = new List<LossReason>();
+
         UserUnitsMap = new Dictionary<string, List<UnitStats>>();
         foreach(UnitStats unit in units) {
             if (UserUnitsMap.ContainsKey(unit.Owner))
@@ -280,5 +285,26 @@ public class EndTurnState {
 
         IsVictory = (killedUsers.Count == state.AliveUsers.Count - 1) && !killedUsers.Contains(currentUser);
         IsDefeat = killedUsers.Contains(currentUser);
+    }
+}
+
+[DataContract]
+public class LossReason {
+    [DataMember(Name = "reason")]
+    private int serverReason { get; set; }
+    public string Reason { get; private set; }
+
+    [DataMember(Name = "username")]
+    public string LossUsername { get; private set; }
+
+    internal enum LossDescriptions {
+        Destroyed = 0,
+        Conceded = 1,
+        Timeout = 2
+    };
+
+    [OnDeserialized]
+    public void OnDeserialized(StreamingContext c) {
+        Reason = ((LossDescriptions)serverReason).ToString();
     }
 }
