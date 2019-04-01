@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using CardsAndCarnage;
+using System.Collections;
+using TMPro;
 
 #pragma warning disable 649
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
@@ -358,10 +360,26 @@ public class GameManager : MonoBehaviour {
                 System.IO.File.Delete(path);
             }
         }
+    }
+
+    IEnumerator MainMenuNavigationCountDown() {
+        TextMeshProUGUI countDownText = this.inGameMenu.returningToMainMenuPanel.transform.Find("CountDownText").gameObject.GetComponent<TextMeshProUGUI>();
+        this.inGameMenu.returningToMainMenuPanel.SetActive(true);
+        float startTime = Time.time;
+
+        int displayTime = 3;
+        while (displayTime > 0) {
+            countDownText.text = displayTime + "...";
+            displayTime = (int)(3 - (Time.time - startTime) + 1);
+            yield return null;
+        }
+        hasExitButtonBeenPressed = false;
+
         audioManager.Play(SoundName.ButtonPress);
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
+
 
     public void Forfeit() {
         if (hasExitButtonBeenPressed)
