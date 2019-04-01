@@ -28,7 +28,9 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(int dir, Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType) {
+    public void Attack(int dir, Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType, AudioManager manager = null) {
+        if(manager != null)
+            manager.Play(unitType, SoundType.Attack);
         TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
@@ -46,8 +48,13 @@ public class Unit : MonoBehaviour {
         moveSpeed = speed;
     }
 
+    public void WalkSound(UnitType type, AudioManager manager = null) {
+        if (manager != null)
+            manager.Play(type, SoundType.Move);
+    }
+
     //Method used to handle the movement animation
-    public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board) {
+    public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board, AudioManager manager = null) {
         StartCoroutine(PathMovement(path,board));
     }
 
@@ -138,9 +145,12 @@ public class Unit : MonoBehaviour {
         }
     }
 
-    public void Kill() {
+    public void Kill(UnitType type, AudioManager manager = null) {
         if(this.anim != null) {
             anim.SetTrigger("death");
+        }
+        if (manager != null) {
+            manager.Play(type, SoundType.Death);
         }
         Destroy(this.gameObject);
     }

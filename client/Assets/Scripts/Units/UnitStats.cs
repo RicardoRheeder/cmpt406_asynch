@@ -99,13 +99,13 @@ public class UnitStats {
     }
 
     //Returns a value based on the target
-    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, Vector3 sourceWorldPos, Vector3 targetWorldPos, bool analyticsAttack=false) {
+    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, Vector3 sourceWorldPos, Vector3 targetWorldPos, AudioManager audioManager = null, bool analyticsAttack = false) {
         if(!moveAfterAttack)
             this.MovementSpeed = 0;
         this.AttackActions--;
         int dir = HexUtility.FindDirection(this.Position,target);
         if (!analyticsAttack)
-            MyUnit.Attack(dir, sourceWorldPos, targetWorldPos, this.UnitType);
+            MyUnit.Attack(dir, sourceWorldPos, targetWorldPos, this.UnitType, audioManager);
         return attackStrategy.Attack(this, target);
     }
 
@@ -140,8 +140,8 @@ public class UnitStats {
 		FloatingTextController.CreateFloatingText(amount.ToString(), MyUnit.transform, true);
     }
     
-    public void Kill() {
-        MyUnit.Kill();
+    public void Kill(AudioManager audioManager = null) {
+        MyUnit.Kill(UnitType, audioManager);
         if (unitHUD != null)
             unitHUD.DestroyThis();
     }
@@ -226,7 +226,8 @@ public class UnitStats {
     }
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
-    public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
+    public void Move(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false) {
+        if (audioManager != null) { MyUnit.WalkSound(UnitType, audioManager); }
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.MovementSpeed -= pathWithDirection.Count;
@@ -241,7 +242,8 @@ public class UnitStats {
         MyUnit.PlaceAt(position, ref board);
     }
 	
-	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
+    public void SandboxMove(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false){
+        if (audioManager != null) { MyUnit.WalkSound(UnitType, audioManager); }
 	    List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;

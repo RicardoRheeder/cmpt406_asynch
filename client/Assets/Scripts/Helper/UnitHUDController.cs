@@ -19,13 +19,13 @@ public class UnitHUDController : MonoBehaviour {
 		
 		instance.transform.SetAsFirstSibling();
 		
-		instance.SetHPText(hp);
+		instance.hp.text =  hp;
 		
-		instance.SetARText(ar);
+		instance.ar.text = ar;
 		
-		instance.SetDMGText(dmg);
+		instance.dmg.text = dmg;
 		
-		instance.SetPENText(pen);
+		instance.pen.text = pen;
 		
 		instance.unit = unit;
 		

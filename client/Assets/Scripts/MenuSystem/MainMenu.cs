@@ -53,6 +53,8 @@ public class MainMenu : MonoBehaviour {
     private GameObject yourGamesPanel;
     [SerializeField]
     private GameObject gameInvitesPanel;
+    [SerializeField]
+    private GameObject completeGamesPanel;
 
     //Ui Cell Prefabs
     [SerializeField]
@@ -91,6 +93,20 @@ public class MainMenu : MonoBehaviour {
     private TMP_Text yourGamesMaxPlayers;
     [SerializeField]
     private Button yourGamesJoinButton;
+
+    //Completed Games variables
+    [SerializeField]
+    private GameObject completedGamesListViewContent;
+    [SerializeField]
+    private TMP_Text completedGamesGameCreator;
+    [SerializeField]
+    private TMP_Text completedGamesMapName;
+    [SerializeField]
+    private TMP_Text completedGamesVictoryText;
+    [SerializeField]
+    private TMP_Text completedGamesLossReason;
+    [SerializeField]
+    private GameObject completedGamesLossReasonParent;
 
     //Game Invites variables
     [SerializeField]
@@ -273,11 +289,12 @@ public class MainMenu : MonoBehaviour {
 
     //========================Play Menu Functionality========================
     //Helper Functions while in the play menu
-    public void SetPlayMenuState(bool createGameState=false, bool publicGamesState = false, bool yourGamesState=false, bool gameInvitesState = false) {
+    public void SetPlayMenuState(bool createGameState=false, bool publicGamesState = false, bool yourGamesState=false, bool gameInvitesState=false, bool completeGamesState=false) {
         createGamePanel.SetActive(createGameState);
         publicGamesPanel.SetActive(publicGamesState);
         yourGamesPanel.SetActive(yourGamesState);
         gameInvitesPanel.SetActive(gameInvitesState);
+        completeGamesPanel.SetActive(completeGamesState);
     }
 
     //========================Create Game Functionality========================
@@ -364,6 +381,44 @@ public class MainMenu : MonoBehaviour {
             audioManager.Play(SoundName.ButtonPress);
             manager.LoadGame(state);
         });
+    }
+
+    //========================Complete Games Functionality========================
+    public void CompleteGamesButton() {
+        audioManager.Play(SoundName.ButtonPress);
+        SetPlayMenuState(completeGamesState: true);
+
+        Tuple<bool, GameStateCollection> response = networkApi.GetCompletedGamesInformation();
+        if(response.First) {
+            foreach(var state in response.Second.states) {
+                GameObject newGameCell = Instantiate(gameListCellPrefab);
+                Button cellButton = newGameCell.GetComponent<Button>();
+                cellButton.GetComponentsInChildren<TMP_Text>()[0].SetText(state.gameName);
+                cellButton.onClick.AddListener(() => CompleteGamesCellButton(state));
+                newGameCell.transform.SetParent(completedGamesListViewContent.transform, false);
+            }
+        }
+        else {
+            //This error can occur on a user that has no information available, i'll have to investigate
+            //DisplayUserMessage("Error", "Failed to get game information from server.");
+        }
+    }
+
+    private void CompleteGamesCellButton(GameState state) {
+        audioManager.Play(SoundName.ButtonPress);
+        completedGamesGameCreator.SetText(state.createdBy);
+        completedGamesMapName.SetText(BoardMetadata.BoardDisplayNames[state.boardId]);
+        LossReason lossReason = null;
+        lossReason = state.LossReasons.Find(x => x.LossUsername == networkApi.UserInformation.Username);
+        if(lossReason != null) {
+            completedGamesVictoryText.SetText("Defeated");
+            completedGamesLossReasonParent.SetActive(true);
+            completedGamesLossReason.SetText(lossReason.Reason);
+        }
+        else {
+            completedGamesVictoryText.SetText("Victory!");
+            completedGamesLossReasonParent.SetActive(false);
+        }
     }
 
     //========================Game Invites Functionality========================
