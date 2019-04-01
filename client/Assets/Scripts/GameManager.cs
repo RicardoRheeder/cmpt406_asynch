@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour {
 
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
     private List<Action> turnActions;
+    private List<Action> actionsSinceLastTurn;
 
     //Two variables that should be set by the "Load game" method
     //They are only used for persistant information between scenes
@@ -42,7 +43,6 @@ public class GameManager : MonoBehaviour {
     //Dictionary used to the game information
     private Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
     private Dictionary<Vector2Int, Effect> effectPositions = new Dictionary<Vector2Int, Effect>();
-    private List<Action> actionsSinceLastTurn;
 
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviour {
 
     //flag for the sandbox;
     private bool isSandboxMode = false;
+
+    private bool hasExitButtonBeenPressed = false;
 
     // Start is called before the first frame update
     void Start() {
@@ -166,7 +168,6 @@ public class GameManager : MonoBehaviour {
         actionsSinceLastTurn = new List<Action>();
         PreprocessGenerals();
         PreprocessCards();
-        PreprocessTraps();
 
         fogOfWarController.UpdateAllFog();
 
@@ -305,17 +306,13 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void PreprocessTraps() {
-
-    }
-
     //===================== In game button functionality ===================
     public void EndTurn() {
-        if (exiting) {
+        if (hasExitButtonBeenPressed) {
             return;
         }
         GameObject.Find("MenuButton").GetComponent<Button>().onClick.RemoveAllListeners();
-        exiting = true;
+        hasExitButtonBeenPressed = true;
         EndTurnState endTurnState = new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn());
 
         audioManager.Play(SoundName.ButtonPress);
@@ -329,7 +326,7 @@ public class GameManager : MonoBehaviour {
                 if (System.IO.File.Exists(path)) {
                     System.IO.File.Delete(path);
                 }
-                exiting = false;
+                hasExitButtonBeenPressed = false;
 
                 SceneManager.sceneLoaded += OnMenuLoaded;
                 SceneManager.LoadScene("MainMenu");
@@ -345,7 +342,7 @@ public class GameManager : MonoBehaviour {
                 if (System.IO.File.Exists(path)) {
                     System.IO.File.Delete(path);
                 }
-                exiting = false;
+                hasExitButtonBeenPressed = false;
 
                 SceneManager.sceneLoaded += OnMenuLoaded;
                 SceneManager.LoadScene("MainMenu");
@@ -367,9 +364,8 @@ public class GameManager : MonoBehaviour {
     }
 
     public void Forfeit() {
-        if (exiting) {
+        if (hasExitButtonBeenPressed)
             return;
-        }
         audioManager.Play(SoundName.ButtonPress);
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
@@ -377,9 +373,8 @@ public class GameManager : MonoBehaviour {
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
-        if (exiting) {
+        if (hasExitButtonBeenPressed)
             return;
-        }
         audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
