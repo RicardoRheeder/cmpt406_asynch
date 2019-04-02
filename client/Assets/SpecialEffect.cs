@@ -195,12 +195,12 @@ public class SpecialEffect : MonoBehaviour
 
     void VETrooperAttack()
     {
-
+        StartCoroutine(findMakeObject());
     }
 
     void VEReconAttack()
     {
-
+        StartCoroutine(findMakeObject());
     }
 
     void VESandmanAttack()
