@@ -82,6 +82,7 @@ MonoBehaviour:
   particleEffect: {fileID: 4745146766022754, guid: 205b01c5b4ae3704285e9f90992273e5,
     type: 3}
   startPoint: {fileID: 5505858441949310559}
+  m_changeColor: {r: 1, g: 0, b: 0, a: 0}
 --- !u!1 &7692210841754749446
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,17 +8,59 @@ public class SpecialEffect : MonoBehaviour
 {
     private UnitType unitType;
 
+    private GameObject gm;
+
     public Transform particleEffect;
     public Transform startPoint;
     private float distance;
 
+    Color m_changeColor;
+    bool isChangeColor = false;
+    Renderer[] m_rnds;
+
+    private Transform[] allChildren;
+    private float m_changeScale = 1;
+    private bool isChangeScale = false;
+
+    void Update()
+    {
+        if (isChangeColor && gm != null)
+        {
+            m_rnds = gm.GetComponentsInChildren<Renderer>(true);
+
+            foreach (Renderer rend in m_rnds)
+            {
+                for (int i = 0; i < rend.materials.Length; i++)
+                {
+                    rend.materials[i].SetColor("_TintColor", m_changeColor);
+                    rend.materials[i].SetColor("_Color", m_changeColor);
+                    rend.materials[i].SetColor("_RimColor", m_changeColor);
+                }
+            }
+        }
+        if (isChangeScale && gm != null)
+        {
+            allChildren = gm.GetComponentsInChildren<Transform>();
+
+            foreach (Transform child in allChildren)
+            {
+                if (child.GetComponent<ParticleSystem>())
+                {
+                    child.localScale = new Vector3(m_changeScale, m_changeScale, m_changeScale);
+                }
+            }
+        }
+
+    }
+
     public void PlayAttackEffect(Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType)
     {
         this.unitType = unitType;
-        GameObject gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         switch (unitType)
         {
             //------------------------------------------
@@ -122,12 +164,26 @@ public class SpecialEffect : MonoBehaviour
 
     void VETungstenAttack()
     {
+        ChangeColor(Color.red);
+        ChangeScale(3);
         StartCoroutine(findMakeObject());
     }
 
     void VECardEffect() { }
 
     void VEDeath() { }
+
+    void ChangeColor(Color desiredColor)
+    {
+        m_changeColor = desiredColor;
+        isChangeColor = true;
+    }
+
+    void ChangeScale(float scaleAmount)
+    {
+        m_changeScale = scaleAmount;
+        isChangeScale = true;
+    }
 
     /**
      *  RICARDO's SECTION END
