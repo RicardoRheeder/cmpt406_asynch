@@ -52,10 +52,6 @@ public class PlayerController : MonoBehaviour {
     //Stuff for top right information on hud
     private TMP_Text userTurnText;
     private TMP_Text turnText;
-
-    //menu buttons
-    private Button concedeButton;
-    private Button closeGameButton;
     
     private UnitStats selectedUnit;
 
@@ -150,12 +146,6 @@ public class PlayerController : MonoBehaviour {
             Ability1Button = Ability1Object.GetComponent<Button>();
             Ability2Object = GameObject.Find("AbilityTwoButton");
             Ability2Button = Ability2Object.GetComponent<Button>();
-
-            concedeButton = GameObject.Find("ConcedeButton").GetComponent<Button>();
-            concedeButton.onClick.AddListener(Forfeit);
-
-            closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
-            closeGameButton.onClick.AddListener(ExitGame);
 
 
             foreach(var pair in unitButtonReferences) {
@@ -490,13 +480,5 @@ public class PlayerController : MonoBehaviour {
             Ability1Object.SetActive(false);
             Ability2Object.SetActive(false);
         }
-    }
-
-    public void Forfeit() {
-        manager.Forfeit();
-    }
-
-    public void ExitGame() {
-        manager.ExitGame();
     }
 }

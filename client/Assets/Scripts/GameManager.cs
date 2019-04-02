@@ -120,6 +120,9 @@ public class GameManager : MonoBehaviour {
 
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
+        GameObject.Find("ConcedeButton").GetComponent<Button>().onClick.AddListener(this.Forfeit);
+        GameObject.Find("CloseGameButton").GetComponent<Button>().onClick.AddListener(this.ExitGame);
+
         this.inGameMenu.replayOpponentTurnsPanel.transform.Find("YesButton").GetComponent<Button>().onClick.AddListener(this.HandleReplay);
 
         boardController = new BoardController();
