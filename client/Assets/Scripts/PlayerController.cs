@@ -151,17 +151,17 @@ public class PlayerController : MonoBehaviour {
             Ability2Object = GameObject.Find("AbilityTwoButton");
             Ability2Button = Ability2Object.GetComponent<Button>();
 
-            if (concedeButton == null) {
-                concedeButton = GameObject.Find("ConcedeButton").GetComponent<Button>();
-                concedeButton.onClick.AddListener(Forfeit);
-            }
-            if (closeGameButton == null) {
-                closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
-                closeGameButton.onClick.AddListener(ExitGame);
-            }
+            concedeButton = GameObject.Find("ConcedeButton").GetComponent<Button>();
+            concedeButton.onClick.AddListener(Forfeit);
+
+            closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
+            closeGameButton.onClick.AddListener(ExitGame);
+
 
             foreach(var pair in unitButtonReferences) {
-                pair.Value.GetComponentInChildren<Button>().onClick.AddListener(() => {
+                Button b = pair.Value.GetComponentInChildren<Button>();
+                b.onClick.RemoveAllListeners();
+                b.onClick.AddListener(() => {
                     audioManager.Play(SoundName.ButtonPress);
                     SelectUnit(pair.Key);
                     manager.SnapToPosition(selectedUnit.Position);

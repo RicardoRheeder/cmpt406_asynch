@@ -255,10 +255,22 @@ public class GameManager : MonoBehaviour {
             unit.Value.Kill();
         }
         unitPositions.Clear();
+        ResetControllers();
+        doingReplay = false;
+    }
+
+    private void ResetControllers() {
+        Destroy(gameBuilderObject);
+        gameBuilderObject = Instantiate(gameBuilderPrefab);
+        gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
         unitPositions = gameBuilder.unitPositions;
+        Destroy(playerControllerObject);
+        playerControllerObject = Instantiate(playerControllerPrefab);
+        playerController = playerControllerObject.GetComponent<PlayerController>();
         playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts: gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
-        doingReplay = false;
+
+        return;
     }
 
     private IEnumerator FadeReplayDone() {
