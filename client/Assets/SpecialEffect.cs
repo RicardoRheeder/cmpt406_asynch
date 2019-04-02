@@ -19,8 +19,6 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.SetParent(this.transform);
         distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-
-
         switch (unitType)
         {
             //------------------------------------------
@@ -124,7 +122,7 @@ public class SpecialEffect : MonoBehaviour
 
     void VETungstenAttack()
     {
-
+        StartCoroutine(findMakeObject());
     }
 
     void VECardEffect() { }

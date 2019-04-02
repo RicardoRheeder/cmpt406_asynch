@@ -34,8 +34,11 @@ public class Unit : MonoBehaviour {
         TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
-            this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos, unitType);
         }
+
+        print("Test");
+        this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos, unitType);
+
     }
 
     public void GetHit() {
