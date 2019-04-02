@@ -487,6 +487,8 @@ MonoBehaviour:
   particleEffect: {fileID: 4745146766022754, guid: 205b01c5b4ae3704285e9f90992273e5,
     type: 3}
   startPoint: {fileID: 562304910199686049}
+  effect47Explosion: {fileID: 1318874244620254, guid: f1069c39521fd0d4584b4e3874ea4c9a,
+    type: 3}
 --- !u!1 &829258606
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,6 +22,9 @@ public class SpecialEffect : MonoBehaviour
     private float m_changeScale = 1;
     private bool isChangeScale = false;
 
+    public GameObject effect47Explosion;
+    public GameObject effect06CardAura;
+
     void Update()
     {
         if (isChangeColor && gm != null)
@@ -165,13 +168,25 @@ public class SpecialEffect : MonoBehaviour
     void VETungstenAttack()
     {
         ChangeColor(Color.red);
-        ChangeScale(3);
+        ChangeScale(2);
         StartCoroutine(findMakeObject());
     }
 
-    void VECardEffect() { }
+    void VECardEffect()
+    {
+        gm = Instantiate(effect06CardAura, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+        ChangeColor(new Color(0.298f, 0.796f, 1f));
+    }
 
-    void VEDeath() { }
+    public void VEDeath()
+    {
+        gm = Instantiate(effect47Explosion, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+        ChangeColor(new Color(1.0f, 0.27f, 0.0f));
+    }
 
     void ChangeColor(Color desiredColor)
     {
@@ -276,7 +291,6 @@ public class SpecialEffect : MonoBehaviour
             MakeObject = GameObject.Find("MakeObject");
             yield return new WaitForSeconds(0.1f);
         }
-        print("FOUND");
         MakeObject.transform.localPosition = new Vector3(0, 0, distance);
     }
 }

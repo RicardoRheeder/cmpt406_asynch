@@ -35,8 +35,6 @@ public class Unit : MonoBehaviour {
         if(this.anim != null) {
             anim.SetTrigger("attack");
         }
-
-        print("Test");
         this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos, unitType);
 
     }
@@ -155,7 +153,17 @@ public class Unit : MonoBehaviour {
         if (manager != null) {
             manager.Play(type, SoundType.Death);
         }
+        if (this.GetComponent<SpecialEffect>())
+            this.GetComponent<SpecialEffect>().VEDeath();
+        StartCoroutine(DestroyUnit(2f));
+    }
+
+    IEnumerator DestroyUnit(float secondsUntilDestroy)
+    {
+        yield return new WaitForSeconds(secondsUntilDestroy);
         Destroy(this.gameObject);
+
+        yield return null;
     }
 
     public FogViewer GetFogViewer() {
