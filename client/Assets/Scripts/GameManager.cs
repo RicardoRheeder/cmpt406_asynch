@@ -49,7 +49,15 @@ public class GameManager : MonoBehaviour {
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
     private bool isPlacing = false;
+    
+    //Bool to say if we are replaying opponent turns
     private bool doingReplay = false;
+
+    // The users hand
+    List<CardFunction> hand;
+
+    // DropZone for cards
+    DropZone dropZone;
 
     //flag for the sandbox;
     private bool isSandboxMode = false;
@@ -125,9 +133,20 @@ public class GameManager : MonoBehaviour {
 
         this.inGameMenu.replayOpponentTurnsPanel.transform.Find("YesButton").GetComponent<Button>().onClick.AddListener(this.HandleReplay);
 
+        actionsSinceLastTurn = new List<Action>();
+
         boardController = new BoardController();
         boardController.Initialize();
 
+        InitControllersHelper();
+
+        inGameMenu.SetupPanels(isPlacing: false);
+
+        SceneManager.sceneLoaded -= OnGameLoaded;
+        SceneManager.sceneLoaded += OnMenuLoaded;
+    }
+
+    private void InitControllersHelper() {
         fogOfWarController = new FogOfWarController();
         fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
 
@@ -140,46 +159,44 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts:gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts: gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
 
-        cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
-        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
+        if (cameraRig == null) {
+            cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
+            cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
+        }
 
         cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
-        List<CardFunction> hand = new List<CardFunction>();
+        hand = new List<CardFunction>();
         if (state.UserCardsMap.ContainsKey(user.Username)) {
             hand = state.UserCardsMap[user.Username].Hand;
         }
 
-        DropZone dropZone = GameObject.Find("Tabletop").GetComponent<DropZone>();
+        if (dropZone == null) {
+            dropZone = GameObject.Find("Tabletop").GetComponent<DropZone>();
+        }
         dropZone.SetPlayerController(playerController);
         dropZone.SetCardSystemManager(cardSystem);
 
         bool wasActions = false;
-        for(int i = 0; i < state.Actions.Count; i++) {
+        for (int i = 0; i < state.Actions.Count; i++) {
             if (state.Actions[i].Username == user.Username) {
                 wasActions = true;
                 break;
             }
         }
 
-        if(wasActions) {
+        if (wasActions) {
             cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
         }
         else {
-            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT);
+            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit: CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT);
         }
 
-        inGameMenu.SetupPanels(isPlacing: false);
-
-        actionsSinceLastTurn = new List<Action>();
         PreprocessGenerals();
         PreprocessCards();
 
         fogOfWarController.UpdateAllFog();
-
-        SceneManager.sceneLoaded -= OnGameLoaded;
-        SceneManager.sceneLoaded += OnMenuLoaded;
     }
 
     private void HandleReplay() {
@@ -250,28 +267,17 @@ public class GameManager : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         /* Make it so these actions dont "count" */
         turnActions.Clear();
+
         /* put things back to the current game state reference */
         foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions)
         {
             unit.Value.Kill();
         }
         unitPositions.Clear();
-        ResetControllers();
-        doingReplay = false;
-    }
-
-    private void ResetControllers() {
         Destroy(gameBuilderObject);
-        gameBuilderObject = Instantiate(gameBuilderPrefab);
-        gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
-        gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
-        unitPositions = gameBuilder.unitPositions;
         Destroy(playerControllerObject);
-        playerControllerObject = Instantiate(playerControllerPrefab);
-        playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts: gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
-
-        return;
+        InitControllersHelper();
+        doingReplay = false;
     }
 
     private IEnumerator FadeReplayDone() {
@@ -653,6 +659,7 @@ public class GameManager : MonoBehaviour {
     //===================== Functions used to get unit positions ===================
     public List<Vector2Int> GetUnitPositions(UnitType type = UnitType.none) {
         List<Vector2Int> retList = new List<Vector2Int>();
+        Debug.Log(unitPositions.Count);
         foreach (Vector2Int pos in unitPositions.Keys) {
             UnitStats unit = unitPositions[pos];
             if((int)unit.UnitType < UnitMetadata.GENERAL_THRESHOLD) {

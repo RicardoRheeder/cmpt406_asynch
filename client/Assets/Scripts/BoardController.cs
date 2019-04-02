@@ -17,7 +17,9 @@ public class BoardController {
     private List<GameObject> hoverHighlightedTiles = new List<GameObject>();
     private Tuple<Vector2Int,int> previousHoverTilePos;
     private Tuple<Vector2Int,Vector2Int> renderPathCache;
-    
+
+    private GameObject fogPlane;
+
     // Initializes the board controller. Must be called before other methods can function
     public void Initialize() {
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
@@ -30,7 +32,10 @@ public class BoardController {
         this.hightlightedTiles = new List<GameObject>();
         this.pathLine = GameObject.Instantiate(Resources.Load<LineRenderer>("PathLine"));
         
-        GameObject fogPlane = GameObject.Find("Fog Plane");
+        if (fogPlane != null) {
+            return;
+        }
+        fogPlane = GameObject.Find("Fog Plane");
         int randInt = UnityEngine.Random.Range(0, 2);
 
         if (randInt == 1) {

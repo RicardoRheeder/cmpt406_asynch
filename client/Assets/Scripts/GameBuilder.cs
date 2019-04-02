@@ -15,6 +15,7 @@ public class GameBuilder : MonoBehaviour {
     public GameObject unitPlacementDisplayPrefab;
     public GameObject unitSelectionDisplayPrefab;
     private GameObject unitPlacementViewport;
+    private bool sceneSetup = false;
     public List<GameObject> UnitDisplayTexts { get; private set; }
 
     //Prefabs for each unit for instantiation purposes
@@ -93,7 +94,8 @@ public class GameBuilder : MonoBehaviour {
             }
         }
 
-        SetupScene();
+         SetupScene();
+
         if(!isPlacing) {
             InstantiateUnits();
         }
@@ -123,6 +125,7 @@ public class GameBuilder : MonoBehaviour {
                 this.unitTexts.Add(unitText);
             }
         }
+        sceneSetup = true;
     }
 
     //Method responsible for making sure all of the units are created with the appropriate gameobjects
