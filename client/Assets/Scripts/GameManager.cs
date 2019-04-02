@@ -257,7 +257,7 @@ public class GameManager : MonoBehaviour {
         unitPositions.Clear();
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
         unitPositions = gameBuilder.unitPositions;
-        this.playerController.unitButtonReferences = this.gameBuilder.UnitButtons;
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts: gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
         doingReplay = false;
     }
 
