@@ -214,13 +214,11 @@ public class GameManager : MonoBehaviour {
 
     private IEnumerator ReplayActions(List<Action> replayActions) {
         yield return new WaitForSeconds(1f);
-        Vector2Int lastMoveTarget = new Vector2Int(-999, -999);
         foreach (Action a in replayActions) {
             switch (a.Type)
             {
                 case ActionType.Movement:
-                    lastMoveTarget = new Vector2Int(a.TargetXPos, a.TargetYPos);
-                    MoveUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), lastMoveTarget);
+                    MoveUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos));
                     break;
                 case ActionType.Attack:
                     Vector2Int actionSource = new Vector2Int(a.OriginXPos, a.OriginYPos);
