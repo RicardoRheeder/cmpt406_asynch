@@ -93,8 +93,8 @@ public class GameBuilder : MonoBehaviour {
                 this.unitNumbers.Add((int)userUnits[i].UnitType);
             }
         }
-
-         SetupScene();
+        
+        SetupScene();
 
         if(!isPlacing) {
             InstantiateUnits();
@@ -113,6 +113,9 @@ public class GameBuilder : MonoBehaviour {
         else {
             prefabToUse = unitSelectionDisplayPrefab;
             unitPlacementViewport = GameObject.Find("UnitSnapContent");
+            foreach (Transform child in unitPlacementViewport.transform) {
+                Destroy(child.gameObject);
+            }
         }
 
         for(int i = 0; i < unitNumbers.Count; i++) {
@@ -125,7 +128,6 @@ public class GameBuilder : MonoBehaviour {
                 this.unitTexts.Add(unitText);
             }
         }
-        sceneSetup = true;
     }
 
     //Method responsible for making sure all of the units are created with the appropriate gameobjects
