@@ -245,10 +245,11 @@ public class GameManager : MonoBehaviour {
             }
             yield return new WaitForSeconds(0.5f);
         }
+        StartCoroutine("FadeReplayDone");
+        yield return new WaitForSeconds(1f);
         /* Make it so these actions dont "count" */
         turnActions.Clear();
         /* put things back to the current game state reference */
-        yield return new WaitForSeconds(2f);
         foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions)
         {
             unit.Value.Kill();
@@ -258,6 +259,19 @@ public class GameManager : MonoBehaviour {
         unitPositions = gameBuilder.unitPositions;
         this.playerController.unitButtonReferences = this.gameBuilder.UnitButtons;
         doingReplay = false;
+    }
+
+    private IEnumerator FadeReplayDone() {
+        this.inGameMenu.replayDonePanel.SetActive(true);
+        CanvasGroup cr = this.inGameMenu.replayDonePanel.GetComponent<CanvasGroup>();
+        yield return new WaitForSeconds(1f);
+        float alpha = 1f;
+        while (alpha > 0f) {
+            alpha -= 0.02f;
+            cr.alpha = alpha;
+            yield return new WaitForSeconds(0.1f);
+        }
+        this.inGameMenu.replayDonePanel.SetActive(false);
     }
 
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
