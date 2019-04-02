@@ -220,15 +220,24 @@ public class GameManager : MonoBehaviour {
                     MoveUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), lastMoveTarget);
                     break;
                 case ActionType.Attack:
-                    Vector2Int originPos = new Vector2Int(a.OriginXPos, a.OriginYPos);
-                    if (originPos.x == lastMoveTarget.x && originPos.x == lastMoveTarget.x) { yield return new WaitForSeconds(0.5f); }
-                    AttackUnit(originPos, new Vector2Int(a.TargetXPos, a.TargetYPos));
+                    Vector2Int actionSource = new Vector2Int(a.OriginXPos, a.OriginYPos);
+                    while (unitPositions[actionSource].MyUnit.isWalking)
+                    {
+                        yield return new WaitForSeconds(0.2f);
+                    }
+                    AttackUnit(actionSource, new Vector2Int(a.TargetXPos, a.TargetYPos));
                     break;
                 case ActionType.Card:
-                    /* do nothing */
+                    CardMetadata.CardEffectDictionary[a.CardId](new Vector2Int(a.TargetXPos, a.TargetYPos), unitPositions, a.Username, false);
                     break;
                 case ActionType.Ability:
-                    /* do nothing */
+                    Vector2Int source = new Vector2Int(a.OriginXPos, a.OriginYPos);
+                    while (unitPositions[source].MyUnit.isWalking) {
+                        yield return new WaitForSeconds(0.2f);
+                    }
+                    unitPositions[source].Ability1Cooldown = 0;
+                    unitPositions[source].Ability2Cooldown = 0;
+                    UseAbility(source, new Vector2Int(a.TargetXPos, a.TargetYPos), a.Ability);
                     break;
                 default:
                     Debug.LogError("Unhandled Action: " + a.Type);
@@ -568,7 +577,7 @@ public class GameManager : MonoBehaviour {
             if (general.Ability1Cooldown == 0) {
                 AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
-                    if(GetUnitOnTile(target, out UnitStats targetUnit)) {
+                    if (GetUnitOnTile(target, out UnitStats targetUnit)) {
                         general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
                         abilityFunction(ref targetUnit, unitPositions, user.Username, true);
                     }
