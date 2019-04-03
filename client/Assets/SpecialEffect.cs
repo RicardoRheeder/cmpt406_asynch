@@ -210,14 +210,37 @@ public class SpecialEffect : MonoBehaviour
      *  TODO: GAURAV's SECTION START
      */
 
+    IEnumerator setArrowDirection(){
+        Debug.Log(distance);
+        yield return new WaitForSeconds(0.1f);
+        Transform[] allChildren = this.GetComponentsInChildren<Transform>();
+        while(allChildren.Length != 0) {
+            allChildren = this.GetComponentsInChildren<Transform>();
+            for (int i = 0; i < allChildren.Length - 1; i++)
+            {
+                if (allChildren[i].GetComponent<TranslateMove>())
+                {
+                    allChildren[i].GetComponent<TranslateMove>().m_fowardMove = false;
+                    allChildren[i].GetComponent<TranslateMove>().m_upMove = true;
+                    allChildren[i].GetComponent<TranslateMove>().m_power = -1;
+                    if (allChildren[i].transform.localPosition.z >= distance)
+                    {
+                        Destroy(allChildren[i].gameObject);
+                    }
+                }
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        yield return null;
+    }
     void VETrooperAttack()
     {
-
+       
     }
 
     void VEReconAttack()
     {
-
+        StartCoroutine(setArrowDirection());
     }
 
     void VESandmanAttack()
