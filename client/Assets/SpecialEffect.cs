@@ -172,12 +172,14 @@ public class SpecialEffect : MonoBehaviour
         StartCoroutine(findMakeObject());
     }
 
-    void VECardEffect()
+    public void VECardEffect()
     {
         gm = Instantiate(effect06CardAura, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
         ChangeColor(new Color(0.298f, 0.796f, 1f));
+        ChangeScale(0.5f);
+        Destroy(gm, 1.5f);
     }
 
     public void VEDeath()
