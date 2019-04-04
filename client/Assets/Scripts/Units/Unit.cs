@@ -31,8 +31,10 @@ public class Unit : MonoBehaviour {
 
     //Method used to handle the attack animation
     public void Attack(int dir, UnitType type, AudioManager manager = null) {
-        if(manager != null)
-            manager.Play(type, SoundType.Attack);
+        if (manager != null) {
+            manager.Play(type, SoundType.Attack, isVoice: true); //plays the voice line
+            manager.Play(type, SoundType.Attack); //plays the attack sound
+        }
         TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
@@ -47,11 +49,6 @@ public class Unit : MonoBehaviour {
 
     public void SetMoveSpeed(float speed) {
         moveSpeed = speed;
-    }
-
-    public void WalkSound(UnitType type, AudioManager manager = null) {
-        if (manager != null)
-            manager.Play(type, SoundType.Move);
     }
 
     //Method used to handle the movement animation
@@ -153,6 +150,7 @@ public class Unit : MonoBehaviour {
             anim.SetTrigger("death");
         }
         if (manager != null) {
+            manager.Play(type, SoundType.Death, isVoice: true);
             manager.Play(type, SoundType.Death);
         }
         Destroy(this.gameObject);

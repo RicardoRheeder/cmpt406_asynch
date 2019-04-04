@@ -39,8 +39,18 @@ public class AudioManager : MonoBehaviour {
         s.audioSource.Play();
     }
 
+    // Plays a sound when there is a collection of sounds to choose from
+    public void Play(UnitType unit, SoundType type, bool isVoice = false) {
+        if (isVoice) {
+            PlayVoice(unit, type);
+        }
+        else {
+            Play(unit, type);
+        }
+    }
+
     // Plays a sound based on the unit type and the sound type
-    public void Play(UnitType unit, SoundType type) {
+    private void Play(UnitType unit, SoundType type) {
         string soundName = unit.ToString() + "_" + type.ToString();
         AudioLibrary s = Array.Find(sounds, sound => sound.name.ToString() == soundName);
         if(s != null) {
@@ -48,6 +58,25 @@ public class AudioManager : MonoBehaviour {
         }
         else {
             Debug.Log("Missing Sound: " + soundName);
+        }
+    }
+
+    // Plays a random voice line based on the unit type and the sound type
+    private void PlayVoice(UnitType unit, SoundType type, bool generateRandom = true) {
+        int randomNumber = generateRandom ? UnityEngine.Random.Range(0, SoundMetadata.VoiceCountsDictionary[type][unit] + 1) : 0;
+        string soundName = unit.ToString() + "_" + type.ToString() + "_" + randomNumber;
+        AudioLibrary s = Array.Find(sounds, sound => sound.name.ToString() == soundName);
+        if (s != null) {
+            s.audioSource.Play();
+        }
+        else {
+            if (generateRandom) {
+                Debug.Log("Generated sound " + soundName + " which didn't exist, using default voiceline");
+                PlayVoice(unit, type, false);
+            }
+            else {
+                Debug.Log("Missing Sound: " + soundName);
+            }
         }
     }
 

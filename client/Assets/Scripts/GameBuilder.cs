@@ -15,7 +15,6 @@ public class GameBuilder : MonoBehaviour {
     public GameObject unitPlacementDisplayPrefab;
     public GameObject unitSelectionDisplayPrefab;
     private GameObject unitPlacementViewport;
-    private bool sceneSetup = false;
     public List<GameObject> UnitDisplayTexts { get; private set; }
 
     //Prefabs for each unit for instantiation purposes

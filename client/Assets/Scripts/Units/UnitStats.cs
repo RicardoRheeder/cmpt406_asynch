@@ -111,8 +111,11 @@ public class UnitStats {
     }
 
     //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
-    public bool TakeDamage(int damage, int pierce) {
+    public bool TakeDamage(int damage, int pierce, AudioManager manager = null) {
         if (MyUnit != null) {MyUnit.GetHit();} else {Debug.LogError("MyUnit is NULL!");}
+        if(manager != null) {
+            manager.Play(UnitType, SoundType.TakeDamage, isVoice: true);
+        }
         int resistance = Armour - pierce;
         resistance = resistance < 0 ? 0 : resistance;
         damage -= resistance;
@@ -124,7 +127,10 @@ public class UnitStats {
         return CurrentHP <= 0;
     }
 
-    public void TakeCardDamage(int damage) {
+    public void TakeCardDamage(int damage, AudioManager manager = null) {
+        if (manager != null) {
+            manager.Play(UnitType, SoundType.TakeDamage, isVoice: true);
+        }
         CurrentHP -= damage;
         CurrentHP = CurrentHP <= 0 ? 1 : CurrentHP;
         if(unitHUD != null)
@@ -227,7 +233,10 @@ public class UnitStats {
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false) {
-        if (audioManager != null) { MyUnit.WalkSound(UnitType, audioManager); }
+        if (audioManager != null) {
+            audioManager.Play(UnitType, SoundType.Move, isVoice: true);
+            audioManager.Play(UnitType, SoundType.Move);
+        }
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.MovementSpeed -= pathWithDirection.Count;
@@ -243,14 +252,45 @@ public class UnitStats {
     }
 	
     public void SandboxMove(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false){
-        if (audioManager != null) { MyUnit.WalkSound(UnitType, audioManager); }
-	    List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
+        if (audioManager != null) {
+            audioManager.Play(UnitType, SoundType.Move, isVoice: true);
+            audioManager.Play(UnitType, SoundType.Move);
+        }
+        List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
         if(pathWithDirection.Count > 0) {
             this.Direction = pathWithDirection[pathWithDirection.Count - 1].Second;
         }
-	}
+    }
+
+    //Note: this list must have two abilities
+    public void SetAbilities(List<GeneralAbility> abilityList) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+    }
+
+    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+        this.Ability1Cooldown = serverUnit.Ability1Cooldown;
+        this.Ability2Cooldown = serverUnit.Ability2Cooldown;
+        this.Ability2Duration = serverUnit.Ability2Duration;
+        this.Ability2Duration = serverUnit.Ability2Duration;
+    }
+
+    public void SetPassive(GeneralPassive passive) {
+        this.Passive = passive;
+    }
+
+    public void Select(AudioManager manager) {
+        if(Random.Range(0, 4) == 0) {
+            manager.Play(UnitType, SoundType.Annoyed, isVoice: true);
+        }
+        else {
+            manager.Play(UnitType, SoundType.Select, isVoice: true);
+        }
+    }
 
     //We need to convert the xPos and yPos variables to be Position
     //We also need to get a base unit and copy over the stats that weren't stored on the server.
@@ -276,24 +316,5 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
-    }
-
-    //Note: this list must have two abilities
-    public void SetAbilities( List<GeneralAbility> abilityList) {
-        this.Ability1 = abilityList[0];
-        this.Ability2 = abilityList[1];
-    }
-
-    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
-        this.Ability1 = abilityList[0];
-        this.Ability2 = abilityList[1];
-        this.Ability1Cooldown = serverUnit.Ability1Cooldown;
-        this.Ability2Cooldown = serverUnit.Ability2Cooldown;
-        this.Ability2Duration = serverUnit.Ability2Duration;
-        this.Ability2Duration = serverUnit.Ability2Duration;
-    }
-
-    public void SetPassive(GeneralPassive passive) {
-        this.Passive = passive;
     }
 }
