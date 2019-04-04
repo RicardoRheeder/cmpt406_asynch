@@ -52,10 +52,6 @@ public class PlayerController : MonoBehaviour {
     //Stuff for top right information on hud
     private TMP_Text userTurnText;
     private TMP_Text turnText;
-
-    //menu buttons
-    private Button concedeButton;
-    private Button closeGameButton;
     
     private UnitStats selectedUnit;
 
@@ -87,7 +83,7 @@ public class PlayerController : MonoBehaviour {
     private string username;
     private Card cardBeingPlayed;
 
-    private Dictionary<UnitStats, GameObject> unitButtonReferences;
+    public Dictionary<UnitStats, GameObject> unitButtonReferences;
     private List<GameObject> unitButtonObjects;
     private int unitButtonObjectsCurIndex = 0;
     private GameObject selectedUnitButton;
@@ -151,13 +147,11 @@ public class PlayerController : MonoBehaviour {
             Ability2Object = GameObject.Find("AbilityTwoButton");
             Ability2Button = Ability2Object.GetComponent<Button>();
 
-            concedeButton = GameObject.Find("ConcedeButton").GetComponent<Button>();
-            concedeButton.onClick.AddListener(Forfeit);
-            closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
-            closeGameButton.onClick.AddListener(ExitGame);
 
             foreach(var pair in unitButtonReferences) {
-                pair.Value.GetComponentInChildren<Button>().onClick.AddListener(() => {
+                Button b = pair.Value.GetComponentInChildren<Button>();
+                b.onClick.RemoveAllListeners();
+                b.onClick.AddListener(() => {
                     audioManager.Play(SoundName.ButtonPress);
                     SelectUnit(pair.Key);
                     manager.SnapToPosition(selectedUnit.Position);
@@ -264,7 +258,7 @@ public class PlayerController : MonoBehaviour {
                         break;
                     case (InteractionState.playingCard):
                         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                            if (manager.UseCard(tilePos, cardBeingPlayed)) {
+                            if (manager.UseCard(tilePos, cardBeingPlayed.func)) {
                                 interactionState = InteractionState.none;
                             }
                         }
@@ -486,13 +480,5 @@ public class PlayerController : MonoBehaviour {
             Ability1Object.SetActive(false);
             Ability2Object.SetActive(false);
         }
-    }
-
-    public void Forfeit() {
-        manager.Forfeit();
-    }
-
-    public void ExitGame() {
-        manager.ExitGame();
     }
 }

@@ -15,6 +15,7 @@ public class GameBuilder : MonoBehaviour {
     public GameObject unitPlacementDisplayPrefab;
     public GameObject unitSelectionDisplayPrefab;
     private GameObject unitPlacementViewport;
+    private bool sceneSetup = false;
     public List<GameObject> UnitDisplayTexts { get; private set; }
 
     //Prefabs for each unit for instantiation purposes
@@ -70,6 +71,8 @@ public class GameBuilder : MonoBehaviour {
         this.board = board;
         this.fogController = fogController;
         this.isPlacing = isPlacing;
+        unitPositions = new Dictionary<Vector2Int, UnitStats>();
+        effectPositions = new Dictionary<Vector2Int, Effect>();
 
         if (armyPreset != null) {
             this.unitNumbers = new List<int>(){
@@ -90,8 +93,9 @@ public class GameBuilder : MonoBehaviour {
                 this.unitNumbers.Add((int)userUnits[i].UnitType);
             }
         }
-
+        
         SetupScene();
+
         if(!isPlacing) {
             InstantiateUnits();
         }
@@ -109,6 +113,9 @@ public class GameBuilder : MonoBehaviour {
         else {
             prefabToUse = unitSelectionDisplayPrefab;
             unitPlacementViewport = GameObject.Find("UnitSnapContent");
+            foreach (Transform child in unitPlacementViewport.transform) {
+                Destroy(child.gameObject);
+            }
         }
 
         for(int i = 0; i < unitNumbers.Count; i++) {

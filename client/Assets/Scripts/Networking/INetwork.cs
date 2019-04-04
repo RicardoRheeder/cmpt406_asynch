@@ -7,5 +7,6 @@ public interface INetwork {
   bool ForfeitGame(string id);
   bool ReadyUnits(ReadyUnitsGameState state);
   Tuple<bool, GameState> GetGamestate(string id);
+  Tuple<bool, GameState> GetOldGamestate(string id, int turnCount);
   PlayerMetadata GetUserInformation();
 }

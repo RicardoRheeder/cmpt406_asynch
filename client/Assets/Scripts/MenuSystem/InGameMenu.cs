@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InGameMenu : MonoBehaviour {
+public class InGameMenu : MonoBehaviour
+{
 
     private GameObject settingsPanel;
     private GameObject placeUnitsPanel;
@@ -16,6 +17,8 @@ public class InGameMenu : MonoBehaviour {
     private GameObject menuPanel;
     private GameObject actionsPanel;
     public GameObject returningToMainMenuPanel;
+    public GameObject replayOpponentTurnsPanel;
+    public GameObject replayDonePanel;
     public GameObject victoryPanel;
     public Button victoryButton;
     public GameObject defeatPanel;
@@ -39,6 +42,7 @@ public class InGameMenu : MonoBehaviour {
         menuPanel.SetActive(false);
         settingsPanel.SetActive(false);
         returningToMainMenuPanel.SetActive(false);
+        replayDonePanel.SetActive(false);
         victoryPanel.SetActive(false);
         defeatPanel.SetActive(false);
 
@@ -49,8 +53,11 @@ public class InGameMenu : MonoBehaviour {
             generalAbilitiesPanel.SetActive(false);
             actionsPanel.SetActive(false);
         }
-        else {
+        else
+        {
+            replayOpponentTurnsPanel.SetActive(true);
             placeUnitsPanel.SetActive(false);
         }
     }
+
 }

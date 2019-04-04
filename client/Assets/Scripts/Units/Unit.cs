@@ -8,6 +8,7 @@ public class Unit : MonoBehaviour {
     public SkinnedMeshRenderer rend;
     public float moveSpeed = 5f;
     Animator anim;
+    public bool isWalking;
 
     Vector2Int currTilePosition;
     FogViewer fogViewer;
@@ -56,6 +57,7 @@ public class Unit : MonoBehaviour {
 
     //Method used to handle the movement animation
     public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board, AudioManager manager = null) {
+        isWalking = true;
         StartCoroutine(PathMovement(path,board));
     }
 
@@ -123,6 +125,7 @@ public class Unit : MonoBehaviour {
                 anim.SetBool("walking",false);
             }
         }
+        isWalking = false;
     }
 
     IEnumerator RotateToDirection(int dir) {

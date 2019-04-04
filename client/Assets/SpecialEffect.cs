@@ -90,6 +90,7 @@ public class SpecialEffect : MonoBehaviour
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
+        print(distance);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
         switch (unitType)
