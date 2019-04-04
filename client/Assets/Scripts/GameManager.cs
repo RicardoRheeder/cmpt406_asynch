@@ -113,11 +113,13 @@ public class GameManager : MonoBehaviour {
         this.isPlacing = false;
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
-        
+
+        isSandboxMode = true;
+
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
         SceneManager.sceneLoaded += OnSandboxLoaded;
-    
+
         SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
 
@@ -200,8 +202,13 @@ public class GameManager : MonoBehaviour {
     }
 
     private void HandleReplay() {
-        doingReplay = true;
         this.inGameMenu.replayOpponentTurnsPanel.SetActive(false);
+
+        if (isSandboxMode) {
+            return;
+        }
+
+        doingReplay = true;
 
         /* Get the old game state */
         int difference = (this.state.turnCount - this.state.maxUsers) + 1;
@@ -296,8 +303,6 @@ public class GameManager : MonoBehaviour {
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
         SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
-
-        isSandboxMode = true;
     }
 
     private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
