@@ -87,11 +87,8 @@ public class SpecialEffect : MonoBehaviour
     public void PlayAttackEffect(Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType)
     {
         this.unitType = unitType;
-        gm = Instantiate(particleEffect, this.transform).gameObject;
-        gm.transform.SetParent(this.transform);
         distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
         print(distance);
-        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
         switch (unitType)
         {
@@ -101,14 +98,23 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.compensator:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VECompensatorAttack();
                 break;
 
             case UnitType.foundation:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEFoundationAttack();
                 break;
 
             case UnitType.piercing_tungsten:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VETungstenAttack();
                 break;
 
@@ -121,12 +127,21 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.trooper:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VETrooperAttack();
                 break;
             case UnitType.recon:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEReconAttack();
                 break;
             case UnitType.support_sandman:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VESandmanAttack();
                 break;
 
@@ -139,15 +154,27 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.pewpew:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEPewPewAttack();
                 break;
             case UnitType.steamer:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VESteamerAttack();
                 break;
             case UnitType.light_adren:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEAdrenAttack();
                 break;
             case UnitType.heavy_albarn:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEAlbarnAttack(sourceWorldPos, targetWorldPos);
                 break;
 
@@ -160,12 +187,21 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.claymore:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEClaymoreAttack();
                 break;
             case UnitType.powerSurge:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEPowerSurgeAttack();
                 break;
             case UnitType.midas:
+                gm = Instantiate(particleEffect, this.transform).gameObject;
+                gm.transform.SetParent(this.transform);
+                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
                 VEMidasAttack();
                 break;
 
