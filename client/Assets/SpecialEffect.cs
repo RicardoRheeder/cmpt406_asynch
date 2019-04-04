@@ -279,13 +279,11 @@ public class SpecialEffect : MonoBehaviour
         }
         yield return null;
     }
-    void VETrooperAttack()
-    {
-       
+    void VETrooperAttack() {
+        StartCoroutine(setArrowDirection());
     }
 
-    void VEReconAttack()
-    {
+    void VEReconAttack(){
         StartCoroutine(setArrowDirection());
     }
 
