@@ -235,10 +235,11 @@ public class SpecialEffect : MonoBehaviour
 
     void VEPewPewAttack()
     {
+        //StartCoroutine(findMakeObject());
         // Logic that was used when trying to figure out what was wrong with orb
-//        particleEffect.GetComponent<TranslateMove>().m_fowardMove = false;
-//        particleEffect.GetComponent<TranslateMove>().m_upMove = true;
-//        particleEffect.GetComponent<TranslateMove>().m_rightMove = false;
+        //        particleEffect.GetComponent<TranslateMove>().m_fowardMove = false;
+        //        particleEffect.GetComponent<TranslateMove>().m_upMove = true;
+        //        particleEffect.GetComponent<TranslateMove>().m_rightMove = false;
 
     }
 
