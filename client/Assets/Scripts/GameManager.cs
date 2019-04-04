@@ -664,7 +664,6 @@ public class GameManager : MonoBehaviour {
     //===================== Functions used to get unit positions ===================
     public List<Vector2Int> GetUnitPositions(UnitType type = UnitType.none) {
         List<Vector2Int> retList = new List<Vector2Int>();
-        Debug.Log(unitPositions.Count);
         foreach (Vector2Int pos in unitPositions.Keys) {
             UnitStats unit = unitPositions[pos];
             if((int)unit.UnitType < UnitMetadata.GENERAL_THRESHOLD) {
