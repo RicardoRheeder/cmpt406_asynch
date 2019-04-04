@@ -9,6 +9,7 @@ public class SpecialEffect : MonoBehaviour
     private UnitType unitType;
 
     private GameObject gm;
+    private GameObject gm2;
 
     public Transform particleEffect;
     public Transform startPoint;
@@ -19,8 +20,11 @@ public class SpecialEffect : MonoBehaviour
     Renderer[] m_rnds;
 
     private Transform[] allChildren;
+    private Transform[] allChildren2;
+
     private float m_changeScale = 1;
     private bool isChangeScale = false;
+    private bool isChangeScaleGameObject = false;
 
     public GameObject effect47Explosion;
     public GameObject effect06CardAura;
@@ -53,6 +57,30 @@ public class SpecialEffect : MonoBehaviour
                 }
             }
         }
+
+        if (isChangeScaleGameObject && gm != null)
+        {
+            allChildren = gm.GetComponentsInChildren<Transform>();
+
+            foreach (Transform child in allChildren) {
+                if (child.GetComponent<TranslateMove>()) {child.localScale = new Vector3(m_changeScale, m_changeScale, m_changeScale);}
+//                if (child.GetComponent<ParticleSystem>()) {
+//                    child.localScale = new Vector3(m_changeScale, m_changeScale, m_changeScale);
+//                }
+            }
+
+            if (gm2 != null) {
+                print("Scale change");
+                allChildren2 = gm2.GetComponentsInChildren<Transform>();
+                foreach (Transform child in allChildren2) {
+                    if (child.GetComponent<TranslateMove>()) { child.localScale = new Vector3(m_changeScale, m_changeScale, m_changeScale);}
+//                    if (child.GetComponent<ParticleSystem>()) {
+//                        child.localScale = new Vector3(m_changeScale, m_changeScale, m_changeScale);
+//                    }
+                }
+            }
+        }
+
 
     }
 
@@ -162,7 +190,18 @@ public class SpecialEffect : MonoBehaviour
 
     void VEFoundationAttack()
     {
+        //TODO: Clean up script
+        ChangeScaleGameObject(0.5f);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+        gm.transform.localPosition = new Vector3(startPoint.localPosition.x + 0.60f, startPoint.localPosition.y, startPoint.localPosition.z);
 
+
+        gm2 = Instantiate(particleEffect, this.transform).gameObject;
+        gm2.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+        gm.transform.localPosition = new Vector3(startPoint.localPosition.x + 0.60f, startPoint.localPosition.y, startPoint.localPosition.z);
+
+        StartCoroutine(setArrowDirection());
     }
 
     void VETungstenAttack()
@@ -200,6 +239,12 @@ public class SpecialEffect : MonoBehaviour
     {
         m_changeScale = scaleAmount;
         isChangeScale = true;
+    }
+
+    void ChangeScaleGameObject(float scaleAmout)
+    {
+        m_changeScale = scaleAmout;
+        isChangeScaleGameObject = true;
     }
 
     /**
