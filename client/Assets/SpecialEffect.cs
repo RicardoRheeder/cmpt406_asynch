@@ -148,7 +148,7 @@ public class SpecialEffect : MonoBehaviour
                 VEAdrenAttack();
                 break;
             case UnitType.heavy_albarn:
-                VEAlbarnAttack();
+                VEAlbarnAttack(sourceWorldPos, targetWorldPos);
                 break;
 
             /**
@@ -302,18 +302,20 @@ public class SpecialEffect : MonoBehaviour
     *  CLAYTON's SECTION START
     */
 
+    public Transform attackPoint;
+
     void VEPewPewAttack()
     {
         // Logic that was used when trying to figure out what was wrong with orb
-//        particleEffect.GetComponent<TranslateMove>().m_fowardMove = false;
-//        particleEffect.GetComponent<TranslateMove>().m_upMove = true;
-//        particleEffect.GetComponent<TranslateMove>().m_rightMove = false;
+        //        particleEffect.GetComponent<TranslateMove>().m_fowardMove = false;
+        //        particleEffect.GetComponent<TranslateMove>().m_upMove = true;
+        //        particleEffect.GetComponent<TranslateMove>().m_rightMove = false;
 
     }
 
     void VESteamerAttack()
     {
-
+        startPoint.localPosition = new Vector3(0, 0, distance);
     }
 
     void VEAdrenAttack()
@@ -321,9 +323,20 @@ public class SpecialEffect : MonoBehaviour
 
     }
 
-    void VEAlbarnAttack()
+    void VEAlbarnAttack(Vector3 sourceWorldPos, Vector3 targetWorldPos)
     {
+        Debug.Log("Albarn Attack");
+        //distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
+        //print(distance);
+        //attackPoint = startPoint.parent.Find("AttackPoint");
 
+        //attackPoint.transform.localPosition = new Vector3(0, 0, distance);
+        
+        GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
+        //gm2.transform.SetParent(this.transform);
+        gm2.transform.position = new Vector3(targetWorldPos.x, targetWorldPos.y, targetWorldPos.z);
+        gm2.transform.eulerAngles = new Vector3(0, 180, 0);
+        Destroy(gm, 5f);
     }
 
     /**
