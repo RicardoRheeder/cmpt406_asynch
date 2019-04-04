@@ -63,7 +63,7 @@ MonoBehaviour:
   m_makeObjs:
   - {fileID: 1484818815215180, guid: ab74891f9018ad249bbacc1fd4755d15, type: 3}
   m_movePos: {fileID: 0}
-  m_startDelay: 0
+  m_startDelay: 0.5
   m_makeCount: 1
   m_makeDelay: 0
   m_randomPos: {x: 0, y: 0, z: 0}
