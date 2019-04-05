@@ -51,9 +51,10 @@ MonoBehaviour:
   compensatorPrefab: {fileID: 793418722, guid: 3d6e55d969e334ec3a885093e7025ee9, type: 3}
   trooperPrefab: {fileID: 931411258, guid: 1b5351f7914cf4c779a5ea10745da59e, type: 3}
   reconPrefab: {fileID: 91914615, guid: 45b6e0323c42e4865b5fca76069473a8, type: 3}
-  steamerPrefab: {fileID: 7378538391732608622, guid: e21b8cf8ea5cf4e20ad8897b77fabef7,
+  steamerPrefab: {fileID: 5839496279572109123, guid: e21b8cf8ea5cf4e20ad8897b77fabef7,
     type: 3}
-  pewpewPrefab: {fileID: 1765606812, guid: 7ed9545a1924341688a696864b512e7f, type: 3}
+  pewpewPrefab: {fileID: 1772257922983642587, guid: 7ed9545a1924341688a696864b512e7f,
+    type: 3}
   foundationPrefab: {fileID: 809058093, guid: 646a72a4aef274050953d4b98b070075, type: 3}
   powerSurgePrefab: {fileID: 95310979, guid: 0de30e3d677d745c9b3799840f6de0b3, type: 3}
   midasPrefab: {fileID: 1284673767, guid: 6200c66161e9048359b59dd759fd707f, type: 3}
