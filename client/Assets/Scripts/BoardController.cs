@@ -287,7 +287,7 @@ public class BoardController {
     }
 
     public List<Vector2Int> GetTilesWithinAttackRange(Vector2Int startingPos, int range) {
-        return HexUtility.FindTilesInVision(startingPos,range,tilemap,false).First;
+        return HexUtility.GetTilePositionsInRange(tilemap,startingPos,range);
     }
 
     public List<Vector2Int> GetTilesWithinMovementRange(Vector2Int startingPos, int movementSpeed) {
