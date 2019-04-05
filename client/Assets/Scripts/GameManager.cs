@@ -142,7 +142,7 @@ public class GameManager : MonoBehaviour {
 
         InitControllersHelper();
 
-        inGameMenu.SetupPanels(isPlacing: false);
+        inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -336,7 +336,7 @@ public class GameManager : MonoBehaviour {
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
         cameraRig.SnapToPosition(boardController.CellToWorld(boardController.GetCenterSpawnTile(spawnPoint)));
 
-        inGameMenu.SetupPanels(isPlacing: true);
+        inGameMenu.SetupPanels(isPlacing: true, state.UserGeneralsMap.ContainsKey(user.Username) ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
 
         fogOfWarController.DeleteFogAtSpawnPoint(spawnPoint, ref boardController);
 
