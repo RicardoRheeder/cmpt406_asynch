@@ -15,6 +15,9 @@ public class SpecialEffect : MonoBehaviour
     public Transform startPoint;
     private float distance;
 
+    private Vector3 sourceWorldPosition;
+    private Vector3 targetWorldPosition;
+
     Color m_changeColor;
     bool isChangeColor = false;
     Renderer[] m_rnds;
@@ -89,6 +92,8 @@ public class SpecialEffect : MonoBehaviour
         this.unitType = unitType;
         distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
         print(distance);
+        this.sourceWorldPosition = sourceWorldPos;
+        this.targetWorldPosition = targetWorldPos;
 
         switch (unitType)
         {
@@ -118,22 +123,13 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.trooper:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VETrooperAttack();
+                StartCoroutine(VETungstenAttack());
                 break;
             case UnitType.recon:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEReconAttack();
+                StartCoroutine(VEReconAttack());
                 break;
             case UnitType.support_sandman:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VESandmanAttack();
+                StartCoroutine(VESandmanAttack());
                 break;
 
             /**
@@ -145,28 +141,16 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.pewpew:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEPewPewAttack();
+                StartCoroutine(VEPewPewAttack());
                 break;
             case UnitType.steamer:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VESteamerAttack();
+                StartCoroutine(VESteamerAttack());
                 break;
             case UnitType.light_adren:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEAdrenAttack();
+                StartCoroutine(VEAdrenAttack());
                 break;
             case UnitType.heavy_albarn:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEAlbarnAttack(sourceWorldPos, targetWorldPos);
+                StartCoroutine(VEAlbarnAttack());
                 break;
 
             /**
@@ -178,22 +162,13 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.claymore:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEClaymoreAttack();
+                StartCoroutine(VEClaymoreAttack());
                 break;
             case UnitType.powerSurge:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEPowerSurgeAttack();
+                StartCoroutine(VEPowerSurgeAttack());
                 break;
             case UnitType.midas:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEMidasAttack();
+                StartCoroutine(VEMidasAttack());
                 break;
 
             /**
@@ -331,17 +306,38 @@ public class SpecialEffect : MonoBehaviour
         }
         yield return null;
     }
-    void VETrooperAttack() {
+    IEnumerator VETrooperAttack() {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         StartCoroutine(setArrowDirection());
+
+        yield return null;
     }
 
-    void VEReconAttack(){
+    IEnumerator VEReconAttack(){
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         StartCoroutine(setArrowDirection());
+
+        yield return null;
     }
 
-    void VESandmanAttack()
+    IEnumerator VESandmanAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
+
+
+        yield return null;
     }
 
     /**
@@ -352,41 +348,55 @@ public class SpecialEffect : MonoBehaviour
     *  CLAYTON's SECTION START
     */
 
-    public Transform attackPoint;
-
-    void VEPewPewAttack()
+    IEnumerator VEPewPewAttack()
     {
         // Logic that was used when trying to figure out what was wrong with orb
         //        particleEffect.GetComponent<TranslateMove>().m_fowardMove = false;
         //        particleEffect.GetComponent<TranslateMove>().m_upMove = true;
         //        particleEffect.GetComponent<TranslateMove>().m_rightMove = false;
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
+        yield return null;
     }
 
-    void VESteamerAttack()
+    IEnumerator VESteamerAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         startPoint.localPosition = new Vector3(0, 0, distance);
+        yield return null;
     }
 
-    void VEAdrenAttack()
+    IEnumerator VEAdrenAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
+        yield return null;
     }
 
-    void VEAlbarnAttack(Vector3 sourceWorldPos, Vector3 targetWorldPos)
+    IEnumerator VEAlbarnAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         Debug.Log("Albarn Attack");
-        //distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
-        //print(distance);
-        //attackPoint = startPoint.parent.Find("AttackPoint");
-
-        //attackPoint.transform.localPosition = new Vector3(0, 0, distance);
-        
+       
         GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
-        //gm2.transform.SetParent(this.transform);
-        gm2.transform.position = new Vector3(targetWorldPos.x, targetWorldPos.y, targetWorldPos.z);
+        gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
         gm2.transform.eulerAngles = new Vector3(0, 180, 0);
         Destroy(gm, 5f);
+        yield return null;
     }
 
     /**
@@ -397,19 +407,39 @@ public class SpecialEffect : MonoBehaviour
     *  JAAMI's SECTION START
     */
 
-    void VEClaymoreAttack()
+    IEnumerator VEClaymoreAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         StartCoroutine(findMakeObjectPowerClaymore());
+        yield return null;
     }
 
-    void VEPowerSurgeAttack()
+    IEnumerator VEPowerSurgeAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         StartCoroutine(findMakeObjectPowerSurge());
+        yield return null;
     }
 
-    void VEMidasAttack()
+    IEnumerator VEMidasAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         StartCoroutine(findMakeObject());
+
+        Destroy(gm, 1.5f);
+        yield return null;
     }
 
     IEnumerator findMakeObjectPowerClaymore()
@@ -471,5 +501,6 @@ public class SpecialEffect : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         MakeObject.transform.localPosition = new Vector3(0, 0, distance);
+        yield return null;
     }
 }
