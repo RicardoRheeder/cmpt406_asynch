@@ -328,6 +328,7 @@ public class PlayerController : MonoBehaviour {
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
                 interactionState = InteractionState.moving;
+                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
             }
         }
     }
@@ -344,6 +345,7 @@ public class PlayerController : MonoBehaviour {
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
                 interactionState = InteractionState.attacking;
+                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
             }
         }
     }
@@ -358,6 +360,7 @@ public class PlayerController : MonoBehaviour {
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
             interactionState = InteractionState.ability1;
+            Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
         }
     }
 
@@ -371,6 +374,7 @@ public class PlayerController : MonoBehaviour {
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
             interactionState = InteractionState.ability2;
+            Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
         }
     }
 
@@ -428,43 +432,50 @@ public class PlayerController : MonoBehaviour {
             actionsName.SetActive(true);
             attackButtonObject.SetActive(true);
             movementButtonObject.SetActive(true);
-            if (unit.AttackActions != 0 && unit.Damage != 0) {
+            if (interactionState == InteractionState.attacking) {
+                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+            } else if (unit.AttackActions != 0 && unit.Damage != 0) {
                 attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
                 attackButton.onClick.RemoveAllListeners();
                 attackButton.onClick.AddListener(AttackButton);
-            }
-            else {
+            } else {
                 attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                 attackButton.onClick.RemoveAllListeners();
             }
-            if (unit.MovementSpeed != 0) {
+
+            if (interactionState == InteractionState.moving) {
+                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+            } else if (unit.MovementSpeed != 0) {
                 movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
                 movementButton.onClick.RemoveAllListeners();
                 movementButton.onClick.AddListener(MovementButton);
-            }
-            else {
+            } else {
                 movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                 movementButton.onClick.RemoveAllListeners();
             }
+
             if (unit.UnitClass == UnitClass.general) {
                 generalNameText.SetText(UnitMetadata.ReadableNames[unit.UnitType]);
                 Ability1Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability1]);
-                if (unit.Ability1Cooldown == 0) {
+                if(interactionState == InteractionState.ability1) {
+                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                } else if (unit.Ability1Cooldown == 0) {
                     Ability1Button.onClick.RemoveAllListeners();
                     Ability1Button.onClick.AddListener(Ability1ButtonClicked);
-                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
-                }
-                else {
+                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
+                } else {
                     Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                     Ability1Button.onClick.RemoveAllListeners();
                 }
                 Ability2Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability2]);
-                if (unit.Ability2Cooldown == 0) {
+                
+                if(interactionState == InteractionState.ability2) {
+                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                } else if (unit.Ability2Cooldown == 0) {
                     Ability2Button.onClick.RemoveAllListeners();
                     Ability2Button.onClick.AddListener(Ability2ButtonClicked);
-                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
-                }
-                else {
+                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
+                } else {
                     Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                     Ability2Button.onClick.RemoveAllListeners();
                 }

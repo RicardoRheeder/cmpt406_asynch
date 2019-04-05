@@ -6,7 +6,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour {
     
     public SkinnedMeshRenderer rend;
-    public float moveSpeed = 5f;
+    public float moveSpeed = 2.5f;
     Animator anim;
 
     Vector2Int currTilePosition;
