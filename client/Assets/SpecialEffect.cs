@@ -383,12 +383,12 @@ public class SpecialEffect : MonoBehaviour
 
     void VEClaymoreAttack()
     {
-
+        StartCoroutine(findMakeObject());
     }
 
     void VEPowerSurgeAttack()
     {
-
+        StartCoroutine(findMakeObject());
     }
 
     void VEMidasAttack()
