@@ -160,7 +160,6 @@ public class FogOfWarController {
             viewers.Add(newViewer);
             fogTilemap.RefreshTile((Vector3Int)position);
         }
-        
     }
 
     public void DeleteFogAtPosition(Vector2Int position) {

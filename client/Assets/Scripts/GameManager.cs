@@ -276,15 +276,15 @@ public class GameManager : MonoBehaviour {
         turnActions.Clear();
 
         /* put things back to the current game state reference */
-        foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions)
-        {
+        foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
             unit.Value.Kill();
         }
         unitPositions.Clear();
         Destroy(gameBuilderObject);
         Destroy(playerControllerObject);
-        InitControllersHelper();
+        fogOfWarController.DeleteAllFog();
         doingReplay = false;
+        InitControllersHelper();
     }
 
     private IEnumerator FadeReplayDone() {
