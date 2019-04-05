@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Theme
   m_EditorClassIdentifier: 
   soundName: 0
-  audioClip: {fileID: 0}
-  mixerGroup: {fileID: 0}
+  audioClip: {fileID: 8300000, guid: fac67bc51f4ec564094693a86cae697c, type: 3}
+  mixerGroup: {fileID: 243606531428667256, guid: 8b63de19650f3f64dac7d3ed3ba5e053,
+    type: 2}
   audioSource: {fileID: 0}
   volume: 1
   pitch: 1

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a8d2ba75287f44ea1cf65efc176dcb, type: 3}
   m_Name: Annoyed_1
   m_EditorClassIdentifier: 
-  soundName: 47
+  soundName: 8
   audioClip: {fileID: 8300000, guid: 3cfb6de8986873342954cbc27e8c65c5, type: 3}
   mixerGroup: {fileID: 243039498198272732, guid: 8b63de19650f3f64dac7d3ed3ba5e053,
     type: 2}

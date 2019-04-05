@@ -2,6 +2,8 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Collections;
 
 public class AudioManager : MonoBehaviour {
 
@@ -57,23 +59,34 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
+    private bool isPlayingVoice = false;
+
     // Plays a random voice line based on the unit type and the sound type
     private void PlayVoice(UnitType unit, SoundType type, bool generateRandom = true) {
         int randomNumber = generateRandom ? UnityEngine.Random.Range(0, SoundMetadata.VoiceCountsDictionary[type][unit]) : 0;
         string soundName = unit.ToString() + "_" + type.ToString() + "_" + randomNumber;
         Sound s = Array.Find(sounds, sound => sound.soundName.ToString() == soundName);
-        if (s != null) {
-            s.audioSource.Play();
-        }
-        else {
-            if (generateRandom) {
-                Debug.Log("Generated sound " + soundName + " which didn't exist, using default voiceline");
-                PlayVoice(unit, type, false);
+        if (!isPlayingVoice) {
+            if (s != null) {
+                isPlayingVoice = true;
+                StartCoroutine(DonePlayingVoice(s.audioClip.length));
+                s.audioSource.Play();
             }
             else {
-                Debug.Log("Missing Sound: " + soundName);
+                if (generateRandom) {
+                    Debug.Log("Generated sound " + soundName + " which didn't exist, using default voiceline");
+                    PlayVoice(unit, type, false);
+                }
+                else {
+                    Debug.Log("Missing Sound: " + soundName);
+                }
             }
         }
+    }
+
+    private IEnumerator DonePlayingVoice(float time) {
+        yield return new WaitForSeconds(time);
+        isPlayingVoice = false;
     }
 
     // Goes through the list of sounds in the AudioLibrary and mutes them

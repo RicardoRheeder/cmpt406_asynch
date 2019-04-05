@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundName: 121
   audioClip: {fileID: 8300000, guid: 05bdc3e97cc42f84583751355952b345, type: 3}
-  mixerGroup: {fileID: 0}
+  mixerGroup: {fileID: 243039498198272732, guid: 8b63de19650f3f64dac7d3ed3ba5e053,
+    type: 2}
   audioSource: {fileID: 0}
   volume: 1
   pitch: 1

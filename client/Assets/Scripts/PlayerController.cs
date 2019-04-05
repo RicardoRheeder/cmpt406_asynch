@@ -318,6 +318,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.selected;
             }
             else {
+                selectedUnit.PlayMoveVoice(audioManager);
                 boardController.ClearHighlighting();
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
@@ -334,6 +335,7 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.selected;
             }
             else {
+                selectedUnit.PlayAttackVoice(audioManager);
                 boardController.ClearHighlighting();
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
@@ -348,6 +350,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.none;
         }
         else {
+            selectedUnit.PlayAbilityVoice(audioManager);
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability1]);
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
@@ -361,6 +364,7 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.none;
         }
         else {
+            selectedUnit.PlayAbilityVoice(audioManager);
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
@@ -373,7 +377,8 @@ public class PlayerController : MonoBehaviour {
 
         SelectUnit();
         this.highlightedTiles = manager.GetUnitPositions(card.type);
-        boardController.HighlightTiles(this.highlightedTiles);
+        if(this.highlightedTiles.Count > 0)
+            boardController.HighlightTiles(this.highlightedTiles);
         this.interactionState = InteractionState.playingCard;
     }
 

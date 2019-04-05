@@ -106,16 +106,18 @@ public class UnitStats {
             this.AttackActions--;
         }
         int dir = HexUtility.FindDirection(this.Position,target);
-        if (MyUnit != null) {MyUnit.Attack(dir, UnitType, audioManager);} else {Debug.LogError("MyUnit is NULL!");}
+        if (MyUnit != null) {
+            MyUnit.Attack(dir, UnitType, audioManager);
+        }
+        else {
+            Debug.LogError("MyUnit is NULL!");
+        }
         return attackStrategy.Attack(this, target);
     }
 
     //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
-    public bool TakeDamage(int damage, int pierce, AudioManager manager = null) {
+    public bool TakeDamage(int damage, int pierce) {
         if (MyUnit != null) {MyUnit.GetHit();} else {Debug.LogError("MyUnit is NULL!");}
-        if(manager != null) {
-            manager.Play(UnitType, SoundType.TakeDamage, isVoice: true);
-        }
         int resistance = Armour - pierce;
         resistance = resistance < 0 ? 0 : resistance;
         damage -= resistance;
@@ -127,10 +129,7 @@ public class UnitStats {
         return CurrentHP <= 0;
     }
 
-    public void TakeCardDamage(int damage, AudioManager manager = null) {
-        if (manager != null) {
-            manager.Play(UnitType, SoundType.TakeDamage, isVoice: true);
-        }
+    public void TakeCardDamage(int damage) {
         CurrentHP -= damage;
         CurrentHP = CurrentHP <= 0 ? 1 : CurrentHP;
         if(unitHUD != null)
@@ -234,7 +233,6 @@ public class UnitStats {
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
     public void Move(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false) {
         if (audioManager != null) {
-            audioManager.Play(UnitType, SoundType.Move, isVoice: true);
             audioManager.Play(UnitType, SoundType.Move);
         }
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
@@ -253,7 +251,6 @@ public class UnitStats {
 	
     public void SandboxMove(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false){
         if (audioManager != null) {
-            audioManager.Play(UnitType, SoundType.Move, isVoice: true);
             audioManager.Play(UnitType, SoundType.Move);
         }
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
@@ -290,6 +287,18 @@ public class UnitStats {
         else {
             manager.Play(UnitType, SoundType.Select, isVoice: true);
         }
+    }
+
+    public void PlayAttackVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Attack, isVoice: true);
+    }
+
+    public void PlayMoveVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Move, isVoice: true);
+    }
+
+    public void PlayAbilityVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Ability, isVoice: true);
     }
 
     //We need to convert the xPos and yPos variables to be Position

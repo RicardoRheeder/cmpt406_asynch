@@ -32,7 +32,6 @@ public class Unit : MonoBehaviour {
     //Method used to handle the attack animation
     public void Attack(int dir, UnitType type, AudioManager manager = null) {
         if (manager != null) {
-            manager.Play(type, SoundType.Attack, isVoice: true); //plays the voice line
             manager.Play(type, SoundType.Attack); //plays the attack sound
         }
         TurnToDirection(dir);
