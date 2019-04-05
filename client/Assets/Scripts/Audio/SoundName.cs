@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+//If you have to edit this list, add new entries to the bottom of the list, but do not remove/add entries within the list
 public enum SoundName {
     Theme,
     ButtonPress,
@@ -453,7 +453,6 @@ public enum SoundName {
     heavy_albarn_Select_5,
     heavy_albarn_TakeDamage_0,
     heavy_albarn_TakeDamage_1,
-
 
     light_adren_Move,
     light_adren_Attack,
