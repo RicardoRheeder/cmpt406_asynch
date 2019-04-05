@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48a8d2ba75287f44ea1cf65efc176dcb, type: 3}
-  m_Name: soundName
+  m_Name: Theme
   m_EditorClassIdentifier: 
   soundName: 0
   audioClip: {fileID: 0}
