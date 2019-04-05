@@ -123,7 +123,7 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.trooper:
-                StartCoroutine(VETungstenAttack());
+                StartCoroutine(VETrooperAttack());
                 break;
             case UnitType.recon:
                 StartCoroutine(VEReconAttack());
@@ -177,8 +177,6 @@ public class SpecialEffect : MonoBehaviour
             //------------------------------------------
 
         }
-
-        Destroy(gm, 3f); //Destroys the Visual Effect
     }
 
 
@@ -200,6 +198,7 @@ public class SpecialEffect : MonoBehaviour
         StartCoroutine(findMakeObject());
 
         // YIELD RETURN NULL
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -222,6 +221,8 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.localPosition = new Vector3(startPoint.localPosition.x + 0.60f, startPoint.localPosition.y, startPoint.localPosition.z);
 
         StartCoroutine(setArrowDirection());
+
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -235,6 +236,8 @@ public class SpecialEffect : MonoBehaviour
         ChangeColor(Color.red);
         ChangeScale(2);
         StartCoroutine(findMakeObject());
+
+        Destroy(gm, 2f);
         yield return null;
 
     }
@@ -255,6 +258,8 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
         ChangeColor(new Color(1.0f, 0.27f, 0.0f));
+
+        Destroy(gm, 2f);
     }
 
     void ChangeColor(Color desiredColor)
@@ -314,6 +319,7 @@ public class SpecialEffect : MonoBehaviour
 
         StartCoroutine(setArrowDirection());
 
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -325,6 +331,7 @@ public class SpecialEffect : MonoBehaviour
 
         StartCoroutine(setArrowDirection());
 
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -336,7 +343,7 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
 
-
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -359,6 +366,7 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -370,6 +378,8 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
         startPoint.localPosition = new Vector3(0, 0, distance);
+
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -380,6 +390,7 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -395,6 +406,8 @@ public class SpecialEffect : MonoBehaviour
         GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
         gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
         gm2.transform.eulerAngles = new Vector3(0, 180, 0);
+
+
         Destroy(gm, 5f);
         yield return null;
     }
@@ -415,6 +428,8 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
         StartCoroutine(findMakeObjectPowerClaymore());
+
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -426,6 +441,8 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
         StartCoroutine(findMakeObjectPowerSurge());
+
+        Destroy(gm, 2f);
         yield return null;
     }
 
@@ -462,6 +479,7 @@ public class SpecialEffect : MonoBehaviour
         FireBreathField.transform.localPosition = new Vector3(0, 0, 0);
         FireBreathField.transform.localEulerAngles = new Vector3(90, 0, 0);
 
+        Destroy(gm, 2f);
         yield return null;
     }
     IEnumerator findMakeObjectPowerSurge()
