@@ -399,17 +399,62 @@ public class SpecialEffect : MonoBehaviour
 
     void VEClaymoreAttack()
     {
-        StartCoroutine(findMakeObject());
+        StartCoroutine(findMakeObjectPowerClaymore());
     }
 
     void VEPowerSurgeAttack()
     {
-        StartCoroutine(findMakeObject());
+        StartCoroutine(findMakeObjectPowerSurge());
     }
 
     void VEMidasAttack()
     {
         StartCoroutine(findMakeObject());
+    }
+
+    IEnumerator findMakeObjectPowerClaymore()
+    {
+        GameObject MakeObject = null;
+        while (MakeObject == null)
+        {
+            MakeObject = GameObject.Find("MakeObject");
+            yield return new WaitForSeconds(0.1f);
+        }
+        MakeObject.transform.localPosition = new Vector3(0, 0, distance);
+        GameObject FireBreath = GameObject.Find("Effect_38_FireBreath(Clone)");
+        FireBreath.transform.position = MakeObject.transform.position;
+        GameObject FireBreathField = null;
+        while (FireBreathField == null)
+        {
+            FireBreathField = GameObject.Find("Effect_38_FireBreathField(Clone)");
+            yield return new WaitForSeconds(0.1f);
+        }
+        FireBreathField.transform.localPosition = new Vector3(0, 0, 0);
+        FireBreathField.transform.localEulerAngles = new Vector3(90, 0, 0);
+
+        yield return null;
+    }
+    IEnumerator findMakeObjectPowerSurge()
+    {
+        GameObject MakeObject = null;
+        while (MakeObject == null)
+        {
+            MakeObject = GameObject.Find("MakeObject");
+            yield return new WaitForSeconds(0.1f);
+        }
+        MakeObject.transform.localPosition = new Vector3(0, 0, distance);
+        GameObject FireBreath = GameObject.Find("Effect_38_FireBreath(Clone)");
+        FireBreath.transform.position = MakeObject.transform.position;
+        GameObject FireBreathField = null;
+        while (FireBreathField == null)
+        {
+            FireBreathField = GameObject.Find("Effect_38_FireBreathField(Clone)");
+            yield return new WaitForSeconds(0.1f);
+        }
+        FireBreathField.transform.localPosition = new Vector3(0, 0, 0);
+        FireBreathField.transform.localEulerAngles = new Vector3(90, 0, 0);
+
+        yield return null;
     }
 
     /**
