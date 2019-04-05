@@ -96,26 +96,17 @@ public class SpecialEffect : MonoBehaviour
             /**
             *  TODO: RICARDO's SECTION START
             */
-
             case UnitType.compensator:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VECompensatorAttack();
+                StartCoroutine(VECompensatorAttack());
                 break;
 
             case UnitType.foundation:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VEFoundationAttack();
+                StartCoroutine(VEFoundationAttack());
                 break;
 
             case UnitType.piercing_tungsten:
-                gm = Instantiate(particleEffect, this.transform).gameObject;
-                gm.transform.SetParent(this.transform);
-                gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
-                VETungstenAttack();
+               
+                StartCoroutine(VETungstenAttack());
                 break;
 
             /**
@@ -220,13 +211,30 @@ public class SpecialEffect : MonoBehaviour
     /**
     *  TODO: RICARDO's SECTION START
     */
-    void VECompensatorAttack()
+    IEnumerator VECompensatorAttack()
     {
+        // WAIT ANY DESIRED AMOUNT OF TIME
+        yield return new WaitForSeconds(5f);
+
+        // CREATE AND SET EVERYTHING
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
+        // PERFORM WHAT MY VECompensatorAttack() WOULD HAVE DONE
         StartCoroutine(findMakeObject());
+
+        // YIELD RETURN NULL
+        yield return null;
     }
 
-    void VEFoundationAttack()
-    {
+
+    IEnumerator VEFoundationAttack() {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         //TODO: Clean up script
         ChangeScaleGameObject(0.5f);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
@@ -239,13 +247,21 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.localPosition = new Vector3(startPoint.localPosition.x + 0.60f, startPoint.localPosition.y, startPoint.localPosition.z);
 
         StartCoroutine(setArrowDirection());
+        yield return null;
     }
 
-    void VETungstenAttack()
+    IEnumerator VETungstenAttack()
     {
+        yield return new WaitForSeconds(0.1f);
+        gm = Instantiate(particleEffect, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
         ChangeColor(Color.red);
         ChangeScale(2);
         StartCoroutine(findMakeObject());
+        yield return null;
+
     }
 
     public void VECardEffect()
