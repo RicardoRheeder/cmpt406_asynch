@@ -140,6 +140,9 @@ public class GameManager : MonoBehaviour {
         boardController = new BoardController();
         boardController.Initialize();
 
+        fogOfWarController = new FogOfWarController();
+        fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
+
         InitControllersHelper();
 
         inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
@@ -149,9 +152,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private void InitControllersHelper() {
-        fogOfWarController = new FogOfWarController();
-        fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
-
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
@@ -282,7 +282,6 @@ public class GameManager : MonoBehaviour {
         unitPositions.Clear();
         Destroy(gameBuilderObject);
         Destroy(playerControllerObject);
-        fogOfWarController.DeleteAllFog();
         doingReplay = false;
         InitControllersHelper();
     }
