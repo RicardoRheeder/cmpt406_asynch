@@ -336,7 +336,7 @@ public class GameManager : MonoBehaviour {
         cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
         cameraRig.SnapToPosition(boardController.CellToWorld(boardController.GetCenterSpawnTile(spawnPoint)));
 
-        inGameMenu.SetupPanels(isPlacing: true, state.UserGeneralsMap.ContainsKey(user.Username) ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
+        inGameMenu.SetupPanels(isPlacing: true);
 
         fogOfWarController.DeleteFogAtSpawnPoint(spawnPoint, ref boardController);
 
