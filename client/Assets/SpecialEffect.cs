@@ -393,7 +393,7 @@ public class SpecialEffect : MonoBehaviour
 
     void VEMidasAttack()
     {
-
+        StartCoroutine(findMakeObject());
     }
 
     /**
