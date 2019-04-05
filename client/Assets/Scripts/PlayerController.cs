@@ -388,6 +388,7 @@ public class PlayerController : MonoBehaviour {
         }
         if(unit != null) {
             unit.MyUnit.OutlineUnit();
+            unit.Select(audioManager);
             if (unit.Owner == username) {
                 unitButtonReferences[unit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_ACTIVE;
                 selectedUnitButton = unitButtonReferences[unit];
