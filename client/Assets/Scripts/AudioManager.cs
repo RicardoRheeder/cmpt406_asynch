@@ -5,19 +5,16 @@ using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour {
 
-    public AudioLibrary[] sounds;
+    private Sound[] sounds;
     public AudioMixer masterMixer;
-
 
     void Awake() {
         // Instaniate the object. If one already exists, destroy it.
         DontDestroyOnLoad(this);
-    }
 
+        sounds = Resources.LoadAll<Sound>("Audio/");
 
-    private void InitalizeAudio() {
-        // Creates an a modifible element in the inspector of the audioManager for each audio clip.
-        foreach (AudioLibrary sound in sounds) {
+        foreach (Sound sound in sounds) {
             sound.audioSource = gameObject.AddComponent<AudioSource>();
             sound.audioSource.clip = sound.audioClip;
             sound.audioSource.volume = sound.volume;
@@ -29,13 +26,12 @@ public class AudioManager : MonoBehaviour {
 
     // Starts the menu theme music
     void Start() {
-        InitalizeAudio();
         Play(SoundName.Theme);
     }
 
     // Looks for sound used in the audioLibrary by name and plays that sound.
     public void Play(SoundName soundName) {
-        AudioLibrary s = Array.Find(sounds, sound => sound.name == soundName);
+        Sound s = Array.Find(sounds, sound => sound.soundName == soundName);
         s.audioSource.Play();
     }
 
@@ -52,7 +48,7 @@ public class AudioManager : MonoBehaviour {
     // Plays a sound based on the unit type and the sound type
     private void Play(UnitType unit, SoundType type) {
         string soundName = unit.ToString() + "_" + type.ToString();
-        AudioLibrary s = Array.Find(sounds, sound => sound.name.ToString() == soundName);
+        Sound s = Array.Find(sounds, sound => sound.soundName.ToString() == soundName);
         if(s != null) {
             s.audioSource.Play();
         }
@@ -63,9 +59,9 @@ public class AudioManager : MonoBehaviour {
 
     // Plays a random voice line based on the unit type and the sound type
     private void PlayVoice(UnitType unit, SoundType type, bool generateRandom = true) {
-        int randomNumber = generateRandom ? UnityEngine.Random.Range(0, SoundMetadata.VoiceCountsDictionary[type][unit] + 1) : 0;
+        int randomNumber = generateRandom ? UnityEngine.Random.Range(0, SoundMetadata.VoiceCountsDictionary[type][unit]) : 0;
         string soundName = unit.ToString() + "_" + type.ToString() + "_" + randomNumber;
-        AudioLibrary s = Array.Find(sounds, sound => sound.name.ToString() == soundName);
+        Sound s = Array.Find(sounds, sound => sound.soundName.ToString() == soundName);
         if (s != null) {
             s.audioSource.Play();
         }
@@ -82,14 +78,14 @@ public class AudioManager : MonoBehaviour {
 
     // Goes through the list of sounds in the AudioLibrary and mutes them
     public void Mute() {
-        foreach (AudioLibrary sound in sounds) {
+        foreach (Sound sound in sounds) {
             sound.audioSource.mute = !sound.audioSource.mute;
         }
     }
 
     // Looks for sound used in the audioLibrary by name and mutes it.
     public void Mute(SoundName soundName){
-        AudioLibrary s = Array.Find(sounds, sound => sound.name == soundName);
+        Sound s = Array.Find(sounds, sound => sound.soundName == soundName);
         s.audioSource.mute = !s.audioSource.mute;
     }
 
