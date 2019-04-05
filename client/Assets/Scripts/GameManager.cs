@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 
 using CardsAndCarnage;
+using System.Collections;
+using TMPro;
 
 #pragma warning disable 649
 //This class has to extend from monobehaviour so it can be created before a scene is loaded.
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour {
 
     //Stores the list of actions made by the user so that they can be serialized and sent to the server
     private List<Action> turnActions;
+    private List<Action> actionsSinceLastTurn;
 
     //Two variables that should be set by the "Load game" method
     //They are only used for persistant information between scenes
@@ -44,14 +45,24 @@ public class GameManager : MonoBehaviour {
     //Dictionary used to the game information
     private Dictionary<Vector2Int, UnitStats> unitPositions = new Dictionary<Vector2Int, UnitStats>();
     private Dictionary<Vector2Int, Effect> effectPositions = new Dictionary<Vector2Int, Effect>();
-    private List<Action> actionsSinceLastTurn;
 
     //Logic to handle the case where we are placing units;
     private List<UnitStats> placedUnits;
     private bool isPlacing = false;
+    
+    //Bool to say if we are replaying opponent turns
+    private bool doingReplay = false;
+
+    // The users hand
+    List<CardFunction> hand;
+
+    // DropZone for cards
+    DropZone dropZone;
 
     //flag for the sandbox;
     private bool isSandboxMode = false;
+
+    private bool hasExitButtonBeenPressed = false;
 
     // Start is called before the first frame update
     void Start() {
@@ -103,12 +114,12 @@ public class GameManager : MonoBehaviour {
         this.client = new Sandbox();
         this.user = client.GetUserInformation();
 
-        audioManager.Play(SoundName.ButtonPress);
-        
+        isSandboxMode = true;
+
         SceneManager.sceneLoaded -= OnMenuLoaded;
         SceneManager.sceneLoaded += OnGameLoaded;
         SceneManager.sceneLoaded += OnSandboxLoaded;
-    
+
         SceneManager.LoadScene(BoardMetadata.BoardSceneNames[state.boardId]);
     }
 
@@ -119,10 +130,25 @@ public class GameManager : MonoBehaviour {
 
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
-        
+        GameObject.Find("ConcedeButton").GetComponent<Button>().onClick.AddListener(this.Forfeit);
+        GameObject.Find("CloseGameButton").GetComponent<Button>().onClick.AddListener(this.ExitGame);
+
+        this.inGameMenu.replayOpponentTurnsPanel.transform.Find("YesButton").GetComponent<Button>().onClick.AddListener(this.HandleReplay);
+
+        actionsSinceLastTurn = new List<Action>();
+
         boardController = new BoardController();
         boardController.Initialize();
 
+        InitControllersHelper();
+
+        inGameMenu.SetupPanels(isPlacing: false);
+
+        SceneManager.sceneLoaded -= OnGameLoaded;
+        SceneManager.sceneLoaded += OnMenuLoaded;
+    }
+
+    private void InitControllersHelper() {
         fogOfWarController = new FogOfWarController();
         fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
 
@@ -135,54 +161,148 @@ public class GameManager : MonoBehaviour {
 
         playerControllerObject = Instantiate(playerControllerPrefab);
         playerController = playerControllerObject.GetComponent<PlayerController>();
-        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts:gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
+        playerController.Initialize(this, audioManager, user.Username, state, null, gameBuilder, boardController, fogOfWarController, isPlacing, presetTexts: gameBuilder.UnitDisplayTexts, unitButtonReferences: gameBuilder.UnitButtons);
 
-        cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
-        cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
+        if (cameraRig == null) {
+            cameraRig = GameObject.Find("CameraRig").GetComponent<CameraMovement>();
+            cameraRig.SnapToPosition(boardController.CellToWorld(GetGeneralPosition(user.Username)));
+        }
 
         cardSystem = GameObject.Find("CardSystem").GetComponent<CardSystemManager>();
-        List<CardFunction> hand = new List<CardFunction>();
+        hand = new List<CardFunction>();
         if (state.UserCardsMap.ContainsKey(user.Username)) {
             hand = state.UserCardsMap[user.Username].Hand;
         }
 
-        DropZone dropZone = GameObject.Find("Tabletop").GetComponent<DropZone>();
+        if (dropZone == null) {
+            dropZone = GameObject.Find("Tabletop").GetComponent<DropZone>();
+        }
         dropZone.SetPlayerController(playerController);
         dropZone.SetCardSystemManager(cardSystem);
 
         bool wasActions = false;
-        for(int i = 0; i < state.Actions.Count; i++) {
+        for (int i = 0; i < state.Actions.Count; i++) {
             if (state.Actions[i].Username == user.Username) {
                 wasActions = true;
                 break;
             }
         }
 
-        if(wasActions) {
+        if (wasActions) {
             cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id);
         }
         else {
-            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit:CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT);
+            cardSystem.Initialize(hand, state.UserUnitsMap[user.Username], state.id, drawLimit: CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT);
         }
 
-        inGameMenu.SetupPanels(isPlacing: false);
-
-        actionsSinceLastTurn = new List<Action>();
         PreprocessGenerals();
         PreprocessCards();
-        PreprocessTraps();
 
         fogOfWarController.UpdateAllFog();
-
-        SceneManager.sceneLoaded -= OnGameLoaded;
-        SceneManager.sceneLoaded += OnMenuLoaded;
     }
-    
+
+    private void HandleReplay() {
+        this.inGameMenu.replayOpponentTurnsPanel.SetActive(false);
+
+        if (isSandboxMode) {
+            return;
+        }
+
+        doingReplay = true;
+
+        /* Get the old game state */
+        int difference = (this.state.turnCount - this.state.maxUsers) + 1;
+        int oldTurnNumber = difference > 1 ? difference : 1;
+        GameState oldState = client.GetOldGamestate(this.state.id, oldTurnNumber).Second;
+        if (oldState == null) {
+            return;
+        }
+
+        /* Get the actions that need to be shown */
+        List<Action> replayActions = new List<Action>();
+        int curCount = this.state.Actions.Count;
+        difference = curCount - oldState.Actions.Count;
+        replayActions = this.state.Actions.GetRange(curCount - difference, difference);
+
+        /* display the old gamestate units/generals */
+        foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
+            unit.Value.Kill();
+        }
+        unitPositions.Clear();
+        oldState.ReadyUsers = this.state.ReadyUsers;
+        gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
+        unitPositions = gameBuilder.unitPositions;
+
+        StartCoroutine("ReplayActions", replayActions);
+    }
+
+    private IEnumerator ReplayActions(List<Action> replayActions) {
+        yield return new WaitForSeconds(1f);
+        foreach (Action a in replayActions) {
+            switch (a.Type)
+            {
+                case ActionType.Movement:
+                    MoveUnit(new Vector2Int(a.OriginXPos, a.OriginYPos), new Vector2Int(a.TargetXPos, a.TargetYPos));
+                    break;
+                case ActionType.Attack:
+                    Vector2Int actionSource = new Vector2Int(a.OriginXPos, a.OriginYPos);
+                    while (unitPositions[actionSource].MyUnit.isWalking)
+                    {
+                        yield return new WaitForSeconds(0.2f);
+                    }
+                    AttackUnit(actionSource, new Vector2Int(a.TargetXPos, a.TargetYPos));
+                    break;
+                case ActionType.Card:
+                    CardMetadata.CardEffectDictionary[a.CardId](new Vector2Int(a.TargetXPos, a.TargetYPos), unitPositions, a.Username, false);
+                    break;
+                case ActionType.Ability:
+                    Vector2Int source = new Vector2Int(a.OriginXPos, a.OriginYPos);
+                    while (unitPositions[source].MyUnit.isWalking) {
+                        yield return new WaitForSeconds(0.2f);
+                    }
+                    unitPositions[source].Ability1Cooldown = 0;
+                    unitPositions[source].Ability2Cooldown = 0;
+                    UseAbility(source, new Vector2Int(a.TargetXPos, a.TargetYPos), a.Ability);
+                    break;
+                default:
+                    Debug.LogError("Unhandled Action: " + a.Type);
+                    break;
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
+        StartCoroutine("FadeReplayDone");
+        yield return new WaitForSeconds(1f);
+        /* Make it so these actions dont "count" */
+        turnActions.Clear();
+
+        /* put things back to the current game state reference */
+        foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions)
+        {
+            unit.Value.Kill();
+        }
+        unitPositions.Clear();
+        Destroy(gameBuilderObject);
+        Destroy(playerControllerObject);
+        InitControllersHelper();
+        doingReplay = false;
+    }
+
+    private IEnumerator FadeReplayDone() {
+        this.inGameMenu.replayDonePanel.SetActive(true);
+        CanvasGroup cr = this.inGameMenu.replayDonePanel.GetComponent<CanvasGroup>();
+        yield return new WaitForSeconds(1f);
+        float alpha = 1f;
+        while (alpha > 0f) {
+            alpha -= 0.02f;
+            cr.alpha = alpha;
+            yield return new WaitForSeconds(0.1f);
+        }
+        this.inGameMenu.replayDonePanel.SetActive(false);
+    }
+
     private void OnSandboxLoaded(Scene scene, LoadSceneMode mode) {
         SceneManager.sceneLoaded -= OnSandboxLoaded;
         SceneManager.sceneLoaded += OnMenuSandbox;
-
-        isSandboxMode = true;
     }
 
     private void OnPlaceUnits(Scene scene, LoadSceneMode mode) {
@@ -309,18 +429,13 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void PreprocessTraps() {
-
-    }
-
     //===================== In game button functionality ===================
-    private bool exiting = false;
     public void EndTurn() {
-        if (exiting) {
+        if (hasExitButtonBeenPressed) {
             return;
         }
         GameObject.Find("MenuButton").GetComponent<Button>().onClick.RemoveAllListeners();
-        exiting = true;
+        hasExitButtonBeenPressed = true;
         EndTurnState endTurnState = new EndTurnState(state, user.Username, turnActions, new List<UnitStats>(unitPositions.Values), cardSystem.EndTurn());
 
         audioManager.Play(SoundName.ButtonPress);
@@ -334,7 +449,7 @@ public class GameManager : MonoBehaviour {
                 if (System.IO.File.Exists(path)) {
                     System.IO.File.Delete(path);
                 }
-                exiting = false;
+                hasExitButtonBeenPressed = false;
 
                 SceneManager.sceneLoaded += OnMenuLoaded;
                 SceneManager.LoadScene("MainMenu");
@@ -350,7 +465,7 @@ public class GameManager : MonoBehaviour {
                 if (System.IO.File.Exists(path)) {
                     System.IO.File.Delete(path);
                 }
-                exiting = false;
+                hasExitButtonBeenPressed = false;
 
                 SceneManager.sceneLoaded += OnMenuLoaded;
                 SceneManager.LoadScene("MainMenu");
@@ -379,16 +494,17 @@ public class GameManager : MonoBehaviour {
             displayTime = (int)(3 - (Time.time - startTime) + 1);
             yield return null;
         }
-        exiting = false;
+        hasExitButtonBeenPressed = false;
 
+        audioManager.Play(SoundName.ButtonPress);
         SceneManager.sceneLoaded += OnMenuLoaded;
         SceneManager.LoadScene("MainMenu");
     }
 
+
     public void Forfeit() {
-        if (exiting) {
+        if (hasExitButtonBeenPressed)
             return;
-        }
         audioManager.Play(SoundName.ButtonPress);
         client.ForfeitGame(state.id);
         SceneManager.LoadScene("MainMenu");
@@ -396,23 +512,20 @@ public class GameManager : MonoBehaviour {
 
     //For now just load the main menu and don't do anything else
     public void ExitGame() {
-        if (exiting) {
+        if (hasExitButtonBeenPressed)
             return;
-        }
         audioManager.Play(SoundName.ButtonPress);
         SceneManager.LoadScene("MainMenu");
     }
 
     public void EndUnitPlacement() {
-        if (exiting) {
-            return;
-        }
-        exiting = true;
-        StartCoroutine("MainMenuNavigationCountDown");
+        //This function will have to figure out how to send the unit data to the server, and confirm that we are going
+        //to be playing in this game
         UnitStats general = placedUnits[0];
         placedUnits.RemoveAt(0);
         ReadyUnitsGameState readyState = new ReadyUnitsGameState(state.id, placedUnits, general);
         client.ReadyUnits(readyState);
+        SceneManager.LoadScene("MainMenu");
     }
 
     //Used for unit placement
@@ -457,13 +570,13 @@ public class GameManager : MonoBehaviour {
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                if(unit.MovementSpeed > 0 && unit.Owner == user.Username) {
+                if (unit.MovementSpeed > 0 && (unit.Owner == user.Username || doingReplay)) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
-                        unit.SandboxMove(endpoint, ref boardController);
+                        unit.SandboxMove(endpoint, ref boardController, audioManager);
                     }
                     else{
-                        unit.Move(endpoint, ref boardController);
+                        unit.Move(endpoint, ref boardController, audioManager);
                     }
                     unitPositions[endpoint] = unit;
                     turnActions.Add(new Action(user.Username, ActionType.Movement, targetUnit, endpoint, GeneralAbility.NONE, CardFunction.NONE));
@@ -475,15 +588,15 @@ public class GameManager : MonoBehaviour {
     public void AttackUnit(Vector2Int source, Vector2Int target) {
         turnActions.Add(new Action(user.Username, ActionType.Attack, source, target, GeneralAbility.NONE, CardFunction.NONE));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
-            if(sourceUnit.AttackActions > 0 && sourceUnit.Owner == user.Username) {
-                List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target);
+            if(sourceUnit.AttackActions > 0 && (sourceUnit.Owner == user.Username || doingReplay)) {
+                List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target, audioManager);
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
                         int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
                         if (modifiedDamage > 0) {
                             if (targetUnit.TakeDamage(modifiedDamage, sourceUnit.Pierce)) {
                                 unitPositions.Remove(damage.First);
-                                targetUnit.Kill();
+                                targetUnit.Kill(audioManager);
                             }
                         }
                         else {
@@ -502,7 +615,7 @@ public class GameManager : MonoBehaviour {
             if (general.Ability1Cooldown == 0) {
                 AbilityAction<UnitStats, Dictionary<Vector2Int, UnitStats>, string, bool> abilityFunction = GeneralMetadata.ActiveAbilityFunctionDictionary[ability];
                 if (target != source) {
-                    if(GetUnitOnTile(target, out UnitStats targetUnit)) {
+                    if (GetUnitOnTile(target, out UnitStats targetUnit)) {
                         general.Ability1Cooldown = GeneralMetadata.AbilityCooldownDictionary[ability];
                         abilityFunction(ref targetUnit, unitPositions, user.Username, true);
                     }
@@ -538,8 +651,7 @@ public class GameManager : MonoBehaviour {
         return true;
     }
 
-    public bool UseCard(Vector2Int target, Card card) {
-        CardFunction cardId = card.func;
+    public bool UseCard(Vector2Int target, CardFunction cardId) {
         if (CardMetadata.CardEffectDictionary[cardId](target, unitPositions, user.Username, false)) {
             turnActions.Add(new Action(user.Username, ActionType.Card, target, target, GeneralAbility.NONE, cardId));
             return true;

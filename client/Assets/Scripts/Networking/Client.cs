@@ -31,6 +31,7 @@ public class Client : MonoBehaviour, INetwork {
     private const string CREATE_PUBLIC_GAME = "/CreatePublicGame"; //Used to create a public game
     private const string CREATE_PRIVATE_GAME = "/CreatePrivateGame"; //Used to create a private game
     private const string GET_GAME_STATE = "/GetGameState"; //Used to get the state of a game
+    private const string GET_OLD_GAME_STATE = "/GetOldGameState"; //Used to get a past game state
     private const string GET_PUBLIC_GAMES = "/GetPublicGamesSummary"; //Used to get a number of public games
     private const string ADD_ARMY_PRESET = "/AddArmyPreset"; //Used to import army presets
     private const string REMOVE_ARMY_PRESET = "/RemoveArmyPreset"; //Used to delete existing presets
@@ -297,6 +298,32 @@ public class Client : MonoBehaviour, INetwork {
         BeginRequest();
         HttpWebRequest request = CreatePostRequest(GET_GAME_STATE);
         string requestJson = JsonConversion.GetJsonForSingleField("gameId", id);
+        AddJsonToRequest(requestJson, ref request);
+
+        try {
+            var response = (HttpWebResponse)request.GetResponse();
+            string responseJson;
+            using (var reader = new StreamReader(response.GetResponseStream())) {
+                responseJson = reader.ReadToEnd();
+            }
+            Debug.Log(responseJson);
+            GameState state = JsonConversion.CreateFromJson<GameState>(responseJson, typeof(GameState));
+            EndRequest();
+            return new Tuple<bool, GameState>(true, state);
+        }
+        catch (WebException e) {
+            PrettyPrint(GET_GAME_STATE, (HttpWebResponse)e.Response);
+            EndRequest();
+            return new Tuple<bool, GameState>(false, null);
+        }
+    }
+
+
+    public Tuple<bool, GameState> GetOldGamestate(string id, int turnCount) {
+        BeginRequest();
+        HttpWebRequest request = CreatePostRequest(GET_OLD_GAME_STATE);
+        GetOldGameState requestData = new GetOldGameState(id, turnCount);
+        string requestJson = JsonConversion.ConvertObjectToJson(requestData);
         AddJsonToRequest(requestJson, ref request);
 
         try {

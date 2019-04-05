@@ -8,6 +8,7 @@ public class Unit : MonoBehaviour {
     public SkinnedMeshRenderer rend;
     public float moveSpeed = 2.5f;
     Animator anim;
+    public bool isWalking;
 
     Vector2Int currTilePosition;
     FogViewer fogViewer;
@@ -29,7 +30,10 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(int dir) {
+    public void Attack(int dir, UnitType type, AudioManager manager = null) {
+        if (manager != null) {
+            manager.Play(type, SoundType.Attack); //plays the attack sound
+        }
         TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
@@ -47,7 +51,8 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the movement animation
-    public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board) {
+    public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board, AudioManager manager = null) {
+        isWalking = true;
         StartCoroutine(PathMovement(path,board));
     }
 
@@ -115,6 +120,7 @@ public class Unit : MonoBehaviour {
                 anim.SetBool("walking",false);
             }
         }
+        isWalking = false;
     }
 
     IEnumerator RotateToDirection(int dir) {
@@ -138,9 +144,13 @@ public class Unit : MonoBehaviour {
         }
     }
 
-    public void Kill() {
+    public void Kill(UnitType type, AudioManager manager = null) {
         if(this.anim != null) {
             anim.SetTrigger("death");
+        }
+        if (manager != null) {
+            manager.Play(type, SoundType.Death, isVoice: true);
+            manager.Play(type, SoundType.Death);
         }
         Destroy(this.gameObject);
     }

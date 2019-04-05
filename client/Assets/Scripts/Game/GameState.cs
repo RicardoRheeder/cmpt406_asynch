@@ -7,17 +7,20 @@ public class GameState {
     [DataMember(IsRequired=true)]
     public readonly string id;
 
-    [DataMember(IsRequired = true)]
+    [DataMember]
     public readonly string gameName;
 
-    [DataMember(IsRequired = true)]
+    [DataMember]
     public readonly string createdBy;
 
-    [DataMember(IsRequired = true)]
+    [DataMember]
     public readonly BoardType boardId;
 
     [DataMember]
     public readonly int maxUsers;
+
+    [DataMember]
+    public readonly int turnCount;
 
     [DataMember]
     public readonly int spotsAvailable;
@@ -32,7 +35,7 @@ public class GameState {
     public List<string> AcceptedUsers { get; private set; }
 
     [DataMember(Name = "readyUsers")]
-    public List<string> ReadyUsers { get; private set; }
+    public List<string> ReadyUsers { get; set; }
 
     [DataMember(Name = "aliveUsers")]
     public List<string> AliveUsers { get; private set; }
@@ -64,6 +67,9 @@ public class GameState {
     [DataMember(Name="forfeitTime")]
     public int ForfeitTime { get; private set; }
 
+    [DataMember(Name="loseReasons")]
+    public List<LossReason> LossReasons;
+
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(this);
     }
@@ -81,6 +87,8 @@ public class GameState {
         if (AliveUsers == null) AliveUsers = new List<string>();
         if (cards == null) cards = new List<CardController>();
         if (Actions == null) Actions = new List<Action>();
+        if (LossReasons == null) LossReasons = new List<LossReason>();
+
         UserUnitsMap = new Dictionary<string, List<UnitStats>>();
         foreach(UnitStats unit in units) {
             if (UserUnitsMap.ContainsKey(unit.Owner))
@@ -134,6 +142,22 @@ public class GameStateCollection {
 
     public override string ToString() {
         return JsonConversion.ConvertObjectToJson(this);
+    }
+}
+
+//Used to create a collection of gamestates from a server response
+[DataContract]
+public class GetOldGameState {
+
+    [DataMember]
+    private string gameId;
+
+    [DataMember]
+    private int turnCount;
+
+    public GetOldGameState(string gameId, int turnCount) {
+        this.gameId = gameId;
+        this.turnCount = turnCount;
     }
 }
 
@@ -261,5 +285,26 @@ public class EndTurnState {
 
         IsVictory = (killedUsers.Count == state.AliveUsers.Count - 1) && !killedUsers.Contains(currentUser);
         IsDefeat = killedUsers.Contains(currentUser);
+    }
+}
+
+[DataContract]
+public class LossReason {
+    [DataMember(Name = "reason")]
+    private int serverReason { get; set; }
+    public string Reason { get; private set; }
+
+    [DataMember(Name = "username")]
+    public string LossUsername { get; private set; }
+
+    internal enum LossDescriptions {
+        Destroyed = 0,
+        Conceded = 1,
+        Timeout = 2
+    };
+
+    [OnDeserialized]
+    public void OnDeserialized(StreamingContext c) {
+        Reason = ((LossDescriptions)serverReason).ToString();
     }
 }

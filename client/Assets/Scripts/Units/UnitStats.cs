@@ -99,14 +99,19 @@ public class UnitStats {
     }
 
     //Returns a value based on the target
-    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, bool specialMove = false) {
+    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, AudioManager audioManager = null, bool specialMove = false) {
         if (!specialMove) {
             if(!moveAfterAttack)
                 this.MovementSpeed = 0;
             this.AttackActions--;
         }
         int dir = HexUtility.FindDirection(this.Position,target);
-        if (MyUnit != null) {MyUnit.Attack(dir);} else {Debug.LogError("MyUnit is NULL!");}
+        if (MyUnit != null) {
+            MyUnit.Attack(dir, UnitType, audioManager);
+        }
+        else {
+            Debug.LogError("MyUnit is NULL!");
+        }
         return attackStrategy.Attack(this, target);
     }
 
@@ -140,8 +145,8 @@ public class UnitStats {
 		FloatingTextController.CreateFloatingText(amount.ToString(), MyUnit.transform, true);
     }
     
-    public void Kill() {
-        MyUnit.Kill();
+    public void Kill(AudioManager audioManager = null) {
+        MyUnit.Kill(UnitType, audioManager);
         if (unitHUD != null)
             unitHUD.DestroyThis();
     }
@@ -226,7 +231,10 @@ public class UnitStats {
     }
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
-    public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
+    public void Move(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false) {
+        if (audioManager != null) {
+            audioManager.Play(UnitType, SoundType.Move);
+        }
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.MovementSpeed -= pathWithDirection.Count;
@@ -241,14 +249,57 @@ public class UnitStats {
         MyUnit.PlaceAt(position, ref board);
     }
 	
-	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
-	    List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
+    public void SandboxMove(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false){
+        if (audioManager != null) {
+            audioManager.Play(UnitType, SoundType.Move);
+        }
+        List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
         if(pathWithDirection.Count > 0) {
             this.Direction = pathWithDirection[pathWithDirection.Count - 1].Second;
         }
-	}
+    }
+
+    //Note: this list must have two abilities
+    public void SetAbilities(List<GeneralAbility> abilityList) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+    }
+
+    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+        this.Ability1Cooldown = serverUnit.Ability1Cooldown;
+        this.Ability2Cooldown = serverUnit.Ability2Cooldown;
+        this.Ability2Duration = serverUnit.Ability2Duration;
+        this.Ability2Duration = serverUnit.Ability2Duration;
+    }
+
+    public void SetPassive(GeneralPassive passive) {
+        this.Passive = passive;
+    }
+
+    public void Select(AudioManager manager) {
+        if(Random.Range(0, 4) == 0) {
+            manager.Play(UnitType, SoundType.Annoyed, isVoice: true);
+        }
+        else {
+            manager.Play(UnitType, SoundType.Select, isVoice: true);
+        }
+    }
+
+    public void PlayAttackVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Attack, isVoice: true);
+    }
+
+    public void PlayMoveVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Move, isVoice: true);
+    }
+
+    public void PlayAbilityVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Ability, isVoice: true);
+    }
 
     //We need to convert the xPos and yPos variables to be Position
     //We also need to get a base unit and copy over the stats that weren't stored on the server.
@@ -274,24 +325,5 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
-    }
-
-    //Note: this list must have two abilities
-    public void SetAbilities( List<GeneralAbility> abilityList) {
-        this.Ability1 = abilityList[0];
-        this.Ability2 = abilityList[1];
-    }
-
-    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
-        this.Ability1 = abilityList[0];
-        this.Ability2 = abilityList[1];
-        this.Ability1Cooldown = serverUnit.Ability1Cooldown;
-        this.Ability2Cooldown = serverUnit.Ability2Cooldown;
-        this.Ability2Duration = serverUnit.Ability2Duration;
-        this.Ability2Duration = serverUnit.Ability2Duration;
-    }
-
-    public void SetPassive(GeneralPassive passive) {
-        this.Passive = passive;
     }
 }

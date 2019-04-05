@@ -35,6 +35,14 @@ ModelImporter:
     100058: spine
     100060: spine2
     100062: spine3
+    100064: back_toe_target_L
+    100066: back_toe_target_R
+    100068: front_toe_target_L
+    100070: front_toe_target_R
+    100072: inside_toe_target_L
+    100074: inside_toe_target_R
+    100076: outside_toe_target_L
+    100078: outside_toe_target_R
     400000: //RootNode
     400002: ankle_target_R
     400004: Armature
@@ -67,6 +75,14 @@ ModelImporter:
     400058: spine
     400060: spine2
     400062: spine3
+    400064: back_toe_target_L
+    400066: back_toe_target_R
+    400068: front_toe_target_L
+    400070: front_toe_target_R
+    400072: inside_toe_target_L
+    400074: inside_toe_target_R
+    400076: outside_toe_target_L
+    400078: outside_toe_target_R
     2100000: ___default___
     2300000: //RootNode
     3300000: //RootNode
