@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class ColourConstants {
 
-    public static Color BUTTON_ACTIVE = Color.yellow;
+    public static Color BUTTON_ACTIVE = new Color(0.4628f, 0.4905f, 0.1828f);
     public static Color BUTTON_DEFAULT = new Color(0.247f, 0.247f, 0.247f);
     public static Color BUTTON_INACTIVE = Color.gray;
 

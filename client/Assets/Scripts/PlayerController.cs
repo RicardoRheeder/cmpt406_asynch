@@ -429,7 +429,7 @@ public class PlayerController : MonoBehaviour {
             attackButtonObject.SetActive(true);
             movementButtonObject.SetActive(true);
             if (unit.AttackActions != 0 && unit.Damage != 0) {
-                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
                 attackButton.onClick.RemoveAllListeners();
                 attackButton.onClick.AddListener(AttackButton);
             }
@@ -438,7 +438,7 @@ public class PlayerController : MonoBehaviour {
                 attackButton.onClick.RemoveAllListeners();
             }
             if (unit.MovementSpeed != 0) {
-                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
                 movementButton.onClick.RemoveAllListeners();
                 movementButton.onClick.AddListener(MovementButton);
             }
