@@ -290,7 +290,7 @@ public class SpecialEffect : MonoBehaviour
 
     IEnumerator setArrowDirection(){
         Debug.Log(distance);
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
         Transform[] allChildren = this.GetComponentsInChildren<Transform>();
         while(allChildren.Length != 0) {
             allChildren = this.GetComponentsInChildren<Transform>();
@@ -311,11 +311,35 @@ public class SpecialEffect : MonoBehaviour
         }
         yield return null;
     }
+
+    IEnumerator findMakeObjectSandman()
+    {
+        GameObject[] movePoints = GameObject.FindGameObjectsWithTag("MissileMovePoint");
+        while (movePoints.Length != 3)
+        {
+            print("Length: " + movePoints.Length);
+            movePoints = GameObject.FindGameObjectsWithTag("MissileMovePoint");
+            for (int i = 0; i < movePoints.Length-1; i++)
+            {
+                movePoints[i].transform.localPosition = new Vector3(0, 0, 1000);
+            }
+
+            yield return new WaitForSeconds(0.1f);
+            if (movePoints.Length != 0)
+            {
+                movePoints[movePoints.Length - 1].transform.localPosition = new Vector3(0, 0, 1000);
+            }
+        }
+        yield return null;
+    }
+
     IEnumerator VETrooperAttack() {
         yield return new WaitForSeconds(0.1f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
+        ChangeColor(new Color(0f, 255f, 0f));
 
         StartCoroutine(setArrowDirection());
 
@@ -329,6 +353,8 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
+        ChangeColor(new Color(66f, 244f, 244f));
+
         StartCoroutine(setArrowDirection());
 
         Destroy(gm, 2f);
@@ -340,10 +366,11 @@ public class SpecialEffect : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
-        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+        gm.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
 
+        StartCoroutine(findMakeObjectSandman());
 
-        Destroy(gm, 2f);
+        Destroy(gm, 4f);
         yield return null;
     }
 
