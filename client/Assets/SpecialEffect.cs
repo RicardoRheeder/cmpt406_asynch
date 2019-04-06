@@ -91,7 +91,7 @@ public class SpecialEffect : MonoBehaviour
     {
         this.unitType = unitType;
         distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
-        print(distance);
+//        print(distance);
         this.sourceWorldPosition = sourceWorldPos;
         this.targetWorldPosition = targetWorldPos;
 
@@ -317,7 +317,7 @@ public class SpecialEffect : MonoBehaviour
         GameObject[] movePoints = GameObject.FindGameObjectsWithTag("MissileMovePoint");
         while (movePoints.Length != 3)
         {
-            print("Length: " + movePoints.Length);
+//            print("Length: " + movePoints.Length);
             movePoints = GameObject.FindGameObjectsWithTag("MissileMovePoint");
             for (int i = 0; i < movePoints.Length-1; i++)
             {
