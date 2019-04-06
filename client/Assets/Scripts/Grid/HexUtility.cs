@@ -243,7 +243,8 @@ public static class HexUtility {
             foreach(Vector2Int hex in fringes[movement-1]) {
                 for(int dir = 0; dir < 6; dir++){
                     Vector2Int neighbor = NeighborTile(hex, dir);
-                    if(!visited.Contains(neighbor) && tilemap.HasTile((Vector3Int)neighbor) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap))) {
+                    HexTile neighborTile = tilemap.GetTile((Vector3Int)neighbor) as HexTile;
+                    if(!visited.Contains(neighbor) && neighborTile != null && !neighborTile.attributes.Contains(TileAttribute.Obstacle) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap))) {
                         visited.Add(neighbor);
                         fringes[movement].Add(neighbor);
                     }
