@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class ColourConstants {
 
-    public static Color BUTTON_ACTIVE = Color.yellow;
+    public static Color BUTTON_ACTIVE = Color.gray;
     public static Color BUTTON_DEFAULT = new Color(0.247f, 0.247f, 0.247f);
-    public static Color BUTTON_INACTIVE = Color.gray;
+    public static Color BUTTON_INACTIVE = Color.black;
 
     public static Dictionary<SpawnPoint, Color> SpawnColours = new Dictionary<SpawnPoint, Color>() {
         {SpawnPoint.Player1, Color.HSVToRGB(0.0f, 1.0f, 1.0f) },
