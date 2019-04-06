@@ -33,6 +33,18 @@ public static class GeneralMetadata {
         {UnitType.support_sandman, new List<GeneralAbility>{ GeneralAbility.SAHARA_MINE, GeneralAbility.SANDSTORM } }
     };
 
+	public static readonly Dictionary<GeneralAbility, String> GeneralAbilityTooltip = new Dictionary<GeneralAbility, string>() {
+		{GeneralAbility.TROJAN_SHOT, "For this turn Tungsten's Range becomes 20 and his attack hits all units between him and his target"},
+		{GeneralAbility.ARMOUR_PIERCING_AMMO, "Select a unit within 10 range of Tungsten. This unit gains 10 Armor Penetration for 4 turns" },
+        {GeneralAbility.STEAM_OVERLOAD, "Choose a location within 10 Range of Albarn. The target takes 30 damage, units within 1 range take 20, units within 2 range take 10" },
+        {GeneralAbility.THE_BEST_OFFENSE, "Choose a unit. The unit's Armor is added to its Damage for this turn" },
+        {GeneralAbility.STICK_AND_POKE, "Your units gain 3 movement speed and units add their default speed for 2 turns" },
+        {GeneralAbility.DEEP_PENETRATION, "Choose a unit. The unit's Armor is set to 0 for this turn" },
+        {GeneralAbility.SAHARA_MINE, "Choose a target within 2 Range of Sandman. All units within 1 range of the target take 10 damage and lost 10 Armor for this turn" },
+        {GeneralAbility.SANDSTORM, "All units within 2 Range of Sandman have their Vision and Movement Speed reduced by 3. The sandstorm lasts for 2 turns" }
+		
+	};
+	
     public static readonly Dictionary<GeneralAbility, String> ReadableAbilityNameDict = new Dictionary<GeneralAbility, string>() {
         {GeneralAbility.TROJAN_SHOT, "Trojan Shot" },
         {GeneralAbility.ARMOUR_PIERCING_AMMO, "Armour Piercing Ammo" },

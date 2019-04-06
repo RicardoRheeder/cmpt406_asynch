@@ -72,7 +72,7 @@ public static class SoundMetadata {
             {UnitType.support_sandman, 7 },
         } },
         {SoundType.Select, new Dictionary<UnitType, int> {
-            {UnitType.trooper, 8 },
+            {UnitType.trooper, 6 },
             {UnitType.recon, 3 },
             {UnitType.steamer, 5 },
             {UnitType.pewpew, 4 },
