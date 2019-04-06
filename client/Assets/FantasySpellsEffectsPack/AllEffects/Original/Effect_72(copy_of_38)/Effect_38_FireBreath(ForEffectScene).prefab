@@ -63,4 +63,4 @@ MonoBehaviour:
   m_makeObjs:
   - {fileID: 1555050012240660, guid: 3a79a183061f9d744ae2e90b5e15bbca, type: 3}
   m_movePos: {fileID: 0}
-  m_startDelay: 0.2
+  m_startDelay: 0.7
