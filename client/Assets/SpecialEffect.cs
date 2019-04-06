@@ -290,7 +290,7 @@ public class SpecialEffect : MonoBehaviour
 
     IEnumerator setArrowDirection(){
         Debug.Log(distance);
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
         Transform[] allChildren = this.GetComponentsInChildren<Transform>();
         while(allChildren.Length != 0) {
             allChildren = this.GetComponentsInChildren<Transform>();
@@ -311,11 +311,36 @@ public class SpecialEffect : MonoBehaviour
         }
         yield return null;
     }
+
+    IEnumerator findMakeObjectSandman()
+    {
+        int a = GameObject.FindObjectsOfType<GameObject>().Length;
+        GameObject[] arr = new GameObject[a];
+        for (int i = 0; i < a; i++)
+        {
+            if (GameObject.FindObjectsOfType<GameObject>()[i].name == "Effect_24_MissileObjectMake(Clone)")
+            {
+                GameObject.FindObjectsOfType<GameObject>()[i].transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            }
+            //GameObject MakeObject = null;
+            //while (MakeObject == null)
+            //{
+            //    MakeObject = GameObject.Find("Effect_24_MissileObjectMake(Clone)");
+            //    yield return new WaitForSeconds(0.1f);
+            //}
+            //MakeObject.transform.localPosition = new Vector3(0, 0, distance);
+            //MakeObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        }
+        yield return null;
+    }
+
     IEnumerator VETrooperAttack() {
         yield return new WaitForSeconds(0.1f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
+        ChangeColor(new Color(0f, 255f, 0f));
 
         StartCoroutine(setArrowDirection());
 
@@ -328,6 +353,8 @@ public class SpecialEffect : MonoBehaviour
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
+        ChangeColor(new Color(66f, 244f, 244f));
 
         StartCoroutine(setArrowDirection());
 
@@ -342,6 +369,12 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
+        //ChangeScaleGameObject(0.5f);
+        StartCoroutine(findMakeObjectSandman());
+        //ChangeScale(0.5f);
+        //GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
+        //gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
+        //gm2.transform.eulerAngles = new Vector3(0, 180, 0);
 
         Destroy(gm, 2f);
         yield return null;
