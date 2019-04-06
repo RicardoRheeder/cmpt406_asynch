@@ -422,14 +422,27 @@ public class SpecialEffect : MonoBehaviour
 
     IEnumerator VEClaymoreAttack()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(1f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+        gm.GetComponent<DelayObjectMake>().m_startDelay = 2f;
+        ChangeColor(Color.red);
+        GameObject FireBreathHole = null;
+        while (FireBreathHole == null)
+        {
+            FireBreathHole = GameObject.Find("Effect_38_FireBreathHole(Clone)");
+
+            yield return new WaitForSeconds(0.1f);
+        }
+        foreach (Transform child in FireBreathHole.transform)
+        {
+            child.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+        }
 
         StartCoroutine(findMakeObjectPowerClaymore());
 
-        Destroy(gm, 3f);
+        Destroy(gm, 5f);
         yield return null;
     }
 
@@ -461,7 +474,7 @@ public class SpecialEffect : MonoBehaviour
 
     IEnumerator VEMidasAttack()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(1f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
@@ -503,7 +516,7 @@ public class SpecialEffect : MonoBehaviour
         FireBreathField.transform.localPosition = new Vector3(0, 0, 0);
         FireBreathField.transform.localEulerAngles = new Vector3(90, 0, 0);
 
-        Destroy(gm, 2f);
+        //Destroy(gm, 2f);
         yield return null;
     }
     IEnumerator findMakeObjectPowerSurge()
