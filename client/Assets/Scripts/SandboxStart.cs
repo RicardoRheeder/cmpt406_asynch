@@ -9,7 +9,7 @@ public class SandboxStart : MonoBehaviour {
                                 "\"boardId\":420,\"cards\":[{\"discardPile\":[],\"drawPile\":[],\"hand\":[]," +
                                 "\"owner\":\"katlin\"}],\"createdBy\":\"katlin\",\"forfeitTime\":-1,\"gameName\":\"lolol\"," +
                                 "\"generals\":[{\"ability1CoolDown\":0,\"ability1Duration\":0,\"ability2CoolDown\":0," +
-                                "\"ability2Duration\":0,\"health\":200,\"owner\":\"katlin\",\"unitType\":101,\"xPos\":-11," +
+                                "\"ability2Duration\":0,\"health\":200,\"owner\":\"katlin\",\"unitType\":103,\"xPos\":-11," +
                                 "\"yPos\":-6}],\"id\":\"42e0cea6-69b1-443e-95b5-d571243e7035\"," +
                                 "\"initUnits\":[{\"ability1CoolDown\":0,\"ability1Duration\":0,\"ability2CoolDown\":0,\"ability2Duration\":0,\"health\":100,\"owner\":\"katlin\"," +
                                 "\"unitType\":1,\"xPos\":-13,\"yPos\":-6},{\"ability1CoolDown\":0,\"ability1Duration\":0,\"ability2CoolDown\":0," +

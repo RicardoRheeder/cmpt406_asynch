@@ -70,6 +70,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
   moveSpeed: 5
+  isWalking: 0
 --- !u!114 &3711400742886914601
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -355,16 +355,33 @@ public class SpecialEffect : MonoBehaviour
     *  CLAYTON's SECTION START
     */
 
+    IEnumerator moveShot(GameObject particle)
+    {
+        yield return new WaitForSeconds(0.01f);
+
+        while (particle != null)
+        {
+            particle.transform.position = Vector3.MoveTowards(particle.transform.position, targetWorldPosition, 1f);
+            yield return new WaitForSeconds(0.01f);
+        }
+
+
+
+        yield return null;
+    }
+
     IEnumerator VEPewPewAttack()
     {
-        // Logic that was used when trying to figure out what was wrong with orb
-        //        particleEffect.GetComponent<TranslateMove>().m_fowardMove = false;
-        //        particleEffect.GetComponent<TranslateMove>().m_upMove = true;
-        //        particleEffect.GetComponent<TranslateMove>().m_rightMove = false;
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(1f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+
+        gm.GetComponent<TranslateMove>().m_fowardMove = false;
+        gm.GetComponent<TranslateMove>().m_upMove = false;
+        gm.GetComponent<TranslateMove>().m_rightMove = false;
+
+        StartCoroutine(moveShot(gm));
 
         Destroy(gm, 2f);
         yield return null;
@@ -377,8 +394,6 @@ public class SpecialEffect : MonoBehaviour
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
-        startPoint.localPosition = new Vector3(0, 0, distance);
-
         Destroy(gm, 2f);
         yield return null;
     }
@@ -386,9 +401,10 @@ public class SpecialEffect : MonoBehaviour
     IEnumerator VEAdrenAttack()
     {
         yield return new WaitForSeconds(0.1f);
-        gm = Instantiate(particleEffect, this.transform).gameObject;
-        gm.transform.SetParent(this.transform);
-        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+        GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
+        gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
+        gm2.transform.eulerAngles = new Vector3(0, 180, 0);
+      
 
         Destroy(gm, 2f);
         yield return null;
@@ -397,16 +413,10 @@ public class SpecialEffect : MonoBehaviour
     IEnumerator VEAlbarnAttack()
     {
         yield return new WaitForSeconds(0.1f);
-        gm = Instantiate(particleEffect, this.transform).gameObject;
-        gm.transform.SetParent(this.transform);
-        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
-        Debug.Log("Albarn Attack");
-       
         GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
         gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
         gm2.transform.eulerAngles = new Vector3(0, 180, 0);
-
 
         Destroy(gm, 5f);
         yield return null;
