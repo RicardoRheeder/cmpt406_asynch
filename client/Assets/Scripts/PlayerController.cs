@@ -223,7 +223,7 @@ public class PlayerController : MonoBehaviour {
                             hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
                             boardController.RenderPath(selectedUnit.Position, tilePos);
                         }
-                        else if (selectedUnit != null) {
+                        else if (selectedUnit != null && selectedUnit.Range < 8) {
                             boardController.HoverHighlight(hoverAttackRange, tilePos);
                         }
                         break;
