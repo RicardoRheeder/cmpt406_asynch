@@ -310,7 +310,7 @@ public class AnalyticsManager : MonoBehaviour
     private List<UnitValuePair> GetSimulatedDamage(UnitStats sourceUnit, Vector2Int target, Dictionary<Vector2Int, UnitStats> fakeBoard) {
         List<UnitValuePair> damageList = new List<UnitValuePair>();
 
-        List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target, new Vector3(), new Vector3(), analyticsAttack: true);
+        List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target, Vector3.zero, Vector3.zero, analyticsAttack: true);
         foreach (var damage in damages) {
 
             bool containsUnit = fakeBoard.ContainsKey(damage.First);

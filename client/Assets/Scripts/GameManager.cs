@@ -140,18 +140,18 @@ public class GameManager : MonoBehaviour {
         boardController = new BoardController();
         boardController.Initialize();
 
+        fogOfWarController = new FogOfWarController();
+        fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
+
         InitControllersHelper();
 
-        inGameMenu.SetupPanels(isPlacing: false);
+        inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
 
     private void InitControllersHelper() {
-        fogOfWarController = new FogOfWarController();
-        fogOfWarController.InitializeFogOfWar(boardController.GetTilemap());
-
         gameBuilderObject = Instantiate(gameBuilderPrefab);
         gameBuilder = gameBuilderObject.GetComponent<GameBuilder>();
         gameBuilder.Build(ref state, user.Username, ref boardController, ref fogOfWarController, false);
@@ -276,15 +276,14 @@ public class GameManager : MonoBehaviour {
         turnActions.Clear();
 
         /* put things back to the current game state reference */
-        foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions)
-        {
+        foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
             unit.Value.Kill();
         }
         unitPositions.Clear();
         Destroy(gameBuilderObject);
         Destroy(playerControllerObject);
-        InitControllersHelper();
         doingReplay = false;
+        InitControllersHelper();
     }
 
     private IEnumerator FadeReplayDone() {
@@ -588,7 +587,7 @@ public class GameManager : MonoBehaviour {
     public void AttackUnit(Vector2Int source, Vector2Int target) {
         turnActions.Add(new Action(user.Username, ActionType.Attack, source, target, GeneralAbility.NONE, CardFunction.NONE));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
-            if(sourceUnit.AttackActions > 0 && sourceUnit.Owner == user.Username) {
+            if(sourceUnit.AttackActions > 0 && sourceUnit.Owner == user.Username || doingReplay) {
                 List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target, boardController.CellToWorld(source), boardController.CellToWorld(target), audioManager);
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {

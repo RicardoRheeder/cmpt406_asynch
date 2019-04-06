@@ -387,6 +387,7 @@ public class MainMenu : MonoBehaviour {
     public void CompleteGamesButton() {
         audioManager.Play(SoundName.ButtonPress);
         SetPlayMenuState(completeGamesState: true);
+        DestroyChildrenInList(completedGamesListViewContent);
 
         Tuple<bool, GameStateCollection> response = networkApi.GetCompletedGamesInformation();
         if(response.First) {

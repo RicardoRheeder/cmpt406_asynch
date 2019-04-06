@@ -401,7 +401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
-  moveSpeed: 5
+  moveSpeed: 2.5
   isWalking: 0
 --- !u!114 &8971649373800011203
 MonoBehaviour:

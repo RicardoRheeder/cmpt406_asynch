@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum SoundType {
-    Move,
+    Ability,
+    Annoyed,
     Attack,
-    Death
+    Death,
+    Move,
+    Select,
+    TakeDamage,
 }

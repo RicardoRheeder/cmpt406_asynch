@@ -15,7 +15,6 @@ public class GameBuilder : MonoBehaviour {
     public GameObject unitPlacementDisplayPrefab;
     public GameObject unitSelectionDisplayPrefab;
     private GameObject unitPlacementViewport;
-    private bool sceneSetup = false;
     public List<GameObject> UnitDisplayTexts { get; private set; }
 
     //Prefabs for each unit for instantiation purposes
@@ -215,7 +214,7 @@ public class GameBuilder : MonoBehaviour {
         GameObject unitObject = Instantiate(typePrefabStorage[unit.UnitType]);
         Unit unitComponent = unitObject.GetComponent<Unit>();
         unitComponent.PlaceAt(pos, ref board);
-        unitComponent.SnapToDirection(unit.Direction);
+        unitComponent.SnapToAngle(unit.Direction);
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Place(pos, ref board);
         unit.Owner = username;
