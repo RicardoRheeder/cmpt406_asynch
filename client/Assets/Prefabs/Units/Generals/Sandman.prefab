@@ -83,8 +83,10 @@ MonoBehaviour:
   particleEffect: {fileID: 4027363086836832, guid: e839b9a15368ae849b59ad0cd9c3504f,
     type: 3}
   startPoint: {fileID: 1583822478154242242}
-  effect47Explosion: {fileID: 0}
-  effect06CardAura: {fileID: 0}
+  effect47Explosion: {fileID: 1318874244620254, guid: f1069c39521fd0d4584b4e3874ea4c9a,
+    type: 3}
+  effect06CardAura: {fileID: 1622586246927232, guid: e6e079c68911c0a44986a85588590eb9,
+    type: 3}
 --- !u!1 &1337422276967231275
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,10 +185,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3552497998934113343}
     m_Modifications:
-    - target: {fileID: 100026, guid: fdcba27ac31374119a01708dfe10c604, type: 3}
-      propertyPath: m_Name
-      value: Sandman
-      objectReference: {fileID: 0}
     - target: {fileID: 400026, guid: fdcba27ac31374119a01708dfe10c604, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -230,6 +228,10 @@ PrefabInstance:
     - target: {fileID: 400026, guid: fdcba27ac31374119a01708dfe10c604, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100026, guid: fdcba27ac31374119a01708dfe10c604, type: 3}
+      propertyPath: m_Name
+      value: Sandman
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: fdcba27ac31374119a01708dfe10c604, type: 3}
       propertyPath: m_Controller
