@@ -237,7 +237,7 @@ public class SpecialEffect : MonoBehaviour
         ChangeScale(2);
         StartCoroutine(findMakeObject());
 
-        Destroy(gm, 2f);
+        Destroy(gm, 5f);
         yield return null;
 
     }

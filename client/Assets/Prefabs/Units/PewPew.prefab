@@ -104,8 +104,10 @@ MonoBehaviour:
   particleEffect: {fileID: 4563052246375180, guid: 1dc0c5269dec7594cabba3d799794bbb,
     type: 3}
   startPoint: {fileID: 6005594183676963890}
-  effect47Explosion: {fileID: 0}
-  effect06CardAura: {fileID: 0}
+  effect47Explosion: {fileID: 1318874244620254, guid: f1069c39521fd0d4584b4e3874ea4c9a,
+    type: 3}
+  effect06CardAura: {fileID: 1622586246927232, guid: e6e079c68911c0a44986a85588590eb9,
+    type: 3}
 --- !u!1 &101445078977616612
 GameObject:
   m_ObjectHideFlags: 0

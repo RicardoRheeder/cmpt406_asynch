@@ -402,6 +402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
   moveSpeed: 5
+  isWalking: 0
 --- !u!114 &8971649373800011203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417,8 +418,10 @@ MonoBehaviour:
   particleEffect: {fileID: 4135627709537468, guid: a208273da7faa4fed911613042cc5c1d,
     type: 3}
   startPoint: {fileID: 4562723354457580828}
-  effect47Explosion: {fileID: 0}
-  effect06CardAura: {fileID: 0}
+  effect47Explosion: {fileID: 1318874244620254, guid: f1069c39521fd0d4584b4e3874ea4c9a,
+    type: 3}
+  effect06CardAura: {fileID: 1622586246927232, guid: e6e079c68911c0a44986a85588590eb9,
+    type: 3}
 --- !u!1 &937098831
 GameObject:
   m_ObjectHideFlags: 0
@@ -1029,7 +1032,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4562723354457580828
 Transform:
   m_ObjectHideFlags: 0
