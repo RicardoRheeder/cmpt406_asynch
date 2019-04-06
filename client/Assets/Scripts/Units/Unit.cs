@@ -15,7 +15,10 @@ public class Unit : MonoBehaviour {
     UnitOutline unitOutline;
 
     private int currDirection = 0;
+    private float currRotation = 0f;
 
+    private static readonly float Y_ROTATION_CONST = 90f;
+    private static readonly float Z_ROTATION_CONST = -90f;
     
     void Awake() {
         rend = GetComponentInChildren<SkinnedMeshRenderer>();
@@ -30,11 +33,11 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(int dir, UnitType type, AudioManager manager = null) {
+    public void Attack(Vector3 targetWorldPos, UnitType type, AudioManager manager = null) {
         if (manager != null) {
             manager.Play(type, SoundType.Attack); //plays the attack sound
         }
-        TurnToDirection(dir);
+        //TurnToDirection(dir);
         if(this.anim != null) {
             anim.SetTrigger("attack");
         }
@@ -144,6 +147,25 @@ public class Unit : MonoBehaviour {
         }
     }
 
+    IEnumerator RotateToDirection(Vector3 worldPos) {
+        if (this.anim != null) {
+            anim.SetBool("walking", true);
+        }
+        float step = moveSpeed * Time.fixedDeltaTime;
+        float t = 0;
+        Quaternion prevRotation = transform.rotation;
+        Vector3 direction = worldPos - transform.position;
+        Quaternion toRotation = Quaternion.LookRotation(direction, Vector3.back);
+        while (t <= 1.0f) {
+            t += step;
+            transform.rotation = Quaternion.Lerp(prevRotation, toRotation, t);
+            yield return new WaitForFixedUpdate();
+        }
+        if (this.anim != null) {
+            anim.SetBool("walking", false);
+        }
+    }
+
     public void Kill(UnitType type, AudioManager manager = null) {
         if(this.anim != null) {
             anim.SetTrigger("death");
@@ -157,5 +179,11 @@ public class Unit : MonoBehaviour {
 
     public FogViewer GetFogViewer() {
         return fogViewer;
+    }
+
+    public void FaceDirection(Vector3 worldPos) {
+        worldPos.z = transform.position.z;
+        StartCoroutine(RotateToDirection(worldPos));
+        this.currRotation = transform.rotation.x % 360;
     }
 }

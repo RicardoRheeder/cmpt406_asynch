@@ -588,7 +588,7 @@ public class GameManager : MonoBehaviour {
         turnActions.Add(new Action(user.Username, ActionType.Attack, source, target, GeneralAbility.NONE, CardFunction.NONE));
         if (GetUnitOnTile(source, out UnitStats sourceUnit)) {
             if(sourceUnit.AttackActions > 0 && (sourceUnit.Owner == user.Username || doingReplay)) {
-                List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target, audioManager);
+                List<Tuple<Vector2Int, int>> damages = sourceUnit.Attack(target, boardController.CellToWorld(target), audioManager);
                 foreach (var damage in damages) {
                     if (GetUnitOnTile(damage.First, out UnitStats targetUnit)) {
                         int modifiedDamage = System.Convert.ToInt32(damage.Second * UnitMetadata.GetMultiplier(sourceUnit.UnitType, targetUnit.UnitType));
@@ -604,6 +604,7 @@ public class GameManager : MonoBehaviour {
                     }
                 }
             }
+            sourceUnit.MyUnit.FaceDirection(boardController.CellToWorld(target));
         }
     }
 

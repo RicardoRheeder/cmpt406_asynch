@@ -88,7 +88,6 @@ public class UnitStats {
         this.Vision = vision;
         this.Direction = direction;
     }
-
 	
     public string GetDisplayName() {
         return UnitMetadata.ReadableNames[this.UnitType];
@@ -99,15 +98,14 @@ public class UnitStats {
     }
 
     //Returns a value based on the target
-    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, AudioManager audioManager = null, bool specialMove = false) {
+    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, Vector3 targetWorldPos, AudioManager audioManager = null, bool specialMove = false) {
         if (!specialMove) {
             if(!moveAfterAttack)
                 this.MovementSpeed = 0;
             this.AttackActions--;
         }
-        int dir = HexUtility.FindDirection(this.Position,target);
         if (MyUnit != null) {
-            MyUnit.Attack(dir, UnitType, audioManager);
+            MyUnit.Attack(targetWorldPos, UnitType, audioManager);
         }
         else {
             Debug.LogError("MyUnit is NULL!");
