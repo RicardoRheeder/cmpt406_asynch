@@ -214,7 +214,7 @@ public class GameBuilder : MonoBehaviour {
         GameObject unitObject = Instantiate(typePrefabStorage[unit.UnitType]);
         Unit unitComponent = unitObject.GetComponent<Unit>();
         unitComponent.PlaceAt(pos, ref board);
-        unitComponent.SnapToDirection(unit.Direction);
+        unitComponent.SnapToAngle(unit.Direction);
         unit.SetUnit(unitObject.GetComponent<Unit>());
         unit.Place(pos, ref board);
         unit.Owner = username;

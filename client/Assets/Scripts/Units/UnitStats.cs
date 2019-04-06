@@ -323,5 +323,6 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
+        Direction = MyUnit != null ? (int)MyUnit.currRotation % 360 : 0;
     }
 }

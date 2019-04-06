@@ -15,7 +15,7 @@ public class Unit : MonoBehaviour {
     UnitOutline unitOutline;
 
     private int currDirection = 0;
-    private float currRotation = 0f;
+    public float currRotation = 0f;
 
     private static readonly float Y_ROTATION_CONST = 90f;
     private static readonly float Z_ROTATION_CONST = -90f;
@@ -76,6 +76,12 @@ public class Unit : MonoBehaviour {
         currDirection = dir;
         int angle = HexUtility.DirectionToAngle(currDirection) - HexUtility.DirectionToAngle(prevDir);
         transform.rotation = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
+    }
+
+    public void SnapToAngle(int angle) {
+        currDirection = angle % 60;
+        currRotation = angle;
+        transform.rotation = Quaternion.Euler((float)angle, Y_ROTATION_CONST, Z_ROTATION_CONST);
     }
 
     public void OutlineUnit() {
