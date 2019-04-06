@@ -198,13 +198,13 @@ public class SpecialEffect : MonoBehaviour
         StartCoroutine(findMakeObject());
 
         // YIELD RETURN NULL
-        Destroy(gm, 2f);
+        Destroy(gm, 7f);
         yield return null;
     }
 
 
     IEnumerator VEFoundationAttack() {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(3.5f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
@@ -222,7 +222,7 @@ public class SpecialEffect : MonoBehaviour
 
         StartCoroutine(setArrowDirection());
 
-        Destroy(gm, 2f);
+        Destroy(gm, 5f);
         yield return null;
     }
 
@@ -563,7 +563,7 @@ public class SpecialEffect : MonoBehaviour
         while (MakeObject == null)
         {
             MakeObject = GameObject.Find("MakeObject");
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
         MakeObject.transform.localPosition = new Vector3(0, 0, distance);
         yield return null;
