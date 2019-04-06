@@ -314,22 +314,21 @@ public class SpecialEffect : MonoBehaviour
 
     IEnumerator findMakeObjectSandman()
     {
-        int a = GameObject.FindObjectsOfType<GameObject>().Length;
-        GameObject[] arr = new GameObject[a];
-        for (int i = 0; i < a; i++)
+        GameObject[] movePoints = GameObject.FindGameObjectsWithTag("MissileMovePoint");
+        while (movePoints.Length != 3)
         {
-            if (GameObject.FindObjectsOfType<GameObject>()[i].name == "Effect_24_MissileObjectMake(Clone)")
+            print("Length: " + movePoints.Length);
+            movePoints = GameObject.FindGameObjectsWithTag("MissileMovePoint");
+            for (int i = 0; i < movePoints.Length-1; i++)
             {
-                GameObject.FindObjectsOfType<GameObject>()[i].transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                movePoints[i].transform.localPosition = new Vector3(0, 0, 1000);
             }
-            //GameObject MakeObject = null;
-            //while (MakeObject == null)
-            //{
-            //    MakeObject = GameObject.Find("Effect_24_MissileObjectMake(Clone)");
-            //    yield return new WaitForSeconds(0.1f);
-            //}
-            //MakeObject.transform.localPosition = new Vector3(0, 0, distance);
-            //MakeObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+            yield return new WaitForSeconds(0.1f);
+            if (movePoints.Length != 0)
+            {
+                movePoints[movePoints.Length - 1].transform.localPosition = new Vector3(0, 0, 1000);
+            }
         }
         yield return null;
     }
@@ -367,16 +366,11 @@ public class SpecialEffect : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
-        gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
+        gm.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
 
-        //ChangeScaleGameObject(0.5f);
         StartCoroutine(findMakeObjectSandman());
-        //ChangeScale(0.5f);
-        //GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
-        //gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
-        //gm2.transform.eulerAngles = new Vector3(0, 180, 0);
 
-        Destroy(gm, 2f);
+        Destroy(gm, 4f);
         yield return null;
     }
 

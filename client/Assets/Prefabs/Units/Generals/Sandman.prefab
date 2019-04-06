@@ -80,7 +80,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4e5417003b14445a38fdbb0ca33f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleEffect: {fileID: 4027363086836832, guid: eeb1f4b2253a17e40b84a893a7c835db,
+  particleEffect: {fileID: 4027363086836832, guid: e839b9a15368ae849b59ad0cd9c3504f,
     type: 3}
   startPoint: {fileID: 1583822478154242242}
   effect47Explosion: {fileID: 0}
