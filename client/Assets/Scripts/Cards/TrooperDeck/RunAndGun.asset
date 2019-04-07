@@ -18,7 +18,7 @@ MonoBehaviour:
   - +1 Movement Action
   - +15 Attack Damage
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 78466a9b736ef2d4e89663f2ae61c9d9, type: 3}
   func: 100
   type: 1
   cardCost: 2

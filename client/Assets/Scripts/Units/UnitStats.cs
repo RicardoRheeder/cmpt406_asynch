@@ -140,7 +140,7 @@ public class UnitStats {
     }
     
     public void Kill(AudioManager audioManager = null) {
-        MyUnit.Kill(UnitType, audioManager);
+        MyUnit.Kill(UnitType, audioManager, CurrentHP);
         if (unitHUD != null)
             unitHUD.DestroyThis();
     }

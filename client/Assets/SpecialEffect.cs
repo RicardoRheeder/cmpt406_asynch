@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 
@@ -31,6 +29,8 @@ public class SpecialEffect : MonoBehaviour
 
     public GameObject effect47Explosion;
     public GameObject effect06CardAura;
+
+    private AudioManager audioManager;
 
     void Update()
     {
@@ -87,13 +87,17 @@ public class SpecialEffect : MonoBehaviour
 
     }
 
-    public void PlayAttackEffect(Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType)
+    public void PlayAttackEffect(Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType, AudioManager audioManager = null)
     {
         this.unitType = unitType;
         distance = Vector3.Distance(sourceWorldPos, targetWorldPos);
 //        print(distance);
         this.sourceWorldPosition = sourceWorldPos;
         this.targetWorldPosition = targetWorldPos;
+
+        if (audioManager != null)
+            this.audioManager = audioManager;
+        
 
         switch (unitType)
         {
@@ -162,7 +166,7 @@ public class SpecialEffect : MonoBehaviour
             */
 
             case UnitType.claymore:
-                StartCoroutine(VEClaymoreAttack());
+                StartCoroutine(VEClaymoreAttackv2());
                 break;
             case UnitType.powerSurge:
                 StartCoroutine(VEPowerSurgeAttack());
@@ -186,8 +190,10 @@ public class SpecialEffect : MonoBehaviour
     */
     IEnumerator VECompensatorAttack()
     {
+        Coroutine attackSound = StartCoroutine(playAttackSound(4.2f));
+
         // WAIT ANY DESIRED AMOUNT OF TIME
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
 
         // CREATE AND SET EVERYTHING
         gm = Instantiate(particleEffect, this.transform).gameObject;
@@ -197,14 +203,18 @@ public class SpecialEffect : MonoBehaviour
         // PERFORM WHAT MY VECompensatorAttack() WOULD HAVE DONE
         StartCoroutine(findMakeObject());
 
-        // YIELD RETURN NULL
-        Destroy(gm, 7f);
+        yield return new WaitForSeconds(7f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
 
     IEnumerator VEFoundationAttack() {
+        Coroutine attackSound = StartCoroutine(playAttackSound(6f));
+
         yield return new WaitForSeconds(3.5f);
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
@@ -222,22 +232,33 @@ public class SpecialEffect : MonoBehaviour
 
         StartCoroutine(setArrowDirection());
 
-        Destroy(gm, 5f);
+        StartCoroutine(findMakeObject());
+
+
+        yield return new WaitForSeconds(5f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
     IEnumerator VETungstenAttack()
     {
-        yield return new WaitForSeconds(0.1f);
+        Coroutine attackSound = StartCoroutine(playAttackSound(0.7f));
+
+        yield return new WaitForSeconds(4f);
+
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
         ChangeColor(Color.red);
-        ChangeScale(2);
+        ChangeScale(3);
         StartCoroutine(findMakeObject());
 
-        Destroy(gm, 5f);
+        yield return new WaitForSeconds(5f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
 
     }
@@ -278,6 +299,14 @@ public class SpecialEffect : MonoBehaviour
     {
         m_changeScale = scaleAmout;
         isChangeScaleGameObject = true;
+    }
+
+    IEnumerator playAttackSound(float secondsToWait = 0.1f)
+    {
+        yield return new WaitForSeconds(secondsToWait);
+        if (audioManager != null)
+            audioManager.Play(unitType, SoundType.Attack);
+        yield return null;
     }
 
     /**
@@ -334,7 +363,10 @@ public class SpecialEffect : MonoBehaviour
     }
 
     IEnumerator VETrooperAttack() {
-        yield return new WaitForSeconds(0.1f);
+        Coroutine attackSound = StartCoroutine(playAttackSound(4.5f));
+
+        yield return new WaitForSeconds(4.5f);
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
@@ -343,12 +375,17 @@ public class SpecialEffect : MonoBehaviour
 
         StartCoroutine(setArrowDirection());
 
-        Destroy(gm, 2f);
+        yield return new WaitForSeconds(4f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
     IEnumerator VEReconAttack(){
+        Coroutine attackSound = StartCoroutine(playAttackSound(0.1f));
+
         yield return new WaitForSeconds(0.1f);
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
@@ -357,20 +394,29 @@ public class SpecialEffect : MonoBehaviour
 
         StartCoroutine(setArrowDirection());
 
-        Destroy(gm, 2f);
+        yield return new WaitForSeconds(3f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
     IEnumerator VESandmanAttack()
     {
+        Coroutine attackSound = StartCoroutine(playAttackSound(0.1f));
+
         yield return new WaitForSeconds(0.1f);
+        if (audioManager != null)
+            audioManager.Play(unitType, SoundType.Attack);
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
 
         StartCoroutine(findMakeObjectSandman());
 
-        Destroy(gm, 4f);
+        yield return new WaitForSeconds(4f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
@@ -399,8 +445,25 @@ public class SpecialEffect : MonoBehaviour
 
     IEnumerator VEPewPewAttack()
     {
-        yield return new WaitForSeconds(1f);
-        gm = Instantiate(particleEffect, this.transform).gameObject;
+        Coroutine attackSound = StartCoroutine(playAttackSound(4f));
+
+        yield return new WaitForSeconds(4f);
+      
+        for (int i = 0; i < 8; i++)
+        {
+            PewPewSingleShot();
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        yield return new WaitForSeconds(4f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
+        yield return null;
+    }
+
+    void PewPewSingleShot()
+    {
+        GameObject gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
@@ -411,41 +474,54 @@ public class SpecialEffect : MonoBehaviour
         StartCoroutine(moveShot(gm));
 
         Destroy(gm, 2f);
-        yield return null;
     }
 
     IEnumerator VESteamerAttack()
     {
+        Coroutine attackSound = StartCoroutine(playAttackSound(0.1f));
+
         yield return new WaitForSeconds(0.1f);
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
-        Destroy(gm, 2f);
+        yield return new WaitForSeconds(3f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
     IEnumerator VEAdrenAttack()
     {
+        Coroutine attackSound = StartCoroutine(playAttackSound(0.1f));
+
         yield return new WaitForSeconds(0.1f);
+
         GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
         gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
         gm2.transform.eulerAngles = new Vector3(0, 180, 0);
-      
 
-        Destroy(gm, 2f);
+
+        yield return new WaitForSeconds(3f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
     IEnumerator VEAlbarnAttack()
     {
+        Coroutine attackSound = StartCoroutine(playAttackSound(0.1f));
+
         yield return new WaitForSeconds(0.1f);
 
         GameObject gm2 = Instantiate(particleEffect.gameObject) as GameObject;
         gm2.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
         gm2.transform.eulerAngles = new Vector3(0, 180, 0);
 
-        Destroy(gm, 5f);
+        yield return new WaitForSeconds(5f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
@@ -456,7 +532,6 @@ public class SpecialEffect : MonoBehaviour
     /**
     *  JAAMI's SECTION START
     */
-
     IEnumerator VEClaymoreAttack()
     {
         yield return new WaitForSeconds(1f);
@@ -483,9 +558,29 @@ public class SpecialEffect : MonoBehaviour
         yield return null;
     }
 
+    IEnumerator VEClaymoreAttackv2() {
+        Coroutine attackSound = StartCoroutine(playAttackSound(3.5f));
+
+        yield return new WaitForSeconds(3.5f);
+
+        gm = Instantiate(effect47Explosion, this.transform).gameObject;
+        gm.transform.SetParent(this.transform);
+        gm.transform.position = new Vector3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z);
+        ChangeColor(Color.blue);
+        ChangeScale(3f);
+
+        yield return new WaitForSeconds(3f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
+        yield return null;
+    }
+
     IEnumerator VEPowerSurgeAttack()
     {
+        Coroutine attackSound = StartCoroutine(playAttackSound(3.5f));
+
         yield return new WaitForSeconds(3.5f);
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
@@ -505,20 +600,27 @@ public class SpecialEffect : MonoBehaviour
 
         StartCoroutine(findMakeObjectPowerSurge());
 
-        Destroy(gm, 3f);
+        yield return new WaitForSeconds(3f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
 
     IEnumerator VEMidasAttack()
     {
+        Coroutine attackSound = StartCoroutine(playAttackSound(1f));
+
         yield return new WaitForSeconds(1f);
+
         gm = Instantiate(particleEffect, this.transform).gameObject;
         gm.transform.SetParent(this.transform);
         gm.transform.position = new Vector3(startPoint.position.x, startPoint.position.y, startPoint.position.z);
 
         StartCoroutine(findMakeObjectMidas());
 
-        Destroy(gm, 3.0f);
+        yield return new WaitForSeconds(3f);
+        StopCoroutine(attackSound);
+        Destroy(gm);
         yield return null;
     }
     

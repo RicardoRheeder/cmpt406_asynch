@@ -17,7 +17,7 @@ MonoBehaviour:
   - Enemies within 2 range of the Claymore have their vision reduced to 0 until your
     next turn
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: f3d1092cb1de3af48a7ebf410c3fea6a, type: 3}
   func: 181
   type: 9
   cardCost: 2

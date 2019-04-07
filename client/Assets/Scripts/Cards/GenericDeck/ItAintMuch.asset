@@ -18,7 +18,7 @@ MonoBehaviour:
   - -1 Attack
   - +3 Heal
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: b77ee82fdee4749499bb57039e6f9da8, type: 3}
   func: 24
   type: -2
   cardCost: 0

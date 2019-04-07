@@ -475,6 +475,7 @@ MonoBehaviour:
   rend: {fileID: 0}
   moveSpeed: 2.5
   isWalking: 0
+  currRotation: 0
 --- !u!114 &2038189929170496668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -505,14 +506,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4e5417003b14445a38fdbb0ca33f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleEffect: {fileID: 4653470441001852, guid: e526642438f0b5c4f8ee93c52ba2432c,
+  particleEffect: {fileID: 4786823529206182, guid: f1069c39521fd0d4584b4e3874ea4c9a,
     type: 3}
   startPoint: {fileID: 704845943792803844}
   effect47Explosion: {fileID: 1318874244620254, guid: f1069c39521fd0d4584b4e3874ea4c9a,
     type: 3}
   effect06CardAura: {fileID: 1622586246927232, guid: e6e079c68911c0a44986a85588590eb9,
     type: 3}
-  attackPoint: {fileID: 0}
 --- !u!1 &1477353950
 GameObject:
   m_ObjectHideFlags: 0
