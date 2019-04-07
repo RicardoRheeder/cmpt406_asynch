@@ -83,7 +83,7 @@ public class GameBuilder : MonoBehaviour {
             this.unitNumbers = new List<int>();
             this.unitTexts = new List<GameObject>();
             this.UnitButtons = new Dictionary<UnitStats, GameObject>();
-            List<UnitStats> userGeneral = state.UserGeneralsMap[username];
+            List<UnitStats> userGeneral = state.UserGeneralsMap.ContainsKey(username) ? state.UserGeneralsMap[username] : new List<UnitStats>();
             for (int i = 0; i < userGeneral.Count; i++) {
                 this.unitNumbers.Add((int)userGeneral[i].UnitType);
             }
