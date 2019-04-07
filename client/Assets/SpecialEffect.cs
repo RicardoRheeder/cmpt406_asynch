@@ -668,15 +668,18 @@ public class SpecialEffect : MonoBehaviour
         }
         MakeObject.transform.localPosition = new Vector3(0, 0, distance);
         GameObject FireBreath = GameObject.Find("Effect_38_FireBreath(Clone)");
-        FireBreath.transform.position = MakeObject.transform.position;
-        GameObject FireBreathField = null;
-        while (FireBreathField == null)
+        if (FireBreath != null)
         {
-            FireBreathField = GameObject.Find("Effect_38_FireBreathField(Clone)");
-            yield return new WaitForSeconds(0.1f);
+            FireBreath.transform.position = MakeObject.transform.position;
+            GameObject FireBreathField = null;
+            while (FireBreathField == null) {
+                FireBreathField = GameObject.Find("Effect_38_FireBreathField(Clone)");
+                yield return new WaitForSeconds(0.1f);
+            }
+            FireBreathField.transform.localPosition = new Vector3(0, 0, 0);
+            FireBreathField.transform.localEulerAngles = new Vector3(90, 0, 0);
         }
-        FireBreathField.transform.localPosition = new Vector3(0, 0, 0);
-        FireBreathField.transform.localEulerAngles = new Vector3(90, 0, 0);
+       
 
         yield return null;
     }
