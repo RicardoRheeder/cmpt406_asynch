@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour {
 
         InitControllersHelper();
 
-        inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
+        inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) && state.UserGeneralsMap[user.Username].Count > 0 ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
