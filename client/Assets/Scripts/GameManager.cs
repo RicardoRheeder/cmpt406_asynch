@@ -127,11 +127,11 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Loading state: " + state);
 		FloatingTextController.Initialize();
 		UnitHUDController.Initialize();
-        if (GameObject.Find("GameHUDCanvas"))
+        if (GameObject.Find("GameHUDCanvas") != null)
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
-        if (GameObject.Find("ConcedeButton"))
-            GameObject.Find("ConcedeButton").GetComponent<Button>().onClick.AddListener(this.Forfeit);
+        if (GameObject.Find("ConcedeButton") != null)
+        GameObject.Find("ConcedeButton").GetComponent<Button>().onClick.AddListener(this.Forfeit);
         GameObject.Find("CloseGameButton").GetComponent<Button>().onClick.AddListener(this.ExitGame);
 
         this.inGameMenu.replayOpponentTurnsPanel.transform.Find("YesButton").GetComponent<Button>().onClick.AddListener(this.HandleReplay);
@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour {
 
         InitControllersHelper();
 
-        inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) && state.UserGeneralsMap[user.Username].Count > 0 ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
+        inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
 
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
@@ -212,36 +212,29 @@ public class GameManager : MonoBehaviour {
         doingReplay = true;
 
         /* Get the old game state */
-        if (this.state != null)
-        {
-            int difference = (this.state.turnCount - this.state.maxUsers) + 1;
-
-            int oldTurnNumber = difference > 1 ? difference : 1;
-            GameState oldState = client.GetOldGamestate(this.state.id, oldTurnNumber).Second;
-            if (oldState == null)
-            {
-                return;
-            }
-
-            /* Get the actions that need to be shown */
-            List<Action> replayActions = new List<Action>();
-            int curCount = this.state.Actions.Count;
-            difference = curCount - oldState.Actions.Count;
-            replayActions = this.state.Actions.GetRange(curCount - difference, difference);
-
-            /* display the old gamestate units/generals */
-            foreach (KeyValuePair<Vector2Int, UnitStats> unit in unitPositions)
-            {
-                unit.Value.Kill();
-            }
-
-            unitPositions.Clear();
-            oldState.ReadyUsers = this.state.ReadyUsers;
-            gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
-            unitPositions = gameBuilder.unitPositions;
-
-            StartCoroutine("ReplayActions", replayActions);
+        int difference = (this.state.turnCount - this.state.maxUsers) + 1;
+        int oldTurnNumber = difference > 1 ? difference : 1;
+        GameState oldState = client.GetOldGamestate(this.state.id, oldTurnNumber).Second;
+        if (oldState == null) {
+            return;
         }
+
+        /* Get the actions that need to be shown */
+        List<Action> replayActions = new List<Action>();
+        int curCount = this.state.Actions.Count;
+        difference = curCount - oldState.Actions.Count;
+        replayActions = this.state.Actions.GetRange(curCount - difference, difference);
+
+        /* display the old gamestate units/generals */
+        foreach(KeyValuePair<Vector2Int, UnitStats> unit in unitPositions) {
+            unit.Value.Kill();
+        }
+        unitPositions.Clear();
+        oldState.ReadyUsers = this.state.ReadyUsers;
+        gameBuilder.Build(ref oldState, user.Username, ref boardController, ref fogOfWarController, false);
+        unitPositions = gameBuilder.unitPositions;
+
+        StartCoroutine("ReplayActions", replayActions);
     }
 
     private IEnumerator ReplayActions(List<Action> replayActions) {
@@ -687,6 +680,6 @@ public class GameManager : MonoBehaviour {
     //===================== Functions used to interact with the camera ===================
     public void SnapToPosition(Vector2Int pos) {
         if (cameraRig != null && boardController != null)
-            cameraRig.SnapToPosition(boardController.CellToWorld(pos));
+        cameraRig.SnapToPosition(boardController.CellToWorld(pos));
     }
 }
