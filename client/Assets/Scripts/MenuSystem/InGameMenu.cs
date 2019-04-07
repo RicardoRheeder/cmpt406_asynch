@@ -65,11 +65,15 @@ public class InGameMenu : MonoBehaviour
         }
     }
 	
-	public void Ability1Tooltip(){
-		tooltip.SetText(GeneralMetadata.GeneralAbilityTooltip[general.Ability1]);
+	public void Ability1Tooltip() {
+        if(general != null) {
+            tooltip.SetText(GeneralMetadata.GeneralAbilityTooltip[general.Ability1]);
+        }
 	}
 	
-	public void Ability2Tooltip(){
-		tooltip.SetText(GeneralMetadata.GeneralAbilityTooltip[general.Ability2]);
+	public void Ability2Tooltip() {
+        if (general != null) {
+            tooltip.SetText(GeneralMetadata.GeneralAbilityTooltip[general.Ability2]);
+        }
 	}
 }
