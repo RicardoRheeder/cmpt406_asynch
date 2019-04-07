@@ -33,14 +33,13 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(Vector3 targetWorldPos, UnitType type, AudioManager manager = null) {
-        if (manager != null) {
-            manager.Play(type, SoundType.Attack); //plays the attack sound
-        }
-        //TurnToDirection(dir);
+    public void Attack(Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType, AudioManager manager = null) {
+        FaceDirection(targetWorldPos);
         if(this.anim != null) {
             anim.SetTrigger("attack");
         }
+        this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos, unitType, manager);
+
     }
 
     public void GetHit() {
@@ -172,7 +171,7 @@ public class Unit : MonoBehaviour {
         }
     }
 
-    public void Kill(UnitType type, AudioManager manager = null) {
+    public void Kill(UnitType type, AudioManager manager = null, int CurrentHP = 1) {
         if(this.anim != null) {
             anim.SetTrigger("death");
         }
@@ -180,7 +179,22 @@ public class Unit : MonoBehaviour {
             manager.Play(type, SoundType.Death, isVoice: true);
             manager.Play(type, SoundType.Death);
         }
+
+        if (CurrentHP <= 0)
+        {
+            if (this.GetComponent<SpecialEffect>())
+                this.GetComponent<SpecialEffect>().VEDeath();
+        }
+       
+        StartCoroutine(DestroyUnit(2f));
+    }
+
+    IEnumerator DestroyUnit(float secondsUntilDestroy)
+    {
+        yield return new WaitForSeconds(secondsUntilDestroy);
         Destroy(this.gameObject);
+
+        yield return null;
     }
 
     public FogViewer GetFogViewer() {

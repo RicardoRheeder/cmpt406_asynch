@@ -17,7 +17,7 @@ MonoBehaviour:
   - +20 Armor
   - -1 Movement Speed
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: effe8bbff79db474197fc194a8a8250f, type: 3}
   func: 121
   type: 3
   cardCost: 2

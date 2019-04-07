@@ -92,15 +92,18 @@ public static class GeneralMetadata {
     //Note: to work with function pointers all of these functions have to take the same arguments, even if they don't require them all
     private static void TrojanShot(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         source.attackStrategy = new LineStrategy();
+        source.MyUnit.GetComponent<SpecialEffect>().VECardEffect();
         source.AlterRange(20);
     }
 
     private static void ArmourPiercingAmmo(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
+        source.MyUnit.GetComponent<SpecialEffect>().VECardEffect();
         source.AlterPierce(10);
     }
 
     private static void SteamOverload(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         if (isOwner) {
+            source.MyUnit.GetComponent<SpecialEffect>().VEDeath();
             if (source.TakeDamage(30, 10000)) {
                 source.Kill();
                 allUnits.Remove(source.Position);
@@ -110,6 +113,7 @@ public static class GeneralMetadata {
                 Vector2Int unitPos = unitsInRange[i];
                 if (allUnits.ContainsKey(unitPos)) {
                     UnitStats targetUnit = allUnits[unitPos];
+                    targetUnit.MyUnit.GetComponent<SpecialEffect>().VEDeath();
                     if (targetUnit.TakeDamage(20, 10000)) {
                         targetUnit.Kill();
                         allUnits.Remove(unitPos);
@@ -120,6 +124,7 @@ public static class GeneralMetadata {
                 Vector2Int unitPos = unitsInRange[i];
                 if (allUnits.ContainsKey(unitPos)) {
                     UnitStats targetUnit = allUnits[unitPos];
+                    targetUnit.MyUnit.GetComponent<SpecialEffect>().VEDeath();
                     if (targetUnit.TakeDamage(10, 10000)) {
                         targetUnit.Kill();
                         allUnits.Remove(unitPos);

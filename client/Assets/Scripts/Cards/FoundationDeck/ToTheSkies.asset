@@ -18,7 +18,7 @@ MonoBehaviour:
   - Your Foundations attacks deal area damage within one tile of your target for this
     turn
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 06fc05224c3a558449c5892823476152, type: 3}
   func: 151
   type: 6
   cardCost: 5

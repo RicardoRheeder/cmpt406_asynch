@@ -17,7 +17,7 @@ MonoBehaviour:
   - +40 Armor Penetration
   - +2 Range
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 5bb72130db14c9f4489d0b20201cf869, type: 3}
   func: 140
   type: 5
   cardCost: 5
