@@ -36,13 +36,13 @@ public static class BoardMetadata {
     };
 
     public static Dictionary<BoardType, int> CostDict = new Dictionary<BoardType, int>() {
-        { BoardType.AlphaChannel, 12 },
+        { BoardType.AlphaChannel, 25 },
         { BoardType.SnakeValley, 25 },
         { BoardType.TheEye, 25 },
 
-        { BoardType.Pinnacle, 20 },
-        { BoardType.Valley, 10 },
-        { BoardType.Lowlands, 16 },
+        { BoardType.Pinnacle, 35 },
+        { BoardType.Valley, 35 },
+        { BoardType.Lowlands, 35 },
 
         { BoardType.Wheel, 40 },
     };
