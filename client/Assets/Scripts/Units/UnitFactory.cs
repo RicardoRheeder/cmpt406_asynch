@@ -40,7 +40,7 @@ public static class UnitFactory {
     private readonly static int PEWPEW_HP = 255;
     private readonly static int PEWPEW_ARMOUR = 20;
     private readonly static int PEWPEW_RANGE = 3;
-    private readonly static int PEWPEW_DAMAGE = 30;
+    private readonly static int PEWPEW_DAMAGE = 453;
     private readonly static int PEWPEW_PIERCE = 0;
     private readonly static int PEWPEW_AOE = 0;
     private readonly static int PEWPEW_SPEED = 4;
@@ -51,7 +51,7 @@ public static class UnitFactory {
     private readonly static int COMPENSATOR_HP = 205;
     private readonly static int COMPENSATOR_ARMOUR = 0;
     private readonly static int COMPENSATOR_RANGE = 7;
-    private readonly static int COMPENSATOR_DAMAGE = 45;
+    private readonly static int COMPENSATOR_DAMAGE = 60;
     private readonly static int COMPENSATOR_PIERCE = 20;
     private readonly static int COMPENSATOR_AOE = 0;
     private readonly static int COMPENSATOR_SPEED = 5;
