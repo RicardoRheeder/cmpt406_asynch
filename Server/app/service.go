@@ -990,23 +990,25 @@ func makeMove(username string, units []gamestate.Unit, generals []gamestate.Unit
 
 func getNextUsersTurn(usersTurn string, aliveUsers []string, killedUsers []string) string {
 	/* Choose the next user that should go */
+	tempAliveUsers := make([]string, len(aliveUsers))
+	copy(tempAliveUsers, aliveUsers)
 	if killedUsers != nil {
 		for _, v := range killedUsers {
 			if usersTurn != v {
-				common.Remove(&aliveUsers, v)
+				common.Remove(&tempAliveUsers, v)
 			}
 		}
 	}
-	if len(aliveUsers) <= 1 {
+	if len(tempAliveUsers) <= 1 {
 		return ""
 	}
 
-	for i, v := range aliveUsers {
+	for i, v := range tempAliveUsers {
 		if v == usersTurn {
-			if i+1 >= len(aliveUsers) {
-				return aliveUsers[0]
+			if i+1 >= len(tempAliveUsers) {
+				return tempAliveUsers[0]
 			}
-			return aliveUsers[i+1]
+			return tempAliveUsers[i+1]
 		}
 	}
 	return ""
