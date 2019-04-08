@@ -158,7 +158,7 @@ public static class GeneralMetadata {
             if (allUnits.TryGetValue(pos, out UnitStats target)) {
                 target.AlterArmour(-10);
                 if (isOwner) {
-                    if (target.TakeDamage(10, 10000)) {
+                    if (target.TakeDamage(25, 10000)) {
                         target.Kill();
                         allUnits.Remove(pos);
                     }

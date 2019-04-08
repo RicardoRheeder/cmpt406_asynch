@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public static class UnitFactory {
 
-    private readonly static int TROOPER_HP = 150;
+    private readonly static int TROOPER_HP = 225;
     private readonly static int TROOPER_ARMOUR = 0;
-    private readonly static int TROOPER_RANGE = 6;
+    private readonly static int TROOPER_RANGE = 4;
     private readonly static int TROOPER_DAMAGE = 100;
     private readonly static int TROOPER_PIERCE = 0;
     private readonly static int TROOPER_AOE = 0;
@@ -15,9 +15,9 @@ public static class UnitFactory {
     private readonly static int TROOPER_COST = 4;
     private readonly static IAttackStrategy TROOPER_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int REACON_HP = 110;
+    private readonly static int REACON_HP = 165;
     private readonly static int REACON_ARMOUR = 0;
-    private readonly static int REACON_RANGE = 6;
+    private readonly static int REACON_RANGE = 3;
     private readonly static int REACON_DAMAGE = 40;
     private readonly static int REACON_PIERCE = 0;
     private readonly static int REACON_AOE = 0;
@@ -26,7 +26,7 @@ public static class UnitFactory {
     private readonly static int REACON_COST = 2;
     private readonly static IAttackStrategy REACON_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int STEAMER_HP = 240;
+    private readonly static int STEAMER_HP = 360;
     private readonly static int STEAMER_ARMOUR = 30;
     private readonly static int STEAMER_RANGE = 1;
     private readonly static int STEAMER_DAMAGE = 60;
@@ -37,7 +37,7 @@ public static class UnitFactory {
     private readonly static int STEAMER_COST = 5;
     private readonly static IAttackStrategy STEAMER_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int PEWPEW_HP = 170;
+    private readonly static int PEWPEW_HP = 255;
     private readonly static int PEWPEW_ARMOUR = 20;
     private readonly static int PEWPEW_RANGE = 3;
     private readonly static int PEWPEW_DAMAGE = 30;
@@ -48,7 +48,7 @@ public static class UnitFactory {
     private readonly static int PEWPEW_COST = 3;
     private readonly static IAttackStrategy PEWPEW_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int COMPENSATOR_HP = 135;
+    private readonly static int COMPENSATOR_HP = 205;
     private readonly static int COMPENSATOR_ARMOUR = 0;
     private readonly static int COMPENSATOR_RANGE = 7;
     private readonly static int COMPENSATOR_DAMAGE = 45;
@@ -59,7 +59,7 @@ public static class UnitFactory {
     private readonly static int COMPENSATOR_COST = 3;
     private readonly static IAttackStrategy COMPENSATOR_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int FOUNDATION_HP = 150;
+    private readonly static int FOUNDATION_HP = 225;
     private readonly static int FOUNDATION_ARMOUR = 0;
     private readonly static int FOUNDATION_RANGE = 8;
     private readonly static int FOUNDATION_DAMAGE = 100;
@@ -70,7 +70,7 @@ public static class UnitFactory {
     private readonly static int FOUNDATION_COST = 5;
     private readonly static IAttackStrategy FOUNDATION_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int POWER_SURGE_HP = 180;
+    private readonly static int POWER_SURGE_HP = 270;
     private readonly static int POWER_SURGE_ARMOUR = 0;
     private readonly static int POWER_SURGE_RANGE = 4;
     private readonly static int POWER_SURGE_DAMAGE = 45;
@@ -81,10 +81,10 @@ public static class UnitFactory {
     private readonly static int POWER_SURGE_COST = 4;
     private readonly static IAttackStrategy POWER_SURGE_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int MIDAS_HP = 110;
+    private readonly static int MIDAS_HP = 165;
     private readonly static int MIDAS_ARMOUR = 0;
     private readonly static int MIDAS_RANGE = 4;
-    private readonly static int MIDAS_DAMAGE = -65;
+    private readonly static int MIDAS_DAMAGE = -75;
     private readonly static int MIDAS_PIERCE = 0;
     private readonly static int MIDAS_AOE = 0;
     private readonly static int MIDAS_SPEED = 6;
@@ -92,10 +92,10 @@ public static class UnitFactory {
     private readonly static int MIDAS_COST = 3;
     private readonly static IAttackStrategy MIDAS_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int CLAYMORE_HP = 85;
+    private readonly static int CLAYMORE_HP = 100;
     private readonly static int CLAYMORE_ARMOUR = 0;
-    private readonly static int CLAYMORE_RANGE = 2;
-    private readonly static int CLAYMORE_DAMAGE = 90;
+    private readonly static int CLAYMORE_RANGE = 1;
+    private readonly static int CLAYMORE_DAMAGE = 230;
     private readonly static int CLAYMORE_PIERCE = 0;
     private readonly static int CLAYMORE_AOE = 1;
     private readonly static int CLAYMORE_SPEED = 8;
@@ -103,7 +103,7 @@ public static class UnitFactory {
     private readonly static int CLAYMORE_COST = 3;
     private readonly static IAttackStrategy CLAYMORE_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int HEAVY_ALBARN_HP = 330;
+    private readonly static int HEAVY_ALBARN_HP = 645;
     private readonly static int HEAVY_ALBARN_ARMOUR = 50;
     private readonly static int HEAVY_ALBARN_RANGE = 120;
     private readonly static int HEAVY_ALBARN_DAMAGE = 70;
@@ -114,7 +114,7 @@ public static class UnitFactory {
     private readonly static int HEAVY_ALBARN_COST = 0;
     private readonly static IAttackStrategy HEAVY_ALBARN_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int PIERCING_TUNGSTEN_HP = 250;
+    private readonly static int PIERCING_TUNGSTEN_HP = 525;
     private readonly static int PIERCING_TUNGSTEN_ARMOUR = 0;
     public readonly static int PIERCING_TUNGSTEN_RANGE = 10; //Public because his ability modifies it
     private readonly static int PIERCING_TUNGSTEN_DAMAGE = 120;
@@ -125,7 +125,7 @@ public static class UnitFactory {
     private readonly static int PIERCING_TUNGSTEN_COST = 0;
     public readonly static IAttackStrategy PIERCING_TUNGSTEN_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int LIGHT_ADREN_HP = 250;
+    private readonly static int LIGHT_ADREN_HP = 525;
     private readonly static int LIGHT_ADREN_ARMOUR = 0;
     private readonly static int LIGHT_ADREN_RANGE = 120;
     private readonly static int LIGHT_ADREN_DAMAGE = 150;
@@ -136,10 +136,10 @@ public static class UnitFactory {
     private readonly static int LIGHT_ADREN_COST = 0;
     private readonly static IAttackStrategy LIGHT_ADREN_ATTACK_STRATEGY = new AreaStrategy();
 
-    private readonly static int SUPPORT_SANDMAN_HP = 450;
+    private readonly static int SUPPORT_SANDMAN_HP = 825;
     private readonly static int SUPPORT_SANDMAN_ARMOUR = 0;
     private readonly static int SUPPORT_SANDMAN_RANGE = 1;
-    private readonly static int SUPPORT_SANDMAN_DAMAGE = 1;
+    private readonly static int SUPPORT_SANDMAN_DAMAGE = 20;
     private readonly static int SUPPORT_SANDMAN_PIERCE = 0;
     private readonly static int SUPPORT_SANDMAN_AOE = 0;
     private readonly static int SUPPORT_SANDMAN_SPEED = 15;
