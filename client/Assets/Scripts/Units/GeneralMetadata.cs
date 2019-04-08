@@ -34,7 +34,7 @@ public static class GeneralMetadata {
     };
 
 	public static readonly Dictionary<GeneralAbility, String> GeneralAbilityTooltip = new Dictionary<GeneralAbility, string>() {
-		{GeneralAbility.TROJAN_SHOT, "For this turn Tungsten's Range becomes 20 and his attack hits all units between him and his target"},
+		{GeneralAbility.TROJAN_SHOT, "For this turn Tungsten's Range becomes 20 and her attack hits all units between her and her target"},
 		{GeneralAbility.ARMOUR_PIERCING_AMMO, "Select a unit within 10 range of Tungsten. This unit gains 10 Armor Penetration for 4 turns" },
         {GeneralAbility.STEAM_OVERLOAD, "Choose a location within 10 Range of Albarn. The target takes 30 damage, units within 1 range take 20, units within 2 range take 10" },
         {GeneralAbility.THE_BEST_OFFENSE, "Choose a unit. The unit's Armor is added to its Damage for this turn" },

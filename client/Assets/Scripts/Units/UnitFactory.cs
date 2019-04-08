@@ -40,7 +40,7 @@ public static class UnitFactory {
     private readonly static int PEWPEW_HP = 255;
     private readonly static int PEWPEW_ARMOUR = 20;
     private readonly static int PEWPEW_RANGE = 3;
-    private readonly static int PEWPEW_DAMAGE = 453;
+    private readonly static int PEWPEW_DAMAGE = 45;
     private readonly static int PEWPEW_PIERCE = 0;
     private readonly static int PEWPEW_AOE = 0;
     private readonly static int PEWPEW_SPEED = 4;
