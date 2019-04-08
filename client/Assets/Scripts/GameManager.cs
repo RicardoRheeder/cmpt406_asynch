@@ -569,7 +569,7 @@ public class GameManager : MonoBehaviour {
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                if (unit.MovementSpeed > 0 && (unit.Owner == user.Username || doingReplay)) {
+                if ((unit.MovementSpeed > 0 && unit.Owner == user.Username) || doingReplay) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
                         unit.SandboxMove(endpoint, ref boardController, audioManager);
