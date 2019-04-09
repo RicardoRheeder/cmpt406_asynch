@@ -127,9 +127,10 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Loading state: " + state);
 		FloatingTextController.Initialize();
 		UnitHUDController.Initialize();
-
+        if (GameObject.Find("GameHUDCanvas") != null)
         inGameMenu = GameObject.Find("GameHUDCanvas").GetComponent<InGameMenu>();
         GameObject.Find("EndTurnButton").GetComponent<Button>().onClick.AddListener(this.EndTurn);
+        if (GameObject.Find("ConcedeButton") != null)
         GameObject.Find("ConcedeButton").GetComponent<Button>().onClick.AddListener(this.Forfeit);
         GameObject.Find("CloseGameButton").GetComponent<Button>().onClick.AddListener(this.ExitGame);
 
@@ -146,7 +147,6 @@ public class GameManager : MonoBehaviour {
         InitControllersHelper();
 
         inGameMenu.SetupPanels(isPlacing: false, state.UserGeneralsMap.ContainsKey(user.Username) && state.UserGeneralsMap[user.Username].Count > 0 ? unitPositions[state.UserGeneralsMap[user.Username][0].Position] : null);
-
         SceneManager.sceneLoaded -= OnGameLoaded;
         SceneManager.sceneLoaded += OnMenuLoaded;
     }
@@ -569,7 +569,7 @@ public class GameManager : MonoBehaviour {
     public void MoveUnit(Vector2Int targetUnit, Vector2Int endpoint) {
         if (!unitPositions.ContainsKey(endpoint)) {
             if (GetUnitOnTile(targetUnit, out UnitStats unit)) {
-                if (unit.MovementSpeed > 0 && (unit.Owner == user.Username || doingReplay)) {
+                if ((unit.MovementSpeed > 0 && unit.Owner == user.Username) || doingReplay) {
                     unitPositions.Remove(targetUnit);
                     if(state.boardId == BoardType.Sandbox){
                         unit.SandboxMove(endpoint, ref boardController, audioManager);
@@ -678,6 +678,7 @@ public class GameManager : MonoBehaviour {
 
     //===================== Functions used to interact with the camera ===================
     public void SnapToPosition(Vector2Int pos) {
+        if (cameraRig != null && boardController != null)
         cameraRig.SnapToPosition(boardController.CellToWorld(pos));
     }
 }
