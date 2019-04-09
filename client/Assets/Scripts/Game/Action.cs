@@ -28,7 +28,7 @@ public class Action {
     public CardFunction CardId { get; private set; }
 
     [DataMember]
-    private int ability;
+    private int abilityNumber;
     public GeneralAbility Ability { get; private set; }
 
     public Action(string username, ActionType type, Vector2Int sourceTile, Vector2Int targetTile, GeneralAbility ability, CardFunction function) {
@@ -45,14 +45,14 @@ public class Action {
     [OnDeserialized]
     public void OnDeserialized(StreamingContext c) {
         this.Type = (ActionType)actionType;
-        Ability = (GeneralAbility)ability;
+        Ability = (GeneralAbility)abilityNumber;
         CardId = (CardFunction)cardId;
     }
 
     [OnSerializing]
     public void OnSerializing(StreamingContext c) {
         actionType = (int)Type;
-        ability = (int)Ability;
+        abilityNumber = (int)Ability;
         cardId = (int)CardId;
     }
 }

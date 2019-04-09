@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class InGameMenu : MonoBehaviour {
+public class InGameMenu : MonoBehaviour
+{
 
     private GameObject settingsPanel;
     private GameObject placeUnitsPanel;
@@ -14,8 +17,16 @@ public class InGameMenu : MonoBehaviour {
     private GameObject unitStatsPanel;
     private GameObject menuPanel;
     private GameObject actionsPanel;
+	public TMP_Text tooltip;
+	private UnitStats general;
     public GameObject returningToMainMenuPanel;
-
+    public GameObject replayOpponentTurnsPanel;
+    public GameObject replayDonePanel;
+    public GameObject victoryPanel;
+    public Button victoryButton;
+    public GameObject defeatPanel;
+    public Button defeatButton;
+	
 
     // Start is called before the first frame update
     void Awake() {
@@ -31,10 +42,14 @@ public class InGameMenu : MonoBehaviour {
         actionsPanel = GameObject.Find("ActionsPanel");
     }
 
-    public void SetupPanels(bool isPlacing) {
+    public void SetupPanels(bool isPlacing, UnitStats general=null) {
         menuPanel.SetActive(false);
         settingsPanel.SetActive(false);
         returningToMainMenuPanel.SetActive(false);
+        replayDonePanel.SetActive(false);
+        victoryPanel.SetActive(false);
+        defeatPanel.SetActive(false);
+        this.general = general;
 
         if (isPlacing) {
             unitSnapPanel.SetActive(false);
@@ -43,8 +58,22 @@ public class InGameMenu : MonoBehaviour {
             generalAbilitiesPanel.SetActive(false);
             actionsPanel.SetActive(false);
         }
-        else {
+        else
+        {
+            replayOpponentTurnsPanel.SetActive(true);
             placeUnitsPanel.SetActive(false);
         }
     }
+	
+	public void Ability1Tooltip() {
+        if(general != null) {
+            tooltip.SetText(GeneralMetadata.GeneralAbilityTooltip[general.Ability1]);
+        }
+	}
+	
+	public void Ability2Tooltip() {
+        if (general != null) {
+            tooltip.SetText(GeneralMetadata.GeneralAbilityTooltip[general.Ability2]);
+        }
+	}
 }

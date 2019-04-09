@@ -16,7 +16,7 @@ MonoBehaviour:
   effects:
   - Heal all allies within 1 range of the M.I.D.A.S for 30 Hit Points
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: de7cfe10855ec174181355c16c30b069, type: 3}
   func: 170
   type: 8
   cardCost: 3

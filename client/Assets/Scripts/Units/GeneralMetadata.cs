@@ -33,6 +33,18 @@ public static class GeneralMetadata {
         {UnitType.support_sandman, new List<GeneralAbility>{ GeneralAbility.SAHARA_MINE, GeneralAbility.SANDSTORM } }
     };
 
+	public static readonly Dictionary<GeneralAbility, String> GeneralAbilityTooltip = new Dictionary<GeneralAbility, string>() {
+		{GeneralAbility.TROJAN_SHOT, "For this turn Tungsten's Range becomes 20 and her attack hits all units between her and her target"},
+		{GeneralAbility.ARMOUR_PIERCING_AMMO, "Select a unit within 10 range of Tungsten. This unit gains 10 Armor Penetration for 4 turns" },
+        {GeneralAbility.STEAM_OVERLOAD, "Choose a location within 10 Range of Albarn. The target takes 30 damage, units within 1 range take 20, units within 2 range take 10" },
+        {GeneralAbility.THE_BEST_OFFENSE, "Choose a unit. The unit's Armor is added to its Damage for this turn" },
+        {GeneralAbility.STICK_AND_POKE, "Your units gain 3 movement speed and units add their default speed for 2 turns" },
+        {GeneralAbility.DEEP_PENETRATION, "Choose a unit. The unit's Armor is set to 0 for this turn" },
+        {GeneralAbility.SAHARA_MINE, "Choose a target within 2 Range of Sandman. All units within 1 range of the target take 10 damage and lost 10 Armor for this turn" },
+        {GeneralAbility.SANDSTORM, "All units within 2 Range of Sandman have their Vision and Movement Speed reduced by 3. The sandstorm lasts for 2 turns" }
+		
+	};
+	
     public static readonly Dictionary<GeneralAbility, String> ReadableAbilityNameDict = new Dictionary<GeneralAbility, string>() {
         {GeneralAbility.TROJAN_SHOT, "Trojan Shot" },
         {GeneralAbility.ARMOUR_PIERCING_AMMO, "Armour Piercing Ammo" },
@@ -51,7 +63,7 @@ public static class GeneralMetadata {
         { GeneralAbility.THE_BEST_OFFENSE, 2 },
         { GeneralAbility.STICK_AND_POKE, 5 },
         { GeneralAbility.DEEP_PENETRATION, 3 },
-        { GeneralAbility.SAHARA_MINE, 4 },
+        { GeneralAbility.SAHARA_MINE, 2 },
         { GeneralAbility.SANDSTORM, 4 }
     };
 
@@ -70,9 +82,9 @@ public static class GeneralMetadata {
         { GeneralAbility.TROJAN_SHOT, 0 },
         { GeneralAbility.ARMOUR_PIERCING_AMMO, 10 },
         { GeneralAbility.STEAM_OVERLOAD, 10 },
-        { GeneralAbility.THE_BEST_OFFENSE, 100 },
+        { GeneralAbility.THE_BEST_OFFENSE, 120 },
         { GeneralAbility.STICK_AND_POKE, 0 },
-        { GeneralAbility.DEEP_PENETRATION, 100 },
+        { GeneralAbility.DEEP_PENETRATION, 120 },
         { GeneralAbility.SAHARA_MINE, 2 },
         { GeneralAbility.SANDSTORM, 0 }
     };
@@ -80,15 +92,18 @@ public static class GeneralMetadata {
     //Note: to work with function pointers all of these functions have to take the same arguments, even if they don't require them all
     private static void TrojanShot(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         source.attackStrategy = new LineStrategy();
+        source.MyUnit.GetComponent<SpecialEffect>().VECardEffect();
         source.AlterRange(20);
     }
 
     private static void ArmourPiercingAmmo(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
+        source.MyUnit.GetComponent<SpecialEffect>().VECardEffect();
         source.AlterPierce(10);
     }
 
     private static void SteamOverload(ref UnitStats source, Dictionary<Vector2Int, UnitStats> allUnits, string username, bool isOwner) {
         if (isOwner) {
+            source.MyUnit.GetComponent<SpecialEffect>().VEDeath();
             if (source.TakeDamage(30, 10000)) {
                 source.Kill();
                 allUnits.Remove(source.Position);
@@ -98,6 +113,7 @@ public static class GeneralMetadata {
                 Vector2Int unitPos = unitsInRange[i];
                 if (allUnits.ContainsKey(unitPos)) {
                     UnitStats targetUnit = allUnits[unitPos];
+                    targetUnit.MyUnit.GetComponent<SpecialEffect>().VEDeath();
                     if (targetUnit.TakeDamage(20, 10000)) {
                         targetUnit.Kill();
                         allUnits.Remove(unitPos);
@@ -108,6 +124,7 @@ public static class GeneralMetadata {
                 Vector2Int unitPos = unitsInRange[i];
                 if (allUnits.ContainsKey(unitPos)) {
                     UnitStats targetUnit = allUnits[unitPos];
+                    targetUnit.MyUnit.GetComponent<SpecialEffect>().VEDeath();
                     if (targetUnit.TakeDamage(10, 10000)) {
                         targetUnit.Kill();
                         allUnits.Remove(unitPos);
@@ -141,7 +158,7 @@ public static class GeneralMetadata {
             if (allUnits.TryGetValue(pos, out UnitStats target)) {
                 target.AlterArmour(-10);
                 if (isOwner) {
-                    if (target.TakeDamage(10, 10000)) {
+                    if (target.TakeDamage(25, 10000)) {
                         target.Kill();
                         allUnits.Remove(pos);
                     }

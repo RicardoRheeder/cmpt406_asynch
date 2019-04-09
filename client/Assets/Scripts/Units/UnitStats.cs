@@ -13,6 +13,7 @@ public class UnitStats {
     public int Cost { get; private set; }
     [DataMember(Name = "owner", IsRequired = true)]
     public string Owner { get; set; }
+	public UnitHUD unitHUD;
 
     //defense stats
     [DataMember(Name = "health")]
@@ -87,7 +88,7 @@ public class UnitStats {
         this.Vision = vision;
         this.Direction = direction;
     }
-
+	
     public string GetDisplayName() {
         return UnitMetadata.ReadableNames[this.UnitType];
     }
@@ -97,40 +98,51 @@ public class UnitStats {
     }
 
     //Returns a value based on the target
-    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, bool specialMove = false) {
-        if (!specialMove) {
-            if(!moveAfterAttack)
-                this.MovementSpeed = 0;
-            this.AttackActions--;
-        }
+    public List<Tuple<Vector2Int, int>> Attack(Vector2Int target, Vector3 sourceWorldPos, Vector3 targetWorldPos, AudioManager audioManager = null, bool analyticsAttack = false) {
+        if(!moveAfterAttack)
+            this.MovementSpeed = 0;
+        this.AttackActions--;
         int dir = HexUtility.FindDirection(this.Position,target);
-        if (MyUnit != null) {MyUnit.Attack(dir);} else {Debug.LogError("MyUnit is NULL!");}
+        if (!analyticsAttack)
+            MyUnit.Attack(sourceWorldPos, targetWorldPos, this.UnitType, audioManager);
         return attackStrategy.Attack(this, target);
     }
 
     //A function to simply take an amount of damage, returning true if the unit dies, false otherwise
-    public bool TakeDamage(int damage, int pierce) {
-        if (MyUnit != null) {MyUnit.GetHit();} else {Debug.LogError("MyUnit is NULL!");}
+    public bool TakeDamage(int damage, int pierce, bool analyticsAttack = false) {
+        if (!analyticsAttack)
+            MyUnit.GetHit();
         int resistance = Armour - pierce;
         resistance = resistance < 0 ? 0 : resistance;
         damage -= resistance;
         damage = damage <= 0 ? 1 : damage;
         CurrentHP -= damage;
+		FloatingTextController.CreateFloatingText(damage.ToString(), MyUnit.transform, false);
+        if (unitHUD != null)
+            unitHUD.SetHPText(CurrentHP.ToString());
         return CurrentHP <= 0;
     }
 
     public void TakeCardDamage(int damage) {
         CurrentHP -= damage;
         CurrentHP = CurrentHP <= 0 ? 1 : CurrentHP;
+        if(unitHUD != null)
+    		unitHUD.SetHPText(CurrentHP.ToString());
+		FloatingTextController.CreateFloatingText(damage.ToString(), MyUnit.transform, false);
     }
 
     public void Heal(int amount) {
         this.CurrentHP += amount;
         CurrentHP = CurrentHP > MaxHP ? MaxHP : CurrentHP;
+        if (unitHUD != null)
+            unitHUD.SetHPText(CurrentHP.ToString());
+		FloatingTextController.CreateFloatingText(amount.ToString(), MyUnit.transform, true);
     }
     
-    public void Kill() {
-        MyUnit.Kill();
+    public void Kill(AudioManager audioManager = null) {
+        MyUnit.Kill(UnitType, audioManager, CurrentHP);
+        if (unitHUD != null)
+            unitHUD.DestroyThis();
     }
 
     //Methods to alter stats
@@ -148,6 +160,8 @@ public class UnitStats {
                 this.Damage = change;
             }
         }
+        if (unitHUD != null)
+            unitHUD.SetDMGText(Damage.ToString());
     }
 
     public void AlterSpeed(int change) {
@@ -165,11 +179,15 @@ public class UnitStats {
     public void AlterPierce(int change) {
         this.Pierce += change;
         this.Pierce = this.Pierce < 0 ? 0 : this.Pierce;
+        if (unitHUD != null)
+            unitHUD.SetPENText(Pierce.ToString());
     }
 
     public void AlterArmour(int change) {
         this.Armour += change;
         this.Armour = this.Armour < 0 ? 0 : this.Armour;
+        if (unitHUD != null)
+            unitHUD.SetARText(Armour.ToString());
     }
 
     public void AlterRange(int change) {
@@ -192,10 +210,14 @@ public class UnitStats {
 
     public void DoublePierce() {
         this.Pierce = this.Pierce * 2;
+        if (unitHUD != null)
+            unitHUD.SetPENText(Pierce.ToString());
     }
 
     public void DoubleDamage() {
         this.Damage = this.Damage * 2;
+        if (unitHUD != null)
+            unitHUD.SetDMGText(Damage.ToString());
     }
 
     public void DoubleSpeed() {
@@ -203,7 +225,10 @@ public class UnitStats {
     }
 
     //Note: we don't need to update  xPos and yPos because that will be done when we send the data to the server
-    public void Move(Vector2Int position, ref BoardController board, bool specialMove = false) {
+    public void Move(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false) {
+        if (audioManager != null) {
+            audioManager.Play(UnitType, SoundType.Move);
+        }
         List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.MovementSpeed -= pathWithDirection.Count;
@@ -218,14 +243,57 @@ public class UnitStats {
         MyUnit.PlaceAt(position, ref board);
     }
 	
-	public void SandboxMove(Vector2Int position, ref BoardController board, bool specialMove = false){
-	    List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
+    public void SandboxMove(Vector2Int position, ref BoardController board, AudioManager audioManager, bool specialMove = false){
+        if (audioManager != null) {
+            audioManager.Play(UnitType, SoundType.Move);
+        }
+        List<Tuple<Vector2Int,int>> pathWithDirection = HexUtility.PathfindingWithDirection(this.Position,position,board.GetTilemap(),false);
         MyUnit.MoveAlongPath(pathWithDirection,ref board);
         this.Position = position;
         if(pathWithDirection.Count > 0) {
             this.Direction = pathWithDirection[pathWithDirection.Count - 1].Second;
         }
-	}
+    }
+
+    //Note: this list must have two abilities
+    public void SetAbilities(List<GeneralAbility> abilityList) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+    }
+
+    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
+        this.Ability1 = abilityList[0];
+        this.Ability2 = abilityList[1];
+        this.Ability1Cooldown = serverUnit.Ability1Cooldown;
+        this.Ability2Cooldown = serverUnit.Ability2Cooldown;
+        this.Ability2Duration = serverUnit.Ability2Duration;
+        this.Ability2Duration = serverUnit.Ability2Duration;
+    }
+
+    public void SetPassive(GeneralPassive passive) {
+        this.Passive = passive;
+    }
+
+    public void Select(AudioManager manager) {
+        if(Random.Range(0, 4) == 0) {
+            manager.Play(UnitType, SoundType.Annoyed, isVoice: true);
+        }
+        else {
+            manager.Play(UnitType, SoundType.Select, isVoice: true);
+        }
+    }
+
+    public void PlayAttackVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Attack, isVoice: true);
+    }
+
+    public void PlayMoveVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Move, isVoice: true);
+    }
+
+    public void PlayAbilityVoice(AudioManager manager) {
+        manager.Play(UnitType, SoundType.Ability, isVoice: true);
+    }
 
     //We need to convert the xPos and yPos variables to be Position
     //We also need to get a base unit and copy over the stats that weren't stored on the server.
@@ -251,24 +319,6 @@ public class UnitStats {
     internal void OnSerializingMethod(StreamingContext context) {
         xPos = Position.x;
         yPos = Position.y;
-    }
-
-    //Note: this list must have two abilities
-    public void SetAbilities( List<GeneralAbility> abilityList) {
-        this.Ability1 = abilityList[0];
-        this.Ability2 = abilityList[1];
-    }
-
-    public void SetAbilities(List<GeneralAbility> abilityList, UnitStats serverUnit, string username) {
-        this.Ability1 = abilityList[0];
-        this.Ability2 = abilityList[1];
-        this.Ability1Cooldown = serverUnit.Ability1Cooldown;
-        this.Ability2Cooldown = serverUnit.Ability2Cooldown;
-        this.Ability2Duration = serverUnit.Ability2Duration;
-        this.Ability2Duration = serverUnit.Ability2Duration;
-    }
-
-    public void SetPassive(GeneralPassive passive) {
-        this.Passive = passive;
+        Direction = MyUnit != null ? (int)MyUnit.currRotation % 360 : 0;
     }
 }

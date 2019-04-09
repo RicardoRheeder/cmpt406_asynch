@@ -18,7 +18,7 @@ MonoBehaviour:
   - +10 Attack Damage
   - Attack an additional target
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: b1b0a6023cac0d547be86f44051b052c, type: 3}
   func: 131
   type: 4
   cardCost: 4

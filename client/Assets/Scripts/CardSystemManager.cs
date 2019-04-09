@@ -20,6 +20,8 @@ public class CardSystemManager : MonoBehaviour {
     private int remainingCardPoints;
     public int discardRegainPointsAmount = 1;
     public TextMeshProUGUI CardPointsText;
+    private int genericCards;
+    private int uniqueCards;
 
     [SerializeField]
     private Deck genericDeck;
@@ -246,9 +248,11 @@ public class CardSystemManager : MonoBehaviour {
     }
 
     public void Initialize(List<CardFunction> startingHand, List<UnitStats> playerUnits, string id, int drawLimit = 3) {
-        TableTop = GameObject.Find("Tabletop");
-        TableTop.SetActive(false);
-        TableHand = GameObject.Find("Hand");
+        if (TableTop == null) {
+            TableTop = GameObject.Find("Tabletop");
+            TableTop.SetActive(false);
+            TableHand = GameObject.Find("Hand");
+        }
 
         bool previouslyGeneratedCards = false;
         string path = CardMetadata.FILE_PATH_BASE + "/." + id + CardMetadata.FILE_EXTENSION;
@@ -259,27 +263,32 @@ public class CardSystemManager : MonoBehaviour {
             string[] cards = cardData.Split('X');
             startingHand.Clear();
             for(int i = 0; i < CardMetadata.GENERIC_CARD_LIMIT + CardMetadata.UNIQUE_CARD_LIMIT; i++) {
-                startingHand.Add((CardFunction)int.Parse(cards[i]));
+                if (cards[i].Trim() != "")
+                    startingHand.Add((CardFunction)int.Parse(cards[i]));
+                else
+                    break;
             }
             reader.Close();
         }
 
-        currentHand = new List<Card>();
-        foreach (var card in startingHand) {
-            currentHand.Add(library[card]);
-        }
-        int genericCards = 0;
-        int uniqueCards = 0;
-        foreach (var card in currentHand) {
-            GameObject newCard = (GameObject)Instantiate(CardTemplate, transform.position, Quaternion.identity);
-            newCard.GetComponent<CardDisplay>().SetCard(card);
-            newCard.GetComponent<Draggable>().SetTableTop(TableTop);
-            newCard.transform.SetParent(TableHand.transform, false);
-            if (card.type == UnitType.none) {
-                genericCards++;
+        if (currentHand == null) {
+            currentHand = new List<Card>();
+            foreach (var card in startingHand) {
+                currentHand.Add(library[card]);
             }
-            else {
-                uniqueCards++;
+            genericCards = 0;
+            uniqueCards = 0;
+            foreach (var card in currentHand) {
+                GameObject newCard = (GameObject)Instantiate(CardTemplate, transform.position, Quaternion.identity);
+                newCard.GetComponent<CardDisplay>().SetCard(card);
+                newCard.GetComponent<Draggable>().SetTableTop(TableTop);
+                newCard.transform.SetParent(TableHand.transform, false);
+                if (card.type == UnitType.none) {
+                    genericCards++;
+                }
+                else {
+                    uniqueCards++;
+                }
             }
         }
 

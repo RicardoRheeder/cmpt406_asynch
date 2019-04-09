@@ -16,7 +16,7 @@ MonoBehaviour:
   effects:
   - The Steamer's attacks deal damage in a 3 tile cone for this turn
   description: 
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: effe8bbff79db474197fc194a8a8250f, type: 3}
   func: 120
   type: 3
   cardCost: 3

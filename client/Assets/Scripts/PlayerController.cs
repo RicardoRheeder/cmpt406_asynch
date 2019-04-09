@@ -52,10 +52,6 @@ public class PlayerController : MonoBehaviour {
     //Stuff for top right information on hud
     private TMP_Text userTurnText;
     private TMP_Text turnText;
-
-    //menu buttons
-    private Button concedeButton;
-    private Button closeGameButton;
     
     private UnitStats selectedUnit;
 
@@ -87,7 +83,7 @@ public class PlayerController : MonoBehaviour {
     private string username;
     private Card cardBeingPlayed;
 
-    private Dictionary<UnitStats, GameObject> unitButtonReferences;
+    public Dictionary<UnitStats, GameObject> unitButtonReferences;
     private List<GameObject> unitButtonObjects;
     private int unitButtonObjectsCurIndex = 0;
     private GameObject selectedUnitButton;
@@ -151,13 +147,11 @@ public class PlayerController : MonoBehaviour {
             Ability2Object = GameObject.Find("AbilityTwoButton");
             Ability2Button = Ability2Object.GetComponent<Button>();
 
-            concedeButton = GameObject.Find("ConcedeButton").GetComponent<Button>();
-            concedeButton.onClick.AddListener(Forfeit);
-            closeGameButton = GameObject.Find("CloseGameButton").GetComponent<Button>();
-            closeGameButton.onClick.AddListener(ExitGame);
 
             foreach(var pair in unitButtonReferences) {
-                pair.Value.GetComponentInChildren<Button>().onClick.AddListener(() => {
+                Button b = pair.Value.GetComponentInChildren<Button>();
+                b.onClick.RemoveAllListeners();
+                b.onClick.AddListener(() => {
                     audioManager.Play(SoundName.ButtonPress);
                     SelectUnit(pair.Key);
                     manager.SnapToPosition(selectedUnit.Position);
@@ -192,7 +186,7 @@ public class PlayerController : MonoBehaviour {
     private void InputController() {
         Vector2Int tilePos = boardController.MousePosToCell();
         boardController.HoverHighlight(new List<Vector2Int>() { tilePos }, tilePos);
-
+		
         switch (controllerState) {
             case (PlayerState.playing):
                 switch (interactionState) {
@@ -229,7 +223,7 @@ public class PlayerController : MonoBehaviour {
                             hoverAttackRange = boardController.GetTilesWithinAttackRange(tilePos, selectedUnit.Range);
                             boardController.RenderPath(selectedUnit.Position, tilePos);
                         }
-                        else if (selectedUnit != null) {
+                        else if (selectedUnit != null && selectedUnit.Range < 8) {
                             boardController.HoverHighlight(hoverAttackRange, tilePos);
                         }
                         break;
@@ -264,7 +258,7 @@ public class PlayerController : MonoBehaviour {
                         break;
                     case (InteractionState.playingCard):
                         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
-                            if (manager.UseCard(tilePos, cardBeingPlayed)) {
+                            if (manager.UseCard(tilePos, cardBeingPlayed.func)) {
                                 interactionState = InteractionState.none;
                             }
                         }
@@ -324,10 +318,12 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.selected;
             }
             else {
+                selectedUnit.PlayMoveVoice(audioManager);
                 boardController.ClearHighlighting();
                 this.highlightedTiles = boardController.GetTilesWithinMovementRange(selectedUnit.Position, selectedUnit.MovementSpeed);
                 boardController.HighlightTiles(this.highlightedTiles);
                 interactionState = InteractionState.moving;
+                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
             }
         }
     }
@@ -340,10 +336,12 @@ public class PlayerController : MonoBehaviour {
                 interactionState = InteractionState.selected;
             }
             else {
+                selectedUnit.PlayAttackVoice(audioManager);
                 boardController.ClearHighlighting();
                 this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, selectedUnit.Range);
                 boardController.HighlightTiles(this.highlightedTiles);
                 interactionState = InteractionState.attacking;
+                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
             }
         }
     }
@@ -354,10 +352,12 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.none;
         }
         else {
+            selectedUnit.PlayAbilityVoice(audioManager);
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability1]);
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
             interactionState = InteractionState.ability1;
+            Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
         }
     }
 
@@ -367,10 +367,12 @@ public class PlayerController : MonoBehaviour {
             interactionState = InteractionState.none;
         }
         else {
+            selectedUnit.PlayAbilityVoice(audioManager);
             this.highlightedTiles = boardController.GetTilesWithinAttackRange(selectedUnit.Position, GeneralMetadata.AbilityRangeDictionary[selectedUnit.Ability2]);
             boardController.HighlightTiles(this.highlightedTiles);
             audioManager.Play(SoundName.ButtonPress);
             interactionState = InteractionState.ability2;
+            Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
         }
     }
 
@@ -379,7 +381,8 @@ public class PlayerController : MonoBehaviour {
 
         SelectUnit();
         this.highlightedTiles = manager.GetUnitPositions(card.type);
-        boardController.HighlightTiles(this.highlightedTiles);
+        if(this.highlightedTiles.Count > 0)
+            boardController.HighlightTiles(this.highlightedTiles);
         this.interactionState = InteractionState.playingCard;
     }
 
@@ -394,6 +397,7 @@ public class PlayerController : MonoBehaviour {
         }
         if(unit != null) {
             unit.MyUnit.OutlineUnit();
+            unit.Select(audioManager);
             if (unit.Owner == username) {
                 unitButtonReferences[unit].GetComponentInChildren<Image>().color = ColourConstants.BUTTON_ACTIVE;
                 selectedUnitButton = unitButtonReferences[unit];
@@ -428,43 +432,50 @@ public class PlayerController : MonoBehaviour {
             actionsName.SetActive(true);
             attackButtonObject.SetActive(true);
             movementButtonObject.SetActive(true);
-            if (unit.AttackActions != 0 && unit.Damage != 0) {
+            if (interactionState == InteractionState.attacking) {
                 attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+            } else if (unit.AttackActions != 0 && unit.Damage != 0) {
+                attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
                 attackButton.onClick.RemoveAllListeners();
                 attackButton.onClick.AddListener(AttackButton);
-            }
-            else {
+            } else {
                 attackButton.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                 attackButton.onClick.RemoveAllListeners();
             }
-            if (unit.MovementSpeed != 0) {
+
+            if (interactionState == InteractionState.moving) {
                 movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+            } else if (unit.MovementSpeed != 0) {
+                movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
                 movementButton.onClick.RemoveAllListeners();
                 movementButton.onClick.AddListener(MovementButton);
-            }
-            else {
+            } else {
                 movementButton.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                 movementButton.onClick.RemoveAllListeners();
             }
+
             if (unit.UnitClass == UnitClass.general) {
                 generalNameText.SetText(UnitMetadata.ReadableNames[unit.UnitType]);
                 Ability1Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability1]);
-                if (unit.Ability1Cooldown == 0) {
+                if(interactionState == InteractionState.ability1) {
+                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                } else if (unit.Ability1Cooldown == 0) {
                     Ability1Button.onClick.RemoveAllListeners();
                     Ability1Button.onClick.AddListener(Ability1ButtonClicked);
-                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
-                }
-                else {
+                    Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
+                } else {
                     Ability1Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                     Ability1Button.onClick.RemoveAllListeners();
                 }
                 Ability2Button.GetComponentInChildren<TMP_Text>().SetText(GeneralMetadata.ReadableAbilityNameDict[unit.Ability2]);
-                if (unit.Ability2Cooldown == 0) {
+                
+                if(interactionState == InteractionState.ability2) {
+                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
+                } else if (unit.Ability2Cooldown == 0) {
                     Ability2Button.onClick.RemoveAllListeners();
                     Ability2Button.onClick.AddListener(Ability2ButtonClicked);
-                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_ACTIVE;
-                }
-                else {
+                    Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_DEFAULT;
+                } else {
                     Ability2Button.GetComponent<Image>().color = ColourConstants.BUTTON_INACTIVE;
                     Ability2Button.onClick.RemoveAllListeners();
                 }
@@ -486,13 +497,5 @@ public class PlayerController : MonoBehaviour {
             Ability1Object.SetActive(false);
             Ability2Object.SetActive(false);
         }
-    }
-
-    public void Forfeit() {
-        manager.Forfeit();
-    }
-
-    public void ExitGame() {
-        manager.ExitGame();
     }
 }

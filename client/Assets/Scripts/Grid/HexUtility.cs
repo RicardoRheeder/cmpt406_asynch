@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Linq;
 
 public static class HexUtility {
 
@@ -242,7 +243,8 @@ public static class HexUtility {
             foreach(Vector2Int hex in fringes[movement-1]) {
                 for(int dir = 0; dir < 6; dir++){
                     Vector2Int neighbor = NeighborTile(hex, dir);
-                    if(!visited.Contains(neighbor) && tilemap.HasTile((Vector3Int)neighbor) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap))) {
+                    HexTile neighborTile = tilemap.GetTile((Vector3Int)neighbor) as HexTile;
+                    if(!visited.Contains(neighbor) && neighborTile != null && !neighborTile.attributes.Contains(TileAttribute.Obstacle) && (ignoreElevation || IsElevationReachable(hex,neighbor,tilemap))) {
                         visited.Add(neighbor);
                         fringes[movement].Add(neighbor);
                     }
@@ -306,6 +308,65 @@ public static class HexUtility {
         return path;
     }
 
+    public static Tuple<List<Vector2Int>,List<Vector2Int>> FindTilesInVision(Vector2Int position, int range, Tilemap tilemap, bool ignoreElevation) {
+        List<Vector2Int> outerRing = FindRing(position,range+1);
+        HashSet<Vector2Int> visionTiles = new HashSet<Vector2Int>();
+        List<Vector2Int> edgeTiles = new List<Vector2Int>();
+        for(int i=0; i<outerRing.Count; i++) {
+            List<Vector2Int> line = FindVisionLine(position,outerRing[i],tilemap,ignoreElevation);
+            if(line.Count > 0) {
+                for(int k=0; k<line.Count-1; k++) {
+                    visionTiles.Add(line[k]);
+                }
+                edgeTiles.Add(line[line.Count-1]);
+            }
+        }
+
+        return new Tuple<List<Vector2Int>,List<Vector2Int>>(visionTiles.ToList(),edgeTiles);
+    }
+
+    // First: tiles in vision
+    // Second: edge tile
+    public static List<Vector2Int> FindVisionLine(Vector2Int startPos, Vector2Int endPos, Tilemap tilemap, bool ignoreElevation) {
+        float distance = HexDistance( startPos, endPos );
+        List<Vector2Int> visionLine = new List<Vector2Int>();
+        Vector3 cubeStart = OddrToCube( startPos );
+        Vector3 cubeEnd = OddrToCube( endPos );
+        if(cubeStart == cubeEnd) {
+            visionLine.Add(CubeToOddr(CubeRound(cubeStart)));
+        } else {
+            Vector3 epsilonHex = new Vector3(1e-6f, 2e-6f, -3e-6f);
+            if(cubeEnd.z-cubeStart.z>=0) {
+                cubeEnd = cubeEnd + epsilonHex;
+            } else {
+                cubeEnd = cubeEnd - epsilonHex;
+            }
+
+            HexTile startTile = tilemap.GetTile((Vector3Int)startPos) as HexTile;
+            HexTile prevTile = null;
+            if(startTile == null) {
+                return visionLine;
+            }
+            for( int i = 0; i <= distance; i++) {
+                Vector3Int cubePosition = CubeRound( CubeLerp( cubeStart, cubeEnd, (1.0f / distance)*i));
+                Vector2Int tilePosition = CubeToOddr(cubePosition);
+                HexTile tile = tilemap.GetTile((Vector3Int)tilePosition) as HexTile;
+                
+                if(tile == null) {
+                    visionLine.Add(tilePosition);
+                    continue;
+                }
+                visionLine.Add(tilePosition);
+                if(prevTile != null && prevTile.elevation > startTile.elevation && !ignoreElevation) {
+                    break;
+                }
+                prevTile = tile;
+            }
+        }
+        
+        return visionLine;
+    }
+
     // Finds a path with direction between starting and ending position
     // only paths to non-null tiles on the argument tilemap
     // if ignoreElevation is false, it won't path to an elevation difference >= 2
@@ -361,7 +422,7 @@ public static class HexUtility {
         return Math.Abs(endTile.elevation - startTile.elevation) < ELEVATION_REACHABLE_DISTANCE;
     }
 
-    public static List<Vector2Int> FindRing(Vector2Int center, int distance, int thickness) {
+    public static List<Vector2Int> FindRing(Vector2Int center, int distance) {
         // TODO: get it working with cache
         List<Vector2Int> results = new List<Vector2Int>();
         Vector3Int cubeCenter = OddrToCube(center);

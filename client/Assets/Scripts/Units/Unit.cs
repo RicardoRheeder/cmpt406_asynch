@@ -6,15 +6,19 @@ using UnityEngine;
 public class Unit : MonoBehaviour {
     
     public SkinnedMeshRenderer rend;
-    public float moveSpeed = 5f;
+    public float moveSpeed = 0.5f;
     Animator anim;
+    public bool isWalking;
 
     Vector2Int currTilePosition;
     FogViewer fogViewer;
     UnitOutline unitOutline;
 
     private int currDirection = 0;
+    public float currRotation = 0f;
 
+    private static readonly float Y_ROTATION_CONST = 90f;
+    private static readonly float Z_ROTATION_CONST = -90f;
     
     void Awake() {
         rend = GetComponentInChildren<SkinnedMeshRenderer>();
@@ -29,11 +33,13 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the attack animation
-    public void Attack(int dir) {
-        TurnToDirection(dir);
+    public void Attack(Vector3 sourceWorldPos, Vector3 targetWorldPos, UnitType unitType, AudioManager manager = null) {
+        FaceDirection(targetWorldPos);
         if(this.anim != null) {
             anim.SetTrigger("attack");
         }
+        this.GetComponent<SpecialEffect>().PlayAttackEffect(sourceWorldPos, targetWorldPos, unitType, manager);
+
     }
 
     public void GetHit() {
@@ -47,7 +53,8 @@ public class Unit : MonoBehaviour {
     }
 
     //Method used to handle the movement animation
-    public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board) {
+    public void MoveAlongPath(List<Tuple<Vector2Int,int>> path, ref BoardController board, AudioManager manager = null) {
+        isWalking = true;
         StartCoroutine(PathMovement(path,board));
     }
 
@@ -68,6 +75,12 @@ public class Unit : MonoBehaviour {
         currDirection = dir;
         int angle = HexUtility.DirectionToAngle(currDirection) - HexUtility.DirectionToAngle(prevDir);
         transform.rotation = Quaternion.AngleAxis(angle,transform.up)*transform.rotation;
+    }
+
+    public void SnapToAngle(int angle) {
+        currDirection = angle % 60;
+        currRotation = angle;
+        transform.rotation = Quaternion.Euler((float)angle, Y_ROTATION_CONST, Z_ROTATION_CONST);
     }
 
     public void OutlineUnit() {
@@ -115,6 +128,7 @@ public class Unit : MonoBehaviour {
                 anim.SetBool("walking",false);
             }
         }
+        isWalking = false;
     }
 
     IEnumerator RotateToDirection(int dir) {
@@ -138,14 +152,58 @@ public class Unit : MonoBehaviour {
         }
     }
 
-    public void Kill() {
+    IEnumerator RotateToDirection(Vector3 worldPos) {
+        if (this.anim != null) {
+            anim.SetBool("walking", true);
+        }
+        float step = moveSpeed * Time.fixedDeltaTime;
+        float t = 0;
+        Quaternion prevRotation = transform.rotation;
+        Vector3 direction = worldPos - transform.position;
+        Quaternion toRotation = Quaternion.LookRotation(direction, Vector3.back);
+        while (t <= 1.0f) {
+            t += step;
+            transform.rotation = Quaternion.Lerp(prevRotation, toRotation, t);
+            yield return new WaitForFixedUpdate();
+        }
+        if (this.anim != null) {
+            anim.SetBool("walking", false);
+        }
+    }
+
+    public void Kill(UnitType type, AudioManager manager = null, int CurrentHP = 1) {
         if(this.anim != null) {
             anim.SetTrigger("death");
         }
+        if (manager != null) {
+            manager.Play(type, SoundType.Death, isVoice: true);
+            manager.Play(type, SoundType.Death);
+        }
+
+        if (CurrentHP <= 0)
+        {
+            if (this.GetComponent<SpecialEffect>())
+                this.GetComponent<SpecialEffect>().VEDeath();
+        }
+       
+        StartCoroutine(DestroyUnit(2f));
+    }
+
+    IEnumerator DestroyUnit(float secondsUntilDestroy)
+    {
+        yield return new WaitForSeconds(secondsUntilDestroy);
         Destroy(this.gameObject);
+
+        yield return null;
     }
 
     public FogViewer GetFogViewer() {
         return fogViewer;
+    }
+
+    public void FaceDirection(Vector3 worldPos) {
+        worldPos.z = transform.position.z;
+        StartCoroutine(RotateToDirection(worldPos));
+        this.currRotation = transform.rotation.x % 360;
     }
 }

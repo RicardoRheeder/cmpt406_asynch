@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1666500718}
   - component: {fileID: 8293816624907673172}
   - component: {fileID: 2370828490217063547}
+  - component: {fileID: 4252577015356515070}
   m_Layer: 0
   m_Name: Adren-LN
   m_TagString: Untagged
@@ -48,6 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rend: {fileID: 0}
   moveSpeed: 5
+  isWalking: 0
 --- !u!114 &8293816624907673172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,6 +87,25 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4252577015356515070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1666500717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4e5417003b14445a38fdbb0ca33f68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleEffect: {fileID: 4343967663331190, guid: a9be34b3b358955448810b86c8ca046b,
+    type: 3}
+  startPoint: {fileID: 7760574659496381275}
+  effect47Explosion: {fileID: 1318874244620254, guid: f1069c39521fd0d4584b4e3874ea4c9a,
+    type: 3}
+  effect06CardAura: {fileID: 1622586246927232, guid: e6e079c68911c0a44986a85588590eb9,
+    type: 3}
 --- !u!1001 &2218035707954469754
 PrefabInstance:
   m_ObjectHideFlags: 0
