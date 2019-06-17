@@ -111,10 +111,10 @@ public class CameraMovement : MonoBehaviour {
                 transform.Translate(transform.up*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
         }
-        else {
-            transform.Translate(transform.right*Input.GetAxis("Horizontal")*inputSensitivity*Time.deltaTime,Space.World);
-            transform.Translate(transform.up*Input.GetAxis("Vertical")*inputSensitivity*Time.deltaTime,Space.World);
-        }
+        
+        transform.Translate(transform.right*Input.GetAxis("Horizontal")*inputSensitivity*Time.deltaTime,Space.World);
+        transform.Translate(transform.up*Input.GetAxis("Vertical")*inputSensitivity*Time.deltaTime,Space.World);
+        
 
         if(tilemap != null) {
             transform.position = new Vector3(Mathf.Clamp(transform.position.x,minBound.x,maxBound.x),Mathf.Clamp(transform.position.y,minBound.y,maxBound.y),transform.position.z);
