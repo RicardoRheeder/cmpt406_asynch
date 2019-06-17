@@ -150,6 +150,7 @@ public class CameraMovement : MonoBehaviour {
 
     void HandleZoom() {
         
+        // Orthographic mode:
         if (Camera.main.orthographic) {
             if (Input.mouseScrollDelta.y < 0) {
                 zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
@@ -162,6 +163,7 @@ public class CameraMovement : MonoBehaviour {
             Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
             zoom = Camera.main.orthographicSize;
         }
+        // Perspective mode:
         else {
             if (Input.mouseScrollDelta.y > 0) {
                 zoom += zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
@@ -172,9 +174,13 @@ public class CameraMovement : MonoBehaviour {
             if (Time.timeSinceLevelLoad < 1f) {
                 zoom -= zoomSensitivity * Time.deltaTime * 0.2f;
             }
+            // Altitude
             zoom = Mathf.Lerp(zoom, Camera.main.transform.position.z, smoothFactor);
             Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Mathf.Clamp(zoom, -150, -40)), Camera.main.transform.rotation);
             zoom = Camera.main.transform.position.z;
+            // Rotation
+            float xRotation = (Camera.main.transform.position.z * 0.5f) * -1 - 120f;
+            Camera.main.transform.eulerAngles = new Vector3(xRotation, 0, 0);
         }
     }
 }
