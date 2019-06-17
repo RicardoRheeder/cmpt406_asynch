@@ -10,11 +10,11 @@ public class CameraMovement : MonoBehaviour {
     [Header("Camera")]
     [Tooltip("Zone that will receive on-screen cursor position.")]
     [Range(0f, 100f)]
-    public float scrollZone = 100f;
+    public float scrollZone = 65f;
 
     [Tooltip("Multiplier for camera movement sensitivity when using mouse.")]
-    [Range(0f, 2f)]
-    public float mouseSensitivity = 1f;
+    [Range(0f, 3f)]
+    public float mouseSensitivity = 2f;
 
     [Tooltip("Multiplier for camera movement sensitivity when using input.")]
     [Range(1f, 100f)]
@@ -94,20 +94,28 @@ public class CameraMovement : MonoBehaviour {
             float percentOutsideScrollZone = 0f;
 
             if (Input.mousePosition.x < scrollZone) {   // pan left
-                percentOutsideScrollZone = scrollZone - Input.mousePosition.x;
+                float mouseX = Input.mousePosition.x;
+                if (mouseX < 0f) { mouseX = 0f; }
+                percentOutsideScrollZone = scrollZone - mouseX;
                 transform.Translate(-transform.right*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
             else if (Input.mousePosition.x > Screen.width - scrollZone) { // pan right
-                percentOutsideScrollZone = Input.mousePosition.x - (Screen.width - scrollZone);
+                float mouseX = Input.mousePosition.x;
+                if (mouseX > Screen.width) { mouseX = Screen.width; }
+                percentOutsideScrollZone = mouseX - (Screen.width - scrollZone);
                 transform.Translate(transform.right*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
 
             if (Input.mousePosition.y < scrollZone) {   // pan down
-                percentOutsideScrollZone = scrollZone - Input.mousePosition.y;
+                float mouseY = Input.mousePosition.y;
+                if (mouseY < 0) { mouseY = 0f; }
+                percentOutsideScrollZone = scrollZone - mouseY;
                 transform.Translate(-transform.up*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
             else if (Input.mousePosition.y > Screen.height - scrollZone) {    // pan up
-                percentOutsideScrollZone = Input.mousePosition.y - (Screen.height - scrollZone);
+                float mouseY = Input.mousePosition.y;
+                if (mouseY > Screen.height) { mouseY = Screen.height; }
+                percentOutsideScrollZone = mouseY - (Screen.height - scrollZone);
                 transform.Translate(transform.up*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
         }
