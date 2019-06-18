@@ -7,13 +7,12 @@ using UnityEngine.Tilemaps;
 //This script is partly from the RTSCamera script in the package "Virtual Cameras for Unity Lite"
 public class CameraMovement : MonoBehaviour {
 
-    [Header("Camera")]
     [Tooltip("Zone that will receive on-screen cursor position.")]
     [Range(0f, 100f)]
     public float scrollZone = 65f;
 
     [Tooltip("Multiplier for camera movement sensitivity when using mouse.")]
-    [Range(0f, 3f)]
+    [Range(0f, 5f)]
     public float mouseSensitivity = 2f;
 
     [Tooltip("Multiplier for camera movement sensitivity when using input.")]
@@ -28,15 +27,33 @@ public class CameraMovement : MonoBehaviour {
     [Range(0f, 10f)]
     public float smoothFactor = 0.2f;
 
-    //for zoom In/Out
-    [Tooltip("Zoom limits . X represents the lowest and Y the highest value.")]
-    public Vector2 zoomLimits;
-
-    [Tooltip("Whether the position changes using the cursor.")]
+    [Tooltip("Whether the camera scrolls using the cursor.")]
     public bool useCursor = true;
 
     [Tooltip("Maximum speed the camera can rotate")]
     public float maxRotationSpeed = 20f;
+    
+    [Space]
+    [Header("--- Orthographic Mode ---")]
+
+    //for zoom In/Out
+    [Tooltip("Zoom limits in orthographic mode. X represents the lowest and Y the highest value.")]
+    public Vector2 zoomLimits;
+
+    [Space]
+    [Header("--- Perspective Mode ---")]
+
+    [Tooltip("Enable camera pitch rotation with zoom")]
+    public bool enableCameraPitch;
+
+    [Tooltip("Max pitch when zoomed all the way in.")]
+    public float maxPitch = 60f;
+
+    [Tooltip("Zoom limits in perspective mode. X represents the lowest and Y the highest value.")]
+    public Vector2 perspectiveZoomLimits;
+
+    [Tooltip("A target object for the camera to look at.")]
+    public GameObject lookTarget;
 
     private Tilemap tilemap; // used to determine camera bounds
     private float zoom;
@@ -64,7 +81,6 @@ public class CameraMovement : MonoBehaviour {
         if(Input.GetMouseButtonDown(1)) {
             rotationAnchorPoint = Input.mousePosition;
         }
-
         HandleRotation();
         HandlePan();
         HandleZoom();
@@ -123,7 +139,6 @@ public class CameraMovement : MonoBehaviour {
         transform.Translate(transform.right*Input.GetAxis("Horizontal")*inputSensitivity*Time.deltaTime,Space.World);
         transform.Translate(transform.up*Input.GetAxis("Vertical")*inputSensitivity*Time.deltaTime,Space.World);
         
-
         if(tilemap != null) {
             transform.position = new Vector3(Mathf.Clamp(transform.position.x,minBound.x,maxBound.x),Mathf.Clamp(transform.position.y,minBound.y,maxBound.y),transform.position.z);
         }
@@ -135,7 +150,6 @@ public class CameraMovement : MonoBehaviour {
             if(rotationSpeed > maxRotationSpeed) {
                 rotationSpeed = maxRotationSpeed;
             }
-
             if (Input.mousePosition.x < rotationAnchorPoint.x) {
                 transform.Rotate(new Vector3(0,0,-rotationSpeed*Time.deltaTime*mouseSensitivity));
             }
@@ -143,13 +157,10 @@ public class CameraMovement : MonoBehaviour {
                 transform.Rotate(new Vector3(0,0,rotationSpeed*Time.deltaTime*mouseSensitivity));
             }
         }
-        else {
-            transform.Rotate(new Vector3(0,0,Input.GetAxis("Rotate")*Time.deltaTime*inputSensitivity));
-        }
+        transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z + Input.GetAxis("Rotate") * Time.deltaTime * 100f);
     }
 
     void HandleZoom() {
-        
         // Orthographic mode:
         if (Camera.main.orthographic) {
             if (Input.mouseScrollDelta.y < 0) {
@@ -176,11 +187,12 @@ public class CameraMovement : MonoBehaviour {
             }
             // Altitude
             zoom = Mathf.Lerp(zoom, Camera.main.transform.position.z, smoothFactor);
-            Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Mathf.Clamp(zoom, -150, -40)), Camera.main.transform.rotation);
+            Camera.main.transform.SetPositionAndRotation(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Mathf.Clamp(zoom, perspectiveZoomLimits.y, perspectiveZoomLimits.x)), Camera.main.transform.rotation);
             zoom = Camera.main.transform.position.z;
-            // Rotation
-            float xRotation = (Camera.main.transform.position.z * 0.5f) * -1 - 120f;
-            Camera.main.transform.eulerAngles = new Vector3(xRotation, 0, 0);
+            // Pitch Rotation
+            if (enableCameraPitch){
+                Camera.main.transform.LookAt(lookTarget.transform, Vector3.back);
+            }
         }
     }
 }
