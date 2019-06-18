@@ -15,6 +15,10 @@ public class CameraMovement : MonoBehaviour {
     [Range(0f, 5f)]
     public float mouseSensitivity = 2f;
 
+    [Tooltip("Multiplier for camera rotation sensitivity when using mouse.")]
+    [Range(0f, 5f)]
+    public float mouseRotationSensitivity = 2f;
+
     [Tooltip("Multiplier for camera movement sensitivity when using input.")]
     [Range(1f, 100f)]
     public float inputSensitivity = 50f;
@@ -151,10 +155,10 @@ public class CameraMovement : MonoBehaviour {
                 rotationSpeed = maxRotationSpeed;
             }
             if (Input.mousePosition.x < rotationAnchorPoint.x) {
-                transform.Rotate(new Vector3(0,0,-rotationSpeed*Time.deltaTime*mouseSensitivity));
+                transform.Rotate(new Vector3(0,0,-rotationSpeed*Time.deltaTime*mouseRotationSensitivity));
             }
             else if (Input.mousePosition.x > rotationAnchorPoint.x) {
-                transform.Rotate(new Vector3(0,0,rotationSpeed*Time.deltaTime*mouseSensitivity));
+                transform.Rotate(new Vector3(0,0,rotationSpeed*Time.deltaTime*mouseRotationSensitivity));
             }
         }
         transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z + Input.GetAxis("Rotate") * Time.deltaTime * 100f);

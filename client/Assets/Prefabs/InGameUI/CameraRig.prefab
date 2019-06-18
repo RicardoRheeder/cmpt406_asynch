@@ -251,17 +251,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2e9239d88a4554d9f30ca1baa27cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollZone: 100
-  mouseSensitivity: 1
+  scrollZone: 20
+  mouseSensitivity: 4
+  mouseRotationSensitivity: 1.33
   inputSensitivity: 50
-  zoomSensitivity: 80
+  zoomSensitivity: 207
   smoothFactor: 0.2
-  useCursor: 0
+  useCursor: 1
   maxRotationSpeed: 100
   zoomLimits: {x: 15, y: 100}
-  enableCameraPitch: 0
+  enableCameraPitch: 1
   maxPitch: 60
-  perspectiveZoomLimits: {x: 0, y: 0}
+  perspectiveZoomLimits: {x: -15, y: -150}
   lookTarget: {fileID: 2380509789142881711}
 --- !u!1 &6525353359766537967
 GameObject:
@@ -288,7 +289,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6525353359766537967}
   m_LocalRotation: {x: 0.000000059604638, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.000015644604, z: -0.000026202462}
+  m_LocalPosition: {x: 0, y: 0.0000025433728, z: -0.000034024764}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6525353358515881507}
