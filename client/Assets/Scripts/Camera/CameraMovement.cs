@@ -1,10 +1,21 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Tilemaps;
 
-//This script is partly from the RTSCamera script in the package "Virtual Cameras for Unity Lite"
+/**
+ * CameraMovement.cs handles all aspects of camera control. It should be attached to a parent
+ * camera rig object with the main camera as a child object. Includes functions for moving the
+ * camera rig to Vector2 positions on the map.
+ * 
+ * Major features:
+ * - 'WASD' horizontal movement controls
+ * - 'Q' and 'E' rotation controls
+ * - Scrollwheel zoom with pitch changing
+ * - Screen-edge cursor movement
+ * - Mouse-button/drag rotation controls
+ * - Camera position functions (snap and interpolate)
+ */
 public class CameraMovement : MonoBehaviour {
 
     [Tooltip("Zone that will receive on-screen cursor position.")]
@@ -40,7 +51,6 @@ public class CameraMovement : MonoBehaviour {
     [Space]
     [Header("--- Orthographic Mode ---")]
 
-    //for zoom In/Out
     [Tooltip("Zoom limits in orthographic mode. X represents the lowest and Y the highest value.")]
     public Vector2 zoomLimits;
 
@@ -59,9 +69,9 @@ public class CameraMovement : MonoBehaviour {
     [Tooltip("A target object for the camera to look at.")]
     public GameObject lookTarget;
 
-    private Tilemap tilemap; // used to determine camera bounds
-    private float zoom;
-    private Vector2 rotationAnchorPoint;
+    private Tilemap tilemap; // Used to determine camera bounds
+    private float zoom; // Height of camera from CameraRig parent object in Perspective mode, orthographicSize in ortho mode
+    private Vector2 rotationAnchorPoint; // A point on the map in 2D space to rotate the camera around
     private Vector3 maxBound;
     private Vector3 minBound;
 
@@ -80,7 +90,7 @@ public class CameraMovement : MonoBehaviour {
         }
     }
 
-    // LateUpdate is called every frame, if the Behaviour is enabled
+    // LateUpdate is called every frame (after Update()), if the Behaviour is enabled
     void LateUpdate() {
         if(Input.GetMouseButtonDown(1)) {
             rotationAnchorPoint = Input.mousePosition;
@@ -90,14 +100,17 @@ public class CameraMovement : MonoBehaviour {
         HandleZoom();
     }
 
+    // Instantly change camera position to X/Y coordinates
     public void SnapToPosition(Vector2 position) {
         transform.position = position;
     }
 
+    // Smoothly move camera to X/Y coordinates
     public void MoveToPosition(Vector2 position) {
         StartCoroutine(TransitionPosition(position));
     }
 
+    // Subroutine for smooth camera movements
     IEnumerator TransitionPosition(Vector2 position) {
         float step = Time.fixedDeltaTime;
         float t = 0;
@@ -109,10 +122,10 @@ public class CameraMovement : MonoBehaviour {
         }
     }
 
+    // Handles horizontal movements of the camera
     void HandlePan() {
         if (useCursor) {
             float percentOutsideScrollZone = 0f;
-
             if (Input.mousePosition.x < scrollZone) {   // pan left
                 float mouseX = Input.mousePosition.x;
                 if (mouseX < 0f) { mouseX = 0f; }
@@ -125,7 +138,6 @@ public class CameraMovement : MonoBehaviour {
                 percentOutsideScrollZone = mouseX - (Screen.width - scrollZone);
                 transform.Translate(transform.right*Time.deltaTime*mouseSensitivity*percentOutsideScrollZone,Space.World);
             }
-
             if (Input.mousePosition.y < scrollZone) {   // pan down
                 float mouseY = Input.mousePosition.y;
                 if (mouseY < 0) { mouseY = 0f; }
@@ -148,6 +160,7 @@ public class CameraMovement : MonoBehaviour {
         }
     }
 
+    // Handles camera rotation about the vertical axis of the parent CameraRig object
     void HandleRotation() {
         if(useCursor && Input.GetMouseButton(1)) {
             float rotationSpeed = Math.Abs(Input.mousePosition.x - rotationAnchorPoint.x);
@@ -164,6 +177,8 @@ public class CameraMovement : MonoBehaviour {
         transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z + Input.GetAxis("Rotate") * Time.deltaTime * 100f);
     }
 
+    // Handles vertical movement of the camera object for zooming in and out.
+    // - Also rotates the camera pitch when camera pitching is enabled
     void HandleZoom() {
         // Orthographic mode:
         if (Camera.main.orthographic) {
@@ -173,7 +188,6 @@ public class CameraMovement : MonoBehaviour {
             if (Input.mouseScrollDelta.y > 0)  {
                 zoom -= zoomSensitivity * Time.deltaTime * Math.Abs(Input.mouseScrollDelta.y);
             }
-
             zoom = Mathf.Lerp(zoom, Camera.main.orthographicSize, smoothFactor);
             Camera.main.orthographicSize = Mathf.Clamp(zoom, zoomLimits.x, zoomLimits.y);
             zoom = Camera.main.orthographicSize;
