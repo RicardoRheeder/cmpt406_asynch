@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2380509789142881711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7330395447555831526}
+  m_Layer: 0
+  m_Name: LookTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7330395447555831526
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2380509789142881711}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6525353358816934746}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6525353358515881511
 GameObject:
   m_ObjectHideFlags: 0
@@ -28,12 +58,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6525353358515881511}
   m_LocalRotation: {x: -0.2658926, y: 0, z: 0, w: 0.9640027}
-  m_LocalPosition: {x: 0, y: -58, z: -128}
+  m_LocalPosition: {x: 0, y: -50, z: -128}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6525353359766537960}
   m_Father: {fileID: 6525353358816934746}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -30.84, y: 0, z: 0}
 --- !u!20 &6525353358515881506
 Camera:
@@ -200,9 +230,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6525353358816934744}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 7330395447555831526}
   - {fileID: 6778815893864676558}
   - {fileID: 6525353358515881507}
   m_Father: {fileID: 0}
@@ -220,14 +251,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2e9239d88a4554d9f30ca1baa27cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollZone: 100
-  mouseSensitivity: 1
+  scrollZone: 20
+  mouseSensitivity: 4
+  mouseRotationSensitivity: 1.33
   inputSensitivity: 50
-  zoomSensitivity: 80
+  zoomSensitivity: 207
   smoothFactor: 0.2
-  zoomLimits: {x: 15, y: 100}
-  useCursor: 0
+  useCursor: 1
   maxRotationSpeed: 100
+  zoomLimits: {x: 15, y: 100}
+  enableCameraPitch: 1
+  maxPitch: 60
+  perspectiveZoomLimits: {x: -15, y: -150}
+  lookTarget: {fileID: 2380509789142881711}
 --- !u!1 &6525353359766537967
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,7 +387,7 @@ PrefabInstance:
     - target: {fileID: 5528973667814989938, guid: 7adba609e5fdb2f489dbafe9163efd96,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5528973667814989938, guid: 7adba609e5fdb2f489dbafe9163efd96,
         type: 3}
